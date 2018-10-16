@@ -68,7 +68,7 @@ void nominal::Loop(TTree *inputtree, TString sample)
   Long64_t nbytes = 0, nb = 0;
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
     nb = fChain->GetEntry(jentry);
-    if(debug||(jentry%10000==0))
+    if((jentry%10000==0))
       std::cout<<" I am here event "<<jentry<<" Event "<<EventNumber<<" Run "<<RunNumber<<" ismc "<<mc_channel_number<<std::endl;
 
 //===============================pre-selections===============================
@@ -107,8 +107,8 @@ void nominal::Loop(TTree *inputtree, TString sample)
       ifregions["reg1e1mu1tau1b"] = 0;
       ifregions["reg1e1mu2b"]     = 0;
     }
-    ifregions["reg1l2b2j"]      = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T==2 && nTaus_OR_Pt25==0;
-    ifregions["reg1l1tau2b1j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T==2 && nTaus_OR_Pt25>=1;
+    ifregions["reg1l2b2j"]      = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=2 && nTaus_OR_Pt25==0;
+    ifregions["reg1l1tau2b1j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=2 && nTaus_OR_Pt25>=1;
 //===============================fill histograms===============================
     map<TString, bool>::iterator iter;
     TString tauorigin;
