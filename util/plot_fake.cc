@@ -18,13 +18,13 @@ int main(int argc, char const *argv[])
 		char filename[100];
 		char cate[100];
 		sscanf(inputline,"%s %s",&filename,&cate);
-		printf("reading list: %s as %s\n", prefix + "/datalists/" + filename + ".txt", cate);
+		printf("reading list: %s as %s\n", (prefix + "/datalists/" + filename + ".txt").Data(), cate);
 		ifstream list(prefix + "/datafiles/" + filename + ".txt");
 		while(!list.eof){
 			list.getline(inputline,200);
 			if(strlen(inputline)==0) continue;
 			if(inputline[0]=='#') continue;
-			printf("reading Root file: %s\n", prefix1 + inputline);
+			printf("reading Root file: %s\n", (prefix1 + inputline).Data());
 			analysis->Loop( (TTree*)TFile::Open(prefix1 + inputline)->Get("nominal"), cate);
 		}
 	}
