@@ -20,12 +20,12 @@ nominal::nominal(){
   TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
   TString nprong[] = {"1prong","3prong"};
 
-  for (int k = 0; k < 2; ++k)
-    for (int j = 0; j < 6; ++j)
+  for (int j = 0; j < 6; ++j)
+    if(j>2) notau_plots->add_region(regions[j]);
+    else for (int k = 0; k < 2; ++k)
       for (int i = 0; i < 4; ++i){
         printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-        if(j<3) tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-        else notau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
+        tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
       }
 
   tau_plots->init_sample("data","data",kBlack);
