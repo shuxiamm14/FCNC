@@ -37,8 +37,8 @@ nominal::nominal(){
   tau_plots->init_sample("ttbar_real","t#bar{t}(real #tau)",kRed);
   tau_plots->init_sample("ttbar_nomatch","t#bar{t}(no truth matched fake #tau)",kGray);
 
-  notau_plots->init_sample("data","data",kBlack);
-  notau_plots->init_sample("other","Other samples",kYellow);
+  notau_plots->init_sample("data_notau","data",kBlack);
+  notau_plots->init_sample("other_notau","Other samples",kYellow);
   notau_plots->init_sample("ttbar","t#bar{t}",kRed);
 
 }
