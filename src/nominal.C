@@ -47,7 +47,7 @@ nominal::~nominal(){
 void nominal::fill_tau(TString region, int nprong, TString sample){
   for (int i = 0; i < 4; ++i)
     if(tau_MV2c10_0>btagwpCut[i]) {
-      if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong)+"_"+bwps[i]).Data(), sample.Data());
+      if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[i]).Data(), sample.Data());
       tau_plots->fill_hist(region+"_"+char('0'+nprong)+"_"+bwps[i],sample);
     }
 }
