@@ -110,26 +110,26 @@ void nominal::Loop(TTree *inputtree, TString sample)
     map<TString, bool>::iterator iter;
     TString tauorigin;
     if(sample == "ttbar" && nTaus_OR_Pt25>=1){
-      if(tau_truthType_0 == 10) tauorigin == "ttbar_real";
-      else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)) tauorigin == "ttbar_lep";
+      if(tau_truthType_0 == 10) tauorigin = "ttbar_real";
+      else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)) tauorigin = "ttbar_lep";
       else
         switch (tau_truthJetFlavour_0){
           case 5:
-            tauorigin == "ttbar_b";
+            tauorigin = "ttbar_b";
             break;
           case 21:
-            tauorigin == "ttbar_g";
+            tauorigin = "ttbar_g";
             break;
           case 4:
-            tauorigin == "ttbar_c";
+            tauorigin = "ttbar_c";
             break;
           default:
-            tauorigin == "ttbar_j";
+            tauorigin = "ttbar_j";
         }
     }else if(sample == "data"){
-      tauorigin == "data";
+      tauorigin = "data";
     }else{
-      tauorigin == "other";
+      tauorigin = "other";
     }
     for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
     {
