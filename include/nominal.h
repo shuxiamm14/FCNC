@@ -21,7 +21,7 @@ public :
    const double btagwpCut[4]={0.94,0.83,0.64,0.11};
    TString bwps[4] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
    Double_t _lum = 80.;
-   int debug = 0;
+   int debug = 1;
    nominal();
    virtual ~nominal();
    void plot();
@@ -31,8 +31,9 @@ public :
    void fill_notau(TString region, TString sample);
    bool SelectTLepid(int id);
 
-   histSaver *tau_plots;
-   histSaver *notau_plots;
+   histSaver *tau_plots = 0;
+   histSaver *notau_plots = 0;
+
    Double_t        weight;
    ULong64_t       eventNumber;
    UInt_t          runNumber;
