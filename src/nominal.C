@@ -32,9 +32,10 @@ nominal::nominal(){
 
   for (int k = 0; k < 2; ++k)
     for (int j = 0; j < 6; ++j)
-      for (int i = 0; i < 4; ++i)
+      for (int i = 0; i < 4; ++i){
+        printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
         tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-  
+      }
   tau_plots->add(30,25.,115.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
 }
 
@@ -44,10 +45,12 @@ nominal::~nominal(){
 }
 
 void nominal::fill_tau(TString region, int nprong, TString sample){
+  if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong)+"_"+bwps[i]).Data(), sample.Data());
   for (int i = 0; i < 4; ++i) if(tau_MV2c10_0>btagwpCut[i]) tau_plots->fill_hist(region+"_"+char('0'+nprong)+"_"+bwps[i],sample);
 }
 
 void nominal::fill_notau(TString region, TString sample){
+  if(debug) printf("fill region: %s sample: %s\n", (region).Data(), sample.Data());
   notau_plots->fill_hist(region,sample);
 }
 
@@ -67,8 +70,8 @@ void nominal::Loop(TTree *inputtree, TString sample)
 
     bool basic_selection = passEventCleaning;
 
-//    if(_outhist.Contains("ttbargamma")) basic_selection &=m_hasMEphoton_DRgt02_nonhad;
-//    if(_outhist.Contains("ttbarnohad")) basic_selection &=!m_hasMEphoton_DRgt02_nonhad;
+    if(_outhist.Contains("ttbargamma")) basic_selection &=m_hasMEphoton_DRgt02_nonhad;
+    if(_outhist.Contains("ttbarnohad")) basic_selection &=!m_hasMEphoton_DRgt02_nonhad;
 
     basic_selection &= 
       (RunYear==2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose ))|| 
@@ -128,8 +131,9 @@ void nominal::Loop(TTree *inputtree, TString sample)
     }
     for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
     {
-      if(iter->second == 1 & iter->first.SubString("tau") == "tau" & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) fill_tau(iter->first,tau_numTrack_0,tauorigin);
-      if(iter->second == 1 & iter->first.SubString("tau") != "tau") fill_notau(iter->first,sample);
+      if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) {
+        fill_tau(iter->first,tau_numTrack_0,tauorigin);
+      if(iter->second == 1 & !iter->first.Contains("tau") ) fill_notau(iter->first,sample);
     }
   }
 }
@@ -147,7 +151,6 @@ bool nominal::SelectTLepid(int id){
   }
   else if(id==1){
     pass = lep_isolationFixedCutLoose_1&&(abs(lep_ID_1)==13||((abs(lep_ID_1)==11)&&lep_isTightLH_1));
-
   }
   else if(id==2){
     pass = lep_isolationFixedCutLoose_2&&(abs(lep_ID_2)==13||((abs(lep_ID_2)==11)&&lep_isTightLH_2));
