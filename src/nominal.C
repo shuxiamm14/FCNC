@@ -39,7 +39,7 @@ nominal::nominal(){
 
   notau_plots->init_sample("data_notau","data",kBlack);
   notau_plots->init_sample("other_notau","Other samples",kYellow);
-  notau_plots->init_sample("ttbar","t#bar{t}",kRed);
+  notau_plots->init_sample("ttbar_notau","t#bar{t}",kRed);
 
 }
 
@@ -57,8 +57,8 @@ void nominal::fill_tau(TString region, int nprong, TString sample){
 }
 
 void nominal::fill_notau(TString region, TString sample){
-  if(debug) printf("fill region: %s sample: %s\n", (region).Data(), sample.Data());
-  notau_plots->fill_hist(sample, region);
+  if(debug) printf("fill region: %s sample: %s\n", (region).Data(), (sample+"_notau").Data());
+  notau_plots->fill_hist(sample+"_notau", region);
 }
 
 void nominal::Loop(TTree *inputtree, TString sample)
