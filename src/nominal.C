@@ -14,6 +14,18 @@ nominal::nominal(){
   notau_plots = new histSaver();
   notau_plots->set_weight(&weight);
 
+  tau_plots->add(30,25.,115.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+  
+  TString regions[] = {"reg1e1mu1tau2b","reg1e1mu2bnj","reg1l1tau2b1j","reg1l2b2j","reg1e1mu1tau1b","reg1e1mu2b"};
+  TString nprong[] = {"1prong","3prong"};
+
+  for (int k = 0; k < 2; ++k)
+    for (int j = 0; j < 6; ++j)
+      for (int i = 0; i < 4; ++i){
+        printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
+        tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
+      }
+
   tau_plots->init_sample("data","data",kBlack);
   tau_plots->init_sample("other","Other samples",kYellow);
   tau_plots->init_sample("ttbar_g","t#bar{t}(gluon fake #tau)",kPink);
@@ -27,16 +39,6 @@ nominal::nominal(){
   notau_plots->init_sample("other","Other samples",kYellow);
   notau_plots->init_sample("ttbar","t#bar{t}",kRed);
 
-  TString regions[] = {"reg1e1mu1tau2b","reg1e1mu2bnj","reg1l1tau2b1j","reg1l2b2j","reg1e1mu1tau1b","reg1e1mu2b"};
-  TString nprong[] = {"1prong","3prong"};
-
-  for (int k = 0; k < 2; ++k)
-    for (int j = 0; j < 6; ++j)
-      for (int i = 0; i < 4; ++i){
-        printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-        tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-      }
-  tau_plots->add(30,25.,115.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
 }
 
 nominal::~nominal(){
