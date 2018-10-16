@@ -15,6 +15,7 @@ nominal::nominal(){
   notau_plots->set_weight(&weight);
 
   tau_plots->add(30,25.,115.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+  notau_plots->add(30,25.,115.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
 
   TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
   TString nprong[] = {"1prong","3prong"};
