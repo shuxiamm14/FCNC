@@ -48,13 +48,13 @@ void nominal::fill_tau(TString region, int nprong, TString sample){
   for (int i = 0; i < 4; ++i)
     if(tau_MV2c10_0>btagwpCut[i]) {
       if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[i]).Data(), sample.Data());
-      tau_plots->fill_hist(region+"_"+char('0'+nprong)+"_"+bwps[i],sample);
+      tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"_"+bwps[i]);
     }
 }
 
 void nominal::fill_notau(TString region, TString sample){
   if(debug) printf("fill region: %s sample: %s\n", (region).Data(), sample.Data());
-  notau_plots->fill_hist(region,sample);
+  notau_plots->fill_hist(sample, region);
 }
 
 void nominal::Loop(TTree *inputtree, TString sample)
