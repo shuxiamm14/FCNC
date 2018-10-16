@@ -17,6 +17,7 @@ FCNCINCS := -I$(FCNC_DIR)/include/fcnc -I$(FCNC_DIR)/include/atlasstyle
 EXTRALIBS +=$(ROOTLIBS) $(ROOTGLIBS) $(FCNCLIBS) $(DELPHESLIBS)
 
 CPPFLAGS += $(ROOTCFLAGS) $(DELPHESINCS) $(FCNCINCS) -Iinclude
+CPPFLAGS += -D PACKAGE_DIR=\"$(PWD)\" 
 
 CPPFLAGS  += -Wno-long-long -fPIC -w -g
 

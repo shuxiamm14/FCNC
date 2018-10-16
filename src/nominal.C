@@ -45,8 +45,11 @@ nominal::~nominal(){
 }
 
 void nominal::fill_tau(TString region, int nprong, TString sample){
-  if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong)+"_"+bwps[i]).Data(), sample.Data());
-  for (int i = 0; i < 4; ++i) if(tau_MV2c10_0>btagwpCut[i]) tau_plots->fill_hist(region+"_"+char('0'+nprong)+"_"+bwps[i],sample);
+  for (int i = 0; i < 4; ++i)
+    if(tau_MV2c10_0>btagwpCut[i]) {
+      if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong)+"_"+bwps[i]).Data(), sample.Data());
+      tau_plots->fill_hist(region+"_"+char('0'+nprong)+"_"+bwps[i],sample);
+    }
 }
 
 void nominal::fill_notau(TString region, TString sample){
@@ -57,7 +60,6 @@ void nominal::fill_notau(TString region, TString sample){
 void nominal::Loop(TTree *inputtree, TString sample)
 {
   Init(inputtree);
-  bool debug = 1;
   if (fChain == 0) return;
   Long64_t nentries = fChain->GetEntriesFast();
   Long64_t nbytes = 0, nb = 0;
@@ -70,8 +72,8 @@ void nominal::Loop(TTree *inputtree, TString sample)
 
     bool basic_selection = passEventCleaning;
 
-    if(_outhist.Contains("ttbargamma")) basic_selection &=m_hasMEphoton_DRgt02_nonhad;
-    if(_outhist.Contains("ttbarnohad")) basic_selection &=!m_hasMEphoton_DRgt02_nonhad;
+    if(sample.Contains("ttbargamma")) { basic_selection &=m_hasMEphoton_DRgt02_nonhad; sample = "ttbar"; }
+    if(sample.Contains("ttbarnohad")) { basic_selection &=!m_hasMEphoton_DRgt02_nonhad; sample = "ttbar"; }
 
     basic_selection &= 
       (RunYear==2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose ))|| 
@@ -131,8 +133,7 @@ void nominal::Loop(TTree *inputtree, TString sample)
     }
     for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
     {
-      if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) {
-        fill_tau(iter->first,tau_numTrack_0,tauorigin);
+      if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) fill_tau(iter->first,tau_numTrack_0,tauorigin);
       if(iter->second == 1 & !iter->first.Contains("tau") ) fill_notau(iter->first,sample);
     }
   }

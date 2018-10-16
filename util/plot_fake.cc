@@ -20,7 +20,7 @@ int main(int argc, char const *argv[])
 		sscanf(inputline,"%s %s",&filename,&cate);
 		printf("reading list: %s as %s\n", (prefix + "/datalists/" + filename + ".txt").Data(), cate);
 		ifstream list(prefix + "/datafiles/" + filename + ".txt");
-		while(!list.eof){
+		while(!list.eof()){
 			list.getline(inputline,200);
 			if(strlen(inputline)==0) continue;
 			if(inputline[0]=='#') continue;
