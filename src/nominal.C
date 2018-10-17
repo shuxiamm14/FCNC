@@ -15,8 +15,8 @@ nominal::nominal(){
   notau_plots->set_weight(&weight);
   notau_plots->debug = 1;
 
-  tau_plots->add(30,25.,115.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-  notau_plots->add(30,25.,115.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+  tau_plots->add(115,0.,115.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+  notau_plots->add(115,0.,115.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
 
   TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
   TString nprong[] = {"1prong","3prong"};
@@ -36,6 +36,7 @@ nominal::nominal(){
   tau_plots->init_sample("ttbar_b","t#bar{t}(b-jets fake #tau)",kViolet);
   tau_plots->init_sample("ttbar_lep","t#bar{t}(lepton fake #tau)",kGreen);
   tau_plots->init_sample("ttbar_real","t#bar{t}(real #tau)",kRed);
+  tau_plots->init_sample("ttbar_c","t#bar{t}(c-jets fake #tau)",kOrange);
   tau_plots->init_sample("ttbar_nomatch","t#bar{t}(no truth matched fake #tau)",kGray);
 
   notau_plots->init_sample("data_notau","data",kBlack);
