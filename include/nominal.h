@@ -32,8 +32,8 @@ public :
    bool SelectTLepid(int id);
    int leading_b = -1 ;
    int leading_ljet = -1 ;
-   double pt_b = 0;
-   double pt_ljet = 0;
+   float pt_b = 0;
+   float pt_ljet = 0;
    histSaver *tau_plots = 0;
    histSaver *notau_plots = 0;
 

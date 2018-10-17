@@ -17,7 +17,7 @@ nominal::nominal(){
 
   tau_plots->add(115,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
   tau_plots->add(115,25.,125.,"p_{T,#b}","bpt",&pt_b,true,"GeV");
-  tau_plots->add(115,0.,115.,"p_{T,#light-jet}","ljetpt",&pt_ljet,true,"GeV");
+  tau_plots->add(115,25.,115.,"p_{T,#light-jet}","ljetpt",&pt_ljet,true,"GeV");
 
   notau_plots->add(115,0.,115.,"p_{T,#b}","bpt",&pt_b,true,"GeV");
   notau_plots->add(115,0.,115.,"p_{T,#light-jet}","ljetpt",&pt_ljet,true,"GeV");
@@ -98,7 +98,7 @@ void nominal::Loop(TTree *inputtree, TString sample)
       ((RunYear==2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose ))|| 
     	(RunYear>=2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0 )))&&lep_isTrigMatch_0;
 
-    weight = mc_channel_number>0?_lum/43.814*mc_norm*mcWeightOrg*pileupEventWeight_090*bTagSF_weight_MV2c10_Continuous*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
+    weight = (mc_channel_number>0&&!(mc_channel_number>2014&&mc_channel_number<2018))?_lum/43.814*mc_norm*mcWeightOrg*pileupEventWeight_090*bTagSF_weight_MV2c10_Continuous*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
 
     leading_b = -1;
     leading_ljet = -1;
