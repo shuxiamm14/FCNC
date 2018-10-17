@@ -77,7 +77,7 @@ void nominal::Loop(TTree *inputtree, TString sample)
     nb = fChain->GetEntry(jentry);
     if((jentry%10000==0))
       std::cout<<" I am here event "<<jentry<<" Event "<<EventNumber<<" Run "<<RunNumber<<" ismc "<<mc_channel_number<<std::endl;
-    if(jentry == 10000) return;
+    if(jentry == 100000) return;
 //===============================pre-selections===============================
 
     bool basic_selection = passEventCleaning;
