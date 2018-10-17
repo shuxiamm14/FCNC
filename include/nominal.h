@@ -21,7 +21,7 @@ public :
    const double btagwpCut[4]={0.94,0.83,0.64,0.11};
    TString bwps[4] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
    Double_t _lum = 80.;
-   int debug = 1;
+   int debug = 0;
    nominal();
    virtual ~nominal();
    void plot();

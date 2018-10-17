@@ -13,6 +13,7 @@ nominal::nominal(){
   tau_plots->debug = 1;
   notau_plots = new histSaver();
   notau_plots->set_weight(&weight);
+  notau_plots->debug = 1;
 
   tau_plots->add(30,25.,115.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
   notau_plots->add(30,25.,115.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
