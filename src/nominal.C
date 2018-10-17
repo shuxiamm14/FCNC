@@ -15,12 +15,12 @@ nominal::nominal(){
   notau_plots->set_weight(&weight);
   notau_plots->debug = 0;
 
-  tau_plots->add(100,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-  tau_plots->add(100,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
-  tau_plots->add(100,25.,115.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
+  tau_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+  tau_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
+  tau_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
 
-  notau_plots->add(115,0.,115.,"p_{T,#b}","bpt",&pt_b,true,"GeV");
-  notau_plots->add(115,0.,115.,"p_{T,#light-jet}","ljetpt",&pt_ljet,true,"GeV");
+  notau_plots->add(10,0.,200.,"p_{T,#b}","bpt",&pt_b,true,"GeV");
+  notau_plots->add(10,0.,200.,"p_{T,#light-jet}","ljetpt",&pt_ljet,true,"GeV");
 
   TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
   TString nprong[] = {"1prong","3prong"};
@@ -33,19 +33,19 @@ nominal::nominal(){
         tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
       }
 
-  tau_plots->init_sample("data","data",kBlack);
-  tau_plots->init_sample("other","Other samples",kYellow);
-  tau_plots->init_sample("ttbar_g","t#bar{t}(gluon fake #tau)",(enum EColor)7);
-  tau_plots->init_sample("ttbar_j","t#bar{t}(light-jet fake #tau)",kBlue);
-  tau_plots->init_sample("ttbar_b","t#bar{t}(b-jets fake #tau)",kViolet);
-  tau_plots->init_sample("ttbar_lep","t#bar{t}(lepton fake #tau)",kGreen);
-  tau_plots->init_sample("ttbar_real","t#bar{t}(real #tau)",kRed);
-  tau_plots->init_sample("ttbar_c","t#bar{t}(c-jets fake #tau)",kOrange);
-  tau_plots->init_sample("ttbar_nomatch","t#bar{t}(no truth matched fake #tau)",kGray);
+  tau_plots->init_sample("data","data","data",kBlack);
+  tau_plots->init_sample("other","other","Other samples",kYellow);
+  tau_plots->init_sample("ttbar_g","ttbar_g","t#bar{t}(gluon fake #tau)",(enum EColor)7);
+  tau_plots->init_sample("ttbar_j","ttbar_j","t#bar{t}(light-jet fake #tau)",kBlue);
+  tau_plots->init_sample("ttbar_b","ttbar_b","t#bar{t}(b-jets fake #tau)",kViolet);
+  tau_plots->init_sample("ttbar_lep","ttbar_lep","t#bar{t}(lepton fake #tau)",kGreen);
+  tau_plots->init_sample("ttbar_real","ttbar_real","t#bar{t}(real #tau)",kRed);
+  tau_plots->init_sample("ttbar_c","ttbar_c","t#bar{t}(c-jets fake #tau)",kOrange);
+  tau_plots->init_sample("ttbar_nomatch","ttbar_nomatch","t#bar{t}(no truth matched fake #tau)",kGray);
 
-  notau_plots->init_sample("data_notau","data",kBlack);
-  notau_plots->init_sample("other_notau","Other samples",kYellow);
-  notau_plots->init_sample("ttbar_notau","t#bar{t}",kRed);
+  notau_plots->init_sample("data","data_notau","data",kBlack);
+  notau_plots->init_sample("other","other_notau","Other samples",kYellow);
+  notau_plots->init_sample("ttbar","ttbar_notau","t#bar{t}",kRed);
 
 }
 
