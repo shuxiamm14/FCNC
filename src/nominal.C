@@ -15,9 +15,9 @@ nominal::nominal(){
   notau_plots->set_weight(&weight);
   notau_plots->debug = 1;
 
-  tau_plots->add(115,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-  tau_plots->add(115,25.,125.,"p_{T,#b}","bpt",&pt_b,true,"GeV");
-  tau_plots->add(115,25.,115.,"p_{T,#light-jet}","ljetpt",&pt_ljet,true,"GeV");
+  tau_plots->add(100,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+  tau_plots->add(100,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
+  tau_plots->add(100,25.,115.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
 
   notau_plots->add(115,0.,115.,"p_{T,#b}","bpt",&pt_b,true,"GeV");
   notau_plots->add(115,0.,115.,"p_{T,#light-jet}","ljetpt",&pt_ljet,true,"GeV");
