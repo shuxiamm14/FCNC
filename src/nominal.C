@@ -16,7 +16,11 @@ nominal::nominal(){
   notau_plots->debug = 0;
 
   tau_plots->add(115,0.,115.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-  notau_plots->add(115,0.,115.,"p_{T,#leading-jet}","jetpt",&lead_jetPt,true,"GeV");
+  tau_plots->add(115,0.,115.,"p_{T,#b}","bpt",&pt_b,true,"GeV");
+  tau_plots->add(115,0.,115.,"p_{T,#light-jet}","ljetpt",&pt_ljet,true,"GeV");
+
+  notau_plots->add(115,0.,115.,"p_{T,#b}","bpt",&pt_b,true,"GeV");
+  notau_plots->add(115,0.,115.,"p_{T,#light-jet}","ljetpt",&pt_ljet,true,"GeV");
 
   TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
   TString nprong[] = {"1prong","3prong"};
@@ -95,8 +99,24 @@ void nominal::Loop(TTree *inputtree, TString sample)
     	(RunYear>=2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0 )))&&lep_isTrigMatch_0;
 
     weight = mc_channel_number>0?_lum/43.814*mc_norm*mcWeightOrg*pileupEventWeight_090*bTagSF_weight_MV2c10_Continuous*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
-    map<TString, bool> ifregions;
+
+    leading_b = -1;
+    leading_ljet = -1;
+    pt_b = 0;
+    pt_ljet = 0;
+
+    for (int i = 0; i < m_jet_flavor_weight_MV2c10->size(); ++i)
+    {
+      if((*m_jet_flavor_weight_MV2c10)[i] > 0.83 && leading_b == -1) {
+        leading_b = i;
+        pt_b = (*m_jet_pt)[i];
+      }else if((*m_jet_flavor_weight_MV2c10)[i] < 0.83 && leading_ljet == -1){
+        leading_ljet = i;
+        pt_ljet = (*m_jet_pt)[i];
+      }
+    }
 //===============================define regions===============================
+    map<TString, bool> ifregions;
     if(trig_match&&dilep_type&&total_charge==0&&lep_Pt_0>20e3&&lep_Pt_1>20e3&&
       ((abs(lep_ID_0)==11&&lep_promptLeptonVeto_TagWeight_0<-0.7)||(abs(lep_ID_0)==13&&lep_promptLeptonVeto_TagWeight_0<-0.5))&&SelectTLepid(0)&&
       ((abs(lep_ID_1)==11&&lep_promptLeptonVeto_TagWeight_1<-0.7)||(abs(lep_ID_1)==13&&lep_promptLeptonVeto_TagWeight_1<-0.5))&&SelectTLepid(1)){ //met>30 GeV ? ttbar vs z+bb:
