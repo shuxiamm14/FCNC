@@ -10,10 +10,10 @@ nominal::nominal(){
   //init histSaver here:
   tau_plots = new histSaver();
   tau_plots->set_weight(&weight);
-  tau_plots->debug = 1;
+  tau_plots->debug = 0;
   notau_plots = new histSaver();
   notau_plots->set_weight(&weight);
-  notau_plots->debug = 1;
+  notau_plots->debug = 0;
 
   tau_plots->add(115,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
   tau_plots->add(115,25.,125.,"p_{T,#b}","bpt",&pt_b,true,"GeV");
