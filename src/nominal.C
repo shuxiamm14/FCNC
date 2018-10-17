@@ -10,13 +10,13 @@ nominal::nominal(){
   //init histSaver here:
   tau_plots = new histSaver();
   tau_plots->set_weight(&weight);
-  tau_plots->debug = 1;
+  tau_plots->debug = 0;
   notau_plots = new histSaver();
   notau_plots->set_weight(&weight);
-  notau_plots->debug = 1;
+  notau_plots->debug = 0;
 
   tau_plots->add(115,0.,115.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-  notau_plots->add(115,0.,115.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+  notau_plots->add(115,0.,115.,"p_{T,#leading-jet}","jetpt",&lead_jetPt,true,"GeV");
 
   TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
   TString nprong[] = {"1prong","3prong"};
