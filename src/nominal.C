@@ -77,7 +77,7 @@ void nominal::Loop(TTree *inputtree, TString sample)
     nb = fChain->GetEntry(jentry);
     if((jentry%10000==0))
       std::cout<<" I am here event "<<jentry<<" Event "<<EventNumber<<" Run "<<RunNumber<<" ismc "<<mc_channel_number<<std::endl;
-
+    if(jentry == 10000) return;
 //===============================pre-selections===============================
 
     bool basic_selection = passEventCleaning;
@@ -99,6 +99,7 @@ void nominal::Loop(TTree *inputtree, TString sample)
     	(RunYear>=2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0 )))&&lep_isTrigMatch_0;
 
     weight = (mc_channel_number>0&&!(mc_channel_number>2014&&mc_channel_number<2018))?_lum/43.814*mc_norm*mcWeightOrg*pileupEventWeight_090*bTagSF_weight_MV2c10_Continuous*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
+//===============================find leading b,non b jets===============================
 
     leading_b = -1;
     leading_ljet = -1;
