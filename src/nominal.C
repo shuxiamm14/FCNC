@@ -10,13 +10,13 @@ nominal::nominal(){
   //init histSaver here:
   tau_plots = new histSaver();
   tau_plots->set_weight(&weight);
-  tau_plots->debug = 0;
+  tau_plots->debug = 1;
   notau_plots = new histSaver();
   notau_plots->set_weight(&weight);
-  notau_plots->debug = 0;
+  notau_plots->debug = 1;
 
-  tau_plots->add(115,0.,115.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-  tau_plots->add(115,0.,115.,"p_{T,#b}","bpt",&pt_b,true,"GeV");
+  tau_plots->add(115,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+  tau_plots->add(115,25.,125.,"p_{T,#b}","bpt",&pt_b,true,"GeV");
   tau_plots->add(115,0.,115.,"p_{T,#light-jet}","ljetpt",&pt_ljet,true,"GeV");
 
   notau_plots->add(115,0.,115.,"p_{T,#b}","bpt",&pt_b,true,"GeV");
@@ -35,7 +35,7 @@ nominal::nominal(){
 
   tau_plots->init_sample("data","data",kBlack);
   tau_plots->init_sample("other","Other samples",kYellow);
-  tau_plots->init_sample("ttbar_g","t#bar{t}(gluon fake #tau)",kPink);
+  tau_plots->init_sample("ttbar_g","t#bar{t}(gluon fake #tau)",(enum EColor)7);
   tau_plots->init_sample("ttbar_j","t#bar{t}(light-jet fake #tau)",kBlue);
   tau_plots->init_sample("ttbar_b","t#bar{t}(b-jets fake #tau)",kViolet);
   tau_plots->init_sample("ttbar_lep","t#bar{t}(lepton fake #tau)",kGreen);
