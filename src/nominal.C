@@ -63,8 +63,8 @@ void nominal::fill_tau(TString region, int nprong, TString sample){
 }
 
 void nominal::fill_notau(TString region, TString sample){
-  if(debug) printf("fill region: %s sample: %s\n", (region).Data(), (sample+"_tau").Data());
-  notau_plots->fill_hist(sample+"_tau", region);
+  if(debug) printf("fill region: %s sample: %s\n", (region).Data(), (sample).Data());
+  notau_plots->fill_hist(sample, region);
 }
 
 void nominal::Loop(TTree *inputtree, TString sample)
