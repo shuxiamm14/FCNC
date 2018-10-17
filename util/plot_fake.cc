@@ -18,7 +18,7 @@ int main(int argc, char const *argv[])
 		char filename[100];
 		char cate[100];
 		sscanf(inputline,"%s %s",&filename,&cate);
-		printf("reading list: %s as %s\n", (prefix + "/datalists/" + filename + ".txt").Data(), cate);
+		printf("reading list: %s as %s\n", (prefix + "/datafiles/" + filename + ".txt").Data(), cate);
 		ifstream list(prefix + "/datafiles/" + filename + ".txt");
 		while(!list.eof()){
 			list.getline(inputline,200);
