@@ -2,3 +2,4 @@ bin
 lib
 run
 update.sh
+.DS_store

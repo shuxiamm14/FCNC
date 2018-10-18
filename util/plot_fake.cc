@@ -25,7 +25,9 @@ int main(int argc, char const *argv[])
 			if(strlen(inputline)==0) continue;
 			if(inputline[0]=='#') continue;
 			printf("reading Root file: %s\n", (prefix1 + inputline).Data());
-			analysis->Loop( (TTree*)TFile::Open(prefix1 + inputline)->Get("nominal"), cate);
+			TFile inputfile(prefix1 + inputline);
+			analysis->Loop( (TTree*)inputfile.Get("nominal"), cate);
+			inputfile.Close();
 		}
 	}
 	analysis->plot();
