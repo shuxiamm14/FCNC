@@ -19,8 +19,8 @@ nominal::nominal(){
   tau_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   tau_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
 
-  notau_plots->add(10,0.,200.,"p_{T,#b}","bpt",&pt_b,true,"GeV");
-  notau_plots->add(10,0.,200.,"p_{T,#light-jet}","ljetpt",&pt_ljet,true,"GeV");
+  notau_plots->add(10,0.,200.,"p_{T,b}","bpt",&pt_b,true,"GeV");
+  notau_plots->add(10,0.,200.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
 
   TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
   TString nprong[] = {"1prong","3prong"};
