@@ -110,7 +110,6 @@ void nominal::Loop(TTree *inputtree, TString sample)
 
     weight = (mc_channel_number>0&&!(mc_channel_number>2014&&mc_channel_number<2018))?_lum/43.814*mc_norm*mcWeightOrg*pileupEventWeight_090*bTagSF_weight_MV2c10_Continuous*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
 //===============================find leading b,non b jets===============================
-
     leading_b = -1;
     leading_ljet = -1;
     pt_b = 0;
@@ -174,6 +173,7 @@ void nominal::Loop(TTree *inputtree, TString sample)
       if(iter->second == 1 & !iter->first.Contains("tau") ) fill_notau(iter->first,sample);
     }
   }
+  tau_plots->plot_lib["data"]["reg1l1tau2b1j_3prong_btagwp70"][0]->Fill(30.039812,1.000000);
 }
 
 void nominal::plot(){
