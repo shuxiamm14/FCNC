@@ -52,9 +52,13 @@ bin/.%.o: util/%.cc
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
 
-bin/%_run: bin/.%.o
+bin/plot_fake_run: bin/.plot_fake.o
 	@echo Linking $@ with $^
 	@$(CXX) $(CPPFLAGS) $(EXTRALIBS)  -Llib -lnominal -o $@ $<
+
+bin/%_run: bin/.%.o
+	@echo Linking $@ with $^
+	@$(CXX) $(CPPFLAGS) $(EXTRALIBS) -o $@ $<
 
 lib/lib%.so: bin/.%.o
 	@echo Linking $@ with $^

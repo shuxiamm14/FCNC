@@ -33,19 +33,6 @@ nominal::nominal(){
         tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
       }
 
-  tau_plots->init_sample("data","data","data",kBlack);
-  tau_plots->init_sample("other","other","Other samples",kYellow);
-  tau_plots->init_sample("ttbar_g","ttbar_g","t#bar{t}(gluon fake #tau)",(enum EColor)7);
-  tau_plots->init_sample("ttbar_j","ttbar_j","t#bar{t}(light-jet fake #tau)",kBlue);
-  tau_plots->init_sample("ttbar_b","ttbar_b","t#bar{t}(b-jets fake #tau)",kViolet);
-  tau_plots->init_sample("ttbar_lep","ttbar_lep","t#bar{t}(lepton fake #tau)",kGreen);
-  tau_plots->init_sample("ttbar_real","ttbar_real","t#bar{t}(real #tau)",kRed);
-  tau_plots->init_sample("ttbar_c","ttbar_c","t#bar{t}(c-jets fake #tau)",kOrange);
-  tau_plots->init_sample("ttbar_nomatch","ttbar_nomatch","t#bar{t}(no truth matched fake #tau)",kGray);
-
-  notau_plots->init_sample("data","data_notau","data",kBlack);
-  notau_plots->init_sample("other","other_notau","Other samples",kYellow);
-  notau_plots->init_sample("ttbar","ttbar_notau","t#bar{t}",kRed);
 
 }
 
@@ -69,13 +56,37 @@ void nominal::fill_notau(TString region, TString sample){
 
 void nominal::Loop(TTree *inputtree, TString sample)
 {
+  if (sample.Contains("ttbar") && initttbar == 0)
+  {
+    tau_plots->init_sample("ttbar_g","ttbar_g","t#bar{t}(gluon fake #tau)",(enum EColor)7);
+    tau_plots->init_sample("ttbar_j","ttbar_j","t#bar{t}(light-jet fake #tau)",kBlue);
+    tau_plots->init_sample("ttbar_b","ttbar_b","t#bar{t}(b-jets fake #tau)",kViolet);
+    tau_plots->init_sample("ttbar_lep","ttbar_lep","t#bar{t}(lepton fake #tau)",kGreen);
+    tau_plots->init_sample("ttbar_real","ttbar_real","t#bar{t}(real #tau)",kRed);
+    tau_plots->init_sample("ttbar_c","ttbar_c","t#bar{t}(c-jets fake #tau)",kOrange);
+    tau_plots->init_sample("ttbar_nomatch","ttbar_nomatch","t#bar{t}(no truth matched fake #tau)",kGray);
+    notau_plots->init_sample("ttbar","ttbar_notau","t#bar{t}",kRed);
+    initttbar = 1;
+  }
+  if (sample.Contains("data") && initdata == 0)
+  {
+    tau_plots->init_sample("data","data","data",kBlack);
+    notau_plots->init_sample("data","data_notau","data",kBlack);
+    initdata = 1;
+  }
+  if (sample.Contains("other") && initother == 0)
+  {
+    tau_plots->init_sample("other","other","Other samples",kYellow);
+    notau_plots->init_sample("other","other_notau","Other samples",kYellow);
+    initother = 1;
+  }
   Init(inputtree);
   if (fChain == 0) return;
   Long64_t nentries = fChain->GetEntriesFast();
   Long64_t nbytes = 0, nb = 0;
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
     nb = fChain->GetEntry(jentry);
-    if((jentry%10000==0))
+    if((jentry%100000==0))
       std::cout<<" I am here event "<<jentry<<" Event "<<EventNumber<<" Run "<<RunNumber<<" ismc "<<mc_channel_number<<std::endl;
 //===============================pre-selections===============================
 
@@ -120,17 +131,17 @@ void nominal::Loop(TTree *inputtree, TString sample)
     if(trig_match&&dilep_type&&total_charge==0&&lep_Pt_0>20e3&&lep_Pt_1>20e3&&
       ((abs(lep_ID_0)==11&&lep_promptLeptonVeto_TagWeight_0<-0.7)||(abs(lep_ID_0)==13&&lep_promptLeptonVeto_TagWeight_0<-0.5))&&SelectTLepid(0)&&
       ((abs(lep_ID_1)==11&&lep_promptLeptonVeto_TagWeight_1<-0.7)||(abs(lep_ID_1)==13&&lep_promptLeptonVeto_TagWeight_1<-0.5))&&SelectTLepid(1)){ //met>30 GeV ? ttbar vs z+bb:
-      ifregions["reg1e1mu1tau2b"] = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==2&&nJets_OR_T==1&&nTaus_OR_Pt25>=1;
+      ifregions["reg1e1mu1tau2b"] = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==2&&nJets_OR_T==3&&nTaus_OR_Pt25>=1;
       ifregions["reg1e1mu2bnj"]   = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==2&&nJets_OR_T>=1&&nTaus_OR_Pt25==0;
       ifregions["reg1e1mu1tau1b"] = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==1&&nJets_OR_T==1&&nTaus_OR_Pt25>=1;
-      ifregions["reg1e1mu2b"]     = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==2&&nJets_OR_T==0&&nTaus_OR_Pt25==0;
+      ifregions["reg1e1mu2b"]     = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==2&&nJets_OR_T==2&&nTaus_OR_Pt25==0;
     }else{
       ifregions["reg1e1mu1tau2b"] = 0;
       ifregions["reg1e1mu2bnj"]   = 0;
       ifregions["reg1e1mu1tau1b"] = 0;
       ifregions["reg1e1mu2b"]     = 0;
     }
-    ifregions["reg1l2b2j"]      = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=2 && nTaus_OR_Pt25==0;
+    ifregions["reg1l2b2j"]      = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=4 && nTaus_OR_Pt25==0;
     ifregions["reg1l1tau2b1j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=2 && nTaus_OR_Pt25>=1;
 //===============================fill histograms===============================
     map<TString, bool>::iterator iter;
@@ -166,8 +177,8 @@ void nominal::Loop(TTree *inputtree, TString sample)
 }
 
 void nominal::plot(){
-  tau_plots->plot_stack();
-  notau_plots->plot_stack();
+  tau_plots->write();
+  notau_plots->write();
 }
 
 bool nominal::SelectTLepid(int id){

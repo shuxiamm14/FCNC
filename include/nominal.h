@@ -25,6 +25,9 @@ public :
    nominal();
    virtual ~nominal();
    void plot();
+   bool initdata = 0;
+   bool initttbar = 0;
+   bool initother = 0;
    virtual void     Init(TTree *tree);
    virtual void     Loop(TTree *inputtree, TString sample);
    void fill_tau(TString region, int nprong, TString sample);
