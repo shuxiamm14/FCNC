@@ -54,8 +54,7 @@ void nominal::fill_notau(TString region, TString sample){
   notau_plots->fill_hist(sample, region);
 }
 
-void nominal::Loop(TTree *inputtree, TString sample)
-{
+void nominal::init_sample(TString sample){
   if (sample.Contains("ttbar") && initttbar == 0)
   {
     tau_plots->init_sample("ttbar_g","ttbar_g","t#bar{t}(gluon fake #tau)",(enum EColor)7);
@@ -80,6 +79,10 @@ void nominal::Loop(TTree *inputtree, TString sample)
     notau_plots->init_sample("other","other_notau","Other samples",kYellow);
     initother = 1;
   }
+}
+
+void nominal::Loop(TTree *inputtree, TString sample)
+{
   Init(inputtree);
   if (fChain == 0) return;
   Long64_t nentries = fChain->GetEntriesFast();
@@ -173,7 +176,6 @@ void nominal::Loop(TTree *inputtree, TString sample)
       if(iter->second == 1 & !iter->first.Contains("tau") ) fill_notau(iter->first,sample);
     }
   }
-  tau_plots->plot_lib["data"]["reg1l1tau2b1j_3prong_btagwp70"][0]->Fill(30.039812,1.000000);
 }
 
 void nominal::plot(){

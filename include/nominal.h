@@ -32,6 +32,7 @@ public :
    virtual void     Loop(TTree *inputtree, TString sample);
    void fill_tau(TString region, int nprong, TString sample);
    void fill_notau(TString region, TString sample);
+   void init_sample(TString sample);
    bool SelectTLepid(int id);
    int leading_b = -1 ;
    int leading_ljet = -1 ;
