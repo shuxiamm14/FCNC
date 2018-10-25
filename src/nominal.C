@@ -27,11 +27,13 @@ nominal::nominal(){
 
   for (int j = 0; j < 6; ++j)
     if(j>2) notau_plots->add_region(regions[j]);
-    else for (int k = 0; k < 2; ++k)
+    else for (int k = 0; k < 2; ++k){
       for (int i = 0; i < 4; ++i){
         printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
         tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
+        tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + "veto" + bwps[i]);
       }
+    }
 
 
 }
@@ -42,11 +44,15 @@ nominal::~nominal(){
 }
 
 void nominal::fill_tau(TString region, int nprong, TString sample){
-  for (int i = 0; i < 4; ++i)
+  for (int i = 0; i < 4; ++i){
     if(tau_MV2c10_0>btagwpCut[i]) {
       if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[i]).Data(), sample.Data());
       tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_"+bwps[i]);
     }
+    if(tau_MV2c10_0<btagwpCut[i]) {
+      tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_"+"veto"+bwps[i]);
+    }
+  }
 }
 
 void nominal::fill_notau(TString region, TString sample){
