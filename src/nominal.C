@@ -18,7 +18,7 @@ nominal::nominal(){
   tau_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
   tau_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   tau_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
-
+  tau_plots->add(120,50.,250.,"m_{#tau,light-jet}","taulmass",&taulmass,true,"GeV");
   notau_plots->add(10,0.,200.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   notau_plots->add(10,0.,200.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
 
@@ -117,7 +117,6 @@ void nominal::Loop(TTree *inputtree, TString sample)
     leading_ljet = -1;
     pt_b = 0;
     pt_ljet = 0;
-
     for (int i = 0; i < m_jet_flavor_weight_MV2c10->size(); ++i)
     {
       if((*m_jet_flavor_weight_MV2c10)[i] > 0.83 && leading_b == -1) {
@@ -133,8 +132,8 @@ void nominal::Loop(TTree *inputtree, TString sample)
     if(trig_match&&dilep_type&&total_charge==0&&lep_Pt_0>20e3&&lep_Pt_1>20e3&&
       ((abs(lep_ID_0)==11&&lep_promptLeptonVeto_TagWeight_0<-0.7)||(abs(lep_ID_0)==13&&lep_promptLeptonVeto_TagWeight_0<-0.5))&&SelectTLepid(0)&&
       ((abs(lep_ID_1)==11&&lep_promptLeptonVeto_TagWeight_1<-0.7)||(abs(lep_ID_1)==13&&lep_promptLeptonVeto_TagWeight_1<-0.5))&&SelectTLepid(1)){ //met>30 GeV ? ttbar vs z+bb:
-      ifregions["reg1e1mu1tau2b"] = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==2&&nJets_OR_T==3&&nTaus_OR_Pt25>=1;
-      ifregions["reg1e1mu2bnj"]   = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==2&&nJets_OR_T>=1&&nTaus_OR_Pt25==0;
+      ifregions["reg1e1mu1tau2b"] = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==2&&nJets_OR_T==2&&nTaus_OR_Pt25>=1;
+      ifregions["reg1e1mu2bnj"]   = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==2&&nJets_OR_T>=3&&nTaus_OR_Pt25==0;
       ifregions["reg1e1mu1tau1b"] = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==1&&nJets_OR_T==1&&nTaus_OR_Pt25>=1;
       ifregions["reg1e1mu2b"]     = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==2&&nJets_OR_T==2&&nTaus_OR_Pt25==0;
     }else{
@@ -144,7 +143,16 @@ void nominal::Loop(TTree *inputtree, TString sample)
       ifregions["reg1e1mu2b"]     = 0;
     }
     ifregions["reg1l2b2j"]      = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=4 && nTaus_OR_Pt25==0;
-    ifregions["reg1l1tau2b1j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=2 && nTaus_OR_Pt25>=1;
+    ifregions["reg1l1tau2b1j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=3 && nTaus_OR_Pt25>=1;
+    if(ifregions["reg1l1tau2b1j"]){
+      TLorentzVector lp, taup;
+      if(leading_ljet>=0) lp.SetPtEtaPhiE((*m_jet_pt)[leading_ljet],(*m_jet_eta)[leading_ljet],(*m_jet_phi)[leading_ljet],(*m_jet_E)[leading_ljet]);
+      else printf("ERROR: no light jet found\n");
+      taup.SetPtEtaPhiE((*m_tau_pt)[0],(*m_tau_eta)[0],(*m_tau_phi)[0],(*m_tau_E)[0]);
+      taulmass = (taup+lp).M();
+    }else{
+      taulmass = 0;
+    }
 //===============================fill histograms===============================
     map<TString, bool>::iterator iter;
     TString tauorigin;
@@ -170,6 +178,7 @@ void nominal::Loop(TTree *inputtree, TString sample)
     }else{
       tauorigin = "other";
     }
+
     for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
     {
       if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) fill_tau(iter->first,tau_numTrack_0,tauorigin);

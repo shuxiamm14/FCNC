@@ -38,6 +38,7 @@ public :
    int leading_ljet = -1 ;
    float pt_b = 0;
    float pt_ljet = 0;
+   float taulmass = 0;
    histSaver *tau_plots = 0;
    histSaver *notau_plots = 0;
 
