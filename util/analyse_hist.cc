@@ -23,11 +23,10 @@ int main(int argc, char const *argv[])
 	      tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
 	    }
 	tau_plots->read_sample("data","data","data",kBlack);
-	printf("data\n");
-	tau_plots->read_sample("other","other","Other samples",kYellow);
-	printf("other\n");
+//	tau_plots->read_sample("other","other","Other samples",kYellow);
+    tau_plots->read_sample("other_real","other_real","Other samples with real tau",kYellow);
+    tau_plots->read_sample("other_fake","other_fake","Other samples with fake tau",kMagenta);
 	tau_plots->read_sample("ttbar_g","ttbar_g","t#bar{t}(gluon fake #tau)",(enum EColor)7);
-	printf("gluon\n");
 	tau_plots->read_sample("ttbar_j","ttbar_j","t#bar{t}(light-jet fake #tau)",kBlue);
 	tau_plots->read_sample("ttbar_b","ttbar_b","t#bar{t}(b-jets fake #tau)",kViolet);
 	tau_plots->read_sample("ttbar_lep","ttbar_lep","t#bar{t}(lepton fake #tau)",kGreen);
@@ -35,9 +34,10 @@ int main(int argc, char const *argv[])
 	tau_plots->read_sample("ttbar_c","ttbar_c","t#bar{t}(c-jets fake #tau)",kOrange);
 	tau_plots->read_sample("ttbar_nomatch","ttbar_nomatch","t#bar{t}(no truth matched fake #tau)",kGray);
 
-	//notau_plots->read_sample("data","data_notau","data",kBlack);
-	//notau_plots->read_sample("other","other_notau","Other samples",kYellow);
-	//notau_plots->read_sample("ttbar","ttbar_notau","t#bar{t}",kRed);
-
+	notau_plots->read_sample("data","data_notau","data",kBlack);
+	notau_plots->read_sample("other","other_notau","Other samples",kYellow);
+	notau_plots->read_sample("ttbar","ttbar_notau","t#bar{t}",kRed);
+	notau_plots->plot_stack("output");
+	tau_plots->plot_stack("output");
 	return 0;
 }

@@ -81,7 +81,9 @@ void nominal::init_sample(TString sample){
   }
   if (sample.Contains("other") && initother == 0)
   {
-    tau_plots->init_sample("other","other","Other samples",kYellow);
+    tau_plots->init_sample("other_real","other_real","Other samples with real tau",kYellow);
+    tau_plots->init_sample("other_fake","other_fake","Other samples with fake tau",kMagenta);
+
     notau_plots->init_sample("other","other_notau","Other samples",kYellow);
     initother = 1;
   }
@@ -181,8 +183,9 @@ void nominal::Loop(TTree *inputtree, TString sample)
         }
     }else if(sample == "data"){
       tauorigin = "data";
-    }else{
-      tauorigin = "other";
+    }else if(sample == "other"){
+      if(tau_truthType_0 == 10) tauorigin = "other_real";
+      else tauorigin = "other_fake";
     }
 
     for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
