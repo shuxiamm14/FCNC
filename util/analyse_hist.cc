@@ -10,6 +10,7 @@ int main(int argc, char const *argv[])
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
 	tau_plots->add("p_{T,#tau}","taupt","GeV");
 	tau_plots->add("p_{T,b}","bpt","GeV");
+	tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
 	tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 	notau_plots->add("p_{T,b}","bpt","GeV");
 	notau_plots->add("p_{T,light-jet}","ljetpt","GeV");
@@ -21,6 +22,7 @@ int main(int argc, char const *argv[])
 	    for (int i = 0; i < 4; ++i){
 	      printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
 	      tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
+	      tau_plots->add_region(regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
 	    }
 	tau_plots->read_sample("data","data","data",kBlack);
 //	tau_plots->read_sample("other","other","Other samples",kYellow);

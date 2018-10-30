@@ -60,7 +60,7 @@ void nominal::fill_notau(TString region, TString sample){
   notau_plots->fill_hist(sample, region);
 }
 
-void nominal::init_sample(TString sample){
+void nominal::init_sample(TString sample, TString sampletitle){
   if (sample.Contains("ttbar") && initttbar == 0)
   {
     tau_plots->init_sample("ttbar_g","ttbar_g","t#bar{t}(gluon fake #tau)",(enum EColor)7);
@@ -79,13 +79,11 @@ void nominal::init_sample(TString sample){
     notau_plots->init_sample("data","data_notau","data",kBlack);
     initdata = 1;
   }
-  if (sample.Contains("other") && initother == 0)
+  else
   {
-    tau_plots->init_sample("other_real","other_real","Other samples with real tau",kYellow);
-    tau_plots->init_sample("other_fake","other_fake","Other samples with fake tau",kMagenta);
-
-    notau_plots->init_sample("other","other_notau","Other samples",kYellow);
-    initother = 1;
+    tau_plots->init_sample(sample + "_real",sample + "_real",sampletitle + " with real tau",kYellow);
+    tau_plots->init_sample(sample + "_fake",sample + "_fake",sampletitle + " with fake tau",kMagenta);
+    notau_plots->init_sample(sample,sample + "_notau",sampletitle,kYellow);
   }
 }
 
@@ -183,9 +181,9 @@ void nominal::Loop(TTree *inputtree, TString sample)
         }
     }else if(sample == "data"){
       tauorigin = "data";
-    }else if(sample == "other"){
-      if(tau_truthType_0 == 10) tauorigin = "other_real";
-      else tauorigin = "other_fake";
+    }else{
+      if(tau_truthType_0 == 10) tauorigin = sample + "_real";
+      else tauorigin = sample + "_fake";
     }
 
     for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)

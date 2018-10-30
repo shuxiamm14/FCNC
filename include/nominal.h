@@ -27,12 +27,11 @@ public :
    void plot();
    bool initdata = 0;
    bool initttbar = 0;
-   bool initother = 0;
    virtual void     Init(TTree *tree);
    virtual void     Loop(TTree *inputtree, TString sample);
    void fill_tau(TString region, int nprong, TString sample);
    void fill_notau(TString region, TString sample);
-   void init_sample(TString sample);
+   void init_sample(TString sample, TString sampletitle);
    bool SelectTLepid(int id);
    int leading_b = -1 ;
    int leading_ljet = -1 ;

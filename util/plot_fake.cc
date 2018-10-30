@@ -17,15 +17,16 @@ int main(int argc, char const *argv[])
 		if(inputline[0]=='#') continue;
 		char filename[100];
 		char cate[100];
-		sscanf(inputline,"%s %s",&filename,&cate);
-		printf("reading list: %s as %s\n", (prefix + "/datafiles/" + filename + ".txt").Data(), cate);
+		char title[100];
+		sscanf(inputline,"%s %s %s",&filename,&cate,&title);
+		printf("reading list: %s as %s with name %s\n", (prefix + "/datafiles/" + filename + ".txt").Data(), cate, title);
 		ifstream list(prefix + "/datafiles/" + filename + ".txt");
 		while(!list.eof()){
 			list.getline(inputline,200);
 			if(strlen(inputline)==0) continue;
 			if(inputline[0]=='#') continue;
 			printf("reading Root file: %s\n", (prefix1 + inputline).Data());
-			analysis->init_sample(cate);
+			analysis->init_sample(cate, title);
 			TFile inputfile(prefix1 + inputline);
 			analysis->Loop( (TTree*)inputfile.Get("nominal"), cate);
 			inputfile.Close();
