@@ -62,6 +62,8 @@ void nominal::fill_notau(TString region, TString sample){
 
 void nominal::init_sample(TString sample, TString sampletitle){
 
+  if(sample.Contains("ttbar")) sample = "ttbar";
+
   if (sample.Contains("data"))
   {
     tau_plots->init_sample("data","data","data",kBlack);
@@ -80,12 +82,14 @@ void nominal::init_sample(TString sample, TString sampletitle){
   
 }
 
-void nominal::Loop(TTree *inputtree, TString sample)
+void nominal::Loop(TTree *inputtree, TString samplename)
 {
   Init(inputtree);
   if (fChain == 0) return;
   Long64_t nentries = fChain->GetEntriesFast();
   Long64_t nbytes = 0, nb = 0;
+  TString sample = samplename;
+  if(samplename.Contains("ttbar")) sample = "ttbar";
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
     nb = fChain->GetEntry(jentry);
     if((jentry%100000==0))
@@ -94,8 +98,8 @@ void nominal::Loop(TTree *inputtree, TString sample)
 
     bool basic_selection = passEventCleaning;
 
-    if(sample.Contains("ttbargamma")) { basic_selection &=m_hasMEphoton_DRgt02_nonhad; sample = "ttbar"; }
-    if(sample.Contains("ttbarnohad")) { basic_selection &=!m_hasMEphoton_DRgt02_nonhad; sample = "ttbar"; }
+    if(samplename.Contains("ttbargamma")) { basic_selection &=m_hasMEphoton_DRgt02_nonhad;}
+    if(samplename.Contains("ttbarnohad")) { basic_selection &=!m_hasMEphoton_DRgt02_nonhad;}
 
     basic_selection &= 
       (RunYear==2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose ))|| 
