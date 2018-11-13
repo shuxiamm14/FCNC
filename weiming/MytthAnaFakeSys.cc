@@ -2052,7 +2052,7 @@ void MytthAnaFakeSys::Loop()
 	    hmzll->Fill(Mll01/1000.<150.?Mll01/1000.:149.,wt);
 	    if(dilep_type==1)hmzmm->Fill(Mll01/1000.<150.?Mll01/1000.:149.,wt);
 	    if(dilep_type==3)hmzee->Fill(Mll01/1000.<150.?Mll01/1000.:149.,wt);
-	  } 
+	  }
           if((dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70>0&&nJets_OR_T<3&&nTaus_OR_Pt25==1){ // ttbar events
 	    if(nJets_OR_T_MV2c10_70==1&&nJets_OR_T==1){ //ll+1b+tau // medium
 	      hptmtauemu1B->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
