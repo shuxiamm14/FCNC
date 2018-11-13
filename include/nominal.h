@@ -29,6 +29,9 @@ public :
    bool initttbar = 0;
    virtual void     Init(TTree *tree);
    virtual void     Loop(TTree *inputtree, TString sample);
+   virtual int      findcjet();
+
+   static  void     fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
    void fill_tau(TString region, int nprong, TString sample);
    void fill_notau(TString region, TString sample);
    void init_sample(TString sample, TString sampletitle);
@@ -38,6 +41,19 @@ public :
    float pt_b = 0;
    float pt_ljet = 0;
    float taulmass = 0;
+   double t1_mass = 0;
+   double Wmass     = 0;
+   double t2_mass    = 0;
+   double higgs_mass = 0;
+
+   TLorentzVector bjet_v;
+   TLorentzVector cjet_v;
+   vector<TLorentzVector> taus_v;
+   TLorentzVector lep_v;
+   TVector3 mets;
+   TVector3 truth_mets;
+   TList forFit;
+
    histSaver *tau_plots = 0;
    histSaver *notau_plots = 0;
 
