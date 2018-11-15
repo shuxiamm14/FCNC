@@ -142,14 +142,12 @@ public :
    Double_t        mcWeightOrg;
    vector<float>   *mcEventWeights;
    Double_t        pileupEventWeight_090;
-   Double_t        bTagSF_weight_MV2c10_Continuous;
    Double_t        MV2c10_60_EventWeight;
    Double_t        MV2c10_70_EventWeight;
    Double_t        MV2c10_77_EventWeight;
    Double_t        MV2c10_85_EventWeight;
    Double_t        MV2c10_Continuous_EventWeight;
    Double_t        JVT_EventWeight;
-   Double_t        bTagSF_weight_DL1_Continuous;
    Double_t        DL1_60_EventWeight;
    Double_t        DL1_70_EventWeight;
    Double_t        DL1_77_EventWeight;
@@ -157,6 +155,121 @@ public :
    Double_t        DL1_Continuous_EventWeight;
    Double_t        pileupEventWeight_UP;
    Double_t        pileupEventWeight_DOWN;
+#if V7NTUP>0
+   Double_t        bTagSF_weight_MV2c10_FixedCutBEff_70;
+   Double_t        bTagSF_weight_DL1_FixedCutBEff_70;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B1_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B1_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B2_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B2_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B3_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B3_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B4_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B4_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B5_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B5_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B6_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B6_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B7_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B7_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B8_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_B8_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C0_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C0_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C1_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C1_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C2_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C2_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B0_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B0_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B1_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B1_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B2_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B2_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B3_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B3_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B4_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B4_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B5_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B5_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B6_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B6_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B7_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B7_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B8_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_B8_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_C0_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_C0_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_C1_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_C1_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_C2_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_C2_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_Light0_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_Light0_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_Light1_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_Light1_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_Light2_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_Light2_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_Light3_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_Light3_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_down;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_up;
+   Float_t         bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_down;
+   vector<int>     *electron_firstEgMotherTruthType;
+   vector<int>     *electron_firstEgMotherTruthOrigin;
+   Int_t           lep_firstEgMotherPdgId_0;
+   Int_t           lep_firstEgMotherTruthType_0;
+   Int_t           lep_firstEgMotherTruthOrigin_0;
+   Int_t           lep_firstEgMotherPdgId_1;
+   Int_t           lep_firstEgMotherTruthType_1;
+   Int_t           lep_firstEgMotherTruthOrigin_1;
+   Int_t           lep_firstEgMotherPdgId_2;
+   Int_t           lep_firstEgMotherTruthType_2;
+   Int_t           lep_firstEgMotherTruthOrigin_2;
+   Int_t           lep_firstEgMotherPdgId_3;
+   Int_t           lep_firstEgMotherTruthType_3;
+   Int_t           lep_firstEgMotherTruthOrigin_3;
+   Int_t           lep_firstEgMotherPdgId_4;
+   Int_t           lep_firstEgMotherTruthType_4;
+   Int_t           lep_firstEgMotherTruthOrigin_4;
+   Float_t         lepEffTrigLoose_MU_SF_Trigger_SYST_UP;
+   Float_t         lepEffTrigTight_MU_SF_Trigger_SYST_UP;
+   Float_t         lepEffTrigTightLoose_MU_SF_Trigger_SYST_UP;
+   Float_t         lepEffTrigLooseTight_MU_SF_Trigger_SYST_UP;
+   Float_t         lepDataEffTrigLoose_MU_SF_Trigger_SYST_UP;
+   Float_t         lepDataEffTrigTight_MU_SF_Trigger_SYST_UP;
+   Float_t         lepDataEffTrigTightLoose_MU_SF_Trigger_SYST_UP;
+   Float_t         lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_UP;
+   Float_t         lepSFTrigLoose_MU_SF_Trigger_SYST_DOWN;
+   Float_t         lepSFTrigTight_MU_SF_Trigger_SYST_DOWN;
+   Float_t         lepSFTrigTightLoose_MU_SF_Trigger_SYST_DOWN;
+   Float_t         lepSFTrigLooseTight_MU_SF_Trigger_SYST_DOWN;
+   Float_t         lepEffTrigLoose_MU_SF_Trigger_SYST_DOWN;
+   Float_t         lepEffTrigTight_MU_SF_Trigger_SYST_DOWN;
+   Float_t         lepEffTrigTightLoose_MU_SF_Trigger_SYST_DOWN;
+   Float_t         lepEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN;
+   Float_t         lepDataEffTrigLoose_MU_SF_Trigger_SYST_DOWN;
+   Float_t         lepDataEffTrigTight_MU_SF_Trigger_SYST_DOWN;
+   Float_t         lepDataEffTrigTightLoose_MU_SF_Trigger_SYST_DOWN;
+   Float_t         lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN;
+#else
+   Double_t        bTagSF_weight_MV2c10_Continuous;
+   Double_t        bTagSF_weight_DL1_Continuous;
    Float_t         bTagSF_weight_MV2c10_Continuous_B0_up;
    Float_t         bTagSF_weight_MV2c10_Continuous_B0_down;
    Float_t         bTagSF_weight_MV2c10_Continuous_B1_up;
@@ -617,6 +730,10 @@ public :
    Float_t         bTagSF_weight_DL1_Continuous_Light53_down;
    Float_t         bTagSF_weight_DL1_Continuous_Light54_up;
    Float_t         bTagSF_weight_DL1_Continuous_Light54_down;
+   vector<int>     *m_jet_tagWeightBin;
+   Float_t         lepEffTrigLoose_MU_SF_Trigger_STAT_DOWN;
+   Float_t         lepEffTrigTight_MU_SF_Trigger_STAT_DOWN;
+#endif
    Double_t        JVT_EventWeight_UP;
    Double_t        JVT_EventWeight_DOWN;
    vector<float>   *m_truth_m;
@@ -912,7 +1029,6 @@ public :
    vector<int>     *m_jet_isLooseBad;
    vector<float>   *m_jet_flavor_weight_MV2c10;
    vector<int>     *m_jet_numTrk;
-   vector<int>     *m_jet_tagWeightBin;
    vector<char>    *m_jet_passOR;
    vector<char>    *m_jet_passTauOR;
    vector<float>   *m_jet_flavor_weight_MV2c00;
@@ -1674,8 +1790,6 @@ public :
    Float_t         lepSFTrigTight_MU_SF_Trigger_STAT_DOWN;
    Float_t         lepSFTrigTightLoose_MU_SF_Trigger_STAT_DOWN;
    Float_t         lepSFTrigLooseTight_MU_SF_Trigger_STAT_DOWN;
-   Float_t         lepEffTrigLoose_MU_SF_Trigger_STAT_DOWN;
-   Float_t         lepEffTrigTight_MU_SF_Trigger_STAT_DOWN;
    Float_t         lepDataEffTrigLoose_MU_SF_Trigger_STAT_DOWN;
    Float_t         lepDataEffTrigTight_MU_SF_Trigger_STAT_DOWN;
    Float_t         lepDataEffTrigTightLoose_MU_SF_Trigger_STAT_DOWN;
@@ -1887,14 +2001,12 @@ public :
    TBranch        *b_mcWeightOrg;   //!
    TBranch        *b_mcEventWeights;   //!
    TBranch        *b_pileupEventWeight_090;   //!
-   TBranch        *b_bTagSF_weight_MV2c10_Continuous;   //!
    TBranch        *b_MV2c10_60_EventWeight;   //!
    TBranch        *b_MV2c10_70_EventWeight;   //!
    TBranch        *b_MV2c10_77_EventWeight;   //!
    TBranch        *b_MV2c10_85_EventWeight;   //!
    TBranch        *b_MV2c10_Continuous_EventWeight;   //!
    TBranch        *b_JVT_EventWeight;   //!
-   TBranch        *b_bTagSF_weight_DL1_Continuous;   //!
    TBranch        *b_DL1_60_EventWeight;   //!
    TBranch        *b_DL1_70_EventWeight;   //!
    TBranch        *b_DL1_77_EventWeight;   //!
@@ -1902,6 +2014,121 @@ public :
    TBranch        *b_DL1_Continuous_EventWeight;   //!
    TBranch        *b_pileupEventWeight_UP;   //!
    TBranch        *b_pileupEventWeight_DOWN;   //!
+#if V7NTUP>0
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B1_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B1_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B2_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B2_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B3_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B3_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B4_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B4_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B5_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B5_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B6_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B6_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B7_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B7_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B8_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_B8_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C0_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C0_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C1_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C1_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C2_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C2_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B0_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B0_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B1_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B1_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B2_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B2_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B3_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B3_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B4_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B4_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B5_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B5_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B6_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B6_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B7_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B7_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B8_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_B8_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_C0_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_C0_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_C1_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_C1_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_C2_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_C2_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_Light0_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_Light0_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_Light1_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_Light1_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_Light2_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_Light2_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_Light3_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_Light3_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_down;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_up;
+   TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_down;
+   TBranch        *b_electron_firstEgMotherTruthType;
+   TBranch        *b_electron_firstEgMotherTruthOrigin;
+   TBranch        *b_lep_firstEgMotherPdgId_0;
+   TBranch        *b_lep_firstEgMotherTruthType_0;
+   TBranch        *b_lep_firstEgMotherTruthOrigin_0;
+   TBranch        *b_lep_firstEgMotherPdgId_1;
+   TBranch        *b_lep_firstEgMotherTruthType_1;
+   TBranch        *b_lep_firstEgMotherTruthOrigin_1;
+   TBranch        *b_lep_firstEgMotherPdgId_2;
+   TBranch        *b_lep_firstEgMotherTruthType_2;
+   TBranch        *b_lep_firstEgMotherTruthOrigin_2;
+   TBranch        *b_lep_firstEgMotherPdgId_3;
+   TBranch        *b_lep_firstEgMotherTruthType_3;
+   TBranch        *b_lep_firstEgMotherTruthOrigin_3;
+   TBranch        *b_lep_firstEgMotherPdgId_4;
+   TBranch        *b_lep_firstEgMotherTruthType_4;
+   TBranch        *b_lep_firstEgMotherTruthOrigin_4;
+   TBranch        *b_lepEffTrigLoose_MU_SF_Trigger_SYST_UP;
+   TBranch        *b_lepEffTrigTight_MU_SF_Trigger_SYST_UP;
+   TBranch        *b_lepEffTrigTightLoose_MU_SF_Trigger_SYST_UP;
+   TBranch        *b_lepEffTrigLooseTight_MU_SF_Trigger_SYST_UP;
+   TBranch        *b_lepDataEffTrigLoose_MU_SF_Trigger_SYST_UP;
+   TBranch        *b_lepDataEffTrigTight_MU_SF_Trigger_SYST_UP;
+   TBranch        *b_lepDataEffTrigTightLoose_MU_SF_Trigger_SYST_UP;
+   TBranch        *b_lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_UP;
+   TBranch        *b_lepSFTrigLoose_MU_SF_Trigger_SYST_DOWN;
+   TBranch        *b_lepSFTrigTight_MU_SF_Trigger_SYST_DOWN;
+   TBranch        *b_lepSFTrigTightLoose_MU_SF_Trigger_SYST_DOWN;
+   TBranch        *b_lepSFTrigLooseTight_MU_SF_Trigger_SYST_DOWN;
+   TBranch        *b_lepEffTrigLoose_MU_SF_Trigger_SYST_DOWN;
+   TBranch        *b_lepEffTrigTight_MU_SF_Trigger_SYST_DOWN;
+   TBranch        *b_lepEffTrigTightLoose_MU_SF_Trigger_SYST_DOWN;
+   TBranch        *b_lepEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN;
+   TBranch        *b_lepDataEffTrigLoose_MU_SF_Trigger_SYST_DOWN;
+   TBranch        *b_lepDataEffTrigTight_MU_SF_Trigger_SYST_DOWN;
+   TBranch        *b_lepDataEffTrigTightLoose_MU_SF_Trigger_SYST_DOWN;
+   TBranch        *b_lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN;
+#else
+   TBranch        *b_bTagSF_weight_MV2c10_Continuous;   //!
+   TBranch        *b_bTagSF_weight_DL1_Continuous;   //!
    TBranch        *b_bTagSF_weight_MV2c10_Continuous_B0_up;   //!
    TBranch        *b_bTagSF_weight_MV2c10_Continuous_B0_down;   //!
    TBranch        *b_bTagSF_weight_MV2c10_Continuous_B1_up;   //!
@@ -2362,6 +2589,10 @@ public :
    TBranch        *b_bTagSF_weight_DL1_Continuous_Light53_down;   //!
    TBranch        *b_bTagSF_weight_DL1_Continuous_Light54_up;   //!
    TBranch        *b_bTagSF_weight_DL1_Continuous_Light54_down;   //!
+   TBranch        *b_lepEffTrigLoose_MU_SF_Trigger_STAT_UP;   //!
+   TBranch        *b_lepEffTrigTight_MU_SF_Trigger_STAT_UP;   //!
+   TBranch        *b_m_jet_tagWeightBin;   //!
+#endif
    TBranch        *b_JVT_EventWeight_UP;   //!
    TBranch        *b_JVT_EventWeight_DOWN;   //!
    TBranch        *b_m_truth_m;   //!
@@ -2657,7 +2888,6 @@ public :
    TBranch        *b_m_jet_isLooseBad;   //!
    TBranch        *b_m_jet_flavor_weight_MV2c10;   //!
    TBranch        *b_m_jet_numTrk;   //!
-   TBranch        *b_m_jet_tagWeightBin;   //!
    TBranch        *b_m_jet_passOR;   //!
    TBranch        *b_m_jet_passTauOR;   //!
    TBranch        *b_m_jet_flavor_weight_MV2c00;   //!
@@ -3408,8 +3638,6 @@ public :
    TBranch        *b_lepSFTrigTight_MU_SF_Trigger_STAT_UP;   //!
    TBranch        *b_lepSFTrigTightLoose_MU_SF_Trigger_STAT_UP;   //!
    TBranch        *b_lepSFTrigLooseTight_MU_SF_Trigger_STAT_UP;   //!
-   TBranch        *b_lepEffTrigLoose_MU_SF_Trigger_STAT_UP;   //!
-   TBranch        *b_lepEffTrigTight_MU_SF_Trigger_STAT_UP;   //!
    TBranch        *b_lepEffTrigTightLoose_MU_SF_Trigger_STAT_UP;   //!
    TBranch        *b_lepEffTrigLooseTight_MU_SF_Trigger_STAT_UP;   //!
    TBranch        *b_lepDataEffTrigLoose_MU_SF_Trigger_STAT_UP;   //!
@@ -3796,7 +4024,13 @@ void nominal::Init(TTree *tree)
    m_jet_isLooseBad = 0;
    m_jet_flavor_weight_MV2c10 = 0;
    m_jet_numTrk = 0;
+#if V7NTUP>0
+   electron_firstEgMotherTruthType = 0;
+   electron_firstEgMotherTruthOrigin = 0;
+#else
    m_jet_tagWeightBin = 0;
+   m_tau_BDTJetScoreSigTrans = 0;
+#endif
    m_jet_passOR = 0;
    m_jet_passTauOR = 0;
    m_jet_flavor_weight_MV2c00 = 0;
@@ -3812,7 +4046,6 @@ void nominal::Init(TTree *tree)
    m_tau_charge = 0;
    m_tau_numTrack = 0;
    m_tau_BDTJetScore = 0;
-   m_tau_BDTJetScoreSigTrans = 0;
    m_tau_JetBDTSigLoose = 0;
    m_tau_JetBDTSigMedium = 0;
    m_tau_JetBDTSigTight = 0;
@@ -3944,22 +4177,133 @@ void nominal::Init(TTree *tree)
    fChain->SetBranchAddress("mcWeightOrg", &mcWeightOrg, &b_mcWeightOrg);
    fChain->SetBranchAddress("mcEventWeights", &mcEventWeights, &b_mcEventWeights);
    fChain->SetBranchAddress("pileupEventWeight_090", &pileupEventWeight_090, &b_pileupEventWeight_090);
-   fChain->SetBranchAddress("bTagSF_weight_MV2c10_Continuous", &bTagSF_weight_MV2c10_Continuous, &b_bTagSF_weight_MV2c10_Continuous);
    fChain->SetBranchAddress("MV2c10_60_EventWeight", &MV2c10_60_EventWeight, &b_MV2c10_60_EventWeight);
    fChain->SetBranchAddress("MV2c10_70_EventWeight", &MV2c10_70_EventWeight, &b_MV2c10_70_EventWeight);
    fChain->SetBranchAddress("MV2c10_77_EventWeight", &MV2c10_77_EventWeight, &b_MV2c10_77_EventWeight);
    fChain->SetBranchAddress("MV2c10_85_EventWeight", &MV2c10_85_EventWeight, &b_MV2c10_85_EventWeight);
-   fChain->SetBranchAddress("MV2c10_Continuous_EventWeight", &MV2c10_Continuous_EventWeight, &b_MV2c10_Continuous_EventWeight);
    fChain->SetBranchAddress("JVT_EventWeight", &JVT_EventWeight, &b_JVT_EventWeight);
-   fChain->SetBranchAddress("bTagSF_weight_DL1_Continuous", &bTagSF_weight_DL1_Continuous, &b_bTagSF_weight_DL1_Continuous);
    fChain->SetBranchAddress("DL1_60_EventWeight", &DL1_60_EventWeight, &b_DL1_60_EventWeight);
    fChain->SetBranchAddress("DL1_70_EventWeight", &DL1_70_EventWeight, &b_DL1_70_EventWeight);
    fChain->SetBranchAddress("DL1_77_EventWeight", &DL1_77_EventWeight, &b_DL1_77_EventWeight);
    fChain->SetBranchAddress("DL1_85_EventWeight", &DL1_85_EventWeight, &b_DL1_85_EventWeight);
    fChain->SetBranchAddress("DL1_Continuous_EventWeight", &DL1_Continuous_EventWeight, &b_DL1_Continuous_EventWeight);
-//    fChain->SetBranchAddress("DL1_Continuous_EventWeight", &DL1_Continuous_EventWeight, &b_DL1_Continuous_EventWeight);
+   fChain->SetBranchAddress("MV2c10_Continuous_EventWeight", &MV2c10_Continuous_EventWeight, &b_MV2c10_Continuous_EventWeight);
    fChain->SetBranchAddress("pileupEventWeight_UP", &pileupEventWeight_UP, &b_pileupEventWeight_UP);
    fChain->SetBranchAddress("pileupEventWeight_DOWN", &pileupEventWeight_DOWN, &b_pileupEventWeight_DOWN);
+#if V7NTUP>0
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70", &bTagSF_weight_MV2c10_FixedCutBEff_70, &b_bTagSF_weight_MV2c10_FixedCutBEff_70);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70", &bTagSF_weight_DL1_FixedCutBEff_70, &b_bTagSF_weight_DL1_FixedCutBEff_70);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B1_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_B1_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B1_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B1_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_B1_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B1_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B2_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_B2_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B2_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B2_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_B2_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B2_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B3_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_B3_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B3_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B3_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_B3_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B3_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B4_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_B4_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B4_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B4_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_B4_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B4_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B5_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_B5_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B5_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B5_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_B5_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B5_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B6_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_B6_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B6_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B6_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_B6_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B6_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B7_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_B7_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B7_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B7_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_B7_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B7_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B8_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_B8_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B8_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B8_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_B8_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B8_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_C0_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_C0_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_C0_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_C0_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_C0_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_C0_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_C1_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_C1_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_C1_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_C1_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_C1_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_C1_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_C2_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_C2_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_C2_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_C2_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_C2_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_C2_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B0_up", &bTagSF_weight_DL1_FixedCutBEff_70_B0_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_B0_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B0_down", &bTagSF_weight_DL1_FixedCutBEff_70_B0_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_B0_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B1_up", &bTagSF_weight_DL1_FixedCutBEff_70_B1_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_B1_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B1_down", &bTagSF_weight_DL1_FixedCutBEff_70_B1_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_B1_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B2_up", &bTagSF_weight_DL1_FixedCutBEff_70_B2_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_B2_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B2_down", &bTagSF_weight_DL1_FixedCutBEff_70_B2_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_B2_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B3_up", &bTagSF_weight_DL1_FixedCutBEff_70_B3_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_B3_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B3_down", &bTagSF_weight_DL1_FixedCutBEff_70_B3_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_B3_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B4_up", &bTagSF_weight_DL1_FixedCutBEff_70_B4_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_B4_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B4_down", &bTagSF_weight_DL1_FixedCutBEff_70_B4_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_B4_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B5_up", &bTagSF_weight_DL1_FixedCutBEff_70_B5_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_B5_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B5_down", &bTagSF_weight_DL1_FixedCutBEff_70_B5_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_B5_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B6_up", &bTagSF_weight_DL1_FixedCutBEff_70_B6_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_B6_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B6_down", &bTagSF_weight_DL1_FixedCutBEff_70_B6_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_B6_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B7_up", &bTagSF_weight_DL1_FixedCutBEff_70_B7_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_B7_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B7_down", &bTagSF_weight_DL1_FixedCutBEff_70_B7_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_B7_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B8_up", &bTagSF_weight_DL1_FixedCutBEff_70_B8_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_B8_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_B8_down", &bTagSF_weight_DL1_FixedCutBEff_70_B8_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_B8_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_C0_up", &bTagSF_weight_DL1_FixedCutBEff_70_C0_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_C0_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_C0_down", &bTagSF_weight_DL1_FixedCutBEff_70_C0_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_C0_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_C1_up", &bTagSF_weight_DL1_FixedCutBEff_70_C1_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_C1_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_C1_down", &bTagSF_weight_DL1_FixedCutBEff_70_C1_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_C1_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_C2_up", &bTagSF_weight_DL1_FixedCutBEff_70_C2_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_C2_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_C2_down", &bTagSF_weight_DL1_FixedCutBEff_70_C2_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_C2_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_Light0_up", &bTagSF_weight_DL1_FixedCutBEff_70_Light0_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_Light0_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_Light0_down", &bTagSF_weight_DL1_FixedCutBEff_70_Light0_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_Light0_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_Light1_up", &bTagSF_weight_DL1_FixedCutBEff_70_Light1_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_Light1_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_Light1_down", &bTagSF_weight_DL1_FixedCutBEff_70_Light1_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_Light1_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_Light2_up", &bTagSF_weight_DL1_FixedCutBEff_70_Light2_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_Light2_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_Light2_down", &bTagSF_weight_DL1_FixedCutBEff_70_Light2_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_Light2_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_Light3_up", &bTagSF_weight_DL1_FixedCutBEff_70_Light3_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_Light3_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_Light3_down", &bTagSF_weight_DL1_FixedCutBEff_70_Light3_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_Light3_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_up", &bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_down", &bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_down);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_up", &bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_up);
+   fChain->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_down", &bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_down);
+   fChain->SetBranchAddress("lep_firstEgMotherPdgId_0", &lep_firstEgMotherPdgId_0, &b_lep_firstEgMotherPdgId_0);
+   fChain->SetBranchAddress("lep_firstEgMotherTruthType_0", &lep_firstEgMotherTruthType_0, &b_lep_firstEgMotherTruthType_0);
+   fChain->SetBranchAddress("lep_firstEgMotherTruthOrigin_0", &lep_firstEgMotherTruthOrigin_0, &b_lep_firstEgMotherTruthOrigin_0);
+   fChain->SetBranchAddress("lep_firstEgMotherPdgId_1", &lep_firstEgMotherPdgId_1, &b_lep_firstEgMotherPdgId_1);
+   fChain->SetBranchAddress("lep_firstEgMotherTruthType_1", &lep_firstEgMotherTruthType_1, &b_lep_firstEgMotherTruthType_1);
+   fChain->SetBranchAddress("lep_firstEgMotherTruthOrigin_1", &lep_firstEgMotherTruthOrigin_1, &b_lep_firstEgMotherTruthOrigin_1);
+   fChain->SetBranchAddress("lep_firstEgMotherPdgId_2", &lep_firstEgMotherPdgId_2, &b_lep_firstEgMotherPdgId_2);
+   fChain->SetBranchAddress("lep_firstEgMotherTruthType_2", &lep_firstEgMotherTruthType_2, &b_lep_firstEgMotherTruthType_2);
+   fChain->SetBranchAddress("lep_firstEgMotherTruthOrigin_2", &lep_firstEgMotherTruthOrigin_2, &b_lep_firstEgMotherTruthOrigin_2);
+   fChain->SetBranchAddress("lep_firstEgMotherPdgId_3", &lep_firstEgMotherPdgId_3, &b_lep_firstEgMotherPdgId_3);
+   fChain->SetBranchAddress("lep_firstEgMotherTruthType_3", &lep_firstEgMotherTruthType_3, &b_lep_firstEgMotherTruthType_3);
+   fChain->SetBranchAddress("lep_firstEgMotherTruthOrigin_3", &lep_firstEgMotherTruthOrigin_3, &b_lep_firstEgMotherTruthOrigin_3);
+   fChain->SetBranchAddress("lep_firstEgMotherPdgId_4", &lep_firstEgMotherPdgId_4, &b_lep_firstEgMotherPdgId_4);
+   fChain->SetBranchAddress("lep_firstEgMotherTruthType_4", &lep_firstEgMotherTruthType_4, &b_lep_firstEgMotherTruthType_4);
+   fChain->SetBranchAddress("lep_firstEgMotherTruthOrigin_4", &lep_firstEgMotherTruthOrigin_4, &b_lep_firstEgMotherTruthOrigin_4);
+   fChain->SetBranchAddress("lepEffTrigLoose_MU_SF_Trigger_SYST_UP", &lepEffTrigLoose_MU_SF_Trigger_SYST_UP, &b_lepEffTrigLoose_MU_SF_Trigger_SYST_UP);
+   fChain->SetBranchAddress("lepEffTrigTight_MU_SF_Trigger_SYST_UP", &lepEffTrigTight_MU_SF_Trigger_SYST_UP, &b_lepEffTrigTight_MU_SF_Trigger_SYST_UP);
+   fChain->SetBranchAddress("lepEffTrigTightLoose_MU_SF_Trigger_SYST_UP", &lepEffTrigTightLoose_MU_SF_Trigger_SYST_UP, &b_lepEffTrigTightLoose_MU_SF_Trigger_SYST_UP);
+   fChain->SetBranchAddress("lepEffTrigLooseTight_MU_SF_Trigger_SYST_UP", &lepEffTrigLooseTight_MU_SF_Trigger_SYST_UP, &b_lepEffTrigLooseTight_MU_SF_Trigger_SYST_UP);
+   fChain->SetBranchAddress("lepDataEffTrigLoose_MU_SF_Trigger_SYST_UP", &lepDataEffTrigLoose_MU_SF_Trigger_SYST_UP, &b_lepDataEffTrigLoose_MU_SF_Trigger_SYST_UP);
+   fChain->SetBranchAddress("lepDataEffTrigTight_MU_SF_Trigger_SYST_UP", &lepDataEffTrigTight_MU_SF_Trigger_SYST_UP, &b_lepDataEffTrigTight_MU_SF_Trigger_SYST_UP);
+   fChain->SetBranchAddress("lepDataEffTrigTightLoose_MU_SF_Trigger_SYST_UP", &lepDataEffTrigTightLoose_MU_SF_Trigger_SYST_UP, &b_lepDataEffTrigTightLoose_MU_SF_Trigger_SYST_UP);
+   fChain->SetBranchAddress("lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_UP", &lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_UP, &b_lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_UP);
+   fChain->SetBranchAddress("lepSFTrigLoose_MU_SF_Trigger_SYST_DOWN", &lepSFTrigLoose_MU_SF_Trigger_SYST_DOWN, &b_lepSFTrigLoose_MU_SF_Trigger_SYST_DOWN);
+   fChain->SetBranchAddress("lepSFTrigTight_MU_SF_Trigger_SYST_DOWN", &lepSFTrigTight_MU_SF_Trigger_SYST_DOWN, &b_lepSFTrigTight_MU_SF_Trigger_SYST_DOWN);
+   fChain->SetBranchAddress("lepSFTrigTightLoose_MU_SF_Trigger_SYST_DOWN", &lepSFTrigTightLoose_MU_SF_Trigger_SYST_DOWN, &b_lepSFTrigTightLoose_MU_SF_Trigger_SYST_DOWN);
+   fChain->SetBranchAddress("lepSFTrigLooseTight_MU_SF_Trigger_SYST_DOWN", &lepSFTrigLooseTight_MU_SF_Trigger_SYST_DOWN, &b_lepSFTrigLooseTight_MU_SF_Trigger_SYST_DOWN);
+   fChain->SetBranchAddress("lepEffTrigLoose_MU_SF_Trigger_SYST_DOWN", &lepEffTrigLoose_MU_SF_Trigger_SYST_DOWN, &b_lepEffTrigLoose_MU_SF_Trigger_SYST_DOWN);
+   fChain->SetBranchAddress("lepEffTrigTight_MU_SF_Trigger_SYST_DOWN", &lepEffTrigTight_MU_SF_Trigger_SYST_DOWN, &b_lepEffTrigTight_MU_SF_Trigger_SYST_DOWN);
+   fChain->SetBranchAddress("lepEffTrigTightLoose_MU_SF_Trigger_SYST_DOWN", &lepEffTrigTightLoose_MU_SF_Trigger_SYST_DOWN, &b_lepEffTrigTightLoose_MU_SF_Trigger_SYST_DOWN);
+   fChain->SetBranchAddress("lepEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN", &lepEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN, &b_lepEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN);
+   fChain->SetBranchAddress("lepDataEffTrigLoose_MU_SF_Trigger_SYST_DOWN", &lepDataEffTrigLoose_MU_SF_Trigger_SYST_DOWN, &b_lepDataEffTrigLoose_MU_SF_Trigger_SYST_DOWN);
+   fChain->SetBranchAddress("lepDataEffTrigTight_MU_SF_Trigger_SYST_DOWN", &lepDataEffTrigTight_MU_SF_Trigger_SYST_DOWN, &b_lepDataEffTrigTight_MU_SF_Trigger_SYST_DOWN);
+   fChain->SetBranchAddress("lepDataEffTrigTightLoose_MU_SF_Trigger_SYST_DOWN", &lepDataEffTrigTightLoose_MU_SF_Trigger_SYST_DOWN, &b_lepDataEffTrigTightLoose_MU_SF_Trigger_SYST_DOWN);
+   fChain->SetBranchAddress("lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN", &lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN, &b_lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN);
+
+#else
+   fChain->SetBranchAddress("bTagSF_weight_DL1_Continuous", &bTagSF_weight_DL1_Continuous, &b_bTagSF_weight_DL1_Continuous);
+   fChain->SetBranchAddress("bTagSF_weight_MV2c10_Continuous", &bTagSF_weight_MV2c10_Continuous, &b_bTagSF_weight_MV2c10_Continuous);
    fChain->SetBranchAddress("bTagSF_weight_MV2c10_Continuous_B0_up", &bTagSF_weight_MV2c10_Continuous_B0_up, &b_bTagSF_weight_MV2c10_Continuous_B0_up);
    fChain->SetBranchAddress("bTagSF_weight_MV2c10_Continuous_B0_down", &bTagSF_weight_MV2c10_Continuous_B0_down, &b_bTagSF_weight_MV2c10_Continuous_B0_down);
    fChain->SetBranchAddress("bTagSF_weight_MV2c10_Continuous_B1_up", &bTagSF_weight_MV2c10_Continuous_B1_up, &b_bTagSF_weight_MV2c10_Continuous_B1_up);
@@ -4420,6 +4764,12 @@ void nominal::Init(TTree *tree)
    fChain->SetBranchAddress("bTagSF_weight_DL1_Continuous_Light53_down", &bTagSF_weight_DL1_Continuous_Light53_down, &b_bTagSF_weight_DL1_Continuous_Light53_down);
    fChain->SetBranchAddress("bTagSF_weight_DL1_Continuous_Light54_up", &bTagSF_weight_DL1_Continuous_Light54_up, &b_bTagSF_weight_DL1_Continuous_Light54_up);
    fChain->SetBranchAddress("bTagSF_weight_DL1_Continuous_Light54_down", &bTagSF_weight_DL1_Continuous_Light54_down, &b_bTagSF_weight_DL1_Continuous_Light54_down);
+   fChain->SetBranchAddress("m_jet_tagWeightBin", &m_jet_tagWeightBin, &b_m_jet_tagWeightBin);
+   fChain->SetBranchAddress("lepEffTrigLoose_MU_SF_Trigger_STAT_DOWN", &lepEffTrigLoose_MU_SF_Trigger_STAT_DOWN, &b_lepEffTrigLoose_MU_SF_Trigger_STAT_DOWN);
+   fChain->SetBranchAddress("lepEffTrigTight_MU_SF_Trigger_STAT_DOWN", &lepEffTrigTight_MU_SF_Trigger_STAT_DOWN, &b_lepEffTrigTight_MU_SF_Trigger_STAT_DOWN);
+   fChain->SetBranchAddress("lepEffTrigLoose_MU_SF_Trigger_STAT_UP", &lepEffTrigLoose_MU_SF_Trigger_STAT_UP, &b_lepEffTrigLoose_MU_SF_Trigger_STAT_UP);
+   fChain->SetBranchAddress("lepEffTrigTight_MU_SF_Trigger_STAT_UP", &lepEffTrigTight_MU_SF_Trigger_STAT_UP, &b_lepEffTrigTight_MU_SF_Trigger_STAT_UP);
+#endif
    fChain->SetBranchAddress("JVT_EventWeight_UP", &JVT_EventWeight_UP, &b_JVT_EventWeight_UP);
    fChain->SetBranchAddress("JVT_EventWeight_DOWN", &JVT_EventWeight_DOWN, &b_JVT_EventWeight_DOWN);
    fChain->SetBranchAddress("m_truth_m", &m_truth_m, &b_m_truth_m);
@@ -4444,7 +4794,6 @@ void nominal::Init(TTree *tree)
    fChain->SetBranchAddress("lbn", &lbn, &b_lbn);
    fChain->SetBranchAddress("bcid", &bcid, &b_bcid);
    fChain->SetBranchAddress("passEventCleaning", &passEventCleaning, &b_passEventCleaning);
-//    fChain->SetBranchAddress("backgroundFlags", &backgroundFlags, &b_backgroundFlags);
    fChain->SetBranchAddress("m_vxp_x", &m_vxp_x, &b_m_vxp_x);
    fChain->SetBranchAddress("m_vxp_y", &m_vxp_y, &b_m_vxp_y);
    fChain->SetBranchAddress("m_vxp_z", &m_vxp_z, &b_m_vxp_z);
@@ -4715,7 +5064,6 @@ void nominal::Init(TTree *tree)
    fChain->SetBranchAddress("m_jet_isLooseBad", &m_jet_isLooseBad, &b_m_jet_isLooseBad);
    fChain->SetBranchAddress("m_jet_flavor_weight_MV2c10", &m_jet_flavor_weight_MV2c10, &b_m_jet_flavor_weight_MV2c10);
    fChain->SetBranchAddress("m_jet_numTrk", &m_jet_numTrk, &b_m_jet_numTrk);
-   fChain->SetBranchAddress("m_jet_tagWeightBin", &m_jet_tagWeightBin, &b_m_jet_tagWeightBin);
    fChain->SetBranchAddress("m_jet_passOR", &m_jet_passOR, &b_m_jet_passOR);
    fChain->SetBranchAddress("m_jet_passTauOR", &m_jet_passTauOR, &b_m_jet_passTauOR);
    fChain->SetBranchAddress("m_jet_flavor_weight_MV2c00", &m_jet_flavor_weight_MV2c00, &b_m_jet_flavor_weight_MV2c00);
@@ -4746,7 +5094,6 @@ void nominal::Init(TTree *tree)
    fChain->SetBranchAddress("m_tau_passJVT", &m_tau_passJVT, &b_m_tau_passJVT);
    fChain->SetBranchAddress("m_tau_fromPV", &m_tau_fromPV, &b_m_tau_fromPV);
    fChain->SetBranchAddress("m_tau_BDTEleScoreSigTrans", &m_tau_BDTEleScoreSigTrans, &b_m_tau_BDTEleScoreSigTrans);
-//    fChain->SetBranchAddress("m_tau_BDTJetScoreSigTrans", &m_tau_BDTJetScoreSigTrans, &b_m_tau_BDTJetScoreSigTrans);
    fChain->SetBranchAddress("m_tau_ptTauEtaCalib", &m_tau_ptTauEtaCalib, &b_m_tau_ptTauEtaCalib);
    fChain->SetBranchAddress("m_tau_etaTauEtaCalib", &m_tau_etaTauEtaCalib, &b_m_tau_etaTauEtaCalib);
    fChain->SetBranchAddress("m_tau_phiTauEtaCalib", &m_tau_phiTauEtaCalib, &b_m_tau_phiTauEtaCalib);
@@ -4768,8 +5115,6 @@ void nominal::Init(TTree *tree)
    fChain->SetBranchAddress("m_tau_PromptTauInput_MV2c10", &m_tau_PromptTauInput_MV2c10, &b_m_tau_PromptTauInput_MV2c10);
    fChain->SetBranchAddress("m_tau_PromptTauVeto", &m_tau_PromptTauVeto, &b_m_tau_PromptTauVeto);
    fChain->SetBranchAddress("m_tau_PromptTauIso", &m_tau_PromptTauIso, &b_m_tau_PromptTauIso);
-//    fChain->SetBranchAddress("triggers", &triggers, &b_triggers);
-//    fChain->SetBranchAddress("loose", &loose, &b_loose);
    fChain->SetBranchAddress("lep_ID_0", &lep_ID_0, &b_lep_ID_0);
    fChain->SetBranchAddress("lep_Index_0", &lep_Index_0, &b_lep_Index_0);
    fChain->SetBranchAddress("lep_Pt_0", &lep_Pt_0, &b_lep_Pt_0);
@@ -5468,8 +5813,6 @@ void nominal::Init(TTree *tree)
    fChain->SetBranchAddress("lepSFTrigTight_MU_SF_Trigger_STAT_UP", &lepSFTrigTight_MU_SF_Trigger_STAT_UP, &b_lepSFTrigTight_MU_SF_Trigger_STAT_UP);
    fChain->SetBranchAddress("lepSFTrigTightLoose_MU_SF_Trigger_STAT_UP", &lepSFTrigTightLoose_MU_SF_Trigger_STAT_UP, &b_lepSFTrigTightLoose_MU_SF_Trigger_STAT_UP);
    fChain->SetBranchAddress("lepSFTrigLooseTight_MU_SF_Trigger_STAT_UP", &lepSFTrigLooseTight_MU_SF_Trigger_STAT_UP, &b_lepSFTrigLooseTight_MU_SF_Trigger_STAT_UP);
-   fChain->SetBranchAddress("lepEffTrigLoose_MU_SF_Trigger_STAT_UP", &lepEffTrigLoose_MU_SF_Trigger_STAT_UP, &b_lepEffTrigLoose_MU_SF_Trigger_STAT_UP);
-   fChain->SetBranchAddress("lepEffTrigTight_MU_SF_Trigger_STAT_UP", &lepEffTrigTight_MU_SF_Trigger_STAT_UP, &b_lepEffTrigTight_MU_SF_Trigger_STAT_UP);
    fChain->SetBranchAddress("lepEffTrigTightLoose_MU_SF_Trigger_STAT_UP", &lepEffTrigTightLoose_MU_SF_Trigger_STAT_UP, &b_lepEffTrigTightLoose_MU_SF_Trigger_STAT_UP);
    fChain->SetBranchAddress("lepEffTrigLooseTight_MU_SF_Trigger_STAT_UP", &lepEffTrigLooseTight_MU_SF_Trigger_STAT_UP, &b_lepEffTrigLooseTight_MU_SF_Trigger_STAT_UP);
    fChain->SetBranchAddress("lepDataEffTrigLoose_MU_SF_Trigger_STAT_UP", &lepDataEffTrigLoose_MU_SF_Trigger_STAT_UP, &b_lepDataEffTrigLoose_MU_SF_Trigger_STAT_UP);
@@ -5480,10 +5823,6 @@ void nominal::Init(TTree *tree)
    fChain->SetBranchAddress("lepSFTrigTight_MU_SF_Trigger_STAT_DOWN", &lepSFTrigTight_MU_SF_Trigger_STAT_DOWN, &b_lepSFTrigTight_MU_SF_Trigger_STAT_DOWN);
    fChain->SetBranchAddress("lepSFTrigTightLoose_MU_SF_Trigger_STAT_DOWN", &lepSFTrigTightLoose_MU_SF_Trigger_STAT_DOWN, &b_lepSFTrigTightLoose_MU_SF_Trigger_STAT_DOWN);
    fChain->SetBranchAddress("lepSFTrigLooseTight_MU_SF_Trigger_STAT_DOWN", &lepSFTrigLooseTight_MU_SF_Trigger_STAT_DOWN, &b_lepSFTrigLooseTight_MU_SF_Trigger_STAT_DOWN);
-   fChain->SetBranchAddress("lepEffTrigLoose_MU_SF_Trigger_STAT_DOWN", &lepEffTrigLoose_MU_SF_Trigger_STAT_DOWN, &b_lepEffTrigLoose_MU_SF_Trigger_STAT_DOWN);
-   fChain->SetBranchAddress("lepEffTrigTight_MU_SF_Trigger_STAT_DOWN", &lepEffTrigTight_MU_SF_Trigger_STAT_DOWN, &b_lepEffTrigTight_MU_SF_Trigger_STAT_DOWN);
-//    fChain->SetBranchAddress("lepSFTrigTightLoose_MU_SF_Trigger_STAT_DOWN", &lepSFTrigTightLoose_MU_SF_Trigger_STAT_DOWN, &b_lepSFTrigTightLoose_MU_SF_Trigger_STAT_DOWN);
-//    fChain->SetBranchAddress("lepSFTrigLooseTight_MU_SF_Trigger_STAT_DOWN", &lepSFTrigLooseTight_MU_SF_Trigger_STAT_DOWN, &b_lepSFTrigLooseTight_MU_SF_Trigger_STAT_DOWN);
    fChain->SetBranchAddress("lepDataEffTrigLoose_MU_SF_Trigger_STAT_DOWN", &lepDataEffTrigLoose_MU_SF_Trigger_STAT_DOWN, &b_lepDataEffTrigLoose_MU_SF_Trigger_STAT_DOWN);
    fChain->SetBranchAddress("lepDataEffTrigTight_MU_SF_Trigger_STAT_DOWN", &lepDataEffTrigTight_MU_SF_Trigger_STAT_DOWN, &b_lepDataEffTrigTight_MU_SF_Trigger_STAT_DOWN);
    fChain->SetBranchAddress("lepDataEffTrigTightLoose_MU_SF_Trigger_STAT_DOWN", &lepDataEffTrigTightLoose_MU_SF_Trigger_STAT_DOWN, &b_lepDataEffTrigTightLoose_MU_SF_Trigger_STAT_DOWN);

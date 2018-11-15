@@ -17,7 +17,7 @@ FCNCINCS := -I$(FCNC_DIR)/include/fcnc -I$(FCNC_DIR)/include/atlasstyle
 EXTRALIBS +=$(ROOTLIBS) $(ROOTGLIBS) $(FCNCLIBS) $(DELPHESLIBS)
 
 CPPFLAGS += $(ROOTCFLAGS) $(DELPHESINCS) $(FCNCINCS) -Iinclude
-CPPFLAGS += -D PACKAGE_DIR=\"$(PWD)\" 
+CPPFLAGS += -D PACKAGE_DIR=\"$(PWD)\"
 
 CPPFLAGS  += -Wno-long-long -fPIC -w -g
 
@@ -36,11 +36,15 @@ bin/.%.o: src/%.cc include/%.h
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
 
-bin/.%.o: src/%.C include/nominal.h
+bin/.skim.o: src/skim.C include/nominal.h
 	@echo Compiling $@ with $^
-	@$(CXX) $(CPPFLAGS) -c $< -o $@
+	@$(CXX) $(CPPFLAGS) -D V7NTUP=1 -c $< -o $@
 
-bin/.%.o: util/%.C include/%.h
+bin/.fake_analysis.o: src/fake_analysis.C include/nominal.h
+	@echo Compiling $@ with $^
+	@$(CXX) $(CPPFLAGS) -D V7NTUP=0 -c $< -o $@
+
+bin/.%.o: util/.C include/%.h
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
 
@@ -54,11 +58,11 @@ bin/.%.o: util/%.cc
 
 bin/plot_fake_run: bin/.plot_fake.o
 	@echo Linking $@ with $^
-	@$(CXX) $(CPPFLAGS) $(EXTRALIBS)  -Llib -lfake_analysis -o $@ $<
+	@$(CXX) $(CPPFLAGS) -D V7NTUP=0 $(EXTRALIBS)  -Llib -lfake_analysis -o $@ $<
 
 bin/skim_run: bin/.plot_fake.o
 	@echo Linking $@ with $^
-	@$(CXX) $(CPPFLAGS) $(EXTRALIBS)  -Llib -lskim -o $@ $<
+	@$(CXX) $(CPPFLAGS) -D V7NTUP=1 $(EXTRALIBS)  -Llib -lskim -o $@ $<
 
 bin/%_run: bin/.%.o
 	@echo Linking $@ with $^
