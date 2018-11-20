@@ -72,8 +72,11 @@ void MytthAnaFakes::Loop()
    std::ofstream* fout_txt(0);
    if(debug)fout_txt = new std::ofstream(_outhist+".txt");
    TString BDT_tth1l2tau = "/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/makingPlots/MakingMini/TMVAClassification_BDTG.weightsv2901var7taupt25Triglept27tauTMnobtag_capnjets5nbjets3.xml";
-   std::cout<<" which BDT ? "<<BDT_tth1l2tau<<std::endl;
+   TString BDT_tth2l2tau = "/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/FakeStudy/tthltauAnaV6/MakingHist/TMVAClassification_BDTG.weights6vartaupt25Triglept27tauMMbvetoTrainRandom_mimic2l2tau_R21.xml";
+   std::cout<<" which BDT 1l2tau ? "<<BDT_tth1l2tau<<std::endl;
+   std::cout<<" which BDT 2l2tau ? "<<BDT_tth2l2tau<<std::endl;
    initialiseTMVA_tth1l2tau(BDT_tth1l2tau);
+   initialiseTMVA_tth2l2tau(BDT_tth2l2tau);
    // Booking here: 
    //TH1F*
    // z->mumu gamma 
@@ -742,22 +745,30 @@ void MytthAnaFakes::Loop()
    TH1F* hvbfnjets = new TH1F("hvbfnjets","hvbfnjets",10, 0.,10.);
    TH1F* hvbfbjets = new TH1F("hvbfbjets","hvbfbjets",5, 0.,5.);
    TH1F* hvbfht = new TH1F("hvbfht","hvbfht",50, 0.,2000.);
+   TH1F* hvbfmjjmax = new TH1F("hvbfmjjmax","hvbfmjjmax",50, 500.,2500.);
    TH1F* hvbfnjets2B = new TH1F("hvbfnjets2B","hvbfnjets2B",10, 0.,10.);
    TH1F* hvbfht2B = new TH1F("hvbfht2B","hvbfht2B",50, 0.,2000.);
+   TH1F* hvbfmjjmax2B = new TH1F("hvbfmjjmax2B","hvbfmjjmax2B",50, 500.,2500.);
    TH1F* hvbfnjets1B = new TH1F("hvbfnjets1B","hvbfnjets1B",10, 0.,10.);
    TH1F* hvbfht1B = new TH1F("hvbfht1B","hvbfht1B",50, 0.,2000.);
+   TH1F* hvbfmjjmax1B = new TH1F("hvbfmjjmax1B","hvbfmjjmax1B",50, 500.,2500.);
    TH1F* hvbfnjets0B = new TH1F("hvbfnjets0B","hvbfnjets0B",10, 0.,10.);
    TH1F* hvbfht0B = new TH1F("hvbfht0B","hvbfht0B",50, 0.,2000.);
+   TH1F* hvbfmjjmax0B = new TH1F("hvbfmjjmax0B","hvbfmjjmax0B",50, 500.,2500.);
    hmjjmax->Sumw2();
    hvbfnjets->Sumw2();
    hvbfbjets->Sumw2();
    hvbfht->Sumw2();
+   hvbfmjjmax->Sumw2();
    hvbfnjets2B->Sumw2();
    hvbfht2B->Sumw2();
+   hvbfmjjmax2B->Sumw2();
    hvbfnjets1B->Sumw2();
    hvbfht1B->Sumw2();
+   hvbfmjjmax1B->Sumw2();
    hvbfnjets0B->Sumw2();
    hvbfht0B->Sumw2();
+   hvbfmjjmax0B->Sumw2();
    //tau fake stuff
    TH1F* hnjetz = new TH1F("hnjetz","hnjetz",5,0.,5.); // mar 2
    TH1F* hnjetemuB = new TH1F("hnjetemuB","hnjetemuB",5,0.,5.);// mar 2
@@ -771,17 +782,21 @@ void MytthAnaFakes::Loop()
    TH1F* hptltauemuBTruth = new TH1F("hptltauemuBTruth","hptltauemuBTruth",3,25.,115.);
    TH1F* hptmtauemuB = new TH1F("hptmtauemuB","hptmtauemuB",3,25.,115.);
    TH1F* hptmtauemuBTruth = new TH1F("hptmtauemuBTruth","hptmtauemuBTruth",3,25.,115.);
+   TH1F* hjfmtauz = new TH1F("hjfmtauz","hjfmtauz", 26, -1., 25.); // 11/5
+   TH1F* hjfltauz = new TH1F("hjfltauz","hjfltauz", 26, -1., 25.); // 11/5
    // 2d
    TH1F* hptltauzx = new TH1F("hptltauzx","hptltauzx",3,25.,115.); // new mar 5
    TH1F* hptltauzl = new TH1F("hptltauzl","hptltauzl",3,25.,115.); // new
    TH1F* hptltauzc = new TH1F("hptltauzc","hptltauzc",3,25.,115.); // new
    TH1F* hptltauzb = new TH1F("hptltauzb","hptltauzb",3,25.,115.); // new
    TH1F* hptltauzg = new TH1F("hptltauzg","hptltauzg",3,25.,115.); // new
+   TH1F* hptltauzexl = new TH1F("hptltauzexl","hptltauzexl",3,25.,115.); // new 11/5
    TH1F* hptmtauzx = new TH1F("hptmtauzx","hptmtauzx",3,25.,115.); // new mar 5
    TH1F* hptmtauzl = new TH1F("hptmtauzl","hptmtauzl",3,25.,115.); // new
    TH1F* hptmtauzc = new TH1F("hptmtauzc","hptmtauzc",3,25.,115.); // new
    TH1F* hptmtauzb = new TH1F("hptmtauzb","hptmtauzb",3,25.,115.); // new
    TH1F* hptmtauzg = new TH1F("hptmtauzg","hptmtauzg",3,25.,115.); // new
+   TH1F* hptmtauzexl = new TH1F("hptmtauzexl","hptmtauzexl",3,25.,115.); // new 11/5
 
    TH1F* hptltauemuBx = new TH1F("hptltauemuBx","hptltauemuBx",3,25.,115.); // new mar 5
    TH1F* hptltauemuBl = new TH1F("hptltauemuBl","hptltauemuBl",3,25.,115.); // new
@@ -1093,6 +1108,81 @@ void MytthAnaFakes::Loop()
    TH1F* hjfltau3poslowbwp3 = new TH1F("hjfltau3poslowbwp3","hjfltau3poslowbwp3", 26, -1., 25.);
    TH1F* hjfltau1psslowbwp3 = new TH1F("hjfltau1psslowbwp3","hjfltau1psslowbwp3", 26, -1., 25.);
    TH1F* hjfltau3psslowbwp3 = new TH1F("hjfltau3psslowbwp3","hjfltau3psslowbwp3", 26, -1., 25.);
+   //13/11
+   TH1F* hptmtauz9bins = new TH1F("hptmtauz9bins","hptmtauz9bins",9,25.,115.);
+   TH1F* hptltauz9bins = new TH1F("hptltauz9bins","hptltauz9bins",9,25.,115.);
+   TH1F* hptmtauemu1B9bins = new TH1F("hptmtauemu1B9bins","hptmtauemu1B9bins",9,25.,115.);
+   TH1F* hpttauemu1B9bins = new TH1F("hpttauemu1B9bins","hpttauemu1B9bins",9,25.,115.);
+   TH1F* hptmtauemu2B9bins = new TH1F("hptmtauemu2B9bins","hptmtauemu2B9bins",9,25.,115.);
+   TH1F* hpttauemu2B9bins = new TH1F("hpttauemu2B9bins","hpttauemu2B9bins",9,25.,115.);
+   TH1F* hptmtauemuB9bins = new TH1F("hptmtauemuB9bins","hptmtauemuB9bins",9,25.,115.);
+   TH1F* hptltauemuB9bins = new TH1F("hptltauemuB9bins","hptltauemuB9bins",9,25.,115.);
+   TH1F* hptmutauosqcd9bins = new TH1F("hptmutauosqcd9bins","hptmutauosqcd9bins",9,25.,115.);
+   TH1F* hptltau1posqcd9bins = new TH1F("hptltau1posqcd9bins","hptltau1posqcd9bins",9,25.,115.);
+   TH1F* hptltau3posqcd9bins = new TH1F("hptltau3posqcd9bins","hptltau3posqcd9bins",9,25.,115.);
+   TH1F* hptmutaussqcd9bins = new TH1F("hptmutaussqcd9bins","hptmutaussqcd9bins",9,25.,115.);
+   TH1F* hptltau1pssqcd9bins = new TH1F("hptltau1pssqcd9bins","hptltau1pssqcd9bins",9,25.,115.);
+   TH1F* hptltau3pssqcd9bins = new TH1F("hptltau3pssqcd9bins","hptltau3pssqcd9bins",9,25.,115.);
+   TH1F* hptmutauosqcdlow9bins = new TH1F("hptmutauosqcdlow9bins","hptmutauosqcdlow9bins",9,25.,115.);
+   TH1F* hptltau1posqcdlow9bins = new TH1F("hptltau1posqcdlow9bins","hptltau1posqcdlow9bins",9,25.,115.);
+   TH1F* hptltau3posqcdlow9bins = new TH1F("hptltau3posqcdlow9bins","hptltau3posqcdlow9bins",9,25.,115.);
+   TH1F* hptmutaussqcdlow9bins = new TH1F("hptmutaussqcdlow9bins","hptmutaussqcdlow9bins",9,25.,115.);
+   TH1F* hptltau1pssqcdlow9bins = new TH1F("hptltau1pssqcdlow9bins","hptltau1pssqcdlow9bins",9,25.,115.);
+   TH1F* hptltau3pssqcdlow9bins = new TH1F("hptltau3pssqcdlow9bins","hptltau3pssqcdlow9bins",9,25.,115.);
+   TH1F* hptltauos9bins = new TH1F("hptltauos9bins","hptltauos9bins",9,25.,115.);
+   TH1F* hptltau1pos9bins = new TH1F("hptltau1pos9bins","hptltau1pos9bins",9,25.,115.);
+   TH1F* hptltau3pos9bins = new TH1F("hptltau3pos9bins","hptltau3pos9bins",9,25.,115.);
+   TH1F* hptltauss9bins = new TH1F("hptltauss9bins","hptltauss9bins",9,25.,115.);
+   TH1F* hptltau1pss9bins = new TH1F("hptltau1pss9bins","hptltau1pss9bins",9,25.,115.);
+   TH1F* hptltau3pss9bins = new TH1F("hptltau3pss9bins","hptltau3pss9bins",9,25.,115.);
+   TH1F* hptmutauoslow9bins = new TH1F("hptmutauoslow9bins","hptmutauoslow9bins",9,25.,115.);
+   TH1F* hptltau1poslow9bins = new TH1F("hptltau1poslow9bins","hptltau1poslow9bins",9,25.,115.);
+   TH1F* hptltau3poslow9bins = new TH1F("hptltau3poslow9bins","hptltau3poslow9bins",9,25.,115.);
+   TH1F* hptmutausslow9bins = new TH1F("hptmutausslow9bins","hptmutausslow9bins",9,25.,115.);
+   TH1F* hptltau1psslow9bins = new TH1F("hptltau1psslow9bins","hptltau1psslow9bins",9,25.,115.);
+   TH1F* hptltau3psslow9bins = new TH1F("hptltau3psslow9bins","hptltau3psslow9bins",9,25.,115.);
+   TH1F* hptltau1posmetlow9bins = new TH1F("hptltau1posmetlow9bins","hptltau1posmetlow9bins",9,25.,115.);
+   TH1F* hptltau3posmetlow9bins = new TH1F("hptltau3posmetlow9bins","hptltau3posmetlow9bins",9,25.,115.);
+   TH1F* hptltau1pssmetlow9bins = new TH1F("hptltau1pssmetlow9bins","hptltau1pssmetlow9bins",9,25.,115.);
+   TH1F* hptltau3pssmetlow9bins = new TH1F("hptltau3pssmetlow9bins","hptltau3pssmetlow9bins",9,25.,115.);
+   //13/11--36
+   hptmtauz9bins->Sumw2();
+   hptltauz9bins->Sumw2();
+   hptmtauemu1B9bins->Sumw2();
+   hpttauemu1B9bins->Sumw2();
+   hptmtauemu2B9bins->Sumw2();
+   hpttauemu2B9bins->Sumw2();
+   hptmtauemuB9bins->Sumw2();
+   hptltauemuB9bins->Sumw2();
+   hptmutauosqcd9bins->Sumw2();
+   hptltau1posqcd9bins->Sumw2();
+   hptltau3posqcd9bins->Sumw2();
+   hptmutaussqcd9bins->Sumw2();
+   hptltau1pssqcd9bins->Sumw2();
+   hptltau3pssqcd9bins->Sumw2();
+   hptmutauosqcdlow9bins->Sumw2();
+   hptltau1posqcdlow9bins->Sumw2();
+   hptltau3posqcdlow9bins->Sumw2();
+   hptmutaussqcdlow9bins->Sumw2();
+   hptltau1pssqcdlow9bins->Sumw2();
+   hptltau3pssqcdlow9bins->Sumw2();
+   hptltauos9bins->Sumw2();
+   hptltau1pos9bins->Sumw2();
+   hptltau3pos9bins->Sumw2();
+   hptltauss9bins->Sumw2();
+   hptltau1pss9bins->Sumw2();
+   hptltau3pss9bins->Sumw2();
+   hptmutauoslow9bins->Sumw2();
+   hptltau1poslow9bins->Sumw2();
+   hptltau3poslow9bins->Sumw2();
+   hptmutausslow9bins->Sumw2();
+   hptltau1psslow9bins->Sumw2();
+   hptltau3psslow9bins->Sumw2();
+   hptltau1posmetlow9bins->Sumw2();
+   hptltau3posmetlow9bins->Sumw2();
+   hptltau1pssmetlow9bins->Sumw2();
+   hptltau3pssmetlow9bins->Sumw2();
+   //
    hjfltau1pos->Sumw2();
    hleptruth1pos->Sumw2();
    hjfltau3pos->Sumw2();
@@ -1139,17 +1229,21 @@ void MytthAnaFakes::Loop()
    hptltauemuBTruth->Sumw2();
    hptmtauemuB->Sumw2();
    hptmtauemuBTruth->Sumw2();
+   hjfmtauz->Sumw2(); // 11/5
+   hjfltauz->Sumw2(); // 11/5
    //
    hptltauzx->Sumw2();
    hptltauzl->Sumw2();
    hptltauzc->Sumw2();
    hptltauzb->Sumw2();
    hptltauzg->Sumw2();
-   hptmtauzx->Sumw2();
-   hptmtauzl->Sumw2();
+   hptltauzexl->Sumw2();
+   hptmtauzx->Sumw2(); 
+   hptmtauzl->Sumw2(); // 11/5
    hptmtauzc->Sumw2();
    hptmtauzb->Sumw2();
    hptmtauzg->Sumw2();
+   hptmtauzexl->Sumw2(); // 11/5
    hptltauemuBx->Sumw2();
    hptltauemuBl->Sumw2();
    hptltauemuBc->Sumw2();
@@ -1677,6 +1771,15 @@ void MytthAnaFakes::Loop()
    TH1F*  hmwltau1psslowTruth = new TH1F("hmwltau1psslowTruth","hmwltau1psslowTruth",30, 0., 150.);
    TH1F*  hmwltau3psslow = new TH1F("hmwltau3psslow","hmwltau3psslow",30, 0., 150.);
    TH1F*  hmwltau3psslowTruth = new TH1F("hmwltau3psslowTruth","hmwltau3psslowTruth",30, 0., 150.);
+   // 11/5 
+   TH1F*  hmwltau1poslowc = new TH1F("hmwltau1poslowc","hmwltau1poslowc",30, 0., 150.);
+   TH1F*  hmwltau1poslownoc = new TH1F("hmwltau1poslownoc","hmwltau1poslownoc",30, 0., 150.);
+   TH1F*  hmwltau3poslowc = new TH1F("hmwltau3poslowc","hmwltau3poslowc",30, 0., 150.);
+   TH1F*  hmwltau3poslownoc = new TH1F("hmwltau3poslownoc","hmwltau3poslownoc",30, 0., 150.);
+   TH1F*  hmwltau1psslowc = new TH1F("hmwltau1psslowc","hmwltau1psslowc",30, 0., 150.);
+   TH1F*  hmwltau1psslownoc = new TH1F("hmwltau1psslownoc","hmwltau1psslownoc",30, 0., 150.);
+   TH1F*  hmwltau3psslowc = new TH1F("hmwltau3psslowc","hmwltau3psslowc",30, 0., 150.);
+   TH1F*  hmwltau3psslownoc = new TH1F("hmwltau3psslownoc","hmwltau3psslownoc",30, 0., 150.);
    // 5-22 
    TH1F*  hmwltau1poslowWjj = new TH1F("hmwltau1poslowWjj","hmwltau1poslowWjj",30, 0., 150.);
    TH1F*  hmwltau1poslowbwp0 = new TH1F("hmwltau1poslowbwp0","hmwltau1poslowbwp0",30, 0., 150.);
@@ -1756,6 +1859,27 @@ void MytthAnaFakes::Loop()
    TH1F* hptltau3pssbjbwp1 = new TH1F("hptltau3pssbjbwp1","hptltau3pssbjbwp1",3,25.,115.);
    TH1F* hptltau3pssbjbwp2 = new TH1F("hptltau3pssbjbwp2","hptltau3pssbjbwp2",3,25.,115.);
    TH1F* hptltau3pssbjbwp3 = new TH1F("hptltau3pssbjbwp3","hptltau3pssbjbwp3",3,25.,115.);
+   // oct 1 2018 
+   TH1F* hptltau1posgj = new TH1F("hptltau1posgj","hptltau1posgj",3,25.,115.);
+   TH1F* hptltau1posgjbwp0 = new TH1F("hptltau1posgjbwp0","hptltau1posgjbwp0",3,25.,115.);
+   TH1F* hptltau1posgjbwp1 = new TH1F("hptltau1posgjbwp1","hptltau1posgjbwp1",3,25.,115.);
+   TH1F* hptltau1posgjbwp2 = new TH1F("hptltau1posgjbwp2","hptltau1posgjbwp2",3,25.,115.);
+   TH1F* hptltau1posgjbwp3 = new TH1F("hptltau1posgjbwp3","hptltau1posgjbwp3",3,25.,115.);
+   TH1F* hptltau3posgj = new TH1F("hptltau3posgj","hptltau3posgj",3,25.,115.);
+   TH1F* hptltau3posgjbwp0 = new TH1F("hptltau3posgjbwp0","hptltau3posgjbwp0",3,25.,115.);
+   TH1F* hptltau3posgjbwp1 = new TH1F("hptltau3posgjbwp1","hptltau3posgjbwp1",3,25.,115.);
+   TH1F* hptltau3posgjbwp2 = new TH1F("hptltau3posgjbwp2","hptltau3posgjbwp2",3,25.,115.);
+   TH1F* hptltau3posgjbwp3 = new TH1F("hptltau3posgjbwp3","hptltau3posgjbwp3",3,25.,115.);
+   TH1F* hptltau1pssgj = new TH1F("hptltau1pssgj","hptltau1pssgj",3,25.,115.);
+   TH1F* hptltau1pssgjbwp0 = new TH1F("hptltau1pssgjbwp0","hptltau1pssgjbwp0",3,25.,115.);
+   TH1F* hptltau1pssgjbwp1 = new TH1F("hptltau1pssgjbwp1","hptltau1pssgjbwp1",3,25.,115.);
+   TH1F* hptltau1pssgjbwp2 = new TH1F("hptltau1pssgjbwp2","hptltau1pssgjbwp2",3,25.,115.);
+   TH1F* hptltau1pssgjbwp3 = new TH1F("hptltau1pssgjbwp3","hptltau1pssgjbwp3",3,25.,115.);
+   TH1F* hptltau3pssgj = new TH1F("hptltau3pssgj","hptltau3pssgj",3,25.,115.);
+   TH1F* hptltau3pssgjbwp0 = new TH1F("hptltau3pssgjbwp0","hptltau3pssgjbwp0",3,25.,115.);
+   TH1F* hptltau3pssgjbwp1 = new TH1F("hptltau3pssgjbwp1","hptltau3pssgjbwp1",3,25.,115.);
+   TH1F* hptltau3pssgjbwp2 = new TH1F("hptltau3pssgjbwp2","hptltau3pssgjbwp2",3,25.,115.);
+   TH1F* hptltau3pssgjbwp3 = new TH1F("hptltau3pssgjbwp3","hptltau3pssgjbwp3",3,25.,115.);
    // 5-25
    TH1F* hptltau1poswj = new TH1F("hptltau1poswj","hptltau1poswj",3,25.,115.);
    TH1F* hptltau1poswjbwp0 = new TH1F("hptltau1poswjbwp0","hptltau1poswjbwp0",3,25.,115.);
@@ -1869,6 +1993,31 @@ void MytthAnaFakes::Loop()
    TH1F* hmwltau3poslowbj = new TH1F("hmwltau3poslowbj","hmwltau3poslowbj",30, 0., 150.);
    TH1F* hmwltau1psslowbj = new TH1F("hmwltau1psslowbj","hmwltau1psslowbj",30, 0., 150.);
    TH1F* hmwltau3psslowbj = new TH1F("hmwltau3psslowbj","hmwltau3psslowbj",30, 0., 150.);
+   // oct 1 2018 
+   TH1F* hmwltau1poslowgj = new TH1F("hmwltau1poslowgj","hmwltau1poslowgj",30, 0., 150.);
+   TH1F* hptltau1poslowgj = new TH1F("hptltau1poslowgj","hptltau1poslowgj",3,25.,115.);
+   TH1F* hptltau1poslowgjbwp0 = new TH1F("hptltau1poslowgjbwp0","hptltau1poslowgjbwp0",3,25.,115.);
+   TH1F* hptltau1poslowgjbwp1 = new TH1F("hptltau1poslowgjbwp1","hptltau1poslowgjbwp1",3,25.,115.);
+   TH1F* hptltau1poslowgjbwp2 = new TH1F("hptltau1poslowgjbwp2","hptltau1poslowgjbwp2",3,25.,115.);
+   TH1F* hptltau1poslowgjbwp3 = new TH1F("hptltau1poslowgjbwp3","hptltau1poslowgjbwp3",3,25.,115.);
+   TH1F* hmwltau3poslowgj = new TH1F("hmwltau3poslowgj","hmwltau3poslowgj",30, 0., 150.);
+   TH1F* hptltau3poslowgj = new TH1F("hptltau3poslowgj","hptltau3poslowgj",3,25.,115.);
+   TH1F* hptltau3poslowgjbwp0 = new TH1F("hptltau3poslowgjbwp0","hptltau3poslowgjbwp0",3,25.,115.);
+   TH1F* hptltau3poslowgjbwp1 = new TH1F("hptltau3poslowgjbwp1","hptltau3poslowgjbwp1",3,25.,115.);
+   TH1F* hptltau3poslowgjbwp2 = new TH1F("hptltau3poslowgjbwp2","hptltau3poslowgjbwp2",3,25.,115.);
+   TH1F* hptltau3poslowgjbwp3 = new TH1F("hptltau3poslowgjbwp3","hptltau3poslowgjbwp3",3,25.,115.);
+   TH1F* hmwltau1psslowgj = new TH1F("hmwltau1psslowgj","hmwltau1psslowgj",30, 0., 150.);
+   TH1F* hptltau1psslowgj = new TH1F("hptltau1psslowgj","hptltau1psslowgj",3,25.,115.);
+   TH1F* hptltau1psslowgjbwp0 = new TH1F("hptltau1psslowgjbwp0","hptltau1psslowgjbwp0",3,25.,115.);
+   TH1F* hptltau1psslowgjbwp1 = new TH1F("hptltau1psslowgjbwp1","hptltau1psslowgjbwp1",3,25.,115.);
+   TH1F* hptltau1psslowgjbwp2 = new TH1F("hptltau1psslowgjbwp2","hptltau1psslowgjbwp2",3,25.,115.);
+   TH1F* hptltau1psslowgjbwp3 = new TH1F("hptltau1psslowgjbwp3","hptltau1psslowgjbwp3",3,25.,115.);
+   TH1F* hmwltau3psslowgj = new TH1F("hmwltau3psslowgj","hmwltau3psslowgj",30, 0., 150.);
+   TH1F* hptltau3psslowgj = new TH1F("hptltau3psslowgj","hptltau3psslowgj",3,25.,115.);
+   TH1F* hptltau3psslowgjbwp0 = new TH1F("hptltau3psslowgjbwp0","hptltau3psslowgjbwp0",3,25.,115.);
+   TH1F* hptltau3psslowgjbwp1 = new TH1F("hptltau3psslowgjbwp1","hptltau3psslowgjbwp1",3,25.,115.);
+   TH1F* hptltau3psslowgjbwp2 = new TH1F("hptltau3psslowgjbwp2","hptltau3psslowgjbwp2",3,25.,115.);
+   TH1F* hptltau3psslowgjbwp3 = new TH1F("hptltau3psslowgjbwp3","hptltau3psslowgjbwp3",3,25.,115.);
    // 5-29 
    TH1F* hjfltauos1B = new TH1F("hjfltauos1B","hjfltauos1B", 26, -1., 25.);
    TH1F* hmwltauos1Bbj = new TH1F("hmwltauos1Bbj","hmwltauos1Bbj",30, 0., 150.);
@@ -1999,6 +2148,27 @@ void MytthAnaFakes::Loop()
    TH1F* hpttauemu2Bbjbwp1 = new TH1F("hpttauemu2Bbjbwp1","hpttauemu2Bbjbwp1",3,25.,115.);
    TH1F* hpttauemu2Bbjbwp2 = new TH1F("hpttauemu2Bbjbwp2","hpttauemu2Bbjbwp2",3,25.,115.);
    TH1F* hpttauemu2Bbjbwp3 = new TH1F("hpttauemu2Bbjbwp3","hpttauemu2Bbjbwp3",3,25.,115.);
+   // oct 1 2018 
+   TH1F* hptmtauemu1Bgj = new TH1F("hptmtauemu1Bgj","hptmtauemu1Bgj",3,25.,115.);
+   TH1F* hptmtauemu1Bgjbwp0 = new TH1F("hptmtauemu1Bgjbwp0","hptmtauemu1Bgjbwp0",3,25.,115.);
+   TH1F* hptmtauemu1Bgjbwp1 = new TH1F("hptmtauemu1Bgjbwp1","hptmtauemu1Bgjbwp1",3,25.,115.);
+   TH1F* hptmtauemu1Bgjbwp2 = new TH1F("hptmtauemu1Bgjbwp2","hptmtauemu1Bgjbwp2",3,25.,115.);
+   TH1F* hptmtauemu1Bgjbwp3 = new TH1F("hptmtauemu1Bgjbwp3","hptmtauemu1Bgjbwp3",3,25.,115.);
+   TH1F* hpttauemu1Bgj = new TH1F("hpttauemu1Bgj","hpttauemu1Bgj",3,25.,115.);
+   TH1F* hpttauemu1Bgjbwp0 = new TH1F("hpttauemu1Bgjbwp0","hpttauemu1Bgjbwp0",3,25.,115.);
+   TH1F* hpttauemu1Bgjbwp1 = new TH1F("hpttauemu1Bgjbwp1","hpttauemu1Bgjbwp1",3,25.,115.);
+   TH1F* hpttauemu1Bgjbwp2 = new TH1F("hpttauemu1Bgjbwp2","hpttauemu1Bgjbwp2",3,25.,115.);
+   TH1F* hpttauemu1Bgjbwp3 = new TH1F("hpttauemu1Bgjbwp3","hpttauemu1Bgjbwp3",3,25.,115.);
+   TH1F* hptmtauemu2Bgj = new TH1F("hptmtauemu2Bgj","hptmtauemu2Bgj",3,25.,115.);
+   TH1F* hptmtauemu2Bgjbwp0 = new TH1F("hptmtauemu2Bgjbwp0","hptmtauemu2Bgjbwp0",3,25.,115.);
+   TH1F* hptmtauemu2Bgjbwp1 = new TH1F("hptmtauemu2Bgjbwp1","hptmtauemu2Bgjbwp1",3,25.,115.);
+   TH1F* hptmtauemu2Bgjbwp2 = new TH1F("hptmtauemu2Bgjbwp2","hptmtauemu2Bgjbwp2",3,25.,115.);
+   TH1F* hptmtauemu2Bgjbwp3 = new TH1F("hptmtauemu2Bgjbwp3","hptmtauemu2Bgjbwp3",3,25.,115.);
+   TH1F* hpttauemu2Bgj = new TH1F("hpttauemu2Bgj","hpttauemu2Bgj",3,25.,115.);
+   TH1F* hpttauemu2Bgjbwp0 = new TH1F("hpttauemu2Bgjbwp0","hpttauemu2Bgjbwp0",3,25.,115.);
+   TH1F* hpttauemu2Bgjbwp1 = new TH1F("hpttauemu2Bgjbwp1","hpttauemu2Bgjbwp1",3,25.,115.);
+   TH1F* hpttauemu2Bgjbwp2 = new TH1F("hpttauemu2Bgjbwp2","hpttauemu2Bgjbwp2",3,25.,115.);
+   TH1F* hpttauemu2Bgjbwp3 = new TH1F("hpttauemu2Bgjbwp3","hpttauemu2Bgjbwp3",3,25.,115.);
    //
    TH1F* hptmtauemu1Bwj = new TH1F("hptmtauemu1Bwj","hptmtauemu1Bwj",3,25.,115.);
    TH1F* hptmtauemu1Bwjbwp0 = new TH1F("hptmtauemu1Bwjbwp0","hptmtauemu1Bwjbwp0",3,25.,115.);
@@ -2138,7 +2308,25 @@ void MytthAnaFakes::Loop()
    TH1F* htaubdtsig3pbwp1 =new TH1F("htaubdtsig3pbwp1","htaubdtsig3pbwp1",20,0.,1.0);
    TH1F* htaubdtsig3pbwp2 =new TH1F("htaubdtsig3pbwp2","htaubdtsig3pbwp2",20,0.,1.0);
    TH1F* htaubdtsig3pbwp3 =new TH1F("htaubdtsig3pbwp3","htaubdtsig3pbwp3",20,0.,1.0);
-
+   //8-9 z->ll 
+   TH1F* hmzll = new TH1F("hmzll","hmzll",50, 0., 150.);
+   TH1F* hmzmm = new TH1F("hmzmm","hmzmm",50, 0., 150.);
+   TH1F* hmzee = new TH1F("hmzee","hmzee",50, 0., 150.);
+   TH1F* hmzeletau = new TH1F("hmzeletau","hmzeletau",50, 0., 150.);
+   TH1F* hmzmutau = new TH1F("hmzmutau","hmzmutau",50, 0., 150.);
+   TH1F* hmzeletautight = new TH1F("hmzeletautight","hmzeletautight",50, 0., 150.);
+   TH1F* hmzmutautight = new TH1F("hmzmutautight","hmzmutautight",50, 0., 150.);
+   TH1F* hmzleptau = new TH1F("hmzleptau","hmzleptau",50, 0., 150.);
+   TH1F* hmzleptaubwp0 = new TH1F("hmzleptaubwp0","hmzleptaubwp0",50, 0., 150.);
+   TH1F* hmzleptaubwp1 = new TH1F("hmzleptaubwp1","hmzleptaubwp1",50, 0., 150.);
+   TH1F* hmzleptaubwp2 = new TH1F("hmzleptaubwp2","hmzleptaubwp2",50, 0., 150.);
+   TH1F* hmzleptaubwp3 = new TH1F("hmzleptaubwp3","hmzleptaubwp3",50, 0., 150.);
+   TH1F* hmzleptautight = new TH1F("hmzleptautight","hmzleptautight",50, 0., 150.);
+   TH1F* hmzleptautightbwp0 = new TH1F("hmzleptautightbwp0","hmzleptautightbwp0",50, 0., 150.);
+   TH1F* hmzleptautightbwp1 = new TH1F("hmzleptautightbwp1","hmzleptautightbwp1",50, 0., 150.);
+   TH1F* hmzleptautightbwp2 = new TH1F("hmzleptautightbwp2","hmzleptautightbwp2",50, 0., 150.);
+   TH1F* hmzleptautightbwp3 = new TH1F("hmzleptautightbwp3","hmzleptautightbwp3",50, 0., 150.);
+   //
    hptltauosbwp0->Sumw2();
    hptltauosbwp1->Sumw2();
    hptltauosbwp2->Sumw2();
@@ -2391,6 +2579,15 @@ void MytthAnaFakes::Loop()
    hmwltau1psslowTruth->Sumw2();
    hmwltau3psslow->Sumw2();
    hmwltau3psslowTruth->Sumw2();
+   // 11/5 
+   hmwltau1poslowc->Sumw2();
+   hmwltau1poslownoc->Sumw2();
+   hmwltau3poslowc->Sumw2();
+   hmwltau3poslownoc->Sumw2();
+   hmwltau1psslowc->Sumw2();
+   hmwltau1psslownoc->Sumw2();
+   hmwltau3psslowc->Sumw2();
+   hmwltau3psslownoc->Sumw2();
    // 5-22 
    hmwltau1poslowWjj->Sumw2();
    hmwltau1poslowbwp0->Sumw2();
@@ -2470,6 +2667,27 @@ void MytthAnaFakes::Loop()
    hptltau3pssbjbwp1->Sumw2();
    hptltau3pssbjbwp2->Sumw2();
    hptltau3pssbjbwp3->Sumw2();
+   // oct 1 2018 (20) 
+   hptltau1posgj->Sumw2();
+   hptltau1posgjbwp0->Sumw2();
+   hptltau1posgjbwp1->Sumw2();
+   hptltau1posgjbwp2->Sumw2();
+   hptltau1posgjbwp3->Sumw2();
+   hptltau3posgj->Sumw2();
+   hptltau3posgjbwp0->Sumw2();
+   hptltau3posgjbwp1->Sumw2();
+   hptltau3posgjbwp2->Sumw2();
+   hptltau3posgjbwp3->Sumw2();
+   hptltau1pssgj->Sumw2();
+   hptltau1pssgjbwp0->Sumw2();
+   hptltau1pssgjbwp1->Sumw2();
+   hptltau1pssgjbwp2->Sumw2();
+   hptltau1pssgjbwp3->Sumw2();
+   hptltau3pssgj->Sumw2();
+   hptltau3pssgjbwp0->Sumw2();
+   hptltau3pssgjbwp1->Sumw2();
+   hptltau3pssgjbwp2->Sumw2();
+   hptltau3pssgjbwp3->Sumw2();
    // 5-24 fake tau from lep
    hptltau1poslep->Sumw2();
    hptltau1poslepbwp0->Sumw2();
@@ -2583,6 +2801,31 @@ void MytthAnaFakes::Loop()
    hmwltau3poslowbj->Sumw2();
    hmwltau1psslowbj->Sumw2();
    hmwltau3psslowbj->Sumw2();
+   // oct 1 2018 (20)
+   hmwltau1poslowgj->Sumw2();
+   hptltau1poslowgj->Sumw2();
+   hptltau1poslowgjbwp0->Sumw2();
+   hptltau1poslowgjbwp1->Sumw2();
+   hptltau1poslowgjbwp2->Sumw2();
+   hptltau1poslowgjbwp3->Sumw2();
+   hmwltau3poslowgj->Sumw2();
+   hptltau3poslowgj->Sumw2();
+   hptltau3poslowgjbwp0->Sumw2();
+   hptltau3poslowgjbwp1->Sumw2();
+   hptltau3poslowgjbwp2->Sumw2();
+   hptltau3poslowgjbwp3->Sumw2();
+   hmwltau1psslowgj->Sumw2();
+   hptltau1psslowgj->Sumw2();
+   hptltau1psslowgjbwp0->Sumw2();
+   hptltau1psslowgjbwp1->Sumw2();
+   hptltau1psslowgjbwp2->Sumw2();
+   hptltau1psslowgjbwp3->Sumw2();
+   hmwltau3psslowgj->Sumw2();
+   hptltau3psslowgj->Sumw2();
+   hptltau3psslowgjbwp0->Sumw2();
+   hptltau3psslowgjbwp1->Sumw2();
+   hptltau3psslowgjbwp2->Sumw2();
+   hptltau3psslowgjbwp3->Sumw2();
    // 5-29 
    hjfltauos1B->Sumw2(); 
    hmwltauos1Bbj->Sumw2();
@@ -2708,6 +2951,27 @@ void MytthAnaFakes::Loop()
    hpttauemu2Bbjbwp1->Sumw2();
    hpttauemu2Bbjbwp2->Sumw2();
    hpttauemu2Bbjbwp3->Sumw2();
+   // oct 1 2018 (20)
+   hptmtauemu1Bgj->Sumw2();
+   hptmtauemu1Bgjbwp0->Sumw2();
+   hptmtauemu1Bgjbwp1->Sumw2();
+   hptmtauemu1Bgjbwp2->Sumw2();
+   hptmtauemu1Bgjbwp3->Sumw2();
+   hpttauemu1Bgj->Sumw2();
+   hpttauemu1Bgjbwp0->Sumw2();
+   hpttauemu1Bgjbwp1->Sumw2();
+   hpttauemu1Bgjbwp2->Sumw2();
+   hpttauemu1Bgjbwp3->Sumw2();
+   hptmtauemu2Bgj->Sumw2();
+   hptmtauemu2Bgjbwp0->Sumw2();
+   hptmtauemu2Bgjbwp1->Sumw2();
+   hptmtauemu2Bgjbwp2->Sumw2();
+   hptmtauemu2Bgjbwp3->Sumw2();
+   hpttauemu2Bgj->Sumw2();
+   hpttauemu2Bgjbwp0->Sumw2();
+   hpttauemu2Bgjbwp1->Sumw2();
+   hpttauemu2Bgjbwp2->Sumw2();
+   hpttauemu2Bgjbwp3->Sumw2();
    //
    hptmtauemu1Bwj->Sumw2();
    hptmtauemu1Bwjbwp0->Sumw2();
@@ -2848,7 +3112,27 @@ void MytthAnaFakes::Loop()
    htaubdtsig3pbwp1->Sumw2();
    htaubdtsig3pbwp2->Sumw2();
    htaubdtsig3pbwp3->Sumw2();
-
+   // 8/9 
+   hmzll->Sumw2();
+   hmzmm->Sumw2();
+   hmzee->Sumw2();
+   // 10/11
+   hmzeletau->Sumw2();
+   hmzmutau->Sumw2();
+   hmzeletautight->Sumw2();
+   hmzmutautight->Sumw2();
+   //
+   hmzleptau->Sumw2();
+   hmzleptaubwp0->Sumw2();
+   hmzleptaubwp1->Sumw2();
+   hmzleptaubwp2->Sumw2();
+   hmzleptaubwp3->Sumw2();
+   hmzleptautight->Sumw2();
+   hmzleptautightbwp0->Sumw2();
+   hmzleptautightbwp1->Sumw2();
+   hmzleptautightbwp2->Sumw2();
+   hmzleptautightbwp3->Sumw2();
+ 
    if (fChain == 0) return;
 
    Long64_t nentries =GetNevtAna()>-1?GetNevtAna():fChain->GetEntriesFast();
@@ -2885,6 +3169,9 @@ void MytthAnaFakes::Loop()
       // note: lepSFID and lepSFIso needed to be corrected for loose iso cases: so far: all individual SF are zero in v4 ntuples 
       double wt = mc_channel_number>0?mc_norm*mcWeightOrg*pileupEventWeight_090*bTagSF_weight_MV2c10_Continuous*JVT_EventWeight*SherpaNJetWeight*
 	((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; // using lepSFObjLoose for 1l2tau
+      double wtt = mc_channel_number>0?mc_norm*mcWeightOrg*pileupEventWeight_090*bTagSF_weight_MV2c10_Continuous*JVT_EventWeight*SherpaNJetWeight*
+        ((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFLoose:1.0):1.0; // using tight tau for 1l2tau
+
       // *lepSFObjTight*tauSFTight*
       //			 *pileupEventWeight_090*bTagSF_weight_MV2c10_Continuous*lepSFObjTight*
       //((!dilep_type||!total_charge)*lepSFTrigTight+(dilep_type&&total_charge)*lepSFTrigLoose)*tauSFTight*
@@ -3595,11 +3882,13 @@ void MytthAnaFakes::Loop()
             if(MET_RefFinal_et/GeV>20&&mt/GeV>50){
               if(nJets_OR_T_MV2c10_70==1&&nJets_OR_T>1&&nJets_OR_T<4){
 		TLorentzVector p4jet[10];
+		double bwtjet[10];
 		int njets(0);
 		for(int i = 0; i<nJets_OR_T; ++i){
 		  if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))<0.83){ // not b-tagged              
 		    p4jet[njets].SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)), m_jet_eta->at(selected_jets_T->at(i)),
 					      m_jet_phi->at(selected_jets_T->at(i)),m_jet_E->at(selected_jets_T->at(i)));
+		    bwtjet[njets] = m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i));
 		    ++njets;
 		  }
 		}
@@ -3737,11 +4026,13 @@ void MytthAnaFakes::Loop()
             if(MET_RefFinal_et/GeV>20&&mt/GeV>50){
               if(nJets_OR_T_MV2c10_70==1&&nJets_OR_T>1&&nJets_OR_T<4){
                 TLorentzVector p4jet[10];
+		double bwtjet[10];
                 int njets(0);
                 for(int i = 0; i<nJets_OR_T; ++i){
                   if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))<0.83){ // not b-tagged                                                                
                     p4jet[njets].SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)), m_jet_eta->at(selected_jets_T->at(i)),
                                               m_jet_phi->at(selected_jets_T->at(i)),m_jet_E->at(selected_jets_T->at(i)));
+		    bwtjet[njets] = m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i));
                     ++njets;
                   }
                 }
@@ -3920,11 +4211,13 @@ void MytthAnaFakes::Loop()
             if(MET_RefFinal_et/GeV>20&&mt/GeV>50){
               if(nJets_OR_T_MV2c10_70==1&&nJets_OR_T>1&&nJets_OR_T<4){
                 TLorentzVector p4jet[10];
+		double bwtjet[10];
                 int njets(0);
                 for(int i = 0; i<nJets_OR_T; ++i){
                   if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))<0.83){ // not b-tagged
                     p4jet[njets].SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)), m_jet_eta->at(selected_jets_T->at(i)),
                                               m_jet_phi->at(selected_jets_T->at(i)),m_jet_E->at(selected_jets_T->at(i)));
+		    bwtjet[njets] = m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i));
                     ++njets;
                   }
                 }
@@ -4050,11 +4343,13 @@ void MytthAnaFakes::Loop()
             if(MET_RefFinal_et/GeV>20&&mt/GeV>50){
               if(nJets_OR_T_MV2c10_70==1&&nJets_OR_T>1&&nJets_OR_T<4){
                 TLorentzVector p4jet[10];
+		double bwtjet[10];
                 int njets(0);
                 for(int i = 0; i<nJets_OR_T; ++i){
                   if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))<0.83){ // not b-tagged
                     p4jet[njets].SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)), m_jet_eta->at(selected_jets_T->at(i)),
                                               m_jet_phi->at(selected_jets_T->at(i)),m_jet_E->at(selected_jets_T->at(i)));
+		    bwtjet[njets] = m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i));
                     ++njets;
                   }
                 }
@@ -4152,11 +4447,13 @@ void MytthAnaFakes::Loop()
             if(MET_RefFinal_et/GeV>20&&mt/GeV>50){
               if(nJets_OR_T_MV2c10_70==1&&nJets_OR_T>1&&nJets_OR_T<4){
 		TLorentzVector p4jet[10];
+		double bwtjet[10];
 		int njets(0);
 		for(int i = 0; i<nJets_OR_T; ++i){
 		  if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))<0.83){ // not b-tagged              
 		    p4jet[njets].SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)), m_jet_eta->at(selected_jets_T->at(i)),
 					      m_jet_phi->at(selected_jets_T->at(i)),m_jet_E->at(selected_jets_T->at(i)));
+		    bwtjet[njets] = m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i));
 		    ++njets;
 		  }
 		}
@@ -4255,11 +4552,13 @@ void MytthAnaFakes::Loop()
             if(MET_RefFinal_et/GeV>20&&mt/GeV>50){
               if(nJets_OR_T_MV2c10_70==1&&nJets_OR_T>1&&nJets_OR_T<4){
                 TLorentzVector p4jet[10];
+		double bwtjet[10];
                 int njets(0);
                 for(int i = 0; i<nJets_OR_T; ++i){
                   if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))<0.83){ // not b-tagged                                                                
                     p4jet[njets].SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)), m_jet_eta->at(selected_jets_T->at(i)),
                                               m_jet_phi->at(selected_jets_T->at(i)),m_jet_E->at(selected_jets_T->at(i)));
+		    bwtjet[njets] = m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i));
                     ++njets;
                   }
                 }
@@ -4351,7 +4650,7 @@ void MytthAnaFakes::Loop()
 	    int nvbfj(0); 
 	    TLorentzVector p4vbfj[20];
 	    for(int i = 0; i<(int)m_jet_pt->size(); ++i){ 
-	      if((fabs(m_jet_eta->at(i))>2.5&&fabs(m_jet_eta->at(i))<4.0)||(fabs(m_jet_eta->at(i))<2.5&&m_jet_passOR->at(i))){ // all jets 
+	      if((fabs(m_jet_eta->at(i))>2.5&&fabs(m_jet_eta->at(i))<4.0)){ // all jets 
 		if(fabs(m_jet_eta->at(i))>2.0&&m_jet_pt->at(i)/GeV>30.0&&nvbfj<20){ 
 		  p4vbfj[nvbfj].SetPtEtaPhiE(m_jet_pt->at(i),m_jet_eta->at(i),m_jet_phi->at(i),m_jet_E->at(i)); 
 		  ++nvbfj; 
@@ -4373,17 +4672,21 @@ void MytthAnaFakes::Loop()
 		hvbfnjets->Fill(nJets_OR_T,wt);
 		hvbfbjets->Fill(nJets_OR_T_MV2c10_70, wt);
 		hvbfht->Fill(HT/GeV,wt);
+		hvbfmjjmax->Fill(mjjmax,wt);
 		if(nJets_OR_T_MV2c10_70>1){
 		  hvbfnjets2B->Fill(nJets_OR_T,wt);
 		  hvbfht2B->Fill(HT/GeV,wt);
+		  hvbfmjjmax2B->Fill(mjjmax,wt);
 		}
 		else if(nJets_OR_T_MV2c10_70==1){
 		  hvbfnjets1B->Fill(nJets_OR_T,wt);
 		  hvbfht1B->Fill(HT/GeV,wt);
+		  hvbfmjjmax1B->Fill(mjjmax,wt);
 		}
 		else{
 		  hvbfnjets0B->Fill(nJets_OR_T,wt);
 		  hvbfht0B->Fill(HT/GeV,wt);
+		  hvbfmjjmax0B->Fill(mjjmax,wt);
 		}
 	      }
 	    }
@@ -4405,30 +4708,35 @@ void MytthAnaFakes::Loop()
 		      hbdtsigtransz->Fill(m_tau_BDTJetScoreSigTrans->at(i), wt);
 		      if(m_tau_JetBDTSigMedium->at(i)){ 
 			hptmtauz->Fill(pt<115?pt:114,wt);
+			hptmtauz9bins->Fill(pt<115?pt:114,wt); // 13/11
                         hetamtauz->Fill(fabs(eta),wt); // new mar 10
                         hntkmtauz->Fill(ntk,wt); // new mar 10			
 			htpvmtauz->Fill(fabs(m_tau_PromptTauVeto->at(i))<1?m_tau_PromptTauVeto->at(i):0.99*m_tau_PromptTauVeto->at(i)/fabs(m_tau_PromptTauVeto->at(i)), wt); // mar 15
 			hmv2cmtauz->Fill(fabs(m_tau_MV2c10->at(i))<1?m_tau_MV2c10->at(i):0.99*m_tau_MV2c10->at(i)/fabs(m_tau_MV2c10->at(i)), wt); // mar 25
 			if((mc_channel_number>0)&&(m_tau_truthType->at(i)!=10)){
+			  hjfmtauz->Fill(m_tau_truthJetFlavour->at(i),wt); //11/5
 			  if(m_tau_truthType->at(i)==2){
                             hptmtauzele->Fill(pt<115?pt:114, wt);
                           }
                           else if(m_tau_truthType->at(i)==6){
                             hptmtauzmu->Fill(pt<115?pt:114, wt);
                           }
+			  else if(m_tau_truthJetFlavour->at(i)==4){ 
+			    hptmtauzc->Fill(pt<115?pt:114, wt);
+			  }
 			  else if(m_tau_truthJetFlavour->at(i)>0&&m_tau_truthJetFlavour->at(i)<4){ 
 			    hptmtauzl->Fill(pt<115?pt:114, wt);
                             htruthmtauzl->Fill(m_tau_truthType->at(i),wt);
                             horigmtauzl->Fill(m_tau_truthOrigin->at(i),wt);
 			  }
-			  else if(m_tau_truthJetFlavour->at(i)==4){ 
-			    hptmtauzc->Fill(pt<115?pt:114, wt);
-			  }
-			  else if(m_tau_truthJetFlavour->at(i)==5){ 
+			  if(m_tau_truthJetFlavour->at(i)==5){ 
 			    hptmtauzb->Fill(pt<115?pt:114, wt);
 			  }
 			  else if(m_tau_truthJetFlavour->at(i)==21){ 
 			    hptmtauzg->Fill(pt<115?pt:114, wt);
+			  }
+			  else if(m_tau_truthJetFlavour->at(i)<0&&(m_tau_truthType->at(i)==2||m_tau_truthType->at(i)==6)){
+			    hptmtauzexl->Fill(pt<115?pt:114, wt); // 11/5
 			  }
 			  else{
 			    hptmtauzx->Fill(pt<115?pt:114, wt);
@@ -4445,46 +4753,51 @@ void MytthAnaFakes::Loop()
 			  hmv2cmtauzTruth->Fill(fabs(m_tau_MV2c10->at(i))<1?m_tau_MV2c10->at(i):0.99*m_tau_MV2c10->at(i)/fabs(m_tau_MV2c10->at(i)), wt); // mar 25
 			}
 		      }
-		      else{
-			hptltauz->Fill(pt<115?pt:114,wt);
-                        hetaltauz->Fill(fabs(eta),wt); // new mar 10
-                        hntkltauz->Fill(ntk,wt); // new mar10
-			htpvltauz->Fill(fabs(m_tau_PromptTauVeto->at(i))<1?m_tau_PromptTauVeto->at(i):0.99*m_tau_PromptTauVeto->at(i)/fabs(m_tau_PromptTauVeto->at(i)), wt); // mar 15
-			hmv2cltauz->Fill(fabs(m_tau_MV2c10->at(i))<1?m_tau_MV2c10->at(i):0.99*m_tau_MV2c10->at(i)/fabs(m_tau_MV2c10->at(i)), wt); // mar 25
+		      if(m_tau_JetBDTSigTight->at(i)){ 
+			hptltauz->Fill(pt<115?pt:114,wtt);
+			hptltauz9bins->Fill(pt<115?pt:114,wtt); //13/11
+                        hetaltauz->Fill(fabs(eta),wtt); // new mar 10
+                        hntkltauz->Fill(ntk,wtt); // new mar10
+			htpvltauz->Fill(fabs(m_tau_PromptTauVeto->at(i))<1?m_tau_PromptTauVeto->at(i):0.99*m_tau_PromptTauVeto->at(i)/fabs(m_tau_PromptTauVeto->at(i)), wtt); // mar 15
+			hmv2cltauz->Fill(fabs(m_tau_MV2c10->at(i))<1?m_tau_MV2c10->at(i):0.99*m_tau_MV2c10->at(i)/fabs(m_tau_MV2c10->at(i)), wtt); // mar 25
 			if((mc_channel_number>0)&&(m_tau_truthType->at(i)!=10)){
+			  hjfltauz->Fill(m_tau_truthJetFlavour->at(i),wtt); //11/5
 			  if(m_tau_truthType->at(i)==2){
-                            hptltauzele->Fill(pt<115?pt:114, wt);
+                            hptltauzele->Fill(pt<115?pt:114, wtt);
                           }
                           else if(m_tau_truthType->at(i)==6){
-                            hptltauzmu->Fill(pt<115?pt:114, wt);
+                            hptltauzmu->Fill(pt<115?pt:114, wtt);
                           }  
 			  else if(m_tau_truthJetFlavour->at(i)>0&&m_tau_truthJetFlavour->at(i)<4){ 
-			    hptltauzl->Fill(pt<115?pt:114, wt);
-                            htruthltauzl->Fill(m_tau_truthType->at(i),wt);
-                            horigltauzl->Fill(m_tau_truthOrigin->at(i),wt);
+			    hptltauzl->Fill(pt<115?pt:114, wtt);
+                            htruthltauzl->Fill(m_tau_truthType->at(i),wtt);
+                            horigltauzl->Fill(m_tau_truthOrigin->at(i),wtt);
 			  }
 			  else if(m_tau_truthJetFlavour->at(i)==4){ 
-			    hptltauzc->Fill(pt<115?pt:114, wt);
+			    hptltauzc->Fill(pt<115?pt:114, wtt);
 			  }
-			  else if(m_tau_truthJetFlavour->at(i)==5){ 
-			    hptltauzb->Fill(pt<115?pt:114, wt);
+			  if(m_tau_truthJetFlavour->at(i)==5){ 
+			    hptltauzb->Fill(pt<115?pt:114, wtt);
 			  }
 			  else if(m_tau_truthJetFlavour->at(i)==21){ 
-			    hptltauzg->Fill(pt<115?pt:114, wt);
+			    hptltauzg->Fill(pt<115?pt:114, wtt);
+			  }
+			  else if(m_tau_truthJetFlavour->at(i)<0&&(m_tau_truthType->at(i)==2||m_tau_truthType->at(i)==6)){
+			    hptltauzexl->Fill(pt<115?pt:114, wtt); // 11/5
 			  }
 			  else{
-			    hptltauzx->Fill(pt<115?pt:114, wt);
-                            htruthltauzx->Fill(m_tau_truthType->at(i),wt);
-                            horigltauzx->Fill(m_tau_truthOrigin->at(i),wt);
+			    hptltauzx->Fill(pt<115?pt:114, wtt);
+                            htruthltauzx->Fill(m_tau_truthType->at(i),wtt);
+                            horigltauzx->Fill(m_tau_truthOrigin->at(i),wtt);
 			  }
 			}
 			//if((m_tau_truthOrigin->at(i)>9&&m_tau_truthOrigin->at(i)<15)||(m_tau_truthOrigin->at(i)==43||m_tau_truthOrigin->at(i)==0)){
 			if(m_tau_truthType->at(i)==10){
-			  hptltauzTruth->Fill(pt<115?pt:114,wt);
-                          hetaltauzTruth->Fill(fabs(eta),wt); // new mar 10
-                          hntkltauzTruth->Fill(ntk,wt); // new mar 10
-			  htpvltauzTruth->Fill(fabs(m_tau_PromptTauVeto->at(i))<1?m_tau_PromptTauVeto->at(i):0.99*m_tau_PromptTauVeto->at(i)/fabs(m_tau_PromptTauVeto->at(i)), wt); // mar 15
-			  hmv2cltauzTruth->Fill(fabs(m_tau_MV2c10->at(i))<1?m_tau_MV2c10->at(i):0.99*m_tau_MV2c10->at(i)/fabs(m_tau_MV2c10->at(i)), wt); // mar 25
+			  hptltauzTruth->Fill(pt<115?pt:114,wtt);
+                          hetaltauzTruth->Fill(fabs(eta),wtt); // new mar 10
+                          hntkltauzTruth->Fill(ntk,wtt); // new mar 10
+			  htpvltauzTruth->Fill(fabs(m_tau_PromptTauVeto->at(i))<1?m_tau_PromptTauVeto->at(i):0.99*m_tau_PromptTauVeto->at(i)/fabs(m_tau_PromptTauVeto->at(i)), wtt); // mar 15
+			  hmv2cltauzTruth->Fill(fabs(m_tau_MV2c10->at(i))<1?m_tau_MV2c10->at(i):0.99*m_tau_MV2c10->at(i)/fabs(m_tau_MV2c10->at(i)), wtt); // mar 25
 			}
 		      }
 		    }	
@@ -4494,9 +4807,11 @@ void MytthAnaFakes::Loop()
 	    }
 	  }
 	  //5-30 emu+b+tau
-          if((dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&nJets_OR_T_MV2c10_70>0&&nJets_OR_T<3&&nTaus_OR_Pt25==1){ // ttbar events
+          if((dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70>0&&nJets_OR_T<3&&nTaus_OR_Pt25==1
+	     &&tau_passEleBDT_0&&tau_passMuonOLR_0){ // ttbar events
 	    if(nJets_OR_T_MV2c10_70==1&&nJets_OR_T==1){
 	      hptmtauemu1B->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+	      hptmtauemu1B9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt); //13/11
 	      if(tau_truthType_0!=10){
 		hjfmtauemu1B->Fill(tau_truthJetFlavour_0,wt);
 		if(tau_MV2c10_0>btagwpCut[1])hjfmtauemu1Bbwp1->Fill(tau_truthJetFlavour_0,wt);
@@ -4519,6 +4834,13 @@ void MytthAnaFakes::Loop()
 		if(tau_MV2c10_0>btagwpCut[2])hptmtauemu1Bbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		if(tau_MV2c10_0>btagwpCut[3])hptmtauemu1Bbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 	      }
+	      else if(tau_truthJetFlavour_0==21){ // oct 1 2018 
+		hptmtauemu1Bgj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		if(tau_MV2c10_0>btagwpCut[0])hptmtauemu1Bgjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		if(tau_MV2c10_0>btagwpCut[1])hptmtauemu1Bgjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		if(tau_MV2c10_0>btagwpCut[2])hptmtauemu1Bgjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		if(tau_MV2c10_0>btagwpCut[3])hptmtauemu1Bgjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+	      }
 	      else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)){
 		hptmtauemu1Blep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		if(tau_MV2c10_0>btagwpCut[0])hptmtauemu1Blepbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -4535,47 +4857,56 @@ void MytthAnaFakes::Loop()
 	      }
 	      //
 	      if(tau_JetBDTSigTight_0){ // tight 
-		hpttauemu1B->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		hpttauemu1B->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		hpttauemu1B9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt); //13/11
 		if(tau_truthType_0!=10){
-		  hjftauemu1B->Fill(tau_truthJetFlavour_0,wt);
-		  if(tau_MV2c10_0>btagwpCut[1])hjftauemu1Bbwp1->Fill(tau_truthJetFlavour_0,wt);
+		  hjftauemu1B->Fill(tau_truthJetFlavour_0,wtt);
+		  if(tau_MV2c10_0>btagwpCut[1])hjftauemu1Bbwp1->Fill(tau_truthJetFlavour_0,wtt);
 		}
-		if(tau_MV2c10_0>btagwpCut[0])hpttauemu1Bbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		if(tau_MV2c10_0>btagwpCut[1])hpttauemu1Bbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		if(tau_MV2c10_0>btagwpCut[2])hpttauemu1Bbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		if(tau_MV2c10_0>btagwpCut[3])hpttauemu1Bbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		if(tau_MV2c10_0>btagwpCut[0])hpttauemu1Bbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		if(tau_MV2c10_0>btagwpCut[1])hpttauemu1Bbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		if(tau_MV2c10_0>btagwpCut[2])hpttauemu1Bbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		if(tau_MV2c10_0>btagwpCut[3])hpttauemu1Bbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		if(tau_truthType_0==10){
-		  hpttauemu1BTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu1BTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu1BTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu1BTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu1BTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		  hpttauemu1BTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu1BTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu1BTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu1BTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu1BTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		}
 		else if(tau_truthJetFlavour_0==5){
-		  hpttauemu1Bbj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu1Bbjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu1Bbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu1Bbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu1Bbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		  hpttauemu1Bbj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu1Bbjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu1Bbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu1Bbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu1Bbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		}
+		else if(tau_truthJetFlavour_0==21){ // oct 1 2018
+		  hpttauemu1Bgj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu1Bgjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu1Bgjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu1Bgjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu1Bgjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		}
 		else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)){
-		  hpttauemu1Blep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu1Blepbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu1Blepbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu1Blepbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu1Blepbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		  hpttauemu1Blep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu1Blepbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu1Blepbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu1Blepbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu1Blepbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		}
 		else{
-		  hpttauemu1Bwj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu1Bwjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu1Bwjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu1Bwjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu1Bwjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		  hpttauemu1Bwj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu1Bwjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu1Bwjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu1Bwjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu1Bwjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		}
 	      }
 	    }
             if(nJets_OR_T_MV2c10_70==2&&nJets_OR_T==2){
               hptmtauemu2B->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+              hptmtauemu2B9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
               if(tau_truthType_0!=10){
                 hjfmtauemu2B->Fill(tau_truthJetFlavour_0,wt);
                 if(tau_MV2c10_0>btagwpCut[1])hjfmtauemu2Bbwp1->Fill(tau_truthJetFlavour_0,wt);
@@ -4598,6 +4929,13 @@ void MytthAnaFakes::Loop()
                 if(tau_MV2c10_0>btagwpCut[2])hptmtauemu2Bbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
                 if(tau_MV2c10_0>btagwpCut[3])hptmtauemu2Bbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
               }
+	      else if(tau_truthJetFlavour_0==21){ // oct 1 2018
+                hptmtauemu2Bgj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                if(tau_MV2c10_0>btagwpCut[0])hptmtauemu2Bgjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                if(tau_MV2c10_0>btagwpCut[1])hptmtauemu2Bgjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                if(tau_MV2c10_0>btagwpCut[2])hptmtauemu2Bgjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                if(tau_MV2c10_0>btagwpCut[3])hptmtauemu2Bgjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+              }
               else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)){
                 hptmtauemu2Blep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
                 if(tau_MV2c10_0>btagwpCut[0])hptmtauemu2Blepbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -4613,42 +4951,51 @@ void MytthAnaFakes::Loop()
                 if(tau_MV2c10_0>btagwpCut[3])hptmtauemu2Bwjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
               }
               if(tau_JetBDTSigTight_0){ // tight
-                hpttauemu2B->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                hpttauemu2B->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+                hpttauemu2B9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);//13/11
+
                 if(tau_truthType_0!=10){
-                  hjftauemu2B->Fill(tau_truthJetFlavour_0,wt);
-                  if(tau_MV2c10_0>btagwpCut[1])hjftauemu2Bbwp1->Fill(tau_truthJetFlavour_0,wt);
+                  hjftauemu2B->Fill(tau_truthJetFlavour_0,wtt);
+                  if(tau_MV2c10_0>btagwpCut[1])hjftauemu2Bbwp1->Fill(tau_truthJetFlavour_0,wtt);
                 }
-                if(tau_MV2c10_0>btagwpCut[0])hpttauemu2Bbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-                if(tau_MV2c10_0>btagwpCut[1])hpttauemu2Bbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-                if(tau_MV2c10_0>btagwpCut[2])hpttauemu2Bbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-                if(tau_MV2c10_0>btagwpCut[3])hpttauemu2Bbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                if(tau_MV2c10_0>btagwpCut[0])hpttauemu2Bbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+                if(tau_MV2c10_0>btagwpCut[1])hpttauemu2Bbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+                if(tau_MV2c10_0>btagwpCut[2])hpttauemu2Bbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+                if(tau_MV2c10_0>btagwpCut[3])hpttauemu2Bbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
                 if(tau_truthType_0==10){
-                  hpttauemu2BTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-                  if(tau_MV2c10_0>btagwpCut[0])hpttauemu2BTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-                  if(tau_MV2c10_0>btagwpCut[1])hpttauemu2BTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-                  if(tau_MV2c10_0>btagwpCut[2])hpttauemu2BTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-                  if(tau_MV2c10_0>btagwpCut[3])hpttauemu2BTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                  hpttauemu2BTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+                  if(tau_MV2c10_0>btagwpCut[0])hpttauemu2BTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+                  if(tau_MV2c10_0>btagwpCut[1])hpttauemu2BTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+                  if(tau_MV2c10_0>btagwpCut[2])hpttauemu2BTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+                  if(tau_MV2c10_0>btagwpCut[3])hpttauemu2BTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
                 }
 		else if(tau_truthJetFlavour_0==5){
-		  hpttauemu2Bbj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu2Bbjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu2Bbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu2Bbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu2Bbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		  hpttauemu2Bbj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu2Bbjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu2Bbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu2Bbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu2Bbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		}
+		else if(tau_truthJetFlavour_0==21){ // oct 1 2018
+		  hpttauemu2Bgj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu2Bgjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu2Bgjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu2Bgjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu2Bgjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		}
 		else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)){
-		  hpttauemu2Blep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu2Blepbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu2Blepbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu2Blepbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu2Blepbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		  hpttauemu2Blep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu2Blepbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu2Blepbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu2Blepbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu2Blepbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		}
 		else{
-		  hpttauemu2Bwj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu2Bwjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu2Bwjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu2Bwjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu2Bwjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		  hpttauemu2Bwj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[0])hpttauemu2Bwjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[1])hpttauemu2Bwjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[2])hpttauemu2Bwjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		  if(tau_MV2c10_0>btagwpCut[3])hpttauemu2Bwjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		}
               }
             }	    
@@ -4664,6 +5011,12 @@ void MytthAnaFakes::Loop()
             hnjetmmssB->Fill(nJets_OR_T,wt);
           if(dilep_type==3&&(Mll01/GeV<80||Mll01/GeV>100)&&(lep_ID_0*lep_ID_1>0)&&nJets_OR_T_MV2c10_70>0&&nJets_OR_T<4)
             hnjeteessB->Fill(nJets_OR_T,wt);
+	  // check z->ll 
+          if(nJets_OR_T>0&&(dilep_type==1||dilep_type==3)){
+            hmzll->Fill(Mll01/1000.<150.?Mll01/1000.:149.,wt);
+            if(dilep_type==1)hmzmm->Fill(Mll01/1000.<150.?Mll01/1000.:149.,wt);
+            if(dilep_type==3)hmzee->Fill(Mll01/1000.<150.?Mll01/1000.:149.,wt);
+          }
 	  //
 	  if((dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&nJets_OR_T_MV2c10_70>0){ // ttbar events inclusive
             for(int i=0; i<(int)m_tau_pt->size(); ++i){
@@ -4723,6 +5076,7 @@ void MytthAnaFakes::Loop()
 		      hbdtsigtransemuB->Fill(m_tau_BDTJetScoreSigTrans->at(i), wt);
                       if(m_tau_JetBDTSigMedium->at(i)){
 			hptmtauemuB->Fill(pt<115?pt:114,wt);
+			hptmtauemuB9bins->Fill(pt<115?pt:114,wt); //13/11
                         hetamtauemuB->Fill(fabs(eta),wt); // new mar 10
                         hntkmtauemuB->Fill(ntk,wt); // new mar 10
 			htpvmtauemuB->Fill(fabs(m_tau_PromptTauVeto->at(i))<1?m_tau_PromptTauVeto->at(i):0.99*m_tau_PromptTauVeto->at(i)/fabs(m_tau_PromptTauVeto->at(i)), wt); // mar 15
@@ -4763,46 +5117,47 @@ void MytthAnaFakes::Loop()
 			  hmv2cmtauemuBTruth->Fill(fabs(m_tau_MV2c10->at(i))<1?m_tau_MV2c10->at(i):0.99*m_tau_MV2c10->at(i)/fabs(m_tau_MV2c10->at(i)), wt); // mar 25
 			}
                       }
-		      else{
-			hptltauemuB->Fill(pt<115?pt:114,wt);
-                        hetaltauemuB->Fill(fabs(eta),wt); // new mar 10
-                        hntkltauemuB->Fill(ntk,wt); // new mar 10
-			htpvltauemuB->Fill(fabs(m_tau_PromptTauVeto->at(i))<1?m_tau_PromptTauVeto->at(i):0.99*m_tau_PromptTauVeto->at(i)/fabs(m_tau_PromptTauVeto->at(i)), wt); // mar 15
-			hmv2cltauemuB->Fill(fabs(m_tau_MV2c10->at(i))<1?m_tau_MV2c10->at(i):0.99*m_tau_MV2c10->at(i)/fabs(m_tau_MV2c10->at(i)), wt); // mar 25
+		      if(m_tau_JetBDTSigTight->at(i)){ // tight 
+			hptltauemuB->Fill(pt<115?pt:114,wtt);
+			hptltauemuB9bins->Fill(pt<115?pt:114,wtt);//13/11
+                        hetaltauemuB->Fill(fabs(eta),wtt); // new mar 10
+                        hntkltauemuB->Fill(ntk,wtt); // new mar 10
+			htpvltauemuB->Fill(fabs(m_tau_PromptTauVeto->at(i))<1?m_tau_PromptTauVeto->at(i):0.99*m_tau_PromptTauVeto->at(i)/fabs(m_tau_PromptTauVeto->at(i)), wtt); // mar 15
+			hmv2cltauemuB->Fill(fabs(m_tau_MV2c10->at(i))<1?m_tau_MV2c10->at(i):0.99*m_tau_MV2c10->at(i)/fabs(m_tau_MV2c10->at(i)), wtt); // mar 25
 			if((mc_channel_number>0)&&(m_tau_truthType->at(i)!=10)){
 			  if(m_tau_truthType->at(i)==2){
-                            hptltauemuBele->Fill(pt<115?pt:114, wt);
+                            hptltauemuBele->Fill(pt<115?pt:114, wtt);
                           }
                           else if(m_tau_truthType->at(i)==6){
-                            hptltauemuBmu->Fill(pt<115?pt:114, wt);
+                            hptltauemuBmu->Fill(pt<115?pt:114, wtt);
                           }
 			  else if(m_tau_truthJetFlavour->at(i)>0&&m_tau_truthJetFlavour->at(i)<4){ 
-			    hptltauemuBl->Fill(pt<115?pt:114, wt);
-                            htruthltauemuBl->Fill(m_tau_truthType->at(i),wt);
-                            horigltauemuBl->Fill(m_tau_truthOrigin->at(i),wt);
+			    hptltauemuBl->Fill(pt<115?pt:114, wtt);
+                            htruthltauemuBl->Fill(m_tau_truthType->at(i),wtt);
+                            horigltauemuBl->Fill(m_tau_truthOrigin->at(i),wtt);
 			  }
 			  else if(m_tau_truthJetFlavour->at(i)==4){ 
-			    hptltauemuBc->Fill(pt<115?pt:114, wt);
+			    hptltauemuBc->Fill(pt<115?pt:114, wtt);
 			  }
 			  else if(m_tau_truthJetFlavour->at(i)==5){ 
-			    hptltauemuBb->Fill(pt<115?pt:114, wt);
+			    hptltauemuBb->Fill(pt<115?pt:114, wtt);
 			  }
 			  else  if(m_tau_truthJetFlavour->at(i)==21){ 
-			    hptltauemuBg->Fill(pt<115?pt:114, wt);
+			    hptltauemuBg->Fill(pt<115?pt:114, wtt);
 			  }
 			  else{
-			    hptltauemuBx->Fill(pt<115?pt:114, wt);
-                            htruthltauemuBx->Fill(m_tau_truthType->at(i),wt);
-                            horigltauemuBx->Fill(m_tau_truthOrigin->at(i),wt);
+			    hptltauemuBx->Fill(pt<115?pt:114, wtt);
+                            htruthltauemuBx->Fill(m_tau_truthType->at(i),wtt);
+                            horigltauemuBx->Fill(m_tau_truthOrigin->at(i),wtt);
 			  }
 			}
 			//if((m_tau_truthOrigin->at(i)>9&&m_tau_truthOrigin->at(i)<15)||(m_tau_truthOrigin->at(i)==43||m_tau_truthOrigin->at(i)==0)){
 			if(m_tau_truthType->at(i)==10){
-			  hptltauemuBTruth->Fill(pt<115?pt:114,wt);
-                          hetaltauemuBTruth->Fill(fabs(eta),wt); // new mar 10
-                          hntkltauemuBTruth->Fill(ntk,wt); // new mar 10
-			  htpvltauemuBTruth->Fill(fabs(m_tau_PromptTauVeto->at(i))<1?m_tau_PromptTauVeto->at(i):0.99*m_tau_PromptTauVeto->at(i)/fabs(m_tau_PromptTauVeto->at(i)), wt); // mar 15
-			  hmv2cltauemuBTruth->Fill(fabs(m_tau_MV2c10->at(i))<1?m_tau_MV2c10->at(i):0.99*m_tau_MV2c10->at(i)/fabs(m_tau_MV2c10->at(i)), wt); // mar 25
+			  hptltauemuBTruth->Fill(pt<115?pt:114,wtt);
+                          hetaltauemuBTruth->Fill(fabs(eta),wtt); // new mar 10
+                          hntkltauemuBTruth->Fill(ntk,wtt); // new mar 10
+			  htpvltauemuBTruth->Fill(fabs(m_tau_PromptTauVeto->at(i))<1?m_tau_PromptTauVeto->at(i):0.99*m_tau_PromptTauVeto->at(i)/fabs(m_tau_PromptTauVeto->at(i)), wtt); // mar 15
+			  hmv2cltauemuBTruth->Fill(fabs(m_tau_MV2c10->at(i))<1?m_tau_MV2c10->at(i):0.99*m_tau_MV2c10->at(i)/fabs(m_tau_MV2c10->at(i)), wtt); // mar 25
 			}
 		      }
                     }
@@ -4819,11 +5174,13 @@ void MytthAnaFakes::Loop()
           TLorentzVector p4lepx;
 	  p4lepx.SetPtEtaPhiE(lep_Pt_0,lep_Eta_0, lep_Phi_0,lep_E_0);
 	  TLorentzVector p4jet[10];
+	  double bwtjet[10];
 	  int njets(0);
 	  for(int i = 0; i<nJets_OR_T; ++i){
 	    if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))<0.83){ // not b-tagged              
 	      p4jet[njets].SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)), m_jet_eta->at(selected_jets_T->at(i)),
 					m_jet_phi->at(selected_jets_T->at(i)),m_jet_E->at(selected_jets_T->at(i)));
+	      bwtjet[njets] = m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i));
 	      ++njets;
 	    }
 	  }
@@ -4833,7 +5190,7 @@ void MytthAnaFakes::Loop()
 	  if(trig_match&&ptcut&&(!((abs(lep_ID_0)==11&&lep_promptLeptonVeto_TagWeight_0<-0.7&&lep_chargeIDBDTTight_0>0.7)||(abs(lep_ID_0)==13&&lep_promptLeptonVeto_TagWeight_0<-0.5)))&&
 		SelectTLepid(0)&&nJets_OR_T_MV2c10_70>0&&((nTaus_OR_Pt25==1&&nJets_OR_T<4)||(nTaus_OR_Pt25==2&&nJets_OR_T<3))){
 	    if(MET_RefFinal_et/GeV>25.0){
-              if(nTaus_OR_Pt25==2){
+              if(nTaus_OR_Pt25==2&&tau_passEleBDT_0&&tau_passMuonOLR_0&&tau_passEleBDT_1&&tau_passMuonOLR_1){
                 // qcd 2tau mar 10                                                                                     
                 if(tau_charge_0*tau_charge_1<0){
                   hptl2tauosqcd->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114.,wt);
@@ -4846,7 +5203,7 @@ void MytthAnaFakes::Loop()
                   hleptruthl2taussqcd->Fill(lep_truthType_0,wt);
                 }
               }
-	      if(nTaus_OR_Pt25==1){
+	      if(nTaus_OR_Pt25==1&&tau_passEleBDT_0&&tau_passMuonOLR_0){
 		int ican = FindLooseTau(); 
 		if(ican>-1){ 
 		  if(tau_charge_0*m_tau_charge->at(ican)<0){ // 
@@ -4859,9 +5216,10 @@ void MytthAnaFakes::Loop()
 		  }
 		}
 	      }
-	      if(nTaus_OR_Pt25==1){
+	      if(nTaus_OR_Pt25==1&&tau_passEleBDT_0&&tau_passMuonOLR_0){
 		if((lep_ID_0>0?-1:1)*tau_charge_0<0){ // os
 		  hptmutauosqcd->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		  hptmutauosqcd9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
                   hetamutauosqcd->Fill(fabs(tau_eta_0), wt); // mar 10
                   hntkmutauosqcd->Fill(tau_numTrack_0, wt); // mar 10
 		  if(tau_MV2c10_0>btagwpCut[0])hptltauosqcdbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt); //april 10 
@@ -4871,6 +5229,8 @@ void MytthAnaFakes::Loop()
 		  //may 29
 		  if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==2){
 		    hptltau1posqcd->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                    hptltau1posqcd9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt); //13/11
+
 		    if(tau_MV2c10_0>btagwpCut[0])hptltau1posqcdbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[1])hptltau1posqcdbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[2])hptltau1posqcdbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -4887,6 +5247,7 @@ void MytthAnaFakes::Loop()
 		  if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==3&&njets==1){
 		    hmwltau3posqcd->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
 		    hptltau3posqcd->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                    hptltau3posqcd9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
 		    if(tau_MV2c10_0>btagwpCut[0])hptltau3posqcdbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[1])hptltau3posqcdbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[2])hptltau3posqcdbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -4915,6 +5276,8 @@ void MytthAnaFakes::Loop()
 		}
 		else{ // ss
 		  hptmutaussqcd->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                  hptmutaussqcd9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt); //13/11
+
                   hetamutaussqcd->Fill(fabs(tau_eta_0),wt); // mar 10
                   hntkmutaussqcd->Fill(tau_numTrack_0, wt); // mar 10
 		  if(tau_MV2c10_0>btagwpCut[0])hptltaussqcdbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -4924,6 +5287,7 @@ void MytthAnaFakes::Loop()
 		  //may 29
 		  if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==2){
 		    hptltau1pssqcd->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                    hptltau1pssqcd9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
 		    if(tau_MV2c10_0>btagwpCut[0])hptltau1pssqcdbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[1])hptltau1pssqcdbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[2])hptltau1pssqcdbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -4940,6 +5304,7 @@ void MytthAnaFakes::Loop()
 		  if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==3&&njets==1){
 		    hmwltau3pssqcd->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);    
 		    hptltau3pssqcd->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                    hptltau3pssqcd9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt); //13/11
 		    if(tau_MV2c10_0>btagwpCut[0])hptltau3pssqcdbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[1])hptltau3pssqcdbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[2])hptltau3pssqcdbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -4969,7 +5334,7 @@ void MytthAnaFakes::Loop()
 	      }
 	    }
 	    else{  // met<25 cuts may-29 
-              if(nTaus_OR_Pt25==2){
+              if(nTaus_OR_Pt25==2&&tau_passEleBDT_0&&tau_passMuonOLR_0&&tau_passEleBDT_1&&tau_passMuonOLR_1){
                 // qcd 2tau mar 10                                                                                     
                 if(tau_charge_0*tau_charge_1<0){
                   hptl2tauosqcdlow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114.,wt);
@@ -4982,7 +5347,7 @@ void MytthAnaFakes::Loop()
                   hleptruthl2taussqcdlow->Fill(lep_truthType_0,wt);
                 }
               }
-	      if(nTaus_OR_Pt25==1){
+	      if(nTaus_OR_Pt25==1&&tau_passEleBDT_0&&tau_passMuonOLR_0){
 		int ican = FindLooseTau(); 
 		if(ican>-1){ 
 		  if(tau_charge_0*m_tau_charge->at(ican)<0){ // 
@@ -4995,9 +5360,10 @@ void MytthAnaFakes::Loop()
 		  }
 		}
 	      }
-	      if(nTaus_OR_Pt25==1){
+	      if(nTaus_OR_Pt25==1&&tau_passEleBDT_0&&tau_passMuonOLR_0){
                 if((lep_ID_0>0?-1:1)*tau_charge_0<0){ // os
                   hptmutauosqcdlow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                  hptmutauosqcdlow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
                   hetamutauosqcdlow->Fill(fabs(tau_eta_0),wt); // mar 10
                   hntkmutauosqcdlow->Fill(tau_numTrack_0, wt); // mar 10
 		  if(tau_MV2c10_0>btagwpCut[0])hptltauosqcdlowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -5006,16 +5372,17 @@ void MytthAnaFakes::Loop()
 		  if(tau_MV2c10_0>btagwpCut[3])hptltauosqcdlowbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		  if(nJets_OR_T_MV2c10_70>1){
 		    hnjetltauosqcdlow->Fill(nJets_OR_T,wt);
-		    if(tau_JetBDTSigTight_0)hnjetltautightosqcdlow->Fill(nJets_OR_T,wt);
+		    if(tau_JetBDTSigTight_0)hnjetltautightosqcdlow->Fill(nJets_OR_T,wtt);
 		    if(tau_MV2c10_0>btagwpCut[1]){
 		      hnjetltauosqcdlowbwp1->Fill(nJets_OR_T,wt);
-		      if(tau_JetBDTSigTight_0)hnjetltautightosqcdlowbwp1->Fill(nJets_OR_T,wt);
+		      if(tau_JetBDTSigTight_0)hnjetltautightosqcdlowbwp1->Fill(nJets_OR_T,wtt);
 		    }
 		  }
 		  //may 29
 		  if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==2){
 		    //hmwltau1posqcdlow->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
 		    hptltau1posqcdlow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                    hptltau1posqcdlow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
 		    if(tau_MV2c10_0>btagwpCut[0])hptltau1posqcdlowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[1])hptltau1posqcdlowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[2])hptltau1posqcdlowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -5033,6 +5400,7 @@ void MytthAnaFakes::Loop()
 		  if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==3&&njets==1){
 		    hmwltau3posqcdlow->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
 		    hptltau3posqcdlow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                    hptltau3posqcdlow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[0])hptltau3posqcdlowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[1])hptltau3posqcdlowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[2])hptltau3posqcdlowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -5054,10 +5422,10 @@ void MytthAnaFakes::Loop()
                     hntkmutauosqcdlowTruth->Fill(tau_numTrack_0, wt); // mar 10
 		    if(nJets_OR_T_MV2c10_70>1){
 		      hnjetltauosqcdlowTruth->Fill(nJets_OR_T,wt);
-		      if(tau_JetBDTSigTight_0)hnjetltautightosqcdlowTruth->Fill(nJets_OR_T,wt);
+		      if(tau_JetBDTSigTight_0)hnjetltautightosqcdlowTruth->Fill(nJets_OR_T,wtt);
 		      if(tau_MV2c10_0>btagwpCut[1]){
 			hnjetltauosqcdlowTruthbwp1->Fill(nJets_OR_T,wt);
-			if(tau_JetBDTSigTight_0)hnjetltautightosqcdlowTruthbwp1->Fill(nJets_OR_T,wt);
+			if(tau_JetBDTSigTight_0)hnjetltautightosqcdlowTruthbwp1->Fill(nJets_OR_T,wtt);
 		      }
 		    }
 		    if(tau_MV2c10_0>btagwpCut[0])hptltauosqcdlowTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -5069,6 +5437,7 @@ void MytthAnaFakes::Loop()
                 }
                 else{ // ss
                   hptmutaussqcdlow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                  hptmutaussqcdlow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
                   hetamutaussqcdlow->Fill(fabs(tau_eta_0),wt); // mar 10
                   hntkmutaussqcdlow->Fill(tau_numTrack_0, wt); // mar 10
 		  if(tau_MV2c10_0>btagwpCut[0])hptltaussqcdlowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt); //april 10 
@@ -5077,16 +5446,17 @@ void MytthAnaFakes::Loop()
 		  if(tau_MV2c10_0>btagwpCut[3])hptltaussqcdlowbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		  if(nJets_OR_T_MV2c10_70>1){
 		    hnjetltaussqcdlow->Fill(nJets_OR_T,wt);
-                    if(tau_JetBDTSigTight_0)hnjetltautightssqcdlow->Fill(nJets_OR_T,wt);
+                    if(tau_JetBDTSigTight_0)hnjetltautightssqcdlow->Fill(nJets_OR_T,wtt);
                     if(tau_MV2c10_0>btagwpCut[1]){
 		      hnjetltaussqcdlowbwp1->Fill(nJets_OR_T,wt);
-                      if(tau_JetBDTSigTight_0)hnjetltautightssqcdlowbwp1->Fill(nJets_OR_T,wt);
+                      if(tau_JetBDTSigTight_0)hnjetltautightssqcdlowbwp1->Fill(nJets_OR_T,wtt);
                     }
 		  }
 		  //may 29
 		  if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==2){
 		    //hmwltau1pssqcdlow->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
 		    hptltau1pssqcdlow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                    hptltau1pssqcdlow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
 		    if(tau_MV2c10_0>btagwpCut[0])hptltau1pssqcdlowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[1])hptltau1pssqcdlowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[2])hptltau1pssqcdlowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -5104,6 +5474,8 @@ void MytthAnaFakes::Loop()
 		  if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==3&&njets==1){
 		    hmwltau3pssqcdlow->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
 		    hptltau3pssqcdlow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                    hptltau3pssqcdlow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
+
 		    if(tau_MV2c10_0>btagwpCut[0])hptltau3pssqcdlowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[1])hptltau3pssqcdlowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[2])hptltau3pssqcdlowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -5125,10 +5497,10 @@ void MytthAnaFakes::Loop()
                     hntkmutaussqcdlowTruth->Fill(tau_numTrack_0, wt); // mar 10
 		    if(nJets_OR_T_MV2c10_70>1){
 		      hnjetltaussqcdlowTruth->Fill(nJets_OR_T,wt);
-		      if(tau_JetBDTSigTight_0)hnjetltautightssqcdlowTruth->Fill(nJets_OR_T,wt);
+		      if(tau_JetBDTSigTight_0)hnjetltautightssqcdlowTruth->Fill(nJets_OR_T,wtt);
 		      if(tau_MV2c10_0>btagwpCut[1]){
 			hnjetltaussqcdlowTruthbwp1->Fill(nJets_OR_T,wt);
-			if(tau_JetBDTSigTight_0)hnjetltautightssqcdlowTruthbwp1->Fill(nJets_OR_T,wt);
+			if(tau_JetBDTSigTight_0)hnjetltautightssqcdlowTruthbwp1->Fill(nJets_OR_T,wtt);
 		      }
 		    }
 		    if(tau_MV2c10_0>btagwpCut[0])hptltaussqcdlowTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -5141,6 +5513,29 @@ void MytthAnaFakes::Loop()
               }
 	    }
 	  }
+	  // check z->ll as ltau 8/9 
+          // save z->ltau for lepton->tau calibration: e and muon faking tau
+          if(trig_match&&ptcut&&((abs(lep_ID_0)==11&&lep_promptLeptonVeto_TagWeight_0<-0.7)||(abs(lep_ID_0)==13&&lep_promptLeptonVeto_TagWeight_0<-0.5))
+	     &&SelectTLepid(0)&&(nTaus_OR_Pt25==1&&nJets_OR_T>0&&tau_passEleBDT_0&&tau_passMuonOLR_0)){
+            if(((lep_ID_0>0?-1:1)*tau_charge_0)<0){
+              hmzleptau->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wt);
+	      if(abs(lep_ID_0)==11)hmzeletau->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wt);
+	      if(abs(lep_ID_0)==13)hmzmutau->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wt);
+              if(tau_MV2c10_0>btagwpCut[0])hmzleptaubwp0->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wt);
+              if(tau_MV2c10_0>btagwpCut[1])hmzleptaubwp1->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wt);
+              if(tau_MV2c10_0>btagwpCut[2])hmzleptaubwp2->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wt);
+              if(tau_MV2c10_0>btagwpCut[3])hmzleptaubwp3->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wt);
+              if(tau_JetBDTSigTight_0){
+                hmzleptautight->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wtt);
+		if(abs(lep_ID_0)==11)hmzeletautight->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wtt);
+		if(abs(lep_ID_0)==13)hmzmutautight->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wtt);
+                if(tau_MV2c10_0>btagwpCut[0])hmzleptautightbwp0->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wtt);
+                if(tau_MV2c10_0>btagwpCut[1])hmzleptautightbwp1->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wtt);
+                if(tau_MV2c10_0>btagwpCut[2])hmzleptautightbwp2->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wtt);
+                if(tau_MV2c10_0>btagwpCut[3])hmzleptautightbwp3->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wtt);
+              }
+            }
+          }
 	  if(trig_match&&ptcut&&((abs(lep_ID_0)==11&&lep_promptLeptonVeto_TagWeight_0<-0.7&&lep_chargeIDBDTTight_0>0.7)||(abs(lep_ID_0)==13&&lep_promptLeptonVeto_TagWeight_0<-0.5))&&
 		SelectTLepid(0)&&nJets_OR_T_MV2c10_70>0&&((nTaus_OR_Pt25==1&&nJets_OR_T<4)||(nTaus_OR_Pt25==2&&nJets_OR_T<3))){ // control region 
             hmetltau->Fill(MET_RefFinal_et/GeV, wt);
@@ -5175,7 +5570,7 @@ void MytthAnaFakes::Loop()
                 }
               }
             }
-	    if(nTaus_OR_Pt25==1){ // ltauss ltauos
+	    if(nTaus_OR_Pt25==1&&tau_passEleBDT_0&&tau_passMuonOLR_0){ // ltauss ltauos
 	      // look for a loose 
 	      if(MET_RefFinal_et/GeV>25.0){
 		for(int i=0; i<(int)m_tau_pt->size(); ++i){ 
@@ -5295,6 +5690,8 @@ void MytthAnaFakes::Loop()
 		  }
 		  if((lep_ID_0>0?-1:1)*tau_charge_0<0){ // os
 		    hptltauos->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                    hptltauos9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
+
 		    if(tau_MV2c10_0>btagwpCut[0])hptltauosbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[1])hptltauosbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[2])hptltauosbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -5304,10 +5701,10 @@ void MytthAnaFakes::Loop()
 		    hmv2cltauos->Fill(fabs(tau_MV2c10_0)<1?tau_MV2c10_0:0.99*tau_MV2c10_0/fabs(tau_MV2c10_0), wt); // mar 25
 		    if(nJets_OR_T_MV2c10_70>1){
 		      hnjetltauos->Fill(nJets_OR_T,wt);
-		      if(tau_JetBDTSigTight_0)hnjetltautightos->Fill(nJets_OR_T,wt);
+		      if(tau_JetBDTSigTight_0)hnjetltautightos->Fill(nJets_OR_T,wtt);
 		      if(tau_MV2c10_0>btagwpCut[1]){
 			hnjetltauosbwp1->Fill(nJets_OR_T,wt);
-			if(tau_JetBDTSigTight_0)hnjetltautightosbwp1->Fill(nJets_OR_T,wt);
+			if(tau_JetBDTSigTight_0)hnjetltautightosbwp1->Fill(nJets_OR_T,wtt);
 		      }
 		    }
 		    // may 29 check for bjet mass shape 
@@ -5319,53 +5716,63 @@ void MytthAnaFakes::Loop()
 		    }
 		    //April 6
 		    if(nJets_OR_T_MV2c10_70>1&&tau_JetBDTSigTight_0&&nJets_OR_T==2){
-		      hleptruth1pos->Fill(lep_truthType_0,wt);
-		      hptltau1pos->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-                      hmleptau1pos->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wt);
+		      hleptruth1pos->Fill(lep_truthType_0,wtt);
+		      hptltau1pos->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+                      hptltau1pos9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);//13/11
+                      hmleptau1pos->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wtt);
 		      if(tau_truthType_0!=10){
-			hjfltau1pos->Fill(tau_truthJetFlavour_0,wt);
+			hjfltau1pos->Fill(tau_truthJetFlavour_0,wtt);
 			if(tau_truthJetFlavour_0==5){
-			  hptltau1posbj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[0])hptltau1posbjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[1])hptltau1posbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[2])hptltau1posbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[3])hptltau1posbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  hptltau1posbj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1posbjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1posbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1posbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1posbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 			}
+			else if(tau_truthJetFlavour_0==21){ // oct 1 2018
+			  hptltau1posgj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1posgjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1posgjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1posgjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1posgjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			}
+			
 			else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)){
-			  hptltau1poslep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[0])hptltau1poslepbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[1])hptltau1poslepbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[2])hptltau1poslepbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[3])hptltau1poslepbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  hptltau1poslep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1poslepbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1poslepbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1poslepbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1poslepbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 			}
 			else {
-			  hptltau1poswj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[0])hptltau1poswjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[1])hptltau1poswjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[2])hptltau1poswjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[3])hptltau1poswjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  hptltau1poswj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1poswjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1poswjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1poswjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1poswjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 			}
 		      }
-		      if(tau_MV2c10_0>btagwpCut[0])hptltau1posbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		      if(tau_MV2c10_0>btagwpCut[0])hptltau1posbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		      if(tau_MV2c10_0>btagwpCut[1]){
-			hptltau1posbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_truthType_0!=10)hjfltau1posbwp1->Fill(tau_truthJetFlavour_0,wt);
+			hptltau1posbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_truthType_0!=10)hjfltau1posbwp1->Fill(tau_truthJetFlavour_0,wtt);
 		      }
-		      if(tau_MV2c10_0>btagwpCut[2])hptltau1posbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		      if(tau_MV2c10_0>btagwpCut[3])hptltau1posbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		      if(tau_MV2c10_0>btagwpCut[2])hptltau1posbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		      if(tau_MV2c10_0>btagwpCut[3])hptltau1posbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		      //if((tau_truthOrigin_0>9&&tau_truthOrigin_0<15)||(tau_truthOrigin_0==43||tau_truthOrigin_0==0)){
 		      if(tau_truthType_0==10){
-			hptltau1posTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			hmleptau1posTruth->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wt);
-			if(tau_MV2c10_0>btagwpCut[0])hptltau1posTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_MV2c10_0>btagwpCut[1])hptltau1posTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_MV2c10_0>btagwpCut[2])hptltau1posTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_MV2c10_0>btagwpCut[3])hptltau1posTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			hptltau1posTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			hmleptau1posTruth->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wtt);
+			if(tau_MV2c10_0>btagwpCut[0])hptltau1posTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_MV2c10_0>btagwpCut[1])hptltau1posTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_MV2c10_0>btagwpCut[2])hptltau1posTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_MV2c10_0>btagwpCut[3])hptltau1posTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		      }
 		    }
 		    if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==2){
 		      hleptruth3pos->Fill(lep_truthType_0,wt);
 		      hptltau3pos->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                      hptltau3pos9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
                       hmleptau3pos->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wt);
 		      if(tau_truthType_0!=10){
 			hjfltau3pos->Fill(tau_truthJetFlavour_0,wt);
@@ -5375,6 +5782,13 @@ void MytthAnaFakes::Loop()
 			  if(tau_MV2c10_0>btagwpCut[1])hptltau3posbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 			  if(tau_MV2c10_0>btagwpCut[2])hptltau3posbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 			  if(tau_MV2c10_0>btagwpCut[3])hptltau3posbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			}
+			else if(tau_truthJetFlavour_0==21){ // oct 1 2018
+			  hptltau3posgj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau3posgjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau3posgjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau3posgjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau3posgjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 			}
 			else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)){
 			  hptltau3poslep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -5413,10 +5827,10 @@ void MytthAnaFakes::Loop()
 		      hptltauosTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		      if(nJets_OR_T_MV2c10_70>1){
 			hnjetltauosTruth->Fill(nJets_OR_T,wt);
-			if(tau_JetBDTSigTight_0)hnjetltautightosTruth->Fill(nJets_OR_T,wt);
+			if(tau_JetBDTSigTight_0)hnjetltautightosTruth->Fill(nJets_OR_T,wtt);
 			if(tau_MV2c10_0>btagwpCut[1]){
 			  hnjetltauosTruthbwp1->Fill(nJets_OR_T,wt);
-			  if(tau_JetBDTSigTight_0)hnjetltautightosTruthbwp1->Fill(nJets_OR_T,wt);
+			  if(tau_JetBDTSigTight_0)hnjetltautightosTruthbwp1->Fill(nJets_OR_T,wtt);
 			}
 		      }
 		      if(tau_MV2c10_0>btagwpCut[0])hptltauosTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -5477,49 +5891,49 @@ void MytthAnaFakes::Loop()
 		      }		      
 		      if(tau_JetBDTSigTight_0){ 
 			if(tau_numTrack_0==1){ 
-			  hptttau1posTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  hetattau1posTruth->Fill(fabs(tau_eta_0),wt); 
-			  hsigtransttau1posTruth->Fill(tau_BDTJetScoreSigTrans_0, wt);
-			  hmv2c10ttau1posTruth->Fill(tau_MV2c10_0, wt);
-			  hputtau1posTruth->Fill(mu<60?mu:59., wt);
+			  hptttau1posTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  hetattau1posTruth->Fill(fabs(tau_eta_0),wtt); 
+			  hsigtransttau1posTruth->Fill(tau_BDTJetScoreSigTrans_0, wtt);
+			  hmv2c10ttau1posTruth->Fill(tau_MV2c10_0, wtt);
+			  hputtau1posTruth->Fill(mu<60?mu:59., wtt);
 			  if(tau_MV2c10_0>btagwpCut[0]){
-			    hptttau1posTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			    hputtau1posTruthbwp0->Fill(mu<60?mu:59., wt);
+			    hptttau1posTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			    hputtau1posTruthbwp0->Fill(mu<60?mu:59., wtt);
 			  }
 			  if(tau_MV2c10_0>btagwpCut[1]){
-			    hptttau1posTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			    hputtau1posTruthbwp1->Fill(mu<60?mu:59., wt);
+			    hptttau1posTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			    hputtau1posTruthbwp1->Fill(mu<60?mu:59., wtt);
 			  }
 			  if(tau_MV2c10_0>btagwpCut[2]){
-			    hptttau1posTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			    hputtau1posTruthbwp2->Fill(mu<60?mu:59., wt);
+			    hptttau1posTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			    hputtau1posTruthbwp2->Fill(mu<60?mu:59., wtt);
 			  }
 			  if(tau_MV2c10_0>btagwpCut[3]){
-			    hptttau1posTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			    hputtau1posTruthbwp3->Fill(mu<60?mu:59., wt);
+			    hptttau1posTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			    hputtau1posTruthbwp3->Fill(mu<60?mu:59., wtt);
 			  }						
 			}
 			else if(tau_numTrack_0==3){
-			  hptttau3posTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  hetattau3posTruth->Fill(fabs(tau_eta_0),wt); 
-			  hsigtransttau3posTruth->Fill(tau_BDTJetScoreSigTrans_0, wt);
-			  hmv2c10ttau3posTruth->Fill(tau_MV2c10_0, wt);
-			  hputtau3posTruth->Fill(mu<60?mu:59., wt);
+			  hptttau3posTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  hetattau3posTruth->Fill(fabs(tau_eta_0),wtt); 
+			  hsigtransttau3posTruth->Fill(tau_BDTJetScoreSigTrans_0, wtt);
+			  hmv2c10ttau3posTruth->Fill(tau_MV2c10_0, wtt);
+			  hputtau3posTruth->Fill(mu<60?mu:59., wtt);
 			  if(tau_MV2c10_0>btagwpCut[0]){
-			    hptttau3posTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			    hputtau3posTruthbwp0->Fill(mu<60?mu:59., wt);
+			    hptttau3posTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			    hputtau3posTruthbwp0->Fill(mu<60?mu:59., wtt);
 			  }
 			  if(tau_MV2c10_0>btagwpCut[1]){
-			    hptttau3posTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			    hputtau3posTruthbwp1->Fill(mu<60?mu:59., wt);
+			    hptttau3posTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			    hputtau3posTruthbwp1->Fill(mu<60?mu:59., wtt);
 			  }
 			  if(tau_MV2c10_0>btagwpCut[2]){
-			    hptttau3posTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			    hputtau3posTruthbwp2->Fill(mu<60?mu:59., wt);
+			    hptttau3posTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			    hputtau3posTruthbwp2->Fill(mu<60?mu:59., wtt);
 			  }
 			  if(tau_MV2c10_0>btagwpCut[3]){
-			    hptttau3posTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			    hputtau3posTruthbwp3->Fill(mu<60?mu:59., wt);
+			    hptttau3posTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			    hputtau3posTruthbwp3->Fill(mu<60?mu:59., wtt);
 			  }
 			}		      
 		      }		      
@@ -5540,7 +5954,7 @@ void MytthAnaFakes::Loop()
 		      hleptruthmutauos->Fill(lep_truthType_0,wt);
 		    }
 		    hetaltauos->Fill(fabs(tau_eta_0),wt); 
-		    htightltauos->Fill(tau_JetBDTSigTight_0,wt); 
+		    htightltauos->Fill(tau_JetBDTSigTight_0,wtt); 
 		    htagltauos->Fill(tau_tagWeightBin_0>=4?1:0,wt);
 		    hntkltauos->Fill(tau_numTrack_0, wt);
 		    hmorltauos->Fill(tau_passMuonOLR_0,wt);
@@ -5550,6 +5964,7 @@ void MytthAnaFakes::Loop()
 		  }
 		  else{ // ss
 		    hptltauss->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                    hptltauss9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
 		    if(tau_MV2c10_0>btagwpCut[0])hptltaussbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[1])hptltaussbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[2])hptltaussbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -5559,10 +5974,10 @@ void MytthAnaFakes::Loop()
 		    hmv2cltauss->Fill(fabs(tau_MV2c10_0)<1?tau_MV2c10_0:0.99*tau_MV2c10_0/fabs(tau_MV2c10_0), wt); // mar 25
 		    if(nJets_OR_T_MV2c10_70>1){
 		      hnjetltauss->Fill(nJets_OR_T,wt);
-                      if(tau_JetBDTSigTight_0)hnjetltautightss->Fill(nJets_OR_T,wt);
+                      if(tau_JetBDTSigTight_0)hnjetltautightss->Fill(nJets_OR_T,wtt);
                       if(tau_MV2c10_0>btagwpCut[1]){
                         hnjetltaussbwp1->Fill(nJets_OR_T,wt);
-                        if(tau_JetBDTSigTight_0)hnjetltautightssbwp1->Fill(nJets_OR_T,wt);
+                        if(tau_JetBDTSigTight_0)hnjetltautightssbwp1->Fill(nJets_OR_T,wtt);
                       }
 		    }
                     if(nJets_OR_T_MV2c10_70==1&&nJets_OR_T==2){
@@ -5573,51 +5988,61 @@ void MytthAnaFakes::Loop()
                     }
 		    //April 6
 		    if(nJets_OR_T_MV2c10_70>1&&tau_JetBDTSigTight_0&&nJets_OR_T==2){
-		      hleptruth1pss->Fill(lep_truthType_0,wt);
-		      hptltau1pss->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		      hleptruth1pss->Fill(lep_truthType_0,wtt);
+		      hptltau1pss->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+                      hptltau1pss9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);//13/11
 		      if(tau_truthType_0!=10){
-			hjfltau1pss->Fill(tau_truthJetFlavour_0,wt);
+			hjfltau1pss->Fill(tau_truthJetFlavour_0,wtt);
 			if(tau_truthJetFlavour_0==5){
-			  hptltau1pssbj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[0])hptltau1pssbjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[1])hptltau1pssbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[2])hptltau1pssbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[3])hptltau1pssbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  hptltau1pssbj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1pssbjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1pssbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1pssbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1pssbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			}
+			else if(tau_truthJetFlavour_0==21){// oct 1 2018
+			  hptltau1pssgj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1pssgjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1pssgjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1pssgjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1pssgjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 			}
 			else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)){
-			  hptltau1psslep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[0])hptltau1psslepbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[1])hptltau1psslepbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[2])hptltau1psslepbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[3])hptltau1psslepbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  hptltau1psslep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1psslepbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1psslepbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1psslepbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1psslepbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 			}
 			else{
-			  hptltau1psswj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[0])hptltau1psswjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[1])hptltau1psswjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[2])hptltau1psswjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[3])hptltau1psswjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  hptltau1psswj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1psswjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1psswjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1psswjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1psswjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 			}
 		      }
-		      if(tau_MV2c10_0>btagwpCut[0])hptltau1pssbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		      if(tau_MV2c10_0>btagwpCut[0])hptltau1pssbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		      if(tau_MV2c10_0>btagwpCut[1]){
-			hptltau1pssbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_truthType_0!=10)hjfltau1pssbwp1->Fill(tau_truthJetFlavour_0,wt);
+			hptltau1pssbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_truthType_0!=10)hjfltau1pssbwp1->Fill(tau_truthJetFlavour_0,wtt);
 		      }
-		      if(tau_MV2c10_0>btagwpCut[2])hptltau1pssbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		      if(tau_MV2c10_0>btagwpCut[3])hptltau1pssbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		      if(tau_MV2c10_0>btagwpCut[2])hptltau1pssbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+		      if(tau_MV2c10_0>btagwpCut[3])hptltau1pssbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		      //if((tau_truthOrigin_0>9&&tau_truthOrigin_0<15)||(tau_truthOrigin_0==43||tau_truthOrigin_0==0)){
 		      if(tau_truthType_0==10){
-			hptltau1pssTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_MV2c10_0>btagwpCut[0])hptltau1pssTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_MV2c10_0>btagwpCut[1])hptltau1pssTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_MV2c10_0>btagwpCut[2])hptltau1pssTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_MV2c10_0>btagwpCut[3])hptltau1pssTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			hptltau1pssTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_MV2c10_0>btagwpCut[0])hptltau1pssTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_MV2c10_0>btagwpCut[1])hptltau1pssTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_MV2c10_0>btagwpCut[2])hptltau1pssTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_MV2c10_0>btagwpCut[3])hptltau1pssTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		      }
 		    }
 		    if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==2){
 		      hleptruth3pss->Fill(lep_truthType_0,wt);
 		      hptltau3pss->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                      hptltau3pss9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
+
 		      if(tau_truthType_0!=10){
 			hjfltau3pss->Fill(tau_truthJetFlavour_0,wt);
 			if(tau_truthJetFlavour_0==5){
@@ -5626,6 +6051,13 @@ void MytthAnaFakes::Loop()
 			  if(tau_MV2c10_0>btagwpCut[1])hptltau3pssbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 			  if(tau_MV2c10_0>btagwpCut[2])hptltau3pssbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 			  if(tau_MV2c10_0>btagwpCut[3])hptltau3pssbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			}
+			else if(tau_truthJetFlavour_0==21){ // oct 1 2018
+			  hptltau3pssgj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau3pssgjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau3pssgjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau3pssgjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau3pssgjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 			}
 			else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)){
 			  hptltau3psslep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -5663,10 +6095,10 @@ void MytthAnaFakes::Loop()
 		      hptltaussTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		      if(nJets_OR_T_MV2c10_70>1){
 			hnjetltaussTruth->Fill(nJets_OR_T,wt);
-			if(tau_JetBDTSigTight_0)hnjetltautightssTruth->Fill(nJets_OR_T,wt);
+			if(tau_JetBDTSigTight_0)hnjetltautightssTruth->Fill(nJets_OR_T,wtt);
 			if(tau_MV2c10_0>btagwpCut[1]){
 			  hnjetltaussTruthbwp1->Fill(nJets_OR_T,wt);
-			  if(tau_JetBDTSigTight_0)hnjetltautightssTruthbwp1->Fill(nJets_OR_T,wt);
+			  if(tau_JetBDTSigTight_0)hnjetltautightssTruthbwp1->Fill(nJets_OR_T,wtt);
 			}
 		      }
 		      if(tau_MV2c10_0>btagwpCut[0])hptltaussTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -5692,7 +6124,7 @@ void MytthAnaFakes::Loop()
 		      hleptruthmutauss->Fill(lep_truthType_0,wt);
 		    }
 		    hetaltauss->Fill(fabs(tau_eta_0),wt); 
-		    htightltauss->Fill(tau_JetBDTSigTight_0,wt); 
+		    htightltauss->Fill(tau_JetBDTSigTight_0,wtt); 
 		    htagltauss->Fill(tau_tagWeightBin_0>=4?1:0,wt);
 		    hntkltauss->Fill(tau_numTrack_0, wt);
 		    hmorltauss->Fill(tau_passMuonOLR_0,wt);
@@ -5714,81 +6146,107 @@ void MytthAnaFakes::Loop()
 		      hleptruthl2taumlsslow->Fill(lep_truthType_0,wt); // mar 15		    
 		    }
 		  }
-		  if((lep_ID_0>0?-1:1)*tau_charge_0<0){ // os 
-                    hptmutauoslow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-                    hetamutauoslow->Fill(fabs(tau_eta_0),wt); // mar 10
-                    hntkmutauoslow->Fill(tau_numTrack_0, wt); // mar 10
-		    if(tau_MV2c10_0>btagwpCut[0])hptltauoslowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		    if(tau_MV2c10_0>btagwpCut[1])hptltauoslowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		    if(tau_MV2c10_0>btagwpCut[2])hptltauoslowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		    if(tau_MV2c10_0>btagwpCut[3])hptltauoslowbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		  if((lep_ID_0>0?-1:1)*tau_charge_0<0){ // os
+		    if(tau_JetBDTSigTight_0){
+		      hptmutauoslow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		      hptmutauoslow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
+		      hetamutauoslow->Fill(fabs(tau_eta_0),wt); // mar 10
+		      hntkmutauoslow->Fill(tau_numTrack_0, wt); // mar 10
+		      if(tau_MV2c10_0>btagwpCut[0])hptltauoslowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		      if(tau_MV2c10_0>btagwpCut[1])hptltauoslowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		      if(tau_MV2c10_0>btagwpCut[2])hptltauoslowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		      if(tau_MV2c10_0>btagwpCut[3])hptltauoslowbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		    }
 		    //April 10
 		    if(nJets_OR_T_MV2c10_70>1&&tau_JetBDTSigTight_0&&nJets_OR_T==3&&njets==1){
-		      hptltau1poslow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		      hmwltau1poslow->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
-                      hmleptau1poslow->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wt);
+		      hptltau1poslow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+                      hptltau1poslow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);//13/11
+		      hmwltau1poslow->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
+                      hmleptau1poslow->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wtt);
+		      if(bwtjet[0]>0.11){ // 11/5
+			hmwltau1poslowc->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
+		      }
+		      else{
+			hmwltau1poslownoc->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
+		      }
+		      //
 		      if(tau_truthType_0!=10){
-			hjfltau1poslow->Fill(tau_truthJetFlavour_0,wt);
+			hjfltau1poslow->Fill(tau_truthJetFlavour_0,wtt);
 			if(tau_truthJetFlavour_0==5){
-			  hmwltau1poslowbj->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
-			  hptltau1poslowbj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[0])hptltau1poslowbjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[1])hptltau1poslowbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[2])hptltau1poslowbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[3])hptltau1poslowbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  hmwltau1poslowbj->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
+			  hptltau1poslowbj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1poslowbjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1poslowbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1poslowbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1poslowbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			}
+			else if(tau_truthJetFlavour_0==21){// oct 1 2018
+			  hmwltau1poslowgj->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
+			  hptltau1poslowgj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1poslowgjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1poslowgjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1poslowgjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1poslowgjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 			}
 			else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)){ 
-			  hptltau1poslowlep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[0])hptltau1poslowlepbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[1])hptltau1poslowlepbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[2])hptltau1poslowlepbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[3])hptltau1poslowlepbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  hmwltau1poslowlep->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+			  hptltau1poslowlep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1poslowlepbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1poslowlepbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1poslowlepbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1poslowlepbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  hmwltau1poslowlep->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
 			}
 			else{
-			  hmwltau1poslowWjj->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
-			  hptltau1poslowwj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[0])hptltau1poslowwjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[1])hptltau1poslowwjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[2])hptltau1poslowwjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[3])hptltau1poslowwjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  hmwltau1poslowWjj->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
+			  hptltau1poslowwj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1poslowwjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1poslowwjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1poslowwjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1poslowwjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 			}
 		      }
 		      if(tau_MV2c10_0>btagwpCut[0]){
-			hptltau1poslowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_truthType_0!=10)hjfltau1poslowbwp0->Fill(tau_truthJetFlavour_0,wt);
-			hmwltau1poslowbwp0->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+			hptltau1poslowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_truthType_0!=10)hjfltau1poslowbwp0->Fill(tau_truthJetFlavour_0,wtt);
+			hmwltau1poslowbwp0->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
 		      }
 		      if(tau_MV2c10_0>btagwpCut[1]){
-			hptltau1poslowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_truthType_0!=10)hjfltau1poslowbwp1->Fill(tau_truthJetFlavour_0,wt);
-			hmwltau1poslowbwp1->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+			hptltau1poslowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_truthType_0!=10)hjfltau1poslowbwp1->Fill(tau_truthJetFlavour_0,wtt);
+			hmwltau1poslowbwp1->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
 		      }
 		      if(tau_MV2c10_0>btagwpCut[2]){
-			hptltau1poslowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_truthType_0!=10)hjfltau1poslowbwp2->Fill(tau_truthJetFlavour_0,wt);
-			hmwltau1poslowbwp2->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+			hptltau1poslowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_truthType_0!=10)hjfltau1poslowbwp2->Fill(tau_truthJetFlavour_0,wtt);
+			hmwltau1poslowbwp2->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
 		      }
 		      if(tau_MV2c10_0>btagwpCut[3]){
-			hptltau1poslowbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_truthType_0!=10)hjfltau1poslowbwp3->Fill(tau_truthJetFlavour_0,wt);
-			hmwltau1poslowbwp3->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+			hptltau1poslowbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_truthType_0!=10)hjfltau1poslowbwp3->Fill(tau_truthJetFlavour_0,wtt);
+			hmwltau1poslowbwp3->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
 		      }
 		      //if((tau_truthOrigin_0>9&&tau_truthOrigin_0<15)||(tau_truthOrigin_0==43||tau_truthOrigin_0==0)){
 		      if(tau_truthType_0==10){
-			hmwltau1poslowTruth->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt); 
-			hptltau1poslowTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			hmleptau1poslowTruth->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wt);
-			if(tau_MV2c10_0>btagwpCut[0])hptltau1poslowTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_MV2c10_0>btagwpCut[1])hptltau1poslowTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_MV2c10_0>btagwpCut[2])hptltau1poslowTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_MV2c10_0>btagwpCut[3])hptltau1poslowTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			hmwltau1poslowTruth->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt); 
+			hptltau1poslowTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			hmleptau1poslowTruth->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wtt);
+			if(tau_MV2c10_0>btagwpCut[0])hptltau1poslowTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_MV2c10_0>btagwpCut[1])hptltau1poslowTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_MV2c10_0>btagwpCut[2])hptltau1poslowTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_MV2c10_0>btagwpCut[3])hptltau1poslowTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		      }
 		    }
 		    if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==3&&njets==1){
 		      hptltau3poslow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		      hptltau3poslow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
 		      hmwltau3poslow->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
                       hmleptau3poslow->Fill((p4lepx+p4tau[0]).M()/1000.<150.?(p4lepx+p4tau[0]).M()/1000.:149.,wt);
+		      if(bwtjet[0]>0.11){
+			hmwltau3poslowc->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+		      }
+		      else{
+			hmwltau3poslownoc->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+		      }
 		      if(tau_truthType_0!=10){
 			hjfltau3poslow->Fill(tau_truthJetFlavour_0,wt);
 			if(tau_truthJetFlavour_0==5){
@@ -5798,6 +6256,14 @@ void MytthAnaFakes::Loop()
 			  if(tau_MV2c10_0>btagwpCut[1])hptltau3poslowbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 			  if(tau_MV2c10_0>btagwpCut[2])hptltau3poslowbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 			  if(tau_MV2c10_0>btagwpCut[3])hptltau3poslowbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			}
+			else if(tau_truthJetFlavour_0==21){ // oct 1 2018
+			  hmwltau3poslowgj->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+			  hptltau3poslowgj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau3poslowgjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau3poslowgjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau3poslowgjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau3poslowgjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 			}
 			else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)){ 
 			  hptltau3poslowlep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -5860,77 +6326,103 @@ void MytthAnaFakes::Loop()
                     hleptruthmutauoslow->Fill(lep_truthType_0,wt);
                   }
 		  else{ // ss
-                    hptmutausslow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-                    hetamutausslow->Fill(fabs(tau_eta_0),wt); // mar 10 
-                    hntkmutausslow->Fill(tau_numTrack_0, wt); // mar 10 
-		    if(tau_MV2c10_0>btagwpCut[0])hptltausslowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		    if(tau_MV2c10_0>btagwpCut[1])hptltausslowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		    if(tau_MV2c10_0>btagwpCut[2])hptltausslowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-		    if(tau_MV2c10_0>btagwpCut[3])hptltausslowbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		    if(tau_JetBDTSigTight_0){
+		      hptmutausslow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		      hptmutausslow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
+		      hetamutausslow->Fill(fabs(tau_eta_0),wt); // mar 10 
+		      hntkmutausslow->Fill(tau_numTrack_0, wt); // mar 10 
+		      if(tau_MV2c10_0>btagwpCut[0])hptltausslowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		      if(tau_MV2c10_0>btagwpCut[1])hptltausslowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		      if(tau_MV2c10_0>btagwpCut[2])hptltausslowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		      if(tau_MV2c10_0>btagwpCut[3])hptltausslowbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		    }
 		    //April 10
 		    if(nJets_OR_T_MV2c10_70>1&&tau_JetBDTSigTight_0&&nJets_OR_T==3&&njets==1){
-		      hmwltau1psslow->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt); 
-		      hptltau1psslow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+		      hmwltau1psslow->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt); 
+		      hptltau1psslow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+                      hptltau1psslow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);//13/11
+
+		      if(bwtjet[0]>0.11){
+			hmwltau1psslowc->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
+		      }
+		      else{
+			hmwltau1psslownoc->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
+		      }
 		      if(tau_truthType_0!=10){
-			hjfltau1psslow->Fill(tau_truthJetFlavour_0,wt);
+			hjfltau1psslow->Fill(tau_truthJetFlavour_0,wtt);
 			if(tau_truthJetFlavour_0==5){
-			  hmwltau1psslowbj->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
-			  hptltau1psslowbj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[0])hptltau1psslowbjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[1])hptltau1psslowbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[2])hptltau1psslowbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[3])hptltau1psslowbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  hmwltau1psslowbj->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
+			  hptltau1psslowbj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1psslowbjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1psslowbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1psslowbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1psslowbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			}
+			else if(tau_truthJetFlavour_0==21){ //oct 1 2018
+			  hmwltau1psslowgj->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
+			  hptltau1psslowgj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1psslowgjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1psslowgjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1psslowgjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1psslowgjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 			}		
 			else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)){ 
-			  hptltau1psslowlep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[0])hptltau1psslowlepbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[1])hptltau1psslowlepbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[2])hptltau1psslowlepbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[3])hptltau1psslowlepbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  hmwltau1psslowlep->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+			  hptltau1psslowlep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1psslowlepbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1psslowlepbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1psslowlepbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1psslowlepbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  hmwltau1psslowlep->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
 			}
 			else{
-			  hmwltau1psslowWjj->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
-			  hptltau1psslowwj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[0])hptltau1psslowwjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[1])hptltau1psslowwjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[2])hptltau1psslowwjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			  if(tau_MV2c10_0>btagwpCut[3])hptltau1psslowwjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  hmwltau1psslowWjj->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
+			  hptltau1psslowwj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau1psslowwjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau1psslowwjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau1psslowwjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau1psslowwjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 			}
 		      }	
 		      if(tau_MV2c10_0>btagwpCut[0]){
-			hptltau1psslowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_truthType_0!=10)hjfltau1psslowbwp0->Fill(tau_truthJetFlavour_0,wt);
-			hmwltau1psslowbwp0->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+			hptltau1psslowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_truthType_0!=10)hjfltau1psslowbwp0->Fill(tau_truthJetFlavour_0,wtt);
+			hmwltau1psslowbwp0->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
 		      }
 		      if(tau_MV2c10_0>btagwpCut[1]){
-			hptltau1psslowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_truthType_0!=10)hjfltau1psslowbwp1->Fill(tau_truthJetFlavour_0,wt);
-			hmwltau1psslowbwp1->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+			hptltau1psslowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_truthType_0!=10)hjfltau1psslowbwp1->Fill(tau_truthJetFlavour_0,wtt);
+			hmwltau1psslowbwp1->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
 		      }
 		      if(tau_MV2c10_0>btagwpCut[2]){
-			hptltau1psslowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_truthType_0!=10)hjfltau1psslowbwp2->Fill(tau_truthJetFlavour_0,wt);
-			hmwltau1psslowbwp2->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+			hptltau1psslowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_truthType_0!=10)hjfltau1psslowbwp2->Fill(tau_truthJetFlavour_0,wtt);
+			hmwltau1psslowbwp2->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
 		      }
 		      if(tau_MV2c10_0>btagwpCut[3]){
-			hptltau1psslowbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_truthType_0!=10)hjfltau1psslowbwp3->Fill(tau_truthJetFlavour_0,wt);
-			hmwltau1psslowbwp3->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+			hptltau1psslowbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_truthType_0!=10)hjfltau1psslowbwp3->Fill(tau_truthJetFlavour_0,wtt);
+			hmwltau1psslowbwp3->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt);
 		      }
 		      //if((tau_truthOrigin_0>9&&tau_truthOrigin_0<15)||(tau_truthOrigin_0==43||tau_truthOrigin_0==0)){
 		      if(tau_truthType_0==10){
-			hmwltau1psslowTruth->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt); 
-			hptltau1psslowTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_MV2c10_0>btagwpCut[0])hptltau1psslowTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_MV2c10_0>btagwpCut[1])hptltau1psslowTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_MV2c10_0>btagwpCut[2])hptltau1psslowTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
-			if(tau_MV2c10_0>btagwpCut[3])hptltau1psslowTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			hmwltau1psslowTruth->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wtt); 
+			hptltau1psslowTruth->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_MV2c10_0>btagwpCut[0])hptltau1psslowTruthbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_MV2c10_0>btagwpCut[1])hptltau1psslowTruthbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_MV2c10_0>btagwpCut[2])hptltau1psslowTruthbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
+			if(tau_MV2c10_0>btagwpCut[3])hptltau1psslowTruthbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wtt);
 		      }
 		    }
 		    if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==3&&njets==1){
 		      hmwltau3psslow->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt); 
 		      hptltau3psslow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                      hptltau3psslow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
+		      if(bwtjet[0]>0.11){ // 11/5
+			hmwltau3psslowc->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+		      }
+		      else{
+			hmwltau3psslownoc->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+		      }
 		      if(tau_truthType_0!=10){
 			hjfltau3psslow->Fill(tau_truthJetFlavour_0,wt);
 			if(tau_truthJetFlavour_0==5){
@@ -5940,6 +6432,14 @@ void MytthAnaFakes::Loop()
 			  if(tau_MV2c10_0>btagwpCut[1])hptltau3psslowbjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 			  if(tau_MV2c10_0>btagwpCut[2])hptltau3psslowbjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 			  if(tau_MV2c10_0>btagwpCut[3])hptltau3psslowbjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			}
+			else if(tau_truthJetFlavour_0==21){ // oct 1 2018
+			  hmwltau3psslowgj->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
+			  hptltau3psslowgj->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[0])hptltau3psslowgjbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[1])hptltau3psslowgjbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[2])hptltau3psslowgjbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+			  if(tau_MV2c10_0>btagwpCut[3])hptltau3psslowgjbwp3->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 			}
 			else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)){ 
 			  hptltau3psslowlep->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -6008,6 +6508,8 @@ void MytthAnaFakes::Loop()
 		  if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==2){
 		    //hmwltau1posmetlow->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
 		    hptltau1posmetlow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                    hptltau1posmetlow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
+
 		    if(tau_MV2c10_0>btagwpCut[0])hptltau1posmetlowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[1])hptltau1posmetlowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
 		    if(tau_MV2c10_0>btagwpCut[2])hptltau1posmetlowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -6024,6 +6526,7 @@ void MytthAnaFakes::Loop()
                   if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==3&&njets==1){
                     hmwltau3posmetlow->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
                     hptltau3posmetlow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                    hptltau3posmetlow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
                     if(tau_MV2c10_0>btagwpCut[0])hptltau3posmetlowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
                     if(tau_MV2c10_0>btagwpCut[1])hptltau3posmetlowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
                     if(tau_MV2c10_0>btagwpCut[2])hptltau3posmetlowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -6041,6 +6544,8 @@ void MytthAnaFakes::Loop()
 		else{ //ss 
                   if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==2){
                     hptltau1pssmetlow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                    hptltau1pssmetlow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
+
                     if(tau_MV2c10_0>btagwpCut[0])hptltau1pssmetlowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
                     if(tau_MV2c10_0>btagwpCut[1])hptltau1pssmetlowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
                     if(tau_MV2c10_0>btagwpCut[2])hptltau1pssmetlowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -6056,6 +6561,8 @@ void MytthAnaFakes::Loop()
                   if(nJets_OR_T_MV2c10_70>1&&nJets_OR_T==3&&njets==1){
                     hmwltau3pssmetlow->Fill((p4jet[0]+p4tau[0]).M()/1000.<150.?(p4jet[0]+p4tau[0]).M()/1000.:149.,wt);
                     hptltau3pssmetlow->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
+                    hptltau3pssmetlow9bins->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);//13/11
+
                     if(tau_MV2c10_0>btagwpCut[0])hptltau3pssmetlowbwp0->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
                     if(tau_MV2c10_0>btagwpCut[1])hptltau3pssmetlowbwp1->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
                     if(tau_MV2c10_0>btagwpCut[2])hptltau3pssmetlowbwp2->Fill(tau_pt_0/GeV<115?tau_pt_0/GeV:114., wt);
@@ -6073,7 +6580,7 @@ void MytthAnaFakes::Loop()
 		//
 	      }
 	    }
-	    else if(nTaus_OR_Pt25==2){
+	    else if(nTaus_OR_Pt25==2&&tau_passEleBDT_0&&tau_passMuonOLR_0&&tau_passEleBDT_1&&tau_passMuonOLR_1){
               if(MET_RefFinal_et/GeV>=0){
 		TLorentzVector p4tau[2];
 		p4tau[0].SetPtEtaPhiE(tau_pt_0,tau_eta_0, tau_phi_0,tau_E_0);
@@ -6084,7 +6591,7 @@ void MytthAnaFakes::Loop()
 		  hleptruthl2tauos->Fill(lep_truthType_0,wt); 
 		  hptsubl2tauos->Fill(tau_pt_1/GeV<115?tau_pt_1/GeV:114.,wt); 
 		  hptsubl2tauoswt->Fill(tau_pt_1/GeV<115?tau_pt_1/GeV:114.,wt*wt_sftau); 
-		  htightl2tauos->Fill(tau_JetBDTSigTight_0+tau_JetBDTSigTight_1,wt);
+		  htightl2tauos->Fill(tau_JetBDTSigTight_0+tau_JetBDTSigTight_1,wtt);
 		  htagl2tauos->Fill(tau_tagWeightBin_0>=4?1:0+tau_tagWeightBin_1>=4?1:0,wt);
 		  hmassl2tauos->Fill((p4tau[0]+p4tau[1]).M()/GeV, wt); 
 		  hmassl2tauoswt->Fill((p4tau[0]+p4tau[1]).M()/GeV, wt*wt_sftau); 
@@ -6112,7 +6619,7 @@ void MytthAnaFakes::Loop()
 		  hleptruthl2tauss->Fill(lep_truthType_0,wt);
 		  hptsubl2tauss->Fill(tau_pt_1/GeV<115?tau_pt_1/GeV:114.,wt); 
 		  hptsubl2tausswt->Fill(tau_pt_1/GeV<115?tau_pt_1/GeV:114.,wt*wt_sftau);
-		  htightl2tauss->Fill(tau_JetBDTSigTight_0+tau_JetBDTSigTight_1,wt);
+		  htightl2tauss->Fill(tau_JetBDTSigTight_0+tau_JetBDTSigTight_1,wtt);
 		  htagl2tauss->Fill(tau_tagWeightBin_0>=4?1:0+tau_tagWeightBin_1>=4?1:0,wt);
 		  hmassl2tauss->Fill((p4tau[0]+p4tau[1]).M()/GeV, wt);
 		  hmassl2tausswt->Fill((p4tau[0]+p4tau[1]).M()/GeV, wt*wt_sftau);
@@ -6184,14 +6691,23 @@ void MytthAnaFakes::Loop()
 	      double taujmin(99999.);
 	      double drtaujmin(99.);
 	      double sumjets(0.);
+	      double sumbjets(0.);
+	      double lbmin(99999.);
 	      TLorentzVector p4jet[10];
+	      TLorentzVector p4lb;
 	      for(int i = 0; i<njetx; ++i){
 		sumjets +=m_jet_pt->at(selected_jets_T->at(i));
-		if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))>0.83){
-		  ++nbjetx;
-		}
 		p4jet[i].SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)),m_jet_eta->at(selected_jets_T->at(i)),m_jet_phi->at(selected_jets_T->at(i)),
 					    m_jet_E->at(selected_jets_T->at(i)));
+                if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))>0.83){
+		  sumbjets +=m_jet_pt->at(selected_jets_T->at(i));
+		  double rx = (p4lep+p4jet[i]).M()/GeV;
+		  if(rx<lbmin){
+		    lbmin = rx; 
+		    p4lb = p4lep+p4jet[i];
+		  }
+                  ++nbjetx;
+                }
 		double phi1 = m_jet_phi->at(selected_jets_T->at(i));
 		double eta1 = m_jet_eta->at(selected_jets_T->at(i));
 		double dr= DrEtaPhi(lep_Eta_0, lep_Phi_0, eta1, phi1); 
@@ -6208,23 +6724,26 @@ void MytthAnaFakes::Loop()
 	      p4tau[0].SetPtEtaPhiE(tau_pt_0,tau_eta_0, tau_phi_0,tau_E_0);
 	      p4tau[1].SetPtEtaPhiE(tau_pt_1,tau_eta_1, tau_phi_1,tau_E_1);
 	      for(int i = 0; i<njetx; ++i){ 
-		double rm = (p4tau[0]+p4jet[i]).M()/GeV;
+		double rm = (p4tau[0]+p4tau[1]+p4jet[i]).M()/GeV;
 		if(rm<taujmin)taujmin = rm; 
 		double dr = p4tau[0].DeltaR(p4jet[i]); 
 		if(dr<drtaujmin)drtaujmin=dr;
-		rm = (p4tau[1]+p4jet[i]).M()/GeV;
-                if(rm<taujmin)taujmin = rm;
+		//rm = (p4tau[1]+p4jet[i]).M()/GeV;
+		//if(rm<taujmin)taujmin = rm;
 		dr = p4tau[1].DeltaR(p4jet[i]);
-                if(dr<drtaujmin)drtaujmin=dr;
+		if(dr<drtaujmin)drtaujmin=dr;
 	      }
 	      tnp_event =EventNumber;
 	      tnp_run = RunNumber;
 	      tnp_evtclass = nTaus_OR_Pt25;
 	      tnp_weight = wt*(mc_channel_number>0?lepSFObjLoose/lepSFObjTight:1.0); // using lepSFObjLoose for 1l2tau only 
+              tnp_weightt = wtt*(mc_channel_number>0?lepSFObjLoose/lepSFObjTight:1.0); // using lepSFObjLoose for 1l2tau only
 	      tnp_njets =njetx;
 	      tnp_nbjets = nbjetx;
 	      tnp_met = MET_RefFinal_et/GeV;
 	      tnp_lept =lep_Pt_0/GeV*(lep_ID_0>0?-1:1); // signed with charge
+	      tnp_mtw = 2*lep_Pt_0/GeV*MET_RefFinal_et/GeV*(1-cos(MET_RefFinal_phi-lep_Phi_0));
+	      tnp_mtw = tnp_mtw>0?sqrt(tnp_mtw):0.;
 	      tnp_htjets =sumjets;
 	      tnp_leadtaupt = tau_pt_0/GeV;
 	      tnp_subtaupt = tau_pt_1/GeV;
@@ -6255,6 +6774,10 @@ void MytthAnaFakes::Loop()
               tnp_etamax =fabs(tau_eta_0)>fabs(tau_eta_1)?fabs(tau_eta_0):fabs(tau_eta_1); 
 	      tnp_leadfrompv = tau_fromPV_0;
 	      tnp_subfrompv = tau_fromPV_1;
+	      tnp_leadmuolr = tau_passMuonOLR_0;
+	      tnp_submuolr = tau_passMuonOLR_1;
+	      tnp_leadelebdt = tau_passEleBDT_0;
+              tnp_subelebdt = tau_passEleBDT_1;
 	      // BDT
 	      tmva1l2tau_njets25 = njetx<6?njetx:5; // cap njets
 	      tmva1l2tau_nbjets25 = nbjetx<4?nbjetx:3; // cap nbjets
@@ -6272,6 +6795,9 @@ void MytthAnaFakes::Loop()
 	      double dphix = fabs(MET_RefFinal_phi - (p4tau[0]+p4tau[1]).Phi());
 	      if(dphix>TMath::Pi())dphix = 2*TMath::Pi()-dphix;
 	      tnp_drmetditau = dphix;
+	      tnp_htbjets = sumbjets; // new 10/30
+	      tnp_lbmin = lbmin; // new
+	      tnp_drlbditau = p4lb.DeltaR(p4tau[0]+p4tau[1]); //new 
 	      tnp->Fill();
 	    }
 	    else if(nTaus_OR_Pt25==1){
@@ -6285,17 +6811,27 @@ void MytthAnaFakes::Loop()
 		double taujmin(99999.);
 		double drtaujmin(99.);
 		double sumjets(0.);
+		double sumbjets(0.);
+		double lbmin(99999.);
 		TLorentzVector p4jet[10];
+		TLorentzVector p4lb;
 		for(int i = 0; i<njetmax; ++i){
 		  double phi1 = m_jet_phi->at(selected_jets_T->at(i));
 		  double eta1 = m_jet_eta->at(selected_jets_T->at(i));		  
 		  if(DrEtaPhi(m_tau_eta->at(ican), m_tau_phi->at(ican), eta1, phi1)>0.4){
 		    sumjets +=m_jet_pt->at(selected_jets_T->at(i));
-		    if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))>0.83){
-		      ++nbjetx;
-		    }
 		    p4jet[njetx].SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)),m_jet_eta->at(selected_jets_T->at(i)),m_jet_phi->at(selected_jets_T->at(i)),
 						m_jet_E->at(selected_jets_T->at(i)));
+                    if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))>0.83){
+		      sumbjets +=m_jet_pt->at(selected_jets_T->at(i));
+		      double rx = (p4lep+p4jet[i]).M()/GeV;
+		      if(rx<lbmin){
+			lbmin = rx;
+			p4lb = p4lep+p4jet[i];
+		      }
+                      ++nbjetx;
+                    }
+
 		    double dr= DrEtaPhi(lep_Eta_0, lep_Phi_0, eta1, phi1);
 		    if(dr<ljmin)ljmin = dr;
 		    //dr= DrEtaPhi(tau_eta_0, tau_phi_0, eta1, phi1)>DrEtaPhi(m_tau_eta->at(ican), m_tau_phi->at(ican), eta1, phi1)?
@@ -6316,23 +6852,26 @@ void MytthAnaFakes::Loop()
 		p4tau[0].SetPtEtaPhiE(tau_pt_0,tau_eta_0, tau_phi_0,tau_E_0);
 		p4tau[1].SetPtEtaPhiE(m_tau_pt->at(ican),m_tau_eta->at(ican), m_tau_phi->at(ican),m_tau_E->at(ican));
 		for(int i = 0; i<njetx; ++i){
-		  double rm = (p4tau[0]+p4jet[i]).M()/GeV;
+		  double rm = (p4tau[0]+p4tau[1]+p4jet[i]).M()/GeV;
 		  if(rm<taujmin)taujmin = rm;
 		  double dr = p4tau[0].DeltaR(p4jet[i]);
 		  if(dr<drtaujmin)drtaujmin = dr;
-		  rm = (p4tau[1]+p4jet[i]).M()/GeV;
-		  if(rm<taujmin)taujmin = rm;
+		  //rm = (p4tau[1]+p4jet[i]).M()/GeV;
+		  //if(rm<taujmin)taujmin = rm;
 		  dr = p4tau[0].DeltaR(p4jet[i]);
-                  if(dr<drtaujmin)drtaujmin = dr;
+		  if(dr<drtaujmin)drtaujmin = dr;
 		}
 		tnp_event =EventNumber;
 		tnp_run = RunNumber;
 		tnp_evtclass = nTaus_OR_Pt25;
 		tnp_weight = wt*(mc_channel_number>0?lepSFObjLoose/lepSFObjTight:1.0); // using lepSFObjLoose for 1l2tau only
+		tnp_weightt = wtt*(mc_channel_number>0?lepSFObjLoose/lepSFObjTight:1.0); // using lepSFObjLoose for 1l2tau only
 		tnp_njets =njetx;
 		tnp_nbjets = nbjetx; 
 		tnp_met = MET_RefFinal_et/GeV;
 		tnp_lept =lep_Pt_0/GeV*(lep_ID_0>0?-1:1); // signed with charge
+		tnp_mtw = 2*lep_Pt_0/GeV*MET_RefFinal_et/GeV*(1-cos(MET_RefFinal_phi-lep_Phi_0)); 
+		tnp_mtw = tnp_mtw>0?sqrt(tnp_mtw):0.; 
 		tnp_htjets =sumjets;
 		tnp_leadtaupt = tau_pt_0/GeV;
 		tnp_subtaupt = m_tau_pt->at(ican)/GeV;
@@ -6363,6 +6902,10 @@ void MytthAnaFakes::Loop()
 		tnp_etamax =fabs(tau_eta_0)>fabs(m_tau_eta->at(ican))?fabs(tau_eta_0):fabs(m_tau_eta->at(ican));
 		tnp_leadfrompv = tau_fromPV_0;
 		tnp_subfrompv = m_tau_fromPV->at(ican);
+                tnp_leadmuolr = tau_passMuonOLR_0;
+                tnp_submuolr = m_tau_passMuonOLR->at(ican);
+		tnp_leadelebdt = tau_passEleBDT_0;
+		tnp_subelebdt = m_tau_passEleBDT->at(ican);
 		// BDT
 		tmva1l2tau_njets25 = njetx<6?njetx:5; // cap njets
 		tmva1l2tau_nbjets25 = nbjetx<4?nbjetx:3; // cap nbjets
@@ -6380,16 +6923,143 @@ void MytthAnaFakes::Loop()
 		double dphix = fabs(MET_RefFinal_et - (p4tau[0]+p4tau[1]).Phi());
 		if(dphix>TMath::Pi())dphix = 2*TMath::Pi()-dphix;
 		tnp_drmetditau = dphix;
+		tnp_htbjets = sumbjets; // new 10/30
+		tnp_lbmin = lbmin; // new
+		tnp_drlbditau = p4lb.DeltaR(p4tau[0]+p4tau[1]); //new
 		tnp->Fill();
 	      }
 	    }
 	  } // 
-	}
-	//
+	} // one_lepton
+	// try to fill 2l2tau events here
+	if(trig_match&&dilep_type&&lep_Pt_0>20e3&&lep_Pt_1>20e3&&SelectTLepid(0)&&SelectTLepid(1)){
+	  if(nJets_OR_T>=0&&nTaus_OR_Pt25==2){
+	    if(debug)std::cout<<"I am here "<<nJets_OR_T<<std::endl;
+	    TLorentzVector p4lep[2];
+            p4lep[0].SetPtEtaPhiE(lep_Pt_0,lep_Eta_0, lep_Phi_0,lep_E_0);
+            p4lep[1].SetPtEtaPhiE(lep_Pt_1,lep_Eta_1, lep_Phi_1,lep_E_1);
+            tnp2l_lep0id = lep_ID_0;
+            tnp2l_lep0truth = lep_truthType_0 + 100*lep_truthOrigin_0;
+	    tnp2l_lep0trig = lep_isTrigMatch_0;
+            tnp2l_lep1id = lep_ID_1;
+            tnp2l_lep1truth = lep_truthType_1 + 100*lep_truthOrigin_1;
+            tnp2l_lep1trig = lep_isTrigMatch_1;
+	    int njetx = nJets_OR_T>7?7:nJets_OR_T;
+	    double nbjetx(0);
+	    double taujmin(99999.);
+	    double drtaujmin(99.);
+	    double sumjets(0.);
+	    double sumbjets(0.);
+	    double lbmin(99999.);
+	    double drltaumin(99);
+	    TLorentzVector p4jet[10];
+	    TLorentzVector p4lb;
+	    for(int i = 0; i<njetx; ++i){
+	      sumjets +=m_jet_pt->at(selected_jets_T->at(i));
+	      p4jet[i].SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)),m_jet_eta->at(selected_jets_T->at(i)),m_jet_phi->at(selected_jets_T->at(i)),m_jet_E->at(selected_jets_T->at(i)));
+	      if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))>0.83){
+		sumbjets +=m_jet_pt->at(selected_jets_T->at(i));
+		for(int k = 0; k<2;++k){
+		  double rx = (p4lep[k]+p4jet[i]).M()/GeV;
+		  if(rx<lbmin){
+		    lbmin = rx;
+		    p4lb = p4lep[k]+p4jet[i];
+		  }
+		}
+		++nbjetx;
+	      }
+	    }
+	    TLorentzVector p4tau[2];
+	    p4tau[0].SetPtEtaPhiE(tau_pt_0,tau_eta_0, tau_phi_0,tau_E_0);
+	    p4tau[1].SetPtEtaPhiE(tau_pt_1,tau_eta_1, tau_phi_1,tau_E_1);
+	    for(int i = 0; i<njetx; ++i){
+	      double rm = (p4tau[0]+p4jet[i]).M()/GeV;
+	      if(rm<taujmin)taujmin = rm;
+	      double dr = p4tau[0].DeltaR(p4jet[i]);
+	      if(dr<drtaujmin)drtaujmin=dr;
+	      rm = (p4tau[1]+p4jet[i]).M()/GeV;
+	      if(rm<taujmin)taujmin = rm;
+	      dr = p4tau[1].DeltaR(p4jet[i]);
+	      if(dr<drtaujmin)drtaujmin=dr;
+	    }
+	    tnp2l_event =EventNumber;
+	    tnp2l_run = RunNumber;
+	    tnp2l_diltype = dilep_type;
+	    tnp2l_dilcharge = total_charge;
+	    tnp2l_dilmass = Mll01/GeV;
+	    tnp2l_weight = wt*(mc_channel_number>0?lepSFObjLoose/lepSFObjTight:1.0); // using lepSFObjLoose for 1l2tau only
+            tnp2l_weightt = wtt*(mc_channel_number>0?lepSFObjLoose/lepSFObjTight:1.0); // using lepSFObjLoose for 1l2tau only 
+	    tnp2l_njets =njetx;
+	    tnp2l_nbjets = nbjetx;
+	    tnp2l_met = MET_RefFinal_et/GeV;
+	    tnp2l_lept0 =lep_Pt_0/GeV*(lep_ID_0>0?-1:1); // signed with charge
+	    tnp2l_lept1 =lep_Pt_1/GeV*(lep_ID_1>0?-1:1);
+	    tnp2l_htjets =sumjets;
+	    tnp2l_leadtaupt = tau_pt_0/GeV;
+	    tnp2l_subtaupt = tau_pt_1/GeV;
+	    tnp2l_leadtaueta = tau_eta_0;
+	    tnp2l_subtaueta = tau_eta_1;
+	    tnp2l_leadtautight =tau_JetBDTSigTight_0;
+	    tnp2l_subtautight = tau_JetBDTSigTight_1;
+	    tnp2l_leadtauntrk = tau_numTrack_0;
+	    tnp2l_subtauntrk = tau_numTrack_1;
+	    tnp2l_leadtaubdtjetscore = tau_BDTJetScoreSigTrans_0;
+	    tnp2l_subtaubdtjetscore = tau_BDTJetScoreSigTrans_1;
+	    tnp2l_mtautau = (p4tau[0]+p4tau[1]).M()/GeV;
+	    tnp2l_drtautau = p4tau[0].DeltaR(p4tau[1]);
+	    tnp2l_pttautau = (p4tau[0]+p4tau[1]).Pt()/GeV;
+	    tnp2l_drltautau = p4lep[0].DeltaR(p4tau[0]+p4tau[1])<p4lep[1].DeltaR(p4tau[0]+p4tau[1])?p4lep[0].DeltaR(p4tau[0]+p4tau[1]):p4lep[1].DeltaR(p4tau[0]+p4tau[1]);
+	    tnp2l_leadtaubtag = tau_MV2c10_0;
+	    tnp2l_subtaubtag = tau_MV2c10_1; 
+	    tnp2l_leadtaubtagBin = tau_tagWeightBin_0;
+	    tnp2l_subtaubtagBin = tau_tagWeightBin_1; 
+	    tnp2l_leadtautruth = tau_truthType_0==10?10:tau_truthJetFlavour_0;
+	    tnp2l_subtautruth = tau_truthType_1==10?10:tau_truthJetFlavour_1;
+	    tnp2l_leadtauch = tau_charge_0;
+	    tnp2l_subtauch = tau_charge_1;
+	    tnp2l_etamax =fabs(tau_eta_0)>fabs(tau_eta_1)?fabs(tau_eta_0):fabs(tau_eta_1);
+	    tnp2l_leadfrompv = tau_fromPV_0;
+	    tnp2l_subfrompv = tau_fromPV_1;
+	    tnp2l_leadmuolr = tau_passMuonOLR_0;
+	    tnp2l_submuolr = tau_passMuonOLR_1;
+	    tnp2l_leadelebdt = tau_passEleBDT_0;
+	    tnp2l_subelebdt = tau_passEleBDT_1;
+	    for(int i = 0; i<2;++i){
+	      for(int j = 0; j<2; ++j){
+		tnp2l_drltau = drltaumin>p4lep[i].DeltaR(p4tau[j])?p4lep[i].DeltaR(p4tau[j]):drltaumin;
+	      }
+	    }
+            if(debug)std::cout<<"I am here -x "<<nJets_OR_T<<std::endl;
+            tnp2l_drtauj = drtaujmin;
+            tnp2l_mtauj = taujmin;
+            double dphix = fabs(MET_RefFinal_phi - (p4tau[0]+p4tau[1]).Phi());
+            if(dphix>TMath::Pi())dphix = 2*TMath::Pi()-dphix;
+            tnp2l_drmetditau = dphix;
+            tnp2l_htbjets = sumbjets;
+            tnp2l_lbmin = lbmin;
+            tnp2l_drlbditau = nbjetx>0?p4lb.DeltaR(p4tau[0]+p4tau[1]):0.;
+	    // BDT
+	    double myBDT = -2.;
+	    if(nbjetx>0){
+	      tmva2l2tau_htbjets = tnp2l_htbjets;
+	      tmva2l2tau_leadtaupt = tnp2l_leadtaupt;
+	      tmva2l2tau_subtaupt= tnp2l_subtaupt;
+	      tmva2l2tau_mtautau = tnp2l_mtautau;
+	      tmva2l2tau_drlbditau =tnp2l_drlbditau;
+	      tmva2l2tau_etamax = tnp2l_etamax;
+	      myBDT = reader_tth2l2tau->EvaluateMVA("BDT_tth2l2tau");
+	      if(fabs(myBDT)>=1.0)myBDT=0.999*myBDT/fabs(myBDT);
+	    }
+	    tnp2l_bdt = myBDT;
+	    tnp2l->Fill();
+	  }
+	}	    
+	/////////// 11/8
       } // trig
    }// loop over events 
    // end for now.
    //_histf->cd();
+   if(debug)std::cout<<"I am here -y "<<std::endl;
    _histf->Write();
    _histf->Close();
 }

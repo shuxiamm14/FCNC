@@ -33,7 +33,7 @@ int main(int argc, char const *argv[])
 		return 1;
 	}
 	bool dofit = 1;
-	bool doPlots = 0;
+	bool doPlots = 1;
 
 	TH1D *fitpreparehist = new TH1D("fitpreparehist","fitpreparehist",50,0,50);
 
@@ -44,16 +44,16 @@ int main(int argc, char const *argv[])
 	histSaver *notau_plots = new histSaver();
 	notau_plots->debug = 0;
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
-	tau_plots->add("p_{T,#tau}","taupt","GeV");
+	//tau_plots->add("p_{T,#tau}","taupt","GeV");
 	tau_plots->add("p_{T,b}","bpt","GeV");
-	tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
-	tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
+	//tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
+	//tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 	notau_plots->add("p_{T,b}","bpt","GeV");
 	notau_plots->add("p_{T,light-jet}","ljetpt","GeV");
-	TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
+	TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_os","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
 	TString nprong[] = {"1prong","3prong"};
-	for (int j = 0; j < 6; ++j)
-	  if(j>2) notau_plots->add_region(regions[j]);
+	for (int j = 0; j < 7; ++j)
+	  if(j>3) notau_plots->add_region(regions[j]);
 	  else for (int k = 0; k < 2; ++k)
 	    for (int i = 0; i < 4; ++i){
 	      printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
@@ -117,7 +117,7 @@ int main(int argc, char const *argv[])
 				for (int iorigin = 0; iorigin < 8; ++iorigin)
 				{
 					for (int ifveto = 0; ifveto < 2; ++ifveto){
-						for (int i = 0; i < 3; ++i)
+						for (int i = 0; i < 4; ++i)
 						{
 							TH1D *target = tau_plots->plot_lib[origin[iorigin]][regions[i] + "_" + nprong[iprong] + (ifveto?"_veto":"_") + bwps[1]][0];
 							fitpreparehist->SetBinContent(i + ifveto*3 + iorigin*3*2 + 1, ptbin < 3? target->GetBinContent(ptbin+1): target->Integral(4,10));
@@ -155,7 +155,7 @@ int main(int argc, char const *argv[])
 				for (int iorigin = 0; iorigin < 4; ++iorigin)
 				{
 					for (int ifveto = 0; ifveto < 2; ++ifveto){						
-						for (int i = 0; i < 3; ++i){
+						for (int i = 0; i < 4; ++i){
 							TH1D *target = tau_plots->plot_lib[origin[iorigin]][regions[i] + "_" + nprong[iprong] + (ifveto?"_veto":"_") + bwps[1]][0];
 							if (ptbin<3){
 								target->SetBinContent(ptbin+1, val[iorigin]*target->GetBinContent(ptbin+1));
