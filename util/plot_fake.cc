@@ -30,6 +30,7 @@ int main(int argc, char const *argv[])
 			if(strlen(inputline)==0) continue;
 			if(inputline[0]=='#') continue;
 			printf("reading Root file: %s\n", (prefix1 + inputline).Data());
+			analysis->version = version;
 			analysis->init_sample(cate, title);
 			TFile inputfile(prefix1 + inputline);
 			analysis->Loop( (TTree*)inputfile.Get("nominal"), cate);
