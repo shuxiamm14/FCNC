@@ -5,7 +5,7 @@
 // found on file: /global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_v2901PLICFTSkimNew/MytthAnaSkim_thq_merged.root
 //////////////////////////////////////////////////////////
 
-
+#ifdef V7NTUP
 #include <TROOT.h>
 #include <TChain.h>
 #include "histSaver.h"
@@ -5950,3 +5950,6 @@ void nominal::Init(TTree *tree)
    fChain->SetBranchAddress("Bdt", &Bdt, &b_Bdt);
    fChain->SetBranchAddress("BdtvsttV", &BdtvsttV, &b_BdtvsttV);
 }
+#else
+   printf("ntuple version not defined\n");
+#endif
