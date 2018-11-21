@@ -199,7 +199,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     arglist[1] = 0;
    
     gM->mnexcm("MIGRADE", arglist ,2,ierflg);
-    for (int i = 0; i < nTaus_OR_Pt25>=2?5:3; ++i) gM->GetParameter(i,val[i],err[i]);
+    for (int i = 0; i < (nTaus_OR_Pt25>=2?5:3); ++i) gM->GetParameter(i,val[i],err[i]);
    
    
     Double_t fmin, fedm, errdef;
@@ -244,7 +244,6 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
     {
       if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) fill_tau(iter->first,tau_numTrack_0,tauorigin);
-      
     }
   }
 }
