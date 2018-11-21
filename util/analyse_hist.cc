@@ -44,9 +44,9 @@ int main(int argc, char const *argv[])
 	histSaver *notau_plots = new histSaver();
 	notau_plots->debug = 0;
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
-	//tau_plots->add("p_{T,#tau}","taupt","GeV");
-	tau_plots->add("p_{T,b}","bpt","GeV");
-	//tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
+	tau_plots->add("p_{T,#tau}","taupt","GeV");
+	//tau_plots->add("p_{T,b}","bpt","GeV");
+	tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
 	//tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 	notau_plots->add("p_{T,b}","bpt","GeV");
 	notau_plots->add("p_{T,light-jet}","ljetpt","GeV");

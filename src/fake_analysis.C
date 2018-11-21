@@ -31,7 +31,7 @@ nominal::nominal(){
       for (int i = 0; i < 4; ++i){
         printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
         tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-        tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + "veto" + bwps[i]);
+        tau_plots->add_region(regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
       }
     }
 
@@ -48,9 +48,8 @@ void nominal::fill_tau(TString region, int nprong, TString sample){
     if(tau_MV2c10_0>btagwpCut[i]) {
       if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[i]).Data(), sample.Data());
       tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_"+bwps[i]);
-    }
-    if(tau_MV2c10_0<btagwpCut[i]) {
-      tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_"+"veto"+bwps[i]);
+    }else{
+      tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto"+bwps[i]);
     }
   }
 }
@@ -98,10 +97,14 @@ void nominal::Loop(TTree *inputtree, TString samplename)
 
     bool basic_selection = passEventCleaning;
 
-    if(samplename.Contains("ttbargamma")) { basic_selection &=m_hasMEphoton_DRgt02_nonhad;}
-    if(samplename.Contains("ttbarnohad")) { basic_selection &=!m_hasMEphoton_DRgt02_nonhad;}
+    if (!basic_selection) continue;
 
-    basic_selection &= 
+    if(samplename.Contains("ttbargamma")) { basic_selection =m_hasMEphoton_DRgt02_nonhad;}
+    if(samplename.Contains("ttbarnohad")) { basic_selection =!m_hasMEphoton_DRgt02_nonhad;}
+
+    if (!basic_selection) continue;
+
+    basic_selection = 
       (RunYear==2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose ))|| 
       (RunYear==2015 && (HLT_2e12_lhloose_L12EM10VH||HLT_e17_lhloose_mu14||HLT_mu18_mu8noL1))||
       (RunYear>=2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0 ))||
