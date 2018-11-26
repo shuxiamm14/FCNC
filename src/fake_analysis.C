@@ -19,6 +19,7 @@ nominal::nominal(){
   tau_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   tau_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
   tau_plots->add(20,20.,120.,"m_{#tau,light-jet}","taulmass",&taulmass,true,"GeV");
+  tau_plots->add(100,0.,100.,"E_{miss}^{T}","met",&MET_RefFinal_et,true,"GeV");
   notau_plots->add(10,0.,200.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   notau_plots->add(10,0.,200.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
 
@@ -28,7 +29,7 @@ nominal::nominal(){
   for (int j = 0; j < 7; ++j)
     if(j>3) notau_plots->add_region(regions[j]);
     else for (int k = 0; k < 2; ++k){
-      for (int i = 0; i < 4; ++i){
+      for (int i = 1; i < 4; i+=2){
         printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
         tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
         tau_plots->add_region(regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
@@ -44,7 +45,7 @@ nominal::~nominal(){
 }
 
 void nominal::fill_tau(TString region, int nprong, TString sample){
-  for (int i = 0; i < 4; ++i){
+  for (int i = 1; i < 4; i+=2){
     if(tau_MV2c10_0>btagwpCut[i]) {
       if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[i]).Data(), sample.Data());
       tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_"+bwps[i]);
@@ -118,31 +119,17 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     	(RunYear>=2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0 )))&&lep_isTrigMatch_0;
 
     weight = (mc_channel_number>0&&!(mc_channel_number>2014&&mc_channel_number<2018))?mc_norm*mcWeightOrg*pileupEventWeight_090*bTagSF_weight_MV2c10_Continuous*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
-//===============================find leading b,non b jets===============================
-    leading_b = -1;
-    leading_ljet = -1;
-    pt_b = 0;
-    pt_ljet = 0;
-    for (int i = 0; i < m_jet_flavor_weight_MV2c10->size(); ++i)
-    {
-      if((*m_jet_flavor_weight_MV2c10)[i] > 0.83 && leading_b == -1) {
-        leading_b = i;
-        pt_b = (*m_jet_pt)[i];
-      }else if((*m_jet_flavor_weight_MV2c10)[i] < 0.83 && leading_ljet == -1){
-        leading_ljet = i;
-        pt_ljet = (*m_jet_pt)[i];
-      }
-    }
 //===============================define regions===============================
     map<TString, bool> ifregions;
     if(trig_match&&dilep_type&&total_charge==0&&lep_Pt_0>20e3&&lep_Pt_1>20e3&&
       ((abs(lep_ID_0)==11&&lep_promptLeptonVeto_TagWeight_0<-0.7)||(abs(lep_ID_0)==13&&lep_promptLeptonVeto_TagWeight_0<-0.5))&&SelectTLepid(0)&&
       ((abs(lep_ID_1)==11&&lep_promptLeptonVeto_TagWeight_1<-0.7)||(abs(lep_ID_1)==13&&lep_promptLeptonVeto_TagWeight_1<-0.5))&&SelectTLepid(1)&&
-      tau_passEleBDT_0&&tau_passMuonOLR_0){ //met>30 GeV ? ttbar vs z+bb:
-      ifregions["reg1e1mu1tau2b"] = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==2&&nJets_OR_T==2&&nTaus_OR_Pt25==1;
-      ifregions["reg1e1mu2bnj"]   = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==2&&nJets_OR_T>=3&&nTaus_OR_Pt25==0;
-      ifregions["reg1e1mu1tau1b"] = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==1&&nJets_OR_T==1&&nTaus_OR_Pt25==1;
-      ifregions["reg1e1mu2b"]     = (dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0&&nJets_OR_T_MV2c10_70==2&&nJets_OR_T==2&&nTaus_OR_Pt25==0;
+      tau_passEleBDT_0&&tau_passMuonOLR_0
+      &&(dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0){ //met>30 GeV ? ttbar vs z+bb:
+      ifregions["reg1e1mu1tau2b"] = nJets_OR_T_MV2c10_70==2&&nJets_OR_T==2&&nTaus_OR_Pt25==1;
+      ifregions["reg1e1mu2bnj"]   = nJets_OR_T_MV2c10_70==2&&nJets_OR_T>=3&&nTaus_OR_Pt25==0;
+      ifregions["reg1e1mu1tau1b"] = nJets_OR_T_MV2c10_70==1&&nJets_OR_T==1&&nTaus_OR_Pt25==1;
+      ifregions["reg1e1mu2b"]     = nJets_OR_T_MV2c10_70==2&&nJets_OR_T==2&&nTaus_OR_Pt25==0;
     }else{
       ifregions["reg1e1mu1tau2b"] = 0;
       ifregions["reg1e1mu2bnj"]   = 0;
@@ -158,8 +145,23 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       else printf("ERROR: no light jet found\n");
       taup.SetPtEtaPhiE((*m_tau_pt)[0],(*m_tau_eta)[0],(*m_tau_phi)[0],(*m_tau_E)[0]);
       taulmass = (taup+lp).M();
-    }else{
+    }else if(ifregions["reg1e1mu1tau2b"]||ifregions["reg1e1mu2bnj"]||ifregions["reg1e1mu1tau1b"]||ifregions["reg1e1mu2b"]||ifregions["reg1l2b2j"]){
       taulmass = 0;
+    }else continue;
+//===============================find leading b,non b jets===============================
+    leading_b = -1;
+    leading_ljet = -1;
+    pt_b = 0;
+    pt_ljet = 0;
+    for (int i = 0; i < m_jet_flavor_weight_MV2c10->size(); ++i)
+    {
+      if((*m_jet_flavor_weight_MV2c10)[i] > 0.83 && leading_b == -1) {
+        leading_b = i;
+        pt_b = (*m_jet_pt)[i];
+      }else if((*m_jet_flavor_weight_MV2c10)[i] < 0.83 && leading_ljet == -1){
+        leading_ljet = i;
+        pt_ljet = (*m_jet_pt)[i];
+      }
     }
 //===============================fill histograms===============================
     map<TString, bool>::iterator iter;
@@ -187,8 +189,8 @@ void nominal::Loop(TTree *inputtree, TString samplename)
 
     for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
     {
-      if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) fill_tau(iter->first,tau_numTrack_0,tauorigin);
-      if(iter->second == 1 & !iter->first.Contains("tau") ) fill_notau(iter->first,sample);
+      if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) { fill_tau(iter->first,tau_numTrack_0,tauorigin); }
+      if(iter->second == 1 & !iter->first.Contains("tau") ) { fill_notau(iter->first,sample); }
     }
   }
 }
