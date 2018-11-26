@@ -23,7 +23,7 @@ nominal::nominal(){
   TString regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
   TString nprong[] = {"1prong","3prong"};
 
-  for (int j = 0; j < 2; ++j)
+  for (int j = 0; j < 3; ++j)
     for (int k = 0; k < 2; ++k){
       for (int i = 0; i < 4; ++i){
         printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
@@ -144,8 +144,8 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     }
 //===============================define regions, find c-jet===============================
     map<TString, bool> ifregions;
-    ifregions["reg1l1tau1b2j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T==3 && nTaus_OR_Pt25==1;
-    ifregions["reg1l1tau1b3j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>4 && nTaus_OR_Pt25==1;
+    ifregions["reg1l1tau1b2j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T==3 && nTaus_OR_Pt25==1;
+    ifregions["reg1l1tau1b3j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T>4 && nTaus_OR_Pt25==1;
     ifregions["reg1l2tau1bnj"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T>=2 && nTaus_OR_Pt25>=2;
     if(ifregions["reg1l2tau1bnj"]){
       cjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_ljet],(*m_jet_eta)[leading_ljet],(*m_jet_phi)[leading_ljet],(*m_jet_E)[leading_ljet]);
@@ -259,7 +259,7 @@ void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t 
       printf("list isnt found\n");
       exit(1);
     }
-    enum lorentzv{bj,cj,tau1,tau2,lep};
+    enum lorentzv{tau1,tau2,bj,cj,lep};
   
     TLorentzVector vectors[5];
     TLorentzVector neutrino[3];
@@ -312,11 +312,11 @@ int nominal::findcjet(){
   int j = 0;
   double m_w = 81000;
   int nlightj = nJets_OR_T - nJets_OR_T_MV2c10_70;
-  for (int i = 0; i < nJets_OR_T; ++i)
+  for (int i = 0; j < nlightj && j < 3 ; ++i)
     if ((*m_jet_flavor_weight_MV2c10)[i] < 0.83){
       nljet[j] = i;
-      ++j;
       ljet[j].SetPtEtaPhiM((*m_jet_pt)[i],(*m_jet_eta)[i],(*m_jet_phi)[i],(*m_jet_E)[i]);
+      ++j;
     }
   if (nlightj == 2) {
     return ljet[0].DeltaR(taus_v[0] + taus_v[0]) + ljet[1].DeltaR(bjet_v) < ljet[1].DeltaR(taus_v[0] + taus_v[0]) + ljet[0].DeltaR(bjet_v) ? nljet[0]:nljet[1];
