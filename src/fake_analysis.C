@@ -139,7 +139,24 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     ifregions["reg1l2b2j"]      = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=4 && nTaus_OR_Pt25==0;
     ifregions["reg1l1tau2b1j_os"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=3 && nTaus_OR_Pt25>=1 && (lep_ID_0>0?-1:1)*tau_charge_0<0;
     ifregions["reg1l1tau2b1j_ss"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=3 && nTaus_OR_Pt25>=1 && (lep_ID_0>0?-1:1)*tau_charge_0>0;
+
+
     if(ifregions["reg1l1tau2b1j_os"] || ifregions["reg1l1tau2b1j_ss"]){
+//===============================find leading b,non b jets===============================
+      leading_b = -1;
+      leading_ljet = -1;
+      pt_b = 0;
+      pt_ljet = 0;
+      for (int i = 0; i < m_jet_flavor_weight_MV2c10->size(); ++i)
+      {
+        if((*m_jet_flavor_weight_MV2c10)[i] > 0.83 && leading_b == -1) {
+          leading_b = i;
+          pt_b = (*m_jet_pt)[i];
+        }else if((*m_jet_flavor_weight_MV2c10)[i] < 0.83 && leading_ljet == -1){
+          leading_ljet = i;
+          pt_ljet = (*m_jet_pt)[i];
+        }
+      }
       TLorentzVector lp, taup;
       if(leading_ljet>=0) lp.SetPtEtaPhiE((*m_jet_pt)[leading_ljet],(*m_jet_eta)[leading_ljet],(*m_jet_phi)[leading_ljet],(*m_jet_E)[leading_ljet]);
       else printf("ERROR: no light jet found\n");
@@ -148,21 +165,6 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     }else if(ifregions["reg1e1mu1tau2b"]||ifregions["reg1e1mu2bnj"]||ifregions["reg1e1mu1tau1b"]||ifregions["reg1e1mu2b"]||ifregions["reg1l2b2j"]){
       taulmass = 0;
     }else continue;
-//===============================find leading b,non b jets===============================
-    leading_b = -1;
-    leading_ljet = -1;
-    pt_b = 0;
-    pt_ljet = 0;
-    for (int i = 0; i < m_jet_flavor_weight_MV2c10->size(); ++i)
-    {
-      if((*m_jet_flavor_weight_MV2c10)[i] > 0.83 && leading_b == -1) {
-        leading_b = i;
-        pt_b = (*m_jet_pt)[i];
-      }else if((*m_jet_flavor_weight_MV2c10)[i] < 0.83 && leading_ljet == -1){
-        leading_ljet = i;
-        pt_ljet = (*m_jet_pt)[i];
-      }
-    }
 //===============================fill histograms===============================
     map<TString, bool>::iterator iter;
     TString tauorigin;
