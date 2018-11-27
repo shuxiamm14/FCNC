@@ -41,10 +41,10 @@ public :
    float pt_b = 0;
    float pt_ljet = 0;
    float taulmass = 0;
-   double t1_mass = 0;
-   double Wmass     = 0;
-   double t2_mass    = 0;
-   double higgs_mass = 0;
+   float t1_mass = 0;
+   float Wmass     = 0;
+   float t2_mass    = 0;
+   float higgs_mass = 0;
 
    TLorentzVector bjet_v;
    TLorentzVector cjet_v;

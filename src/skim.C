@@ -324,23 +324,23 @@ int nominal::findcjet(){
     if( abs((ljet[0] + ljet[1]).M() - m_w) > abs((ljet[0] + ljet[2]).M() - m_w) )
       if(abs((ljet[0] + ljet[2]).M() - m_w) > abs((ljet[1] + ljet[2]).M() - m_w)) 
       {
-        t1_mass     = ( lep_v + ljet[1] + ljet[2] + bjet_v ) .M();
+        t1_mass     = ( ljet[1] + ljet[2] + bjet_v ) .M();
         Wmass      = ( ljet[1] + ljet[2] ).M();
         return nljet[0];
       }
       else{
-        t1_mass     = ( lep_v + ljet[0] + ljet[2] + bjet_v ) .M();
+        t1_mass     = ( ljet[0] + ljet[2] + bjet_v ) .M();
         Wmass      = ( ljet[0] + ljet[2] ).M();
         return nljet[1];
       }
     else if(abs((ljet[0] + ljet[1]).M() - m_w) > abs((ljet[1] + ljet[2]).M() - m_w)) 
       {
-        t1_mass     = ( lep_v + ljet[1] + ljet[2] + bjet_v ) .M();
+        t1_mass     = ( ljet[1] + ljet[2] + bjet_v ) .M();
         Wmass      = ( ljet[1] + ljet[2] ).M();
         return nljet[0];
       }
       else{
-        t1_mass     = ( lep_v + ljet[0] + ljet[1] + bjet_v ) .M();
+        t1_mass     = ( ljet[0] + ljet[1] + bjet_v ) .M();
         Wmass      = ( ljet[0] + ljet[1] ).M();
         return nljet[2];
       }
