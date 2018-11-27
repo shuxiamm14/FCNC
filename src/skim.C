@@ -296,11 +296,11 @@ void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t 
       Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px()+neutrino[2].Px();
       Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py()+neutrino[2].Py();
       Float_t pConstrain = (vectors[bj].Dot(vectors[lep])/100) + (vectors[bj].Dot(neutrino[2])/100);
-      chisq =  pow((Wmass-81)/10,2) + pow((t1.M()-172.5)/25,2) +pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2) + pow((Hmass-125)/10,2);// + pow((t2mass-172.5)/30,2);// + pow((pConstrain-110)/20,2);
+      chisq =  pow((Wmass-81000)/10000,2) + pow((t1.M()-172500)/25000,2) +pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2) + pow((Hmass-125000)/10000,2);// + pow((t2mass-172.5)/30,2);// + pow((pConstrain-110)/20,2);
     }else{
       Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px();
       Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py();
-      chisq = pow((Hmass-125)/10,2) + pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2);
+      chisq = pow((Hmass-125000)/10000,2) + pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2);
     }
     f = chisq;
 }
