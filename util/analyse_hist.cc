@@ -44,9 +44,11 @@ int main(int argc, char const *argv[])
 	histSaver *notau_plots = new histSaver();
 	notau_plots->debug = 0;
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
-	tau_plots->add("p_{T,#tau}","taupt","GeV");
+	//tau_plots->add("p_{T,#tau}","taupt","GeV");
 	//tau_plots->add("p_{T,b}","bpt","GeV");
-	tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
+	//tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
+  	tau_plots->add("E_{miss}^{T}","met","GeV");
+  	tau_plots->irebin = 5;
 	//tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 	notau_plots->add("p_{T,b}","bpt","GeV");
 	notau_plots->add("p_{T,light-jet}","ljetpt","GeV");
@@ -55,7 +57,7 @@ int main(int argc, char const *argv[])
 	for (int j = 0; j < 7; ++j)
 	  if(j>3) notau_plots->add_region(regions[j]);
 	  else for (int k = 0; k < 2; ++k)
-	    for (int i = 0; i < 4; ++i){
+	    for (int i = 1; i < 4; i+=2){
 	      printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
 	      tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
 	      tau_plots->add_region(regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);

@@ -124,7 +124,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     if(trig_match&&dilep_type&&total_charge==0&&lep_Pt_0>20e3&&lep_Pt_1>20e3&&
       ((abs(lep_ID_0)==11&&lep_promptLeptonVeto_TagWeight_0<-0.7)||(abs(lep_ID_0)==13&&lep_promptLeptonVeto_TagWeight_0<-0.5))&&SelectTLepid(0)&&
       ((abs(lep_ID_1)==11&&lep_promptLeptonVeto_TagWeight_1<-0.7)||(abs(lep_ID_1)==13&&lep_promptLeptonVeto_TagWeight_1<-0.5))&&SelectTLepid(1)&&
-      tau_passEleBDT_0&&tau_passMuonOLR_0
+      &&(nTaus_OR_Pt25==0||(tau_passEleBDT_0&&tau_passMuonOLR_0))
       &&(dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0){ //met>30 GeV ? ttbar vs z+bb:
       ifregions["reg1e1mu1tau2b"] = nJets_OR_T_MV2c10_70==2&&nJets_OR_T==2&&nTaus_OR_Pt25==1;
       ifregions["reg1e1mu2bnj"]   = nJets_OR_T_MV2c10_70==2&&nJets_OR_T>=3&&nTaus_OR_Pt25==0;
