@@ -22,8 +22,7 @@ int main(int argc, char const *argv[])
 		char title[100];
 		int version;
 		sscanf(inputline,"%d %s %s %s",&version,&filename,&cate,&title);
-		prefix1 ="/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimV";
-		prefix1 += char('0'+ version);
+		prefix1 ="/Users/Liby/work/tau_analysis/FCNC/ttH_fakes/run/data";
 		prefix1 += "/MytthAnaSkim_";
 		printf("reading list: %s as %s with name %s\n", (prefix + "/datafiles/" + filename + ".txt").Data(), cate, title);
 		ifstream list(prefix + "/datafiles/" + filename + ".txt");
