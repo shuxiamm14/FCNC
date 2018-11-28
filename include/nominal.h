@@ -1,9 +1,3 @@
-//////////////////////////////////////////////////////////
-// This class has been automatically generated on
-// Fri Oct 12 11:50:26 2018 by ROOT version 6.10/04
-// from TTree nominal/tree
-// found on file: /global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_v2901PLICFTSkimNew/MytthAnaSkim_thq_merged.root
-//////////////////////////////////////////////////////////
 
 #include <TROOT.h>
 #include <TChain.h>
@@ -36,6 +30,7 @@ public :
    void fill_notau(TString region, TString sample);
    void init_sample(TString sample, TString sampletitle);
    bool SelectTLepid(int id);
+   static void printv(TLorentzVector v);
    int leading_b = -1 ;
    int leading_ljet = -1 ;
    float pt_b = 0;

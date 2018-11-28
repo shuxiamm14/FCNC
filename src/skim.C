@@ -35,8 +35,9 @@ nominal::nominal(){
   TLorentzVector v1;
   for(int i = 0 ; i < 2 ; ++i){
     taus_v.push_back(v1);
-    forFit.Add(&(taus_v[i]));
   }
+  forFit.Add(&(taus_v[0]));
+  forFit.Add(&(taus_v[1]));
   forFit.Add(&bjet_v);
   forFit.Add(&cjet_v);
   forFit.Add(&lep_v);
@@ -164,6 +165,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       cjet_v.SetPtEtaPhiE((*m_jet_pt)[cjetn],(*m_jet_eta)[cjetn],(*m_jet_phi)[cjetn],(*m_jet_E)[cjetn]);
     }else continue;
     mets.SetXYZ(met_met*cos(met_phi), met_met*sin(met_phi), MET_RefFinal_sumet);
+
 //===============================fit neutrino===============================
     gM->mnparm(0, "rpt1", 0.4, 0.01, 0.,2.,ierflg);
     gM->mnparm(1, "rpt2", 0.4, 0.01, 0.,2.,ierflg);
@@ -319,6 +321,8 @@ int nominal::findcjet(){
       ++j;
     }
   if (nlightj == 2) {
+    t1_mass = 0;
+    Wmass = 0;
     return ljet[0].DeltaR(taus_v[0] + taus_v[0]) + ljet[1].DeltaR(bjet_v) < ljet[1].DeltaR(taus_v[0] + taus_v[0]) + ljet[0].DeltaR(bjet_v) ? nljet[0]:nljet[1];
   }else{
     if( abs((ljet[0] + ljet[1]).M() - m_w) > abs((ljet[0] + ljet[2]).M() - m_w) )
@@ -366,4 +370,8 @@ bool nominal::SelectTLepid(int id){
     pass = lep_isolationFixedCutLoose_4&&(abs(lep_ID_4)==13||((abs(lep_ID_4)==11)&&lep_isTightLH_4));
   }
   return pass;
+}
+
+void nominal::printv(TLorentzVector v){
+  printf("Pt : %f, Eta: %f, Phi: %f, E: %f\n", v.Pt(),v.Eta(),v.Phi(),v.E());
 }
