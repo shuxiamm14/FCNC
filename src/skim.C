@@ -133,14 +133,14 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     leading_ljet = -1;
     pt_b = 0;
     pt_ljet = 0;
-    for (int i = 0; i < m_jet_flavor_weight_MV2c10->size(); ++i)
+    for (int i = 0; i < nJets_OR_T; ++i)
     {
-      if((*m_jet_flavor_weight_MV2c10)[i] > 0.83 && leading_b == -1) {
-        leading_b = i;
-        pt_b = (*m_jet_pt)[i];
-      }else if((*m_jet_flavor_weight_MV2c10)[i] < 0.83 && leading_ljet == -1){
-        leading_ljet = i;
-        pt_ljet = (*m_jet_pt)[i];
+      if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > 0.83 && leading_b == -1) {
+        leading_b = selected_jets_T->at(i);
+        pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
+      }else if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < 0.83 && leading_ljet == -1){
+        leading_ljet = selected_jets_T->at(i);
+        pt_ljet = (*m_jet_pt)[selected_jets_T->at(i)];
       }
     }
 //===============================define regions, find c-jet===============================
@@ -317,10 +317,10 @@ int nominal::findcjet(){
   int j = 0;
   double m_w = 81000;
   int nlightj = nJets_OR_T - nJets_OR_T_MV2c10_70;
-  for (int i = 0; j < nlightj && j < 3 ; ++i)
-    if ((*m_jet_flavor_weight_MV2c10)[i] < 0.83){
-      nljet[j] = i;
-      ljet[j].SetPtEtaPhiM((*m_jet_pt)[i],(*m_jet_eta)[i],(*m_jet_phi)[i],(*m_jet_E)[i]);
+  for (int i = 0; i < nJets_OR_T; ++i)
+    if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < 0.83){
+      nljet[j] = selected_jets_T->at(i);
+      ljet[j].SetPtEtaPhiM((*m_jet_pt)[selected_jets_T->at(i)],(*m_jet_eta)[selected_jets_T->at(i)],(*m_jet_phi)[selected_jets_T->at(i)],(*m_jet_E)[selected_jets_T->at(i)]);
       ++j;
     }
   if (nlightj == 2) {
