@@ -11,7 +11,7 @@ nominal::nominal(){
   tau_plots = new histSaver();
   tau_plots->set_weight(&weight);
   tau_plots->debug = 0;
-  
+  debug = 1;
   tau_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
   tau_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   tau_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
@@ -133,14 +133,14 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     leading_ljet = -1;
     pt_b = 0;
     pt_ljet = 0;
-    for (int i = 0; i < m_jet_flavor_weight_MV2c10->size(); ++i)
+    for (int i = 0; i < nJets_OR_T; ++i)
     {
-      if((*m_jet_flavor_weight_MV2c10)[i] > 0.83 && leading_b == -1) {
-        leading_b = i;
-        pt_b = (*m_jet_pt)[i];
-      }else if((*m_jet_flavor_weight_MV2c10)[i] < 0.83 && leading_ljet == -1){
-        leading_ljet = i;
-        pt_ljet = (*m_jet_pt)[i];
+      if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > 0.83 && leading_b == -1) {
+        leading_b = selected_jets_T->at(i);
+        pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
+      }else if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < 0.83 && leading_ljet == -1){
+        leading_ljet = selected_jets_T->at(i);
+        pt_ljet = (*m_jet_pt)[selected_jets_T->at(i)];
       }
     }
 //===============================define regions, find c-jet===============================
@@ -162,6 +162,9 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       lep_v.SetPtEtaPhiE(0,0,0,0);
       bjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b],(*m_jet_eta)[leading_b],(*m_jet_phi)[leading_b],(*m_jet_E)[leading_b]);
       int cjetn = findcjet();
+      if(debug) {
+        printf("Wmass: %f, t1_mass: %f\n", Wmass, t1_mass);
+      }
       cjet_v.SetPtEtaPhiE((*m_jet_pt)[cjetn],(*m_jet_eta)[cjetn],(*m_jet_phi)[cjetn],(*m_jet_E)[cjetn]);
     }else continue;
     mets.SetXYZ(met_met*cos(met_phi), met_met*sin(met_phi), MET_RefFinal_sumet);
@@ -314,10 +317,10 @@ int nominal::findcjet(){
   int j = 0;
   double m_w = 81000;
   int nlightj = nJets_OR_T - nJets_OR_T_MV2c10_70;
-  for (int i = 0; j < nlightj && j < 3 ; ++i)
-    if ((*m_jet_flavor_weight_MV2c10)[i] < 0.83){
-      nljet[j] = i;
-      ljet[j].SetPtEtaPhiM((*m_jet_pt)[i],(*m_jet_eta)[i],(*m_jet_phi)[i],(*m_jet_E)[i]);
+  for (int i = 0; i < nJets_OR_T; ++i)
+    if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < 0.83){
+      nljet[j] = selected_jets_T->at(i);
+      ljet[j].SetPtEtaPhiM((*m_jet_pt)[selected_jets_T->at(i)],(*m_jet_eta)[selected_jets_T->at(i)],(*m_jet_phi)[selected_jets_T->at(i)],(*m_jet_E)[selected_jets_T->at(i)]);
       ++j;
     }
   if (nlightj == 2) {
@@ -325,6 +328,7 @@ int nominal::findcjet(){
     Wmass = 0;
     return ljet[0].DeltaR(taus_v[0] + taus_v[0]) + ljet[1].DeltaR(bjet_v) < ljet[1].DeltaR(taus_v[0] + taus_v[0]) + ljet[0].DeltaR(bjet_v) ? nljet[0]:nljet[1];
   }else{
+    if(debug) printf("wm1: %f, wm2: %f, wm3: %f\n", (ljet[0] + ljet[1]).M(), (ljet[0] + ljet[2]).M(), (ljet[2] + ljet[1]).M());
     if( abs((ljet[0] + ljet[1]).M() - m_w) > abs((ljet[0] + ljet[2]).M() - m_w) )
       if(abs((ljet[0] + ljet[2]).M() - m_w) > abs((ljet[1] + ljet[2]).M() - m_w)) 
       {
