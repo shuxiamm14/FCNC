@@ -328,7 +328,12 @@ int nominal::findcjet(){
     Wmass = 0;
     return ljet[0].DeltaR(taus_v[0] + taus_v[0]) + ljet[1].DeltaR(bjet_v) < ljet[1].DeltaR(taus_v[0] + taus_v[0]) + ljet[0].DeltaR(bjet_v) ? nljet[0]:nljet[1];
   }else{
-    if(debug) printf("wm1: %f, wm2: %f, wm3: %f\n", (ljet[0] + ljet[1]).M(), (ljet[0] + ljet[2]).M(), (ljet[2] + ljet[1]).M());
+    if(debug) {
+      printv(ljet[0]);
+      printv(ljet[1]);
+      printv(ljet[2]);
+      printf("wm1: %f, wm2: %f, wm3: %f\n", (ljet[0] + ljet[1]).M(), (ljet[0] + ljet[2]).M(), (ljet[2] + ljet[1]).M());
+    }
     if( abs((ljet[0] + ljet[1]).M() - m_w) > abs((ljet[0] + ljet[2]).M() - m_w) )
       if(abs((ljet[0] + ljet[2]).M() - m_w) > abs((ljet[1] + ljet[2]).M() - m_w)) 
       {
@@ -377,5 +382,5 @@ bool nominal::SelectTLepid(int id){
 }
 
 void nominal::printv(TLorentzVector v){
-  printf("Pt : %f, Eta: %f, Phi: %f, E: %f\n", v.Pt(),v.Eta(),v.Phi(),v.E());
+  printf("Pt : %f, Eta: %f, Phi: %f, E: %f, m: %f\n", v.Pt(),v.Eta(),v.Phi(),v.E(),v.M());
 }
