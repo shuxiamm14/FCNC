@@ -11,7 +11,7 @@ nominal::nominal(){
   tau_plots = new histSaver();
   tau_plots->set_weight(&weight);
   tau_plots->debug = 0;
-  debug = 1;
+  debug = 0;
   tau_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
   tau_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   tau_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
@@ -320,7 +320,7 @@ int nominal::findcjet(){
   for (int i = 0; i < nJets_OR_T; ++i)
     if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < 0.83){
       nljet[j] = selected_jets_T->at(i);
-      ljet[j].SetPtEtaPhiM((*m_jet_pt)[selected_jets_T->at(i)],(*m_jet_eta)[selected_jets_T->at(i)],(*m_jet_phi)[selected_jets_T->at(i)],(*m_jet_E)[selected_jets_T->at(i)]);
+      ljet[j].SetPtEtaPhiE((*m_jet_pt)[selected_jets_T->at(i)],(*m_jet_eta)[selected_jets_T->at(i)],(*m_jet_phi)[selected_jets_T->at(i)],(*m_jet_E)[selected_jets_T->at(i)]);
       ++j;
     }
   if (nlightj == 2) {
