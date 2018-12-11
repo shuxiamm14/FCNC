@@ -288,7 +288,7 @@ void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t 
     neutrino[0].SetPtEtaPhiM(par[0]*vectors[tau1].Pt(),vectors[tau1].Eta(),vectors[tau1].Phi(),vectors[lep].Pt()==0?par[2]:0);
     neutrino[1].SetPtEtaPhiM(par[1]*vectors[tau2].Pt(),vectors[tau2].Eta(),vectors[tau2].Phi(),0);
     Float_t Hmass = (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]).M();
-    Float_t met_resol = 13.1+0.50*sqrt(met[2]);
+    Float_t met_resol = 13100+0.50*sqrt(met[2]);
     Double_t chisq = 1e10;
 
     if(vectors[lep].Pt()!=0){

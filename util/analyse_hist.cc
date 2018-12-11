@@ -36,7 +36,7 @@ int main(int argc, char const *argv[])
 		printf("please specify merge strategy:\n0 : merge_other; 1: merge_sample ; 2: merge_origin\n");
 		return 1;
 	}
-	bool dofit = 1;
+	bool dofit = 0;
 	bool doPlots = 1;
 	int binning = 2;
 	TH1D *fitpreparehist = new TH1D("fitpreparehist","fitpreparehist",100,0,100);
@@ -50,8 +50,8 @@ int main(int argc, char const *argv[])
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
 	tau_plots->add("p_{T,#tau}","taupt","GeV");
 	//tau_plots->add("p_{T,b}","bpt","GeV");
-	tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
-  	//tau_plots->add("E_{miss}^{T}","met","GeV");
+	//tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
+  	tau_plots->add("E_{miss}^{T}","met","GeV");
   	tau_plots->irebin = 1;
 	//tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 	notau_plots->add("p_{T,b}","bpt","GeV");
@@ -103,12 +103,12 @@ int main(int argc, char const *argv[])
 				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i], sampletitle[j], (enum EColor)colors[j],1);
 
 	if(doPlots){
-	//	for (int i = 0; i < 6; ++i)
-	//	{
-	//		notau_plots->read_sample(samples[i] ,samples[i] + "_notau", sampletitle[i], (enum EColor)colors[i],1);
-	//	}
-	//
-	//	notau_plots->plot_stack(outputdir[plot_option]);
+		for (int i = 0; i < 6; ++i)
+		{
+			notau_plots->read_sample(samples[i] ,samples[i] + "_notau", sampletitle[i], (enum EColor)colors[i],1);
+		}
+	
+		notau_plots->plot_stack(outputdir[plot_option]);
 		tau_plots  ->plot_stack(outputdir[plot_option]);
 	}
 
