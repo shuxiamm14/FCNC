@@ -20,8 +20,10 @@ int main(int argc, char const *argv[])
 //	tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 	tau_plots->add("m_{t,SM}","t1mass","GeV");
 	tau_plots->add("m_{#tau,#tau}","tautaumass","GeV");
+	tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV");
 	tau_plots->add("m_{W}","wmass","GeV");
 	tau_plots->add("m_{t,FCNC}","t2mass","GeV");
+	tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV");
   	tau_plots->irebin = 6;
 	TString regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
 	TString nprong[] = {"1prong","3prong"};
@@ -42,13 +44,13 @@ int main(int argc, char const *argv[])
 	tau_plots->read_sample("data","data","data",kBlack, 1);
 //============================ merge_sample============================
 	if(plot_option == 1){
-		for (int j = 0; j < 7; ++j)
+		for (int j = 6; j < 7; ++j)
 			for (int i = 0; i < 7; ++i)
 				tau_plots->read_sample( origin[i], samples[j] + "_" + origin[i], origintitle[i], (enum EColor)colors[i], norm[j]);
 	}
 //============================ merge_origin ============================
 	else if(plot_option == 2)
-		for (int j = 0; j < 7; ++j)
+		for (int j = 6; j < 7; ++j)
 			for (int i = 0; i < 7; ++i)
 				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i], sampletitle[j], (enum EColor)colors[j], norm[j]);
 

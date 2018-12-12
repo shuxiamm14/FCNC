@@ -128,28 +128,46 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     	(RunYear>=2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0 )))&&lep_isTrigMatch_0;
 
     weight = (mc_channel_number>0&&!(mc_channel_number>2014&&mc_channel_number<2018))?mc_norm*mcWeightOrg*pileupEventWeight_090*bTagSF_weight_MV2c10_FixedCutBEff_70*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
+//===============================define regions===============================
+    map<TString, bool> ifregions;
+    ifregions["reg1l1tau1b2j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T==3 && nTaus_OR_Pt25==1;
+    ifregions["reg1l1tau1b3j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T>4 && nTaus_OR_Pt25==1;
+    ifregions["reg1l2tau1bnj"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T>=2 && nTaus_OR_Pt25>=2;
+
+    map<TString, bool>::iterator iter;
+
+    bool triggered = 0;
+    
+    for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
+      if(iter->second) {
+        triggered = 1;
+        break;
+      }
+
+    if(!triggered) continue;
+
 //===============================find leading b,non b jets===============================
     leading_b = -1;
     leading_ljet = -1;
     pt_b = 0;
     pt_ljet = 0;
+    bool reloop = 1;
     for (int i = 0; i < nJets_OR_T; ++i)
     {
       if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > 0.83 && leading_b == -1) {
         leading_b = selected_jets_T->at(i);
         pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
-      }else if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < 0.83 && leading_ljet == -1){
+      }else if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < 0.83 && reloop == 1){
         leading_ljet = selected_jets_T->at(i);
+        cjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_ljet],(*m_jet_eta)[leading_ljet],(*m_jet_phi)[leading_ljet],(*m_jet_E)[leading_ljet]);
+        if((cjet_v + taus_v[0] + taus_v[1]).M() < 175) reloop = 0;
         pt_ljet = (*m_jet_pt)[selected_jets_T->at(i)];
       }
+      if(reloop == 0 && leading_b != -1) break;
     }
-//===============================define regions, find c-jet===============================
-    map<TString, bool> ifregions;
-    ifregions["reg1l1tau1b2j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T==3 && nTaus_OR_Pt25==1;
-    ifregions["reg1l1tau1b3j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T>4 && nTaus_OR_Pt25==1;
-    ifregions["reg1l2tau1bnj"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T>=2 && nTaus_OR_Pt25>=2;
+
+
     if(ifregions["reg1l2tau1bnj"]){
-      cjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_ljet],(*m_jet_eta)[leading_ljet],(*m_jet_phi)[leading_ljet],(*m_jet_E)[leading_ljet]);
       for (int i = 0; i < 2; ++i) taus_v[i].SetPtEtaPhiE((*m_tau_pt)[i],(*m_tau_eta)[i],(*m_tau_phi)[i],(*m_tau_E)[i]);
       if (abs(lep_ID_0)==11) lep_v.SetPtEtaPhiE((*electron_pt)[0],(*electron_eta)[0],(*electron_phi)[0],(*electron_E)[0]);
       else lep_v.SetPtEtaPhiE((*muon_pt)[0],(*muon_eta)[0],(*muon_phi)[0],(*muon_E)[0]);
@@ -223,7 +241,6 @@ void nominal::Loop(TTree *inputtree, TString samplename)
 
 
 //===============================fill histograms===============================
-    map<TString, bool>::iterator iter;
     TString tauorigin;
     if(sample == "data"){
       tauorigin = "data";
@@ -288,7 +305,7 @@ void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t 
     neutrino[0].SetPtEtaPhiM(par[0]*vectors[tau1].Pt(),vectors[tau1].Eta(),vectors[tau1].Phi(),vectors[lep].Pt()==0?par[2]:0);
     neutrino[1].SetPtEtaPhiM(par[1]*vectors[tau2].Pt(),vectors[tau2].Eta(),vectors[tau2].Phi(),0);
     Float_t Hmass = (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]).M();
-    Float_t met_resol = 13100+0.50*sqrt(met[2]);
+    Float_t met_resol = 13100+0.50*sqrt(met[2]*1000);
     Double_t chisq = 1e10;
 
     if(vectors[lep].Pt()!=0){
