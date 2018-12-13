@@ -20,7 +20,6 @@ nominal::nominal(){
   tau_plots->add(120,50.,250.,"m_{W}","wmass",&Wmass,true,"GeV");
   tau_plots->add(120,50.,250.,"m_{t,FCNC}","t2mass",&t2_mass,true,"GeV");
   
-  TString ptbin[] = {"below35","above35"};
   TString regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
   TString nprong[] = {"1prong","3prong"};
 
@@ -32,7 +31,7 @@ nominal::nominal(){
         for (int iptbin = 0; iptbin < 2; ++iptbin)
         {
           if(debug) printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-//          tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
+          tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
           tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
         }
       }
