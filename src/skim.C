@@ -20,15 +20,21 @@ nominal::nominal(){
   tau_plots->add(120,50.,250.,"m_{W}","wmass",&Wmass,true,"GeV");
   tau_plots->add(120,50.,250.,"m_{t,FCNC}","t2mass",&t2_mass,true,"GeV");
   
+  TString ptbin[] = {"below35","above35"};
   TString regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
   TString nprong[] = {"1prong","3prong"};
 
   for (int j = 0; j < 3; ++j)
-    for (int k = 0; k < 2; ++k){
-      for (int i = 0; i < 4; ++i){
-        printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-        tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-        tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + "veto" + bwps[i]);
+    for (int k = 0; k < 2; ++k)
+    {
+      for (int i = 0; i < 4; ++i)
+      {
+        for (int iptbin = 0; iptbin < 2; ++iptbin)
+        {
+          if(debug) printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
+//          tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
+          tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+        }
       }
     }
 
@@ -49,14 +55,13 @@ nominal::~nominal(){
   deletepointer(gM);
 }
 
-void nominal::fill_tau(TString region, int nprong, TString sample){
+void nominal::fill_tau(TString region, int nprong, TString sample, int iptbin){
   for (int i = 0; i < 4; ++i){
     if(tau_MV2c10_0>btagwpCut[i]) {
       if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[i]).Data(), sample.Data());
-      tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_"+bwps[i]);
-    }
-    if(tau_MV2c10_0<btagwpCut[i]) {
-      tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_"+"veto"+bwps[i]);
+      tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
+    }else{
+      tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
     }
   }
 }
@@ -265,7 +270,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
 
     for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
     {
-      if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) fill_tau(iter->first,tau_numTrack_0,tauorigin);
+      if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) fill_tau(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
     }
   }
 }

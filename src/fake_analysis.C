@@ -44,7 +44,7 @@ nominal::~nominal(){
   deletepointer(notau_plots);
 }
 
-void nominal::fill_tau(TString region, int nprong, TString sample){
+void nominal::fill_tau(TString region, int nprong, TString sample, int iptbin){
   for (int i = 1; i < 4; i+=2){
     if(tau_MV2c10_0>btagwpCut[i]) {
       if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[i]).Data(), sample.Data());
@@ -192,7 +192,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
 
     for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
     {
-      if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) { fill_tau(iter->first,tau_numTrack_0,tauorigin); }
+      if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) { fill_tau(iter->first,tau_numTrack_0,tauorigin,0); }
       if(iter->second == 1 & !iter->first.Contains("tau") ) { fill_notau(iter->first,sample); }
     }
   }
