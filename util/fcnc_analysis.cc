@@ -3,14 +3,9 @@
 
 int main(int argc, char const *argv[])
 {
-	if (argc != 2)
-	{
-		printf("please specify merge strategy:\n0 : merge_other; 1: merge_sample ; 2: merge_origin\n");
-		return 1;
-	}
 	bool doPlots = 1;
 
-	int plot_option = *argv[1] - '0';
+	int plot_option = 2;
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver();
 	tau_plots->debug = 0;
@@ -32,11 +27,11 @@ int main(int argc, char const *argv[])
 	    for (int i = 1; i < 4; i+=2){
 	      printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
 //	      tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-	      tau_plots->add_region(regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
+	      tau_plots->add_region(regions[j] + "_" + nprong[k] + "_above35_" + bwps[i]);
 	    }
 	TString samples[] = {"Other", "Vjets", "diboson", "ttH", "ttV", "ttbar","fcnc_ch"};
 	TString sampletitle[] = {"Other", "V+jets", "Diboson", "#bar{t}tH", "#bar{t}tV", "#bar{t}t", "#bar{t}t#rightarrow bWqH"};
-	double norm[] = {0,0,0,0,0,0,10};
+	double norm[] = {1,1,1,1,1,1,10};
 	TString origin[] = {"b", "c", "g", "j", "lep", "nomatch", "real", "data"};
 	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "real #tau"};
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed};
