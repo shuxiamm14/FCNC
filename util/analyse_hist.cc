@@ -14,18 +14,23 @@ int main(int argc, char const *argv[])
 
 	HISTFITTER* fitter = new HISTFITTER();
 
+	fitter->setparam("sf_b", 1, 0.1, 0.,2.);
+	fitter->setparam("sf_c", 1, 0.1, 0.,2.);
+	fitter->setparam("sf_g", 2, 0.1, 0.,3.);
+	fitter->setparam("sf_j", 1, 0.1, 0.,2.);
 	int plot_option = *argv[1] - '0';
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver();
 	tau_plots->debug = 0;
 	histSaver *notau_plots = new histSaver();
 	notau_plots->debug = 0;
+  	tau_plots->irebin = 1;
+
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
 	tau_plots->add("p_{T,#tau}","taupt","GeV");
-	tau_plots->add("p_{T,b}","bpt","GeV");
 	tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
+	tau_plots->add("p_{T,b}","bpt","GeV");
   	tau_plots->add("E_{miss}^{T}","met","GeV");
-  	tau_plots->irebin = 1;
 	tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 	notau_plots->add("p_{T,b}","bpt","GeV");
 	notau_plots->add("p_{T,light-jet}","ljetpt","GeV");
@@ -45,7 +50,8 @@ int main(int argc, char const *argv[])
 	TString sampletitle[] = {"Other", "V+jets", "Diboson", "#bar{t}tH", "#bar{t}tV", "#bar{t}t"};
 
 	TString origin[] = {"b", "c", "g", "j", "lep", "nomatch", "real", "data"};
-	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "real #tau"};
+	double pseudodataratio[] = {1,0.5,3,1,1,1,1};
+	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "(real #tau)"};
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed};
 
 	tau_plots->read_sample("data","data","data",kBlack,1);
@@ -61,28 +67,31 @@ int main(int argc, char const *argv[])
 					if(origin[i] == "real") tau_plots->read_sample("other_real",samples[j] + "_" + origin[i],"Other samples with real tau",kYellow,1);
 					else tau_plots->read_sample("other_fake",samples[j] + "_" + origin[i],"Other samples with fake tau",kMagenta,1);
 				}else
-					tau_plots->read_sample( samples[j] + "_" + origin[i], samples[j] + "_" + origin[i], sampletitle[j] + origintitle[i], (enum EColor)colors[j],1);
+					tau_plots->read_sample( samples[j] + "_" + origin[i], samples[j] + "_" + origin[i], sampletitle[j] + origintitle[i], (enum EColor)colors[i],1);
 			}
 //============================ merge_sample============================
 	else if(plot_option == 1){
 		for (int j = 0; j < 6; ++j)
-			for (int i = 0; i < 7; ++i)
+			for (int i = 0; i < 7; ++i){
 				tau_plots->read_sample( origin[i], samples[j] + "_" + origin[i], origintitle[i], (enum EColor)colors[i],1);
+				//tau_plots->read_sample("data", samples[j] + "_" + origin[i], "data",kBlack,pseudodataratio[i]);
+			}
 	}
 //============================ merge_origin ============================
 	else if(plot_option == 2)
 		for (int j = 0; j < 6; ++j)
-			for (int i = 0; i < 7; ++i)
+			for (int i = 0; i < 7; ++i){
 				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i], sampletitle[j], (enum EColor)colors[j],1);
+			}
 
 	if(doPlots){
 		for (int i = 0; i < 6; ++i)
 		{
 			notau_plots->read_sample(samples[i] ,samples[i] + "_notau", sampletitle[i], (enum EColor)colors[i],1);
 		}
-	
-		notau_plots->plot_stack(outputdir[plot_option]);
 		tau_plots  ->plot_stack(outputdir[plot_option]);
+	
+		//notau_plots->plot_stack(outputdir[plot_option]);
 	}
 
 	if (dofit && plot_option == 1)
@@ -96,38 +105,38 @@ int main(int argc, char const *argv[])
 						tau_plots->plot_lib[origin[iorigin]][regions[0] + "_" + nprong[iprong] + "_" + bwps[1]][0],
 						tau_plots->plot_lib[origin[iorigin]][regions[1] + "_" + nprong[iprong] + "_" + bwps[1]][0],
 						tau_plots->plot_lib[origin[iorigin]][regions[4] + "_" + nprong[iprong] + "_" + bwps[1]][0],
-						tau_plots->plot_lib[origin[iorigin]][regions[2+ptbin] + "_" + nprong[iprong] + "_" + bwps[1]][4],
 						tau_plots->plot_lib[origin[iorigin]][regions[0] + "_" + nprong[iprong] + "_veto" + bwps[1]][0],
 						tau_plots->plot_lib[origin[iorigin]][regions[1] + "_" + nprong[iprong] + "_veto" + bwps[1]][0],
 						tau_plots->plot_lib[origin[iorigin]][regions[4] + "_" + nprong[iprong] + "_veto" + bwps[1]][0],
-						tau_plots->plot_lib[origin[iorigin]][regions[2+ptbin] + "_" + nprong[iprong] + "_veto" + bwps[1]][4],
-						tau_plots->plot_lib[origin[iorigin]][regions[1] + "_" + nprong[iprong] + "_" + bwps[3]][0]
+						tau_plots->plot_lib[origin[iorigin]][regions[1] + "_" + nprong[iprong] + "_" + bwps[3]][0],
+						tau_plots->plot_lib[origin[iorigin]][regions[2+ptbin] + "_" + nprong[iprong] + "_veto" + bwps[1]][1],
+						tau_plots->plot_lib[origin[iorigin]][regions[2+ptbin] + "_" + nprong[iprong] + "_" + bwps[1]][1]
 					};
-					TH1D *fithist[4];
-					for (int i = 0; i < 4; ++i)
-					{
-						fithist[i] = (TH1D*)target[i]->Clone();
-						fithist[i]->Add(target[i+4]);
-					}
+					//TH1D *fithist[4];
+					//for (int i = 0; i < 4; ++i)
+					//{
+					//	fithist[i] = (TH1D*)target[i]->Clone();
+					//	fithist[i]->Add(target[i+4]);
+					//}
 
-					for (int i = 0; i < 3; ++i)
+					for (int i = 0; i < 7; ++i)
 						if(ptbin == 0)
-							//fitter->addfithist(origin[iorigin],target[i],1,1);
-							fitter->addfithist(origin[iorigin],fithist[i],1,1);
+							fitter->addfithist(origin[iorigin],target[i],1,1);
+							//fitter->addfithist(origin[iorigin],fithist[i],1,1);
 						else{
-							//fitter->addfithist(origin[iorigin],target[i],2,2);
-							fitter->addfithist(origin[iorigin],fithist[i],2,target[i]->GetNbinsX());
+							fitter->addfithist(origin[iorigin],target[i],2,target[i]->GetNbinsX());
+							//fitter->addfithist(origin[iorigin],fithist[i],2,target[i]->GetNbinsX());
 						}
 
-					fitter->addfithist(origin[iorigin],fithist[4],9,13);
+					fitter->addfithist(origin[iorigin],target[7],9,13);
 
 				}
 				Double_t val[4],err[4];
-
 				fitter->debug();
 //============================ do fit here============================
-				double chi2 = fitter->fit(val,err);
-				printf("b: %f+/-%f, c: %f+/-%f, g: %f+/-%f, j: %f+/-%f;  f:%f\n",val[0],err[0], val[1],err[1], val[2],err[2], val[3],err[3], chi2);
+				//fitter->asimovfit(100,nprong[iprong]+"ptbin"+char(ptbin+'0')+".root");
+				double chi2 = fitter->fit(val,err,0);
+				printf("%s, ptbin: %d, b: %f+/-%f, c: %f+/-%f, g: %f+/-%f, j: %f+/-%f;  Chi2:%f\n",nprong[iprong].Data(), ptbin+1, val[0],err[0], val[1],err[1], val[2],err[2], val[3],err[3], chi2);
 				fitter->clear();
 				TH1D *target;
 //============================post-fit plots============================
@@ -154,7 +163,7 @@ int main(int argc, char const *argv[])
 				}
 			}
 		}
-		tau_plots  ->plot_stack("postfit");
+		//tau_plots  ->plot_stack("postfit");
 	}
 	return 0;
 }
