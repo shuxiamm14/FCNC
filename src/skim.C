@@ -121,6 +121,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     iter->second->Branch("tautaumass",&higgs_mass);
     iter->second->Branch("wmass",&Wmass);
     iter->second->Branch("t2mass",&t2_mass);
+    iter->second->SetBranchAddress("m_tau_BDTJetScoreSigTrans", &m_tau_BDTJetScoreSigTrans, &b_m_tau_BDTJetScoreSigTrans);
   }
 
   if (fChain == 0) return;
