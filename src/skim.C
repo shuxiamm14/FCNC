@@ -106,6 +106,7 @@ void nominal::finalise_sample(TString sample, TString sampletitle){
 }
 void nominal::Loop(TTree *inputtree, TString samplename)
 {
+  outputtreefile->cd();
   Init(inputtree);
   if (!outputtree["reg1l1tau1b2j"])
   {
