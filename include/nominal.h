@@ -13,6 +13,7 @@ public :
 // Fixed size dimensions of array or collections stored in the TTree if any.
    const double btagwpCut[4]={0.94,0.83,0.64,0.11};
    TString bwps[4] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
+   TString ptbin[2] = {"below35","above35"};
    Double_t _lum = 80.;
    int debug = 0;
    nominal();
@@ -21,12 +22,14 @@ public :
    bool initdata = 0;
    bool initttbar = 0;
    int version = 6;
+   TFile *outputtreefile;
+   map<TString, TTree*> outputtree;
    virtual void     Init(TTree *tree);
    virtual void     Loop(TTree *inputtree, TString sample);
    virtual int      findcjet();
-
+   void finalise_sample(TString sample, TString sampletitle);
    static  void     fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
-   void fill_tau(TString region, int nprong, TString sample);
+   void fill_tau(TString region, int nprong, TString sample, int ptbin);
    void fill_notau(TString region, TString sample);
    void init_sample(TString sample, TString sampletitle);
    bool SelectTLepid(int id);

@@ -23,7 +23,7 @@ nominal::nominal(){
   notau_plots->add(10,0.,200.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   notau_plots->add(10,0.,200.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
 
-  TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
+  TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
   TString nprong[] = {"1prong","3prong"};
 
   for (int j = 0; j < 7; ++j)
@@ -44,7 +44,7 @@ nominal::~nominal(){
   deletepointer(notau_plots);
 }
 
-void nominal::fill_tau(TString region, int nprong, TString sample){
+void nominal::fill_tau(TString region, int nprong, TString sample, int iptbin){
   for (int i = 1; i < 4; i+=2){
     if(tau_MV2c10_0>btagwpCut[i]) {
       if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[i]).Data(), sample.Data());
@@ -118,7 +118,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       ((RunYear==2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose ))|| 
     	(RunYear>=2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0 )))&&lep_isTrigMatch_0;
 
-    weight = (mc_channel_number>0&&!(mc_channel_number>2014&&mc_channel_number<2018))?mc_norm*mcWeightOrg*pileupEventWeight_090*bTagSF_weight_MV2c10_Continuous*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
+    weight = mc_channel_number>0?mc_norm*mcWeightOrg*pileupEventWeight_090*(V7NTUP?bTagSF_weight_MV2c10_FixedCutBEff_70:bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
 //===============================define regions===============================
     map<TString, bool> ifregions;
     if(trig_match&&dilep_type&&total_charge==0&&lep_Pt_0>20e3&&lep_Pt_1>20e3&&
@@ -139,7 +139,8 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     ifregions["reg1l2b2j"]      = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=4 && nTaus_OR_Pt25==0;
     ifregions["reg1l1tau2b1j_os"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=3 && nTaus_OR_Pt25>=1 && (lep_ID_0>0?-1:1)*tau_charge_0<0;
     ifregions["reg1l1tau2b1j_ss"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=3 && nTaus_OR_Pt25>=1 && (lep_ID_0>0?-1:1)*tau_charge_0>0;
-
+    ifregions["reg1l1tau2b1j_ss_ptbin1"] = ifregions["reg1l1tau2b1j_ss"] && tau_pt_0/GeV <= 35;
+    ifregions["reg1l1tau2b1j_ss_ptbin2"] = ifregions["reg1l1tau2b1j_ss"] && tau_pt_0/GeV > 35;
 
     if(ifregions["reg1l1tau2b1j_os"] || ifregions["reg1l1tau2b1j_ss"]){
 //===============================find leading b,non b jets===============================
@@ -191,7 +192,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
 
     for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
     {
-      if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) { fill_tau(iter->first,tau_numTrack_0,tauorigin); }
+      if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) { fill_tau(iter->first,tau_numTrack_0,tauorigin,0); }
       if(iter->second == 1 & !iter->first.Contains("tau") ) { fill_notau(iter->first,sample); }
     }
   }
