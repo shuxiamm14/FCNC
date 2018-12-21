@@ -27,13 +27,13 @@ int main(int argc, char const *argv[])
 		prefix1 += "/MytthAnaSkim_";
 		printf("reading list: %s as %s with name %s\n", (prefix + "/datafiles/" + filename + ".txt").Data(), cate, title);
 		ifstream list(prefix + "/datafiles/" + filename + ".txt");
+		analysis->version = version;
+		analysis->init_sample(cate, title);
 		while(!list.eof()){
 			list.getline(inputline,200);
 			if(strlen(inputline)==0) continue;
 			if(inputline[0]=='#') continue;
 			printf("reading Root file: %s\n", (prefix1 + inputline).Data());
-			analysis->version = version;
-			analysis->init_sample(cate, title);
 			TFile inputfile(prefix1 + inputline);
 			analysis->Loop( (TTree*)inputfile.Get("nominal"), cate);
 			inputfile.Close();
