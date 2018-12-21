@@ -106,13 +106,13 @@ void nominal::finalise_sample(TString sample, TString sampletitle){
 }
 void nominal::Loop(TTree *inputtree, TString samplename)
 {
-  outputtreefile->cd();
   Init(inputtree);
+  outputtreefile->cd();
   if (!outputtree["reg1l1tau1b2j"])
   {
-    outputtree["reg1l1tau1b2j"] = inputtree->CloneTree(0);
-    outputtree["reg1l1tau1b3j"] = inputtree->CloneTree(0);
-    outputtree["reg1l2tau1bnj"] = inputtree->CloneTree(0);
+    outputtree["reg1l1tau1b2j"] = inputtree->CloneTree(1);
+    outputtree["reg1l1tau1b3j"] = inputtree->CloneTree(1);
+    outputtree["reg1l2tau1bnj"] = inputtree->CloneTree(1);
   }
   map<TString, TTree*>::iterator iter;
   for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
@@ -121,7 +121,6 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     iter->second->Branch("tautaumass",&higgs_mass);
     iter->second->Branch("wmass",&Wmass);
     iter->second->Branch("t2mass",&t2_mass);
-    iter->second->SetBranchAddress("m_tau_BDTJetScoreSigTrans", &m_tau_BDTJetScoreSigTrans, &b_m_tau_BDTJetScoreSigTrans);
   }
 
   if (fChain == 0) return;
