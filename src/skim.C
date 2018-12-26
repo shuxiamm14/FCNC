@@ -100,7 +100,7 @@ void nominal::finalise_sample(){
   outputtreefile->cd();
   map<TString, TTree*>::iterator iter;
   for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
-    iter->second->Write();
+    iter->second->Write(iter->first,TObject::kWriteDelete);
   outputtreefile->Close();
   deletepointer(outputtreefile);
 }
