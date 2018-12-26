@@ -471,7 +471,6 @@ void nominal::definetree(TTree* tree){
   tree->Branch("HLT_mu24_ivarmedium",&HLT_mu24_ivarmedium,"HLT_mu24_ivarmedium/B");
   tree->Branch("HLT_mu24_ivarloose",&HLT_mu24_ivarloose,"HLT_mu24_ivarloose/B");
   tree->Branch("HLT_mu24_imedium",&HLT_mu24_imedium,"HLT_mu24_imedium/B");
-  tree->Branch("HLT_mu24",&HLT_mu24,"HLT_mu24/B");
   tree->Branch("HLT_mu20_mu8noL1",&HLT_mu20_mu8noL1,"HLT_mu20_mu8noL1/B");
   tree->Branch("HLT_mu20_iloose_L1MU15",&HLT_mu20_iloose_L1MU15,"HLT_mu20_iloose_L1MU15/B");
   tree->Branch("HLT_mu18_mu8noL1",&HLT_mu18_mu8noL1,"HLT_mu18_mu8noL1/B");
@@ -550,9 +549,10 @@ void nominal::definetree(TTree* tree){
   tree->Branch("DL1_Continuous_EventWeight",&DL1_Continuous_EventWeight,"DL1_Continuous_EventWeight/D");
   tree->Branch("pileupEventWeight_UP",&pileupEventWeight_UP,"pileupEventWeight_UP/D");
   tree->Branch("pileupEventWeight_DOWN",&pileupEventWeight_DOWN,"pileupEventWeight_DOWN/D");
+  tree->Branch("muon_match_HLT_mu24",&muon_match_HLT_mu24);
   if (version == 7)
   {
-    tree->Branch("muon_match_HLT_mu24",&muon_match_HLT_mu24);
+    tree->Branch("HLT_mu24",&HLT_mu24,"HLT_mu24/B");
     if(dosys){
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up",&bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up,"bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up/F");
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down",&bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down,"bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down/F");
