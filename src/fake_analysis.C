@@ -223,3 +223,5 @@ bool nominal::SelectTLepid(int id){
   }
   return pass;
 }
+
+void nominal::finalise_sample(){}
