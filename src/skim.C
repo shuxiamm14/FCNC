@@ -124,10 +124,14 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       iter->second->Branch("wmass",&Wmass);
       iter->second->Branch("t2mass",&t2_mass);
     }
+  }else{
+    Init(outputtree["reg1l1tau1b2j"]);
+    Init(outputtree["reg1l1tau1b3j"]);
+    Init(outputtree["reg1l2tau1bnj"]);
   }
 
-  if (fChain == 0) return;
-  Long64_t nentries = fChain->GetEntriesFast();
+  if (inputtree == 0) return;
+  Long64_t nentries = inputtree->GetEntriesFast();
   Long64_t nbytes = 0, nb = 0;
   TString sample = samplename;
   if(samplename.Contains("ttbar")) sample = "ttbar";
@@ -144,7 +148,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
 
 
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
-    nb = fChain->GetEntry(jentry);
+    nb = inputtree->GetEntry(jentry);
     if((jentry%100000==0))
       std::cout<<" I am here event "<<jentry<<" Event "<<EventNumber<<" Run "<<RunNumber<<" ismc "<<mc_channel_number<<std::endl;
 //===============================pre-selections===============================
@@ -628,8 +632,6 @@ void nominal::definetree(TTree* tree){
   tree->Branch("m_truth_pdgId",&m_truth_pdgId);
   tree->Branch("m_truth_status",&m_truth_status);
   tree->Branch("m_truth_barcode",&m_truth_barcode);
-  tree->Branch("m_truth_parents",&m_truth_parents);
-  tree->Branch("m_truth_children",&m_truth_children);
   tree->Branch("m_mcevt_pdf_X1",&m_mcevt_pdf_X1);
   tree->Branch("m_mcevt_pdf_X2",&m_mcevt_pdf_X2);
   tree->Branch("m_mcevt_pdf_PDGID1",&m_mcevt_pdf_PDGID1);
@@ -930,7 +932,6 @@ void nominal::definetree(TTree* tree){
   tree->Branch("m_tau_charge",&m_tau_charge);
   tree->Branch("m_tau_numTrack",&m_tau_numTrack);
   tree->Branch("m_tau_BDTJetScore",&m_tau_BDTJetScore);
-  tree->Branch("m_tau_BDTJetScoreSigTrans",&m_tau_BDTJetScoreSigTrans);
   tree->Branch("m_tau_JetBDTSigLoose",&m_tau_JetBDTSigLoose);
   tree->Branch("m_tau_JetBDTSigMedium",&m_tau_JetBDTSigMedium);
   tree->Branch("m_tau_JetBDTSigTight",&m_tau_JetBDTSigTight);

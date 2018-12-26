@@ -85,13 +85,13 @@ void nominal::init_sample(TString sample, TString sampletitle){
 void nominal::Loop(TTree *inputtree, TString samplename)
 {
   Init(inputtree);
-  if (fChain == 0) return;
-  Long64_t nentries = fChain->GetEntriesFast();
+  if (inputtree == 0) return;
+  Long64_t nentries = inputtree->GetEntriesFast();
   Long64_t nbytes = 0, nb = 0;
   TString sample = samplename;
   if(samplename.Contains("ttbar")) sample = "ttbar";
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
-    nb = fChain->GetEntry(jentry);
+    nb = inputtree->GetEntry(jentry);
     if((jentry%100000==0))
       std::cout<<" I am here event "<<jentry<<" Event "<<EventNumber<<" Run "<<RunNumber<<" ismc "<<mc_channel_number<<std::endl;
 //===============================pre-selections===============================
