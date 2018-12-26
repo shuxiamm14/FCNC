@@ -110,11 +110,11 @@ void nominal::Loop(TTree *inputtree, TString samplename)
   outputtreefile->cd();
   if (!outputtree["reg1l1tau1b2j"])
   {
-    outputtree["reg1l1tau1b2j"] = new TTree();
+    outputtree["reg1l1tau1b2j"] = new TTree("reg1l1tau1b2j","reg1l1tau1b2j");
     definetree(outputtree["reg1l1tau1b2j"]);
-    outputtree["reg1l1tau1b3j"] = new TTree();
+    outputtree["reg1l1tau1b3j"] = new TTree("reg1l1tau1b3j","reg1l1tau1b3j");
     definetree(outputtree["reg1l1tau1b3j"]);
-    outputtree["reg1l2tau1bnj"] = new TTree();
+    outputtree["reg1l2tau1bnj"] = new TTree("reg1l2tau1bnj","reg1l2tau1bnj");
     definetree(outputtree["reg1l2tau1bnj"]);
   }
   map<TString, TTree*>::iterator iter;
