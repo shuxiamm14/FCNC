@@ -96,7 +96,7 @@ void nominal::init_sample(TString sample, TString sampletitle){
     tau_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
   }
 }
-void nominal::finalise_sample(TString sample, TString sampletitle){
+void nominal::finalise_sample(){
   outputtreefile->cd();
   map<TString, TTree*>::iterator iter;
   for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)

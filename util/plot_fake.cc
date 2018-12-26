@@ -38,6 +38,7 @@ int main(int argc, char const *argv[])
 			analysis->Loop( (TTree*)inputfile.Get("nominal"), cate);
 			inputfile.Close();
 		}
+		analysis->finalise_sample();
 	}
 	analysis->plot();
 	return 0;
