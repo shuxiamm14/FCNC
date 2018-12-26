@@ -16,7 +16,7 @@ public :
    TString ptbin[2] = {"below35","above35"};
    Double_t _lum = 80.;
    int debug = 0;
-   bool dosys = 0;
+   bool dosys = 1;
    nominal();
    virtual ~nominal();
    void plot();
@@ -28,7 +28,7 @@ public :
    virtual void     Init(TTree *tree);
    virtual void     Loop(TTree *inputtree, TString sample);
    virtual int      findcjet();
-   virtual void finalise_sample();
+   void finalise_sample();
    static  void     fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
    void fill_tau(TString region, int nprong, TString sample, int ptbin);
    void fill_notau(TString region, TString sample);
