@@ -632,8 +632,8 @@ void nominal::definetree(TTree* tree){
   tree->Branch("m_truth_pdgId",&m_truth_pdgId);
   tree->Branch("m_truth_status",&m_truth_status);
   tree->Branch("m_truth_barcode",&m_truth_barcode);
-  tree->Branch("m_truth_parents",&m_truth_parents);
-  tree->Branch("m_truth_children",&m_truth_children);
+  //tree->Branch("m_truth_parents",&m_truth_parents);
+  //tree->Branch("m_truth_children",&m_truth_children);
   tree->Branch("m_mcevt_pdf_X1",&m_mcevt_pdf_X1);
   tree->Branch("m_mcevt_pdf_X2",&m_mcevt_pdf_X2);
   tree->Branch("m_mcevt_pdf_PDGID1",&m_mcevt_pdf_PDGID1);
