@@ -227,8 +227,6 @@ public :
    Float_t         bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_down;
    Float_t         bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_up;
    Float_t         bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_down;
-   vector<int>     *electron_firstEgMotherTruthType;
-   vector<int>     *electron_firstEgMotherTruthOrigin;
    Int_t           lep_firstEgMotherPdgId_0;
    Int_t           lep_firstEgMotherTruthType_0;
    Int_t           lep_firstEgMotherTruthOrigin_0;
@@ -2083,8 +2081,6 @@ public :
    TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_down;
    TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_up;
    TBranch        *b_bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_down;
-   TBranch        *b_electron_firstEgMotherTruthType;
-   TBranch        *b_electron_firstEgMotherTruthOrigin;
    TBranch        *b_lep_firstEgMotherPdgId_0;
    TBranch        *b_lep_firstEgMotherTruthType_0;
    TBranch        *b_lep_firstEgMotherTruthOrigin_0;
@@ -4016,8 +4012,6 @@ void nominal::Init(TTree *tree)
    m_jet_isLooseBad = 0;
    m_jet_flavor_weight_MV2c10 = 0;
    m_jet_numTrk = 0;
-   electron_firstEgMotherTruthType = 0;
-   electron_firstEgMotherTruthOrigin = 0;
    m_jet_tagWeightBin = 0;
    m_tau_BDTJetScoreSigTrans = 0;
    m_jet_passOR = 0;

@@ -106,7 +106,6 @@ void nominal::finalise_sample(){
 }
 void nominal::Loop(TTree *inputtree, TString samplename)
 {
-  Init(inputtree);
   outputtreefile->cd();
   if (!outputtree["reg1l1tau1b2j"])
   {
@@ -129,6 +128,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     Init(outputtree["reg1l1tau1b3j"]);
     Init(outputtree["reg1l2tau1bnj"]);
   }
+  Init(inputtree);
 
   if (inputtree == 0) return;
   Long64_t nentries = inputtree->GetEntriesFast();
@@ -801,8 +801,6 @@ void nominal::definetree(TTree* tree){
   tree->Branch("electron_truthOrigin",&electron_truthOrigin);
   tree->Branch("electron_truthType",&electron_truthType);
   tree->Branch("electron_firstEgMotherPdgId",&electron_firstEgMotherPdgId);
-  tree->Branch("electron_firstEgMotherTruthType",&electron_firstEgMotherTruthType);
-  tree->Branch("electron_firstEgMotherTruthOrigin",&electron_firstEgMotherTruthOrigin);
   tree->Branch("electron_jetFitterComb",&electron_jetFitterComb);
   tree->Branch("electron_PromptLeptonInput_sv1_jf_ntrkv",&electron_PromptLeptonInput_sv1_jf_ntrkv);
   tree->Branch("electron_PromptLeptonInput_TrackJetNTrack",&electron_PromptLeptonInput_TrackJetNTrack);
