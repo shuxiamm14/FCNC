@@ -25,7 +25,7 @@ MAKESHARED = clang++ -shared -fPIC -dynamiclib -single_module -O2 -mmacosx-versi
 
 TARGETS 		= $(patsubst util/%.cc,bin/%_run,$(wildcard util/*.cc))
 
-all: makebin lib/libskim.so lib/libfake_analysis.so $(TARGETS) bin/skim_run
+all: makebin lib/libskim.so lib/libfake_analysis.so $(TARGETS)
 
 makebin:
 	@echo using compiler: $(CXX)
