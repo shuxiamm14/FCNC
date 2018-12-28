@@ -47,11 +47,20 @@ nominal::nominal(){
   forFit.Add(&cjet_v);
   forFit.Add(&lep_v);
   forFit.Add(&mets);
+
+  neutrino_pt  = new vector<float>();
+  neutrino_eta = new vector<float>();
+  neutrino_phi = new vector<float>();
+  neutrino_m   = new vector<float>();
 }
 
 nominal::~nominal(){
   deletepointer(tau_plots);
   deletepointer(gM);
+  deletepointer(neutrino_pt  );
+  deletepointer(neutrino_eta );
+  deletepointer(neutrino_phi );
+  deletepointer(neutrino_m   );
 }
 
 void nominal::fill_tau(TString region, int nprong, TString sample, int iptbin){
@@ -104,8 +113,10 @@ void nominal::finalise_sample(){
   outputtreefile->Close();
   deletepointer(outputtreefile);
 }
-void nominal::Loop(TTree *inputtree, TString samplename)
+void nominal::Loop(TTree *inputtree, TString samplename, int _reduce)
 {
+  reduce = _reduce;
+  map<TString, bool> ifregions;
   outputtreefile->cd();
   if (!outputtree["reg1l1tau1b2j"])
   {
@@ -115,19 +126,32 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     definetree(outputtree["reg1l1tau1b3j"]);
     outputtree["reg1l2tau1bnj"] = new TTree("reg1l2tau1bnj","reg1l2tau1bnj");
     definetree(outputtree["reg1l2tau1bnj"]);
+
     map<TString, TTree*>::iterator iter;
-    for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
-    {
-      iter->second->Branch("t1mass",&t1_mass);
-      iter->second->Branch("tautaumass",&higgs_mass);
-      iter->second->Branch("wmass",&Wmass);
-      iter->second->Branch("t2mass",&t2_mass);
+    if(reduce == 1 || reduce == 0)
+      for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
+      {
+        iter->second->Branch("t1mass",&t1_mass);
+        iter->second->Branch("tautaumass",&higgs_mass);
+        iter->second->Branch("wmass",&Wmass);
+        iter->second->Branch("t2mass",&t2_mass);
+      }
+    if(reduce==2 || reduce == 0){
+        iter->second->Branch("neutrino_pt" , &neutrino_pt );
+        iter->second->Branch("neutrino_eta", &neutrino_eta);
+        iter->second->Branch("neutrino_phi", &neutrino_phi);
+        iter->second->Branch("neutrino_m"  , &neutrino_m  );
+        iter->second->Branch("weight",&weight);
+        iter->second->Branch("cjet_index", &cjet_index );
+        iter->second->Branch("wjet1_index", &wjet1_index);
+        iter->second->Branch("wjet2_index", &wjet2_index);
     }
   }else{
     Init(outputtree["reg1l1tau1b2j"]);
     Init(outputtree["reg1l1tau1b3j"]);
     Init(outputtree["reg1l2tau1bnj"]);
   }
+  reduce = 0;
   Init(inputtree);
 
   if (inputtree == 0) return;
@@ -172,9 +196,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       ((RunYear==2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose ))|| 
     	(RunYear>=2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0 )))&&lep_isTrigMatch_0;
 
-    weight = mc_channel_number>0?mc_norm*mcWeightOrg*pileupEventWeight_090*(V7NTUP?bTagSF_weight_MV2c10_FixedCutBEff_70:bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
 //===============================define regions===============================
-    map<TString, bool> ifregions;
     ifregions["reg1l1tau1b2j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T==3 && nTaus_OR_Pt25==1;
     ifregions["reg1l1tau1b3j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T>4 && nTaus_OR_Pt25==1;
     ifregions["reg1l2tau1bnj"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T>=2 && nTaus_OR_Pt25>=2;
@@ -189,6 +211,8 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       }
 
     if(!triggered) continue;
+
+    weight = mc_channel_number>0?mc_norm*mcWeightOrg*pileupEventWeight_090*(V7NTUP?bTagSF_weight_MV2c10_FixedCutBEff_70:bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
 
 //===============================find leading b,non b jets===============================
     leading_b = -1;
@@ -206,6 +230,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
         cjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_ljet],(*m_jet_eta)[leading_ljet],(*m_jet_phi)[leading_ljet],(*m_jet_E)[leading_ljet]);
         if((cjet_v + taus_v[0] + taus_v[1]).M() < 175) reloop = 0;
         pt_ljet = (*m_jet_pt)[selected_jets_T->at(i)];
+        cjet_index = selected_jets_T->at(i);
       }
       if(reloop == 0 && leading_b != -1) break;
     }
@@ -223,11 +248,11 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       taus_v[1].SetPtEtaPhiE((*m_tau_pt)[0],(*m_tau_eta)[0],(*m_tau_phi)[0],(*m_tau_E)[0]);
       lep_v.SetPtEtaPhiE(0,0,0,0);
       bjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b],(*m_jet_eta)[leading_b],(*m_jet_phi)[leading_b],(*m_jet_E)[leading_b]);
-      int cjetn = findcjet();
+      int cjet_index = findcjet();
       if(debug) {
         printf("Wmass: %f, t1_mass: %f\n", Wmass, t1_mass);
       }
-      cjet_v.SetPtEtaPhiE((*m_jet_pt)[cjetn],(*m_jet_eta)[cjetn],(*m_jet_phi)[cjetn],(*m_jet_E)[cjetn]);
+      cjet_v.SetPtEtaPhiE((*m_jet_pt)[cjet_index],(*m_jet_eta)[cjet_index],(*m_jet_phi)[cjet_index],(*m_jet_E)[cjet_index]);
     }
     mets.SetXYZ(met_met*cos(met_phi), met_met*sin(met_phi), MET_RefFinal_sumet);
 
@@ -274,9 +299,17 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     gM->mnstat(fmin, fedm, errdef,npari, nparx, istat);
     TLorentzVector tauv1_v; tauv1_v.SetPtEtaPhiM(val[0]*(*m_tau_pt)[0],(*m_tau_eta)[0],(*m_tau_phi)[0],nJets_OR_T>=2?0:val[2]);
     TLorentzVector tauv2_v; tauv2_v.SetPtEtaPhiM(val[1]*(*m_tau_pt)[1],(*m_tau_eta)[1],(*m_tau_phi)[1],0);
+    neutrino_pt  ->push_back (tauv1_v.Pt ()); neutrino_pt  ->push_back (tauv2_v.Pt ());
+    neutrino_eta ->push_back (tauv1_v.Eta()); neutrino_eta ->push_back (tauv2_v.Eta());
+    neutrino_phi ->push_back (tauv1_v.Phi()); neutrino_phi ->push_back (tauv2_v.Phi());
+    neutrino_m   ->push_back (tauv1_v.M  ()); neutrino_m   ->push_back (tauv2_v.M  ());
     if (nTaus_OR_Pt25>=2)
     {
       TLorentzVector wv_v   ; wv_v   .SetPtEtaPhiM(val[2],val[3],val[4],0);
+      neutrino_pt  ->push_back (wv_v.Pt ());
+      neutrino_eta ->push_back (wv_v.Eta());
+      neutrino_phi ->push_back (wv_v.Phi());
+      neutrino_m   ->push_back (wv_v.M  ());
       t1_mass     = ( lep_v + wv_v + bjet_v ) .M();
       Wmass      = ( lep_v + wv_v ).M();
     }
@@ -314,6 +347,10 @@ void nominal::Loop(TTree *inputtree, TString samplename)
         outputtree[iter->first]->Fill();
       }
     }
+    neutrino_pt  -> clear();
+    neutrino_eta -> clear();
+    neutrino_phi -> clear();
+    neutrino_m   -> clear();
   }
 }
 
@@ -390,7 +427,14 @@ int nominal::findcjet(){
   if (nlightj == 2) {
     t1_mass = 0;
     Wmass = 0;
-    return ljet[0].DeltaR(taus_v[0] + taus_v[0]) + ljet[1].DeltaR(bjet_v) < ljet[1].DeltaR(taus_v[0] + taus_v[0]) + ljet[0].DeltaR(bjet_v) ? nljet[0]:nljet[1];
+    wjet2_index = 0;
+    if(ljet[0].DeltaR(taus_v[0] + taus_v[0]) + ljet[1].DeltaR(bjet_v) < ljet[1].DeltaR(taus_v[0] + taus_v[0]) + ljet[0].DeltaR(bjet_v)){
+      wjet1_index = nljet[1];
+      return nljet[0];
+    }else{
+      wjet1_index = nljet[0];
+      return nljet[1];
+    }
   }else{
     if(debug) {
       printv(ljet[0]);
@@ -403,22 +447,30 @@ int nominal::findcjet(){
       {
         t1_mass     = ( ljet[1] + ljet[2] + bjet_v ) .M();
         Wmass      = ( ljet[1] + ljet[2] ).M();
+        wjet1_index = nljet[1];
+        wjet2_index = nljet[2];
         return nljet[0];
       }
       else{
         t1_mass     = ( ljet[0] + ljet[2] + bjet_v ) .M();
         Wmass      = ( ljet[0] + ljet[2] ).M();
+        wjet1_index = nljet[0];
+        wjet2_index = nljet[2];
         return nljet[1];
       }
     else if(abs((ljet[0] + ljet[1]).M() - m_w) > abs((ljet[1] + ljet[2]).M() - m_w)) 
       {
         t1_mass     = ( ljet[1] + ljet[2] + bjet_v ) .M();
         Wmass      = ( ljet[1] + ljet[2] ).M();
+        wjet1_index = nljet[1];
+        wjet2_index = nljet[2];
         return nljet[0];
       }
       else{
         t1_mass     = ( ljet[0] + ljet[1] + bjet_v ) .M();
         Wmass      = ( ljet[0] + ljet[1] ).M();
+        wjet1_index = nljet[0];
+        wjet2_index = nljet[1];
         return nljet[2];
       }
   }

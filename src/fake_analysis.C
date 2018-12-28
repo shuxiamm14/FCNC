@@ -82,7 +82,7 @@ void nominal::init_sample(TString sample, TString sampletitle){
   
 }
 
-void nominal::Loop(TTree *inputtree, TString samplename)
+void nominal::Loop(TTree *inputtree, TString samplename, int _reduce)
 {
   Init(inputtree);
   if (inputtree == 0) return;

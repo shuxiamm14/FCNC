@@ -56,11 +56,11 @@ bin/.%.o: util/%.cc
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
 
-bin/plot_fake_run: bin/.plot_fake.o
+bin/plot_fake_run: bin/.reduce1.o
 	@echo Linking $@ with $^
 	@$(CXX) $(CPPFLAGS) -D V7NTUP=0 $(EXTRALIBS)  -Llib -lfake_analysis -o $@ $<
 
-bin/skim_run: bin/.plot_fake.o
+bin/reduce%_run: bin/.reduce%.o
 	@echo Linking $@ with $^
 	@$(CXX) $(CPPFLAGS) -D V7NTUP=1 $(EXTRALIBS)  -Llib -lskim -o $@ $<
 
