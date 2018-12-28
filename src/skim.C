@@ -229,7 +229,7 @@ void nominal::Loop(TTree *inputtree, TString samplename, int _reduce)
     pt_ljet = 0;
     bool reloop = 1;
     if(nJets_OR_T != selected_jets_T->size()){
-      printf("ERROR: nJets_OR_T,%d != selected_jets_T->size(),%d; Entry: %d\n", nJets_OR_T,selected_jets_T->size(),EventNumber);
+      printf("ERROR: nJets_OR_T,%d != selected_jets_T->size(),%d; Entry: %d\n", nJets_OR_T,selected_jets_T->size(),jentry);
       continue;
     }
     for (int i = 0; i < nJets_OR_T; ++i)
