@@ -12,9 +12,10 @@ public :
    const double btagwpCut[4]={0.94,0.83,0.64,0.11};
    TString bwps[4] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
    TString ptbin[2] = {"below35","above35"};
+   map<TString, bool> ifregions;
    Double_t _lum = 80.;
    int debug = 0;
-   bool dosys = 1;
+   bool dosys = 0;
    int reduce = 0;
    nominal();
    virtual ~nominal();
@@ -25,7 +26,7 @@ public :
    TFile *outputtreefile;
    map<TString, TTree*> outputtree;
    virtual void     Init(TTree *tree);
-   virtual void     Loop(TTree *inputtree, TString sample, int _reduce);
+   virtual void     Loop(TTree *inputtree, TString sample);
    virtual int      findcjet();
    void finalise_sample();
    static  void     fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
@@ -4080,13 +4081,13 @@ void nominal::Init(TTree *tree)
    if (!tree) return;
 
    tree->SetMakeClass(1);
-   if(reduce>1 && reduce != 0){
+   if(reduce>=1 && reduce != 0){
       tree->SetBranchAddress("t1mass",&t1_mass);
       tree->SetBranchAddress("tautaumass",&higgs_mass);
       tree->SetBranchAddress("wmass",&Wmass);
       tree->SetBranchAddress("t2mass",&t2_mass);
    }
-   if(reduce>2 && reduce != 0){
+   if(reduce>=2 && reduce != 0){
       tree->SetBranchAddress("neutrino_pt" , &neutrino_pt );
       tree->SetBranchAddress("neutrino_eta", &neutrino_eta);
       tree->SetBranchAddress("neutrino_phi", &neutrino_phi);

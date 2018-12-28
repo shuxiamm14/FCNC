@@ -77,6 +77,7 @@ void nominal::fill_tau(TString region, int nprong, TString sample, int iptbin){
 
 void nominal::init_sample(TString sample, TString sampletitle){
   outputtreefile = new TFile(sample + ".root","update");
+  outputtreefile->cd();
   if (outputtreefile->Get("reg1l1tau1b2j"))
   {
     outputtree["reg1l1tau1b2j"] = (TTree*)(outputtreefile->Get("reg1l1tau1b2j"));
@@ -86,6 +87,42 @@ void nominal::init_sample(TString sample, TString sampletitle){
     outputtree["reg1l1tau1b2j"] = 0;
     outputtree["reg1l1tau1b3j"] = 0;
     outputtree["reg1l2tau1bnj"] = 0;
+  }
+
+  if (!outputtree["reg1l1tau1b2j"])
+  {
+    outputtree["reg1l1tau1b2j"] = new TTree("reg1l1tau1b2j","reg1l1tau1b2j");
+    definetree(outputtree["reg1l1tau1b2j"]);
+    outputtree["reg1l1tau1b3j"] = new TTree("reg1l1tau1b3j","reg1l1tau1b3j");
+    definetree(outputtree["reg1l1tau1b3j"]);
+    outputtree["reg1l2tau1bnj"] = new TTree("reg1l2tau1bnj","reg1l2tau1bnj");
+    definetree(outputtree["reg1l2tau1bnj"]);
+
+    map<TString, TTree*>::iterator iter;
+    if(reduce == 1 || reduce == 0)
+      for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
+      {
+        iter->second->Branch("t1mass",&t1_mass);
+        iter->second->Branch("tautaumass",&higgs_mass);
+        iter->second->Branch("wmass",&Wmass);
+        iter->second->Branch("t2mass",&t2_mass);
+      }
+    if(reduce==2 || reduce == 0)
+      for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
+      {
+        iter->second->Branch("neutrino_pt" , &neutrino_pt );
+        iter->second->Branch("neutrino_eta", &neutrino_eta);
+        iter->second->Branch("neutrino_phi", &neutrino_phi);
+        iter->second->Branch("neutrino_m"  , &neutrino_m  );
+        iter->second->Branch("weight",&weight);
+        iter->second->Branch("cjet_index", &cjet_index );
+        iter->second->Branch("wjet1_index", &wjet1_index);
+        iter->second->Branch("wjet2_index", &wjet2_index);
+      }
+  }else{
+    Init(outputtree["reg1l1tau1b2j"]);
+    Init(outputtree["reg1l1tau1b3j"]);
+    Init(outputtree["reg1l2tau1bnj"]);
   }
 
   if(sample.Contains("ttbar")) sample = "ttbar";
@@ -113,55 +150,19 @@ void nominal::finalise_sample(){
   outputtreefile->Close();
   deletepointer(outputtreefile);
 }
-void nominal::Loop(TTree *inputtree, TString samplename, int _reduce)
+void nominal::Loop(TTree *inputtree, TString samplename)
 {
-  reduce = _reduce;
-  map<TString, bool> ifregions;
-  outputtreefile->cd();
-  if (!outputtree["reg1l1tau1b2j"])
-  {
-    outputtree["reg1l1tau1b2j"] = new TTree("reg1l1tau1b2j","reg1l1tau1b2j");
-    definetree(outputtree["reg1l1tau1b2j"]);
-    outputtree["reg1l1tau1b3j"] = new TTree("reg1l1tau1b3j","reg1l1tau1b3j");
-    definetree(outputtree["reg1l1tau1b3j"]);
-    outputtree["reg1l2tau1bnj"] = new TTree("reg1l2tau1bnj","reg1l2tau1bnj");
-    definetree(outputtree["reg1l2tau1bnj"]);
+  int reducetmp = reduce;
+  reduce = 0;
+  Init(inputtree);
+  reduce = reducetmp;
 
-    map<TString, TTree*>::iterator iter;
-    if(reduce == 1 || reduce == 0)
-      for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
-      {
-        iter->second->Branch("t1mass",&t1_mass);
-        iter->second->Branch("tautaumass",&higgs_mass);
-        iter->second->Branch("wmass",&Wmass);
-        iter->second->Branch("t2mass",&t2_mass);
-      }
-    else{      
+  if(reduce > 1) {
       ifregions["reg1l1tau1b2j"]  = 0;
       ifregions["reg1l1tau1b3j"]  = 0;
       ifregions["reg1l2tau1bnj"]  = 0;
       ifregions[inputtree->GetName()] = 1;
-    }
-    if(reduce==2 || reduce == 0)
-      for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
-      {
-        iter->second->Branch("neutrino_pt" , &neutrino_pt );
-        iter->second->Branch("neutrino_eta", &neutrino_eta);
-        iter->second->Branch("neutrino_phi", &neutrino_phi);
-        iter->second->Branch("neutrino_m"  , &neutrino_m  );
-        iter->second->Branch("weight",&weight);
-        iter->second->Branch("cjet_index", &cjet_index );
-        iter->second->Branch("wjet1_index", &wjet1_index);
-        iter->second->Branch("wjet2_index", &wjet2_index);
-      }
-  }else{
-    Init(outputtree["reg1l1tau1b2j"]);
-    Init(outputtree["reg1l1tau1b3j"]);
-    Init(outputtree["reg1l2tau1bnj"]);
   }
-  reduce = 0;
-  Init(inputtree);
-
   if (inputtree == 0) return;
   Long64_t nentries = inputtree->GetEntriesFast();
   TString sample = samplename;
@@ -219,9 +220,9 @@ void nominal::Loop(TTree *inputtree, TString samplename, int _reduce)
         }
 
       if(!triggered) continue;
-
-      weight = mc_channel_number>0?mc_norm*mcWeightOrg*pileupEventWeight_090*(V7NTUP?bTagSF_weight_MV2c10_FixedCutBEff_70:bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
     }
+    if(reduce == 2) weight = mc_channel_number>0?mc_norm*mcWeightOrg*pileupEventWeight_090*(V7NTUP?bTagSF_weight_MV2c10_FixedCutBEff_70:bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
+
 //===============================find leading b,non b jets===============================
     leading_b = -1;
     leading_ljet = -1;

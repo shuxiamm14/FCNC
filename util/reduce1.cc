@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
 	char inputline[100];
 
 	nominal *analysis = new nominal();
-
+	analysis->reduce = 1;
 	while(!fn.eof()){
 		fn.getline(inputline,200);
 		if(strlen(inputline)==0) continue;
@@ -35,7 +35,7 @@ int main(int argc, char const *argv[])
 			if(inputline[0]=='#') continue;
 			printf("reading Root file: %s\n", (prefix1 + inputline).Data());
 			TFile inputfile(prefix1 + inputline);
-			analysis->Loop( (TTree*)inputfile.Get("nominal"), cate, 1);
+			analysis->Loop( (TTree*)inputfile.Get("nominal"), cate);
 			inputfile.Close();
 		}
 		analysis->finalise_sample();

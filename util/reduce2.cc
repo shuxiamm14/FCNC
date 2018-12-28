@@ -11,7 +11,7 @@ int main(int argc, char const *argv[])
 	char inputline[100];
 
 	nominal *analysis = new nominal();
-
+	analysis->reduce = 2;
 	while(!fn.eof()){
 		fn.getline(inputline,200);
 		if(strlen(inputline)==0) continue;
@@ -24,9 +24,9 @@ int main(int argc, char const *argv[])
 		analysis->init_sample(cate, title);
 		printf("reading Root file: %s\n", (prefix + "/data/" + cate + ".root").Data());
 		TFile inputfile(prefix + "/data/" + cate + ".root");
-		analysis->Loop( (TTree*)inputfile.Get("reg1l1tau1b2j"), cate, 2);
-		analysis->Loop( (TTree*)inputfile.Get("reg1l1tau1b3j"), cate, 2);
-		analysis->Loop( (TTree*)inputfile.Get("reg1l2tau1bnj"), cate, 2);
+		analysis->Loop( (TTree*)inputfile.Get("reg1l1tau1b2j"), cate);
+		analysis->Loop( (TTree*)inputfile.Get("reg1l1tau1b3j"), cate);
+		analysis->Loop( (TTree*)inputfile.Get("reg1l2tau1bnj"), cate);
 		inputfile.Close();
 		analysis->finalise_sample();
 	}
