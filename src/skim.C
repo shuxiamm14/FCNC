@@ -164,7 +164,6 @@ void nominal::Loop(TTree *inputtree, TString samplename, int _reduce)
 
   if (inputtree == 0) return;
   Long64_t nentries = inputtree->GetEntriesFast();
-  Long64_t nbytes = 0, nb = 0;
   TString sample = samplename;
   if(samplename.Contains("ttbar")) sample = "ttbar";
 
@@ -180,7 +179,7 @@ void nominal::Loop(TTree *inputtree, TString samplename, int _reduce)
 
 
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
-    nb = inputtree->GetEntry(jentry);
+    inputtree->GetEntry(jentry);
     if((jentry%100000==0))
       std::cout<<" I am here event "<<jentry<<" Event "<<EventNumber<<" Run "<<RunNumber<<" ismc "<<mc_channel_number<<std::endl;
 //===============================pre-selections===============================
@@ -230,7 +229,7 @@ void nominal::Loop(TTree *inputtree, TString samplename, int _reduce)
     pt_ljet = 0;
     bool reloop = 1;
     if(nJets_OR_T != selected_jets_T->size()){
-      printf("ERROR: nJets_OR_T,%d != selected_jets_T->size()%d%s\n", nJets_OR_T,selected_jets_T->size());
+      printf("ERROR: nJets_OR_T,%d != selected_jets_T->size(),%d; Entry: %d\n", nJets_OR_T,selected_jets_T->size(),EventNumber);
       exit(1);
     }
     for (int i = 0; i < nJets_OR_T; ++i)
