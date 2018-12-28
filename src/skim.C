@@ -230,7 +230,7 @@ void nominal::Loop(TTree *inputtree, TString samplename, int _reduce)
     bool reloop = 1;
     if(nJets_OR_T != selected_jets_T->size()){
       printf("ERROR: nJets_OR_T,%d != selected_jets_T->size(),%d; Entry: %d\n", nJets_OR_T,selected_jets_T->size(),EventNumber);
-      exit(1);
+      continue;
     }
     for (int i = 0; i < nJets_OR_T; ++i)
     {
