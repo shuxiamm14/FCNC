@@ -136,7 +136,9 @@ void nominal::Loop(TTree *inputtree, TString samplename, int _reduce)
         iter->second->Branch("wmass",&Wmass);
         iter->second->Branch("t2mass",&t2_mass);
       }
-    if(reduce==2 || reduce == 0){
+    if(reduce==2 || reduce == 0)
+      for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
+      {
         iter->second->Branch("neutrino_pt" , &neutrino_pt );
         iter->second->Branch("neutrino_eta", &neutrino_eta);
         iter->second->Branch("neutrino_phi", &neutrino_phi);
@@ -145,7 +147,7 @@ void nominal::Loop(TTree *inputtree, TString samplename, int _reduce)
         iter->second->Branch("cjet_index", &cjet_index );
         iter->second->Branch("wjet1_index", &wjet1_index);
         iter->second->Branch("wjet2_index", &wjet2_index);
-    }
+      }
   }else{
     Init(outputtree["reg1l1tau1b2j"]);
     Init(outputtree["reg1l1tau1b3j"]);
