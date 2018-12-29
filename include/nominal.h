@@ -4791,8 +4791,8 @@ void nominal::Init(TTree *tree)
    tree->SetBranchAddress("m_truth_pdgId", &m_truth_pdgId, &b_m_truth_pdgId);
    tree->SetBranchAddress("m_truth_status", &m_truth_status, &b_m_truth_status);
    tree->SetBranchAddress("m_truth_barcode", &m_truth_barcode, &b_m_truth_barcode);
-   //tree->SetBranchAddress("m_truth_parents", &m_truth_parents, &b_m_truth_parents);
-   //tree->SetBranchAddress("m_truth_children", &m_truth_children, &b_m_truth_children);
+   tree->SetBranchAddress("m_truth_parents", &m_truth_parents, &b_m_truth_parents);
+   tree->SetBranchAddress("m_truth_children", &m_truth_children, &b_m_truth_children);
    tree->SetBranchAddress("m_mcevt_pdf_X1", &m_mcevt_pdf_X1, &b_m_mcevt_pdf_X1);
    tree->SetBranchAddress("m_mcevt_pdf_X2", &m_mcevt_pdf_X2, &b_m_mcevt_pdf_X2);
    tree->SetBranchAddress("m_mcevt_pdf_PDGID1", &m_mcevt_pdf_PDGID1, &b_m_mcevt_pdf_PDGID1);
