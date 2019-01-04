@@ -48,12 +48,13 @@ bin/.%.o: util/.C include/%.h
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
 
-src/LinkDef.cxx: include/LinkDef.h
+src/dict.cxx: include/LinkDef.h
 	@echo Linking LinkDef.h for $@
 	@rootcint -f $@ -c $<
+	@mv src/dict.h include/.
 
-bin/.LinkDef.o: src/LinkDef.cxx
-	@$(CXX) $(CPPFLAGS) -c $< -o $@
+bin/.dict.o: src/dict.cxx include/dict.h
+	@$(CXX) $(CPPFLAGS) -Iinclude/dict.h -c $< -o $@
 
 bin/.%.o: util/%.cc include/%.h
 	@echo Compiling $@ with $^
@@ -63,15 +64,15 @@ bin/.%.o: util/%.cc
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
 
-bin/plot_fake_run: bin/.reduce1.o bin/.LinkDef.o
+bin/plot_fake_run: bin/.reduce1.o bin/.dict.o
 	@echo Linking $@ with $^
 	@$(CXX) $(CPPFLAGS) -D V7NTUP=0 $(EXTRALIBS)  -Llib -lfake_analysis -o $@ $^
 
-bin/reduce%_run: bin/.reduce%.o bin/.LinkDef.o
+bin/reduce%_run: bin/.reduce%.o bin/.dict.o
 	@echo Linking $@ with $^
 	@$(CXX) $(CPPFLAGS) -D V7NTUP=1 $(EXTRALIBS)  -Llib -lskim -o $@ $^
 
-bin/%_run: bin/.%.o bin/.LinkDef.o
+bin/%_run: bin/.%.o bin/.dict.o
 	@echo Linking $@ with $^
 	@$(CXX) $(CPPFLAGS) $(EXTRALIBS) -o $@ $^
 
