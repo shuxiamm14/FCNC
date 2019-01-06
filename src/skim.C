@@ -98,6 +98,7 @@ void nominal::init_sample(TString sample, TString sampletitle){
         iter->second->Branch("tautaumass",&higgs_mass);
         iter->second->Branch("wmass",&Wmass);
         iter->second->Branch("t2mass",&t2_mass);
+        Init(iter->second);
       }
     if(reduce==2 || reduce == 0)
       for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
@@ -110,12 +111,9 @@ void nominal::init_sample(TString sample, TString sampletitle){
         iter->second->Branch("cjet_index", &cjet_index );
         iter->second->Branch("wjet1_index", &wjet1_index);
         iter->second->Branch("wjet2_index", &wjet2_index);
+        Init(iter->second);
       }
-  }else{
-    Init(outputtree["reg1l1tau1b2j"]);
-    Init(outputtree["reg1l1tau1b3j"]);
-    Init(outputtree["reg1l2tau1bnj"]);
-  }
+    }
 
   for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
     iter->second->SetDirectory(outputtreefile);
