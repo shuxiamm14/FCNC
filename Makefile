@@ -4,7 +4,7 @@
 
 ROOTCFLAGS      := $(shell root-config --cflags)
 ROOTLIBS        := $(shell root-config --libs)
-ROOTGLIBS       := $(shell root-config --glibs) -lMinuit -lTMVA -lHistFactory -lRooStats -lRooFit -lRooFitCore
+ROOTGLIBS       := $(shell root-config --glibs) -lMinuit -lTMVA
 
 DELPHES_DIR := /Users/Liby/Desktop/software/delphes/Delphes-3.4.0
 DELPHESLIBS := -L$(DELPHES_DIR) -lDelphes
@@ -48,14 +48,13 @@ bin/.%.o: util/.C include/%.h
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
 
-src/dict.cxx: include/LinkDef.h
+bin/.dict.cxx: include/LinkDef.h
 	@echo Linking LinkDef.h for $@
 	@rootcint -f $@ -c $<
-	@mv src/dict.h include/.
 
-bin/.dict.o: src/dict.cxx include/dict.h
-	@$(CXX) $(CPPFLAGS) -Iinclude/dict.h -c $< -o $@
-
+bin/.dict.o: bin/.dict.cxx
+	@$(CXX) $(CPPFLAGS) -c $< -o $@
+	@mv bin/.dict_rdict.pcm lib/.
 bin/.%.o: util/%.cc include/%.h
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
@@ -83,4 +82,4 @@ lib/lib%.so: bin/.%.o
 .PHONY:clean
 
 clean:
-	@rm bin/*
+	@rm -r bin lib

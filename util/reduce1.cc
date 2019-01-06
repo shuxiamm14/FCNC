@@ -2,6 +2,8 @@
 
 int main(int argc, char const *argv[])
 {
+
+	bool doplot = 0;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	ifstream fn(argv[1]);
@@ -13,6 +15,7 @@ int main(int argc, char const *argv[])
 
 	nominal *analysis = new nominal();
 	analysis->reduce = 1;
+	analysis->dohist = doplot;
 	while(!fn.eof()){
 		fn.getline(inputline,200);
 		if(strlen(inputline)==0) continue;
@@ -40,6 +43,6 @@ int main(int argc, char const *argv[])
 		}
 		analysis->finalise_sample();
 	}
-	analysis->plot();
+	if(doplot) analysis->plot();
 	return 0;
 }
