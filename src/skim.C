@@ -77,6 +77,8 @@ void nominal::fill_tau(TString region, int nprong, TString sample, int iptbin){
 
 void nominal::init_sample(TString sample, TString sampletitle){
   outputtreefile = new TFile(sample + ".root","update");
+  map<TString, TTree*>::iterator iter;
+
   if (outputtreefile->Get("reg1l1tau1b2j"))
   {
     outputtree["reg1l1tau1b2j"] = (TTree*)(outputtreefile->Get("reg1l1tau1b2j"));
@@ -89,8 +91,7 @@ void nominal::init_sample(TString sample, TString sampletitle){
     definetree(outputtree["reg1l1tau1b3j"]);
     outputtree["reg1l2tau1bnj"] = new TTree("reg1l2tau1bnj","reg1l2tau1bnj");
     definetree(outputtree["reg1l2tau1bnj"]);
-
-    map<TString, TTree*>::iterator iter;
+    
     if(reduce == 1 || reduce == 0)
       for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
       {
@@ -114,7 +115,6 @@ void nominal::init_sample(TString sample, TString sampletitle){
         Init(iter->second);
       }
     }
-
   for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
     iter->second->SetDirectory(outputtreefile);
 
