@@ -8,34 +8,36 @@
 TMinuit* gM = 0;
 nominal::nominal(){
   //init histSaver here:
-  tau_plots = new histSaver();
-  tau_plots->set_weight(&weight);
-  tau_plots->debug = 0;
-  debug = 1;
-  //tau_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-  //tau_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
-  //tau_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
-  //tau_plots->add(120,50.,250.,"m_{t,SM}","t1mass",&t1_mass,true,"GeV");
-  //tau_plots->add(120,50.,250.,"m_{#tau,#tau}","tautaumass",&higgs_mass,true,"GeV");
-  //tau_plots->add(120,50.,250.,"m_{W}","wmass",&Wmass,true,"GeV");
-  tau_plots->add(120,50.,250.,"m_{t,FCNC}","t2mass",&t2_mass,true,"GeV");
+  if(dohist){
+    tau_plots = new histSaver();
+    tau_plots->set_weight(&weight);
+    tau_plots->debug = 0;
+    debug = 1;
+    tau_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+    tau_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
+    tau_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
+    tau_plots->add(120,50.,250.,"m_{t,SM}","t1mass",&t1_mass,true,"GeV");
+    tau_plots->add(120,50.,250.,"m_{#tau,#tau}","tautaumass",&higgs_mass,true,"GeV");
+    tau_plots->add(120,50.,250.,"m_{W}","wmass",&Wmass,true,"GeV");
+    tau_plots->add(120,50.,250.,"m_{t,FCNC}","t2mass",&t2_mass,true,"GeV");
   
-  TString regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
-  TString nprong[] = {"1prong","3prong"};
+    TString regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
+    TString nprong[] = {"1prong","3prong"};
 
-  for (int j = 0; j < 3; ++j)
-    for (int k = 0; k < 2; ++k)
-    {
-      for (int i = 0; i < 4; ++i)
+    for (int j = 0; j < 3; ++j)
+      for (int k = 0; k < 2; ++k)
       {
-        for (int iptbin = 0; iptbin < 2; ++iptbin)
+        for (int i = 0; i < 4; ++i)
         {
-          if(debug) printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-          tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
-          tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+          for (int iptbin = 0; iptbin < 2; ++iptbin)
+          {
+            if(debug) printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
+            tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
+            tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+          }
         }
       }
-    }
+  }
 
   TLorentzVector v1;
   for(int i = 0 ; i < 2 ; ++i){
@@ -76,9 +78,10 @@ void nominal::fill_tau(TString region, int nprong, TString sample, int iptbin){
 
 
 void nominal::init_sample(TString sample, TString sampletitle){
+
+//==========================init output n-tuple==========================
   outputtreefile = new TFile(sample + ".root","update");
   map<TString, TTree*>::iterator iter;
-
   if (outputtreefile->Get("reg1l1tau1b2j"))
   {
     outputtree["reg1l1tau1b2j"] = (TTree*)(outputtreefile->Get("reg1l1tau1b2j"));
@@ -91,7 +94,7 @@ void nominal::init_sample(TString sample, TString sampletitle){
     definetree(outputtree["reg1l1tau1b3j"]);
     outputtree["reg1l2tau1bnj"] = new TTree("reg1l2tau1bnj","reg1l2tau1bnj");
     definetree(outputtree["reg1l2tau1bnj"]);
-    
+
     if(reduce == 1 || reduce == 0)
       for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
       {
@@ -118,23 +121,28 @@ void nominal::init_sample(TString sample, TString sampletitle){
   for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
     iter->second->SetDirectory(outputtreefile);
 
-  if(sample.Contains("ttbar")) sample = "ttbar";
-
-  if (sample.Contains("data"))
-  {
-    tau_plots->init_sample("data","data","data",kBlack);
-    
-    initdata = 1;
-  }else{
-    tau_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
-    tau_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
-    tau_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
-    tau_plots->init_sample(sample + "_lep",sample + "_lep",sampletitle + "(lepton fake #tau)",kGreen);
-    tau_plots->init_sample(sample + "_real",sample + "_real",sampletitle + "(real #tau)",kRed);
-    tau_plots->init_sample(sample + "_c",sample + "_c",sampletitle + "(c-jets fake #tau)",kOrange);
-    tau_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
+//==========================init output histogram==========================
+  if(dohist){
+    if(sample.Contains("ttbar")) sample = "ttbar";
+  
+    if (sample.Contains("data"))
+    {
+      tau_plots->init_sample("data","data","data",kBlack);
+      
+      initdata = 1;
+    }else{
+      tau_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
+      tau_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
+      tau_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
+      tau_plots->init_sample(sample + "_lep",sample + "_lep",sampletitle + "(lepton fake #tau)",kGreen);
+      tau_plots->init_sample(sample + "_real",sample + "_real",sampletitle + "(real #tau)",kRed);
+      tau_plots->init_sample(sample + "_c",sample + "_c",sampletitle + "(c-jets fake #tau)",kOrange);
+      tau_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
+    }
   }
 }
+
+
 void nominal::finalise_sample(){
   outputtreefile->cd();
   map<TString, TTree*>::iterator iter;
@@ -323,7 +331,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       higgs_mass  = ( tauv2_v + taus_v[0] + tauv1_v + taus_v[1] ) .M();
 
 
-//===============================fill histograms===============================
+//===============================fill histograms, fill tree===============================
     TString tauorigin;
     if(sample == "data"){
       tauorigin = "data";
@@ -349,7 +357,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
     {
       if(iter->second == 1) {
-        fill_tau(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
+        if(dohist) fill_tau(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
         outputtree[iter->first]->Fill();
         outputtree[iter->first]->AutoSave();
       }

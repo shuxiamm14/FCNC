@@ -22,8 +22,9 @@ public :
    void plot();
    bool initdata = 0;
    bool initttbar = 0;
+   bool dohist = 0;
    int version = 6;
-   TFile *outputtreefile;
+   TFile *outputtreefile = 0;
    map<TString, TTree*> outputtree;
    virtual void     Init(TTree *tree);
    virtual void     Loop(TTree *inputtree, TString sample);
