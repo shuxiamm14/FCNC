@@ -10,6 +10,11 @@ int main(int argc, char const *argv[])
 	}
 	char inputline[100];
 
+	vector<TString> regions;
+	regions.push_back("reg1l2tau1bnj");
+	regions.push_back("reg1l1tau1b2j");
+	regions.push_back("reg1l1tau1b3j");
+
 	nominal *analysis = new nominal();
 	analysis->reduce = 2;
 	while(!fn.eof()){
@@ -24,9 +29,11 @@ int main(int argc, char const *argv[])
 		analysis->init_sample(cate, title);
 		printf("reading Root file: %s\n", (prefix + "/data/" + cate + ".root").Data());
 		TFile inputfile(prefix + "/data/" + cate + ".root");
-		analysis->Loop( (TTree*)inputfile.Get("reg1l1tau1b2j"), cate);
-		analysis->Loop( (TTree*)inputfile.Get("reg1l1tau1b3j"), cate);
-		analysis->Loop( (TTree*)inputfile.Get("reg1l2tau1bnj"), cate);
+		for (std::vector<TString>::iterator i = regions.begin(); i != regions.end(); ++i)
+		{
+			printf("region: %s\n", i->Data());
+			analysis->Loop( (TTree*)inputfile.Get(i->Data()), cate);
+		}
 		inputfile.Close();
 		analysis->finalise_sample();
 	}

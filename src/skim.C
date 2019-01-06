@@ -11,13 +11,13 @@ nominal::nominal(){
   tau_plots = new histSaver();
   tau_plots->set_weight(&weight);
   tau_plots->debug = 0;
-  debug = 0;
-  tau_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-  tau_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
-  tau_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
-  tau_plots->add(120,50.,250.,"m_{t,SM}","t1mass",&t1_mass,true,"GeV");
-  tau_plots->add(120,50.,250.,"m_{#tau,#tau}","tautaumass",&higgs_mass,true,"GeV");
-  tau_plots->add(120,50.,250.,"m_{W}","wmass",&Wmass,true,"GeV");
+  debug = 1;
+  //tau_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+  //tau_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
+  //tau_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
+  //tau_plots->add(120,50.,250.,"m_{t,SM}","t1mass",&t1_mass,true,"GeV");
+  //tau_plots->add(120,50.,250.,"m_{#tau,#tau}","tautaumass",&higgs_mass,true,"GeV");
+  //tau_plots->add(120,50.,250.,"m_{W}","wmass",&Wmass,true,"GeV");
   tau_plots->add(120,50.,250.,"m_{t,FCNC}","t2mass",&t2_mass,true,"GeV");
   
   TString regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
@@ -77,20 +77,12 @@ void nominal::fill_tau(TString region, int nprong, TString sample, int iptbin){
 
 void nominal::init_sample(TString sample, TString sampletitle){
   outputtreefile = new TFile(sample + ".root","update");
-  outputtreefile->cd();
   if (outputtreefile->Get("reg1l1tau1b2j"))
   {
     outputtree["reg1l1tau1b2j"] = (TTree*)(outputtreefile->Get("reg1l1tau1b2j"));
     outputtree["reg1l1tau1b3j"] = (TTree*)(outputtreefile->Get("reg1l1tau1b3j"));
     outputtree["reg1l2tau1bnj"] = (TTree*)(outputtreefile->Get("reg1l2tau1bnj"));
   }else{
-    outputtree["reg1l1tau1b2j"] = 0;
-    outputtree["reg1l1tau1b3j"] = 0;
-    outputtree["reg1l2tau1bnj"] = 0;
-  }
-
-  if (!outputtree["reg1l1tau1b2j"])
-  {
     outputtree["reg1l1tau1b2j"] = new TTree("reg1l1tau1b2j","reg1l1tau1b2j");
     definetree(outputtree["reg1l1tau1b2j"]);
     outputtree["reg1l1tau1b3j"] = new TTree("reg1l1tau1b3j","reg1l1tau1b3j");
@@ -125,6 +117,9 @@ void nominal::init_sample(TString sample, TString sampletitle){
     Init(outputtree["reg1l2tau1bnj"]);
   }
 
+  for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
+    iter->second->SetDirectory(outputtreefile);
+
   if(sample.Contains("ttbar")) sample = "ttbar";
 
   if (sample.Contains("data"))
@@ -145,8 +140,8 @@ void nominal::init_sample(TString sample, TString sampletitle){
 void nominal::finalise_sample(){
   outputtreefile->cd();
   map<TString, TTree*>::iterator iter;
-  for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
-    iter->second->Write(iter->first,TObject::kWriteDelete);
+//  for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
+//    iter->second->Write(iter->first,TObject::kWriteDelete);
   outputtreefile->Close();
   deletepointer(outputtreefile);
 }
@@ -358,6 +353,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       if(iter->second == 1) {
         fill_tau(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
         outputtree[iter->first]->Fill();
+        outputtree[iter->first]->AutoSave();
       }
     }
     neutrino_pt  -> clear();
