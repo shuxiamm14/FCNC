@@ -83,10 +83,12 @@ void nominal::init_sample(TString sample, TString sampletitle){
   outputtreefile = new TFile(sample + ".root","update");
   map<TString, TTree*>::iterator iter;
   if (outputtreefile->Get("reg1l1tau1b2j"))
-  {
+  {      
     outputtree["reg1l1tau1b2j"] = (TTree*)(outputtreefile->Get("reg1l1tau1b2j"));
     outputtree["reg1l1tau1b3j"] = (TTree*)(outputtreefile->Get("reg1l1tau1b3j"));
     outputtree["reg1l2tau1bnj"] = (TTree*)(outputtreefile->Get("reg1l2tau1bnj"));
+    for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
+      Init(iter->second);
   }else{
     outputtree["reg1l1tau1b2j"] = new TTree("reg1l1tau1b2j","reg1l1tau1b2j");
     definetree(outputtree["reg1l1tau1b2j"]);
@@ -102,7 +104,6 @@ void nominal::init_sample(TString sample, TString sampletitle){
         iter->second->Branch("tautaumass",&higgs_mass);
         iter->second->Branch("wmass",&Wmass);
         iter->second->Branch("t2mass",&t2_mass);
-        Init(iter->second);
       }
     if(reduce==2 || reduce == 0)
       for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
@@ -115,7 +116,6 @@ void nominal::init_sample(TString sample, TString sampletitle){
         iter->second->Branch("cjet_index", &cjet_index );
         iter->second->Branch("wjet1_index", &wjet1_index);
         iter->second->Branch("wjet2_index", &wjet2_index);
-        Init(iter->second);
       }
     }
 //  for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)

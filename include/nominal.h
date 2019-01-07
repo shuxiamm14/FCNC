@@ -3784,7 +3784,6 @@ void nominal::Init(TTree *tree)
    // code, but the routine can be extended by the user if needed.
    // Init() will be called many times when running on PROOF
    // (once per file to be processed).
-
    // Set object pointer
    tau_pt = 0;
    tau_eta = 0;
@@ -4080,7 +4079,7 @@ void nominal::Init(TTree *tree)
    selected_jets_T_mv2c10_Ordrd = 0;
    // Set branch addresses and branch pointers
    if (!tree) return;
-
+   printf("init tree: %s\n", tree->GetName());
    tree->SetMakeClass(1);
    if(reduce>=1 && reduce != 0){
       tree->SetBranchAddress("t1mass",&t1_mass);
