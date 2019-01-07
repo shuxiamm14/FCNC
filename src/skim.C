@@ -118,8 +118,8 @@ void nominal::init_sample(TString sample, TString sampletitle){
         Init(iter->second);
       }
     }
-  for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
-    iter->second->SetDirectory(outputtreefile);
+//  for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
+//    iter->second->SetDirectory(outputtreefile);
 
 //==========================init output histogram==========================
   if(dohist){
@@ -146,8 +146,8 @@ void nominal::init_sample(TString sample, TString sampletitle){
 void nominal::finalise_sample(){
   outputtreefile->cd();
   map<TString, TTree*>::iterator iter;
-//  for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
-//    iter->second->Write(iter->first,TObject::kWriteDelete);
+  for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
+    iter->second->Write(iter->first,TObject::kWriteDelete);
   outputtreefile->Close();
   deletepointer(outputtreefile);
 }
@@ -359,7 +359,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       if(iter->second == 1) {
         if(dohist) fill_tau(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
         outputtree[iter->first]->Fill();
-        outputtree[iter->first]->AutoSave();
+//       outputtree[iter->first]->AutoSave();
       }
     }
     neutrino_pt  -> clear();
