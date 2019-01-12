@@ -14,12 +14,14 @@ FCNC_DIR := /Users/Liby/work/tau_analysis/FCNC/plotTools
 FCNCLIBS := -L$(FCNC_DIR)/lib -lAtlasStyle -lPlotTool
 FCNCINCS := -I$(FCNC_DIR)/include/fcnc -I$(FCNC_DIR)/include/atlasstyle 
 
-EXTRALIBS +=$(ROOTLIBS) $(ROOTGLIBS) $(FCNCLIBS) $(DELPHESLIBS)
+EXTRALIBS +=$(ROOTLIBS) $(ROOTGLIBS) $(FCNCLIBS)
 
-CPPFLAGS += $(ROOTCFLAGS) $(DELPHESINCS) $(FCNCINCS) -Iinclude
+CPPFLAGS += $(ROOTCFLAGS) $(FCNCINCS) -Iinclude
 CPPFLAGS += -D PACKAGE_DIR=\"$(PWD)\"
 
 CPPFLAGS  += -Wno-long-long -fPIC -w -g
+
+CXX=/Applications/Xcode.app/Contents/Developer/usr/bin/g++
 
 MAKESHARED = clang++ -shared -fPIC -dynamiclib -single_module -O2 -mmacosx-version-min=10.10 -m64 -Wl,-install_name,@rpath/$(patsubst lib/%,%,$@)
 
@@ -63,10 +65,6 @@ bin/.%.o: util/%.cc
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
 
-bin/plot_fake_run: bin/.reduce1.o bin/.dict.o
-	@echo Linking $@ with $^
-	@$(CXX) $(CPPFLAGS) -D V7NTUP=0 $(EXTRALIBS)  -Llib -lfake_analysis -o $@ $^
-
 bin/reduce%_run: bin/.reduce%.o bin/.dict.o
 	@echo Linking $@ with $^
 	@$(CXX) $(CPPFLAGS) -D V7NTUP=1 $(EXTRALIBS)  -Llib -lskim -o $@ $^
@@ -78,6 +76,8 @@ bin/%_run: bin/.%.o bin/.dict.o
 lib/lib%.so: bin/.%.o
 	@echo Linking $@ with $^
 	@$(MAKESHARED) $(CPPFLAGS) $(EXTRALIBS) $< -o $@
+
+.PRECIOUS: bin/.%.o
 
 .PHONY:clean
 

@@ -9,7 +9,6 @@ int main(int argc, char const *argv[])
 	  return 1;
 	}
 	char inputline[100];
-
 	vector<TString> regions;
 	regions.push_back("reg1l2tau1bnj");
 	regions.push_back("reg1l1tau1b2j");
@@ -17,6 +16,7 @@ int main(int argc, char const *argv[])
 
 	nominal *analysis = new nominal();
 	analysis->reduce = 2;
+	analysis->debug = 0;
 	while(!fn.eof()){
 		fn.getline(inputline,200);
 		if(strlen(inputline)==0) continue;
@@ -33,6 +33,7 @@ int main(int argc, char const *argv[])
 		{
 			printf("region: %s\n", i->Data());
 			analysis->Loop( (TTree*)inputfile.Get(i->Data()), cate);
+			printf("finish loop on region: %s\n", i->Data());
 		}
 		inputfile.Close();
 		analysis->finalise_sample();

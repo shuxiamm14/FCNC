@@ -10,6 +10,13 @@ public :
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
    const double btagwpCut[4]={0.94,0.83,0.64,0.11};
+   double fakeSFs[4][4] = {
+      {1.028254, 0.060939, 2.842907, 0.802803},   //1prong <35
+      {0.770841, 0.524360, 2.233151, 0.769241},   //1prong >35
+      {1.157861, 0.792569, 1.349050, 1.426554},   //3prong <35
+      {0.818782, 0.614790, 5.756198, 0.489836}    //3prong >35
+   };
+
    TString bwps[4] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
    TString ptbin[2] = {"below35","above35"};
    map<TString, bool> ifregions;
@@ -59,8 +66,13 @@ public :
 
    histSaver *tau_plots = 0;
    histSaver *notau_plots = 0;
-
+   Double_t        t2vis_mass;
+   Double_t        t1vis_mass;
+   Double_t        ttvis_mass;
    Double_t        weight;
+   Double_t        fakeSF;
+   Double_t        x1fit;
+   Double_t        x2fit;
    ULong64_t       eventNumber;
    UInt_t          runNumber;
    UInt_t          randomRunNumber;
@@ -4081,21 +4093,29 @@ void nominal::Init(TTree *tree)
    if (!tree) return;
    printf("init tree: %s\n", tree->GetName());
    tree->SetMakeClass(1);
-   if(reduce>=1 && reduce != 0){
+   if(reduce>=1){
       tree->SetBranchAddress("t1mass",&t1_mass);
       tree->SetBranchAddress("tautaumass",&higgs_mass);
       tree->SetBranchAddress("wmass",&Wmass);
       tree->SetBranchAddress("t2mass",&t2_mass);
    }
-   if(reduce>=2 && reduce != 0){
+   if(reduce>=2){
       tree->SetBranchAddress("neutrino_pt" , &neutrino_pt );
       tree->SetBranchAddress("neutrino_eta", &neutrino_eta);
       tree->SetBranchAddress("neutrino_phi", &neutrino_phi);
       tree->SetBranchAddress("neutrino_m"  , &neutrino_m);
       tree->SetBranchAddress("weight",&weight);
+      tree->SetBranchAddress("fakeSF",&fakeSF);
       tree->SetBranchAddress("cjet_index", &cjet_index );
       tree->SetBranchAddress("wjet1_index", &wjet1_index);
       tree->SetBranchAddress("wjet2_index", &wjet2_index);
+      tree->SetBranchAddress("x1fit",&x1fit);
+      tree->SetBranchAddress("x2fit",&x2fit);
+      tree->SetBranchAddress("tau_leadpt", &tau_leadpt, &b_tau_leadpt);
+      tree->SetBranchAddress("tau_subpt", &tau_subpt, &b_tau_subpt);
+      tree->SetBranchAddress("t2vismass",&t2vis_mass);
+      tree->SetBranchAddress("t1vismass",&t1vis_mass);
+
    }
 
    tree->SetBranchAddress("eventNumber", &eventNumber, &b_eventNumber);
@@ -4199,8 +4219,8 @@ void nominal::Init(TTree *tree)
    tree->SetBranchAddress("pileupEventWeight_DOWN", &pileupEventWeight_DOWN, &b_pileupEventWeight_DOWN);
    if(version == 7){
       tree->SetBranchAddress("HLT_mu24", &HLT_mu24, &b_HLT_mu24);
+      tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70", &bTagSF_weight_MV2c10_FixedCutBEff_70, &b_bTagSF_weight_MV2c10_FixedCutBEff_70);
       if(dosys){
-         tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70", &bTagSF_weight_MV2c10_FixedCutBEff_70, &b_bTagSF_weight_MV2c10_FixedCutBEff_70);
          tree->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70", &bTagSF_weight_DL1_FixedCutBEff_70, &b_bTagSF_weight_DL1_FixedCutBEff_70);
          tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up);
          tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down);
@@ -4313,9 +4333,9 @@ void nominal::Init(TTree *tree)
          tree->SetBranchAddress("lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN", &lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN, &b_lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN);
       }
    }else{
+      tree->SetBranchAddress("bTagSF_weight_MV2c10_Continuous", &bTagSF_weight_MV2c10_Continuous, &b_bTagSF_weight_MV2c10_Continuous);
       if(dosys){
          tree->SetBranchAddress("bTagSF_weight_DL1_Continuous", &bTagSF_weight_DL1_Continuous, &b_bTagSF_weight_DL1_Continuous);
-         tree->SetBranchAddress("bTagSF_weight_MV2c10_Continuous", &bTagSF_weight_MV2c10_Continuous, &b_bTagSF_weight_MV2c10_Continuous);
          tree->SetBranchAddress("bTagSF_weight_MV2c10_Continuous_B0_up", &bTagSF_weight_MV2c10_Continuous_B0_up, &b_bTagSF_weight_MV2c10_Continuous_B0_up);
          tree->SetBranchAddress("bTagSF_weight_MV2c10_Continuous_B0_down", &bTagSF_weight_MV2c10_Continuous_B0_down, &b_bTagSF_weight_MV2c10_Continuous_B0_down);
          tree->SetBranchAddress("bTagSF_weight_MV2c10_Continuous_B1_up", &bTagSF_weight_MV2c10_Continuous_B1_up, &b_bTagSF_weight_MV2c10_Continuous_B1_up);
@@ -5936,8 +5956,6 @@ void nominal::Init(TTree *tree)
    }
    tree->SetBranchAddress("mc_norm", &mc_norm, &b_mc_norm);
    tree->SetBranchAddress("l2tau_bdt", &l2tau_bdt, &b_l2tau_bdt);
-   tree->SetBranchAddress("tau_leadpt", &tau_leadpt, &b_tau_leadpt);
-   tree->SetBranchAddress("tau_subpt", &tau_subpt, &b_tau_subpt);
    tree->SetBranchAddress("tau_btag70_0", &tau_btag70_0, &b_tau_btag70_0);
    tree->SetBranchAddress("tau_tight_0", &tau_tight_0, &b_tau_tight_0);
    tree->SetBranchAddress("tau_truth_0", &tau_truth_0, &b_tau_truth_0);
