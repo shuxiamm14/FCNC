@@ -158,7 +158,7 @@ void nominal::finalise_sample(){
 void nominal::Loop(TTree *inputtree, TString samplename)
 {
   int reducetmp = reduce;
-  reduce = 1;
+  reduce -= 1;
   Init(inputtree);
   reduce = reducetmp;
 
