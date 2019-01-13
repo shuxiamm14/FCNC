@@ -227,6 +227,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       if(!triggered) continue;
     }
     if(reduce <= 2) weight = mc_channel_number>0?mc_norm*mcWeightOrg*pileupEventWeight_090*(V7NTUP?bTagSF_weight_MV2c10_FixedCutBEff_70:bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
+    if(debug) printf("event weight: %f\n", weight);
     if (debug == 2)
     {
       for(iter = ifregions.begin(); iter!= ifregions.end(); iter++){
@@ -579,7 +580,6 @@ void nominal::definetree(TTree* tree){
   tree->Branch("MV2c10_85_EventWeight",&MV2c10_85_EventWeight,"MV2c10_85_EventWeight/D");
   tree->Branch("MV2c10_Continuous_EventWeight",&MV2c10_Continuous_EventWeight,"MV2c10_Continuous_EventWeight/D");
   tree->Branch("JVT_EventWeight",&JVT_EventWeight,"JVT_EventWeight/D");
-  tree->Branch("bTagSF_weight_DL1_FixedCutBEff_70",&bTagSF_weight_DL1_FixedCutBEff_70,"bTagSF_weight_DL1_FixedCutBEff_70/D");
   tree->Branch("DL1_60_EventWeight",&DL1_60_EventWeight,"DL1_60_EventWeight/D");
   tree->Branch("DL1_70_EventWeight",&DL1_70_EventWeight,"DL1_70_EventWeight/D");
   tree->Branch("DL1_77_EventWeight",&DL1_77_EventWeight,"DL1_77_EventWeight/D");
@@ -591,6 +591,7 @@ void nominal::definetree(TTree* tree){
   if (version == 7)
   {
     tree->Branch("HLT_mu24",&HLT_mu24,"HLT_mu24/B");
+    tree->Branch("bTagSF_weight_DL1_FixedCutBEff_70",&bTagSF_weight_DL1_FixedCutBEff_70,"bTagSF_weight_DL1_FixedCutBEff_70/D");
     tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70",&bTagSF_weight_MV2c10_FixedCutBEff_70,"bTagSF_weight_MV2c10_FixedCutBEff_70/D");
     if(dosys){
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up",&bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up,"bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up/F");

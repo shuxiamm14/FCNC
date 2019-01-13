@@ -4118,21 +4118,6 @@ void nominal::Init(TTree *tree)
 
    }
 
-   tree->SetBranchAddress("eventNumber", &eventNumber, &b_eventNumber);
-   tree->SetBranchAddress("runNumber", &runNumber, &b_runNumber);
-   tree->SetBranchAddress("randomRunNumber", &randomRunNumber, &b_randomRunNumber);
-   tree->SetBranchAddress("mcChannelNumber", &mcChannelNumber, &b_mcChannelNumber);
-   tree->SetBranchAddress("mu", &mu, &b_mu);
-   tree->SetBranchAddress("backgroundFlags", &backgroundFlags, &b_backgroundFlags);
-   tree->SetBranchAddress("hasBadMuon", &hasBadMuon, &b_hasBadMuon);
-   tree->SetBranchAddress("tau_pt", &tau_pt, &b_tau_pt);
-   tree->SetBranchAddress("tau_eta", &tau_eta, &b_tau_eta);
-   tree->SetBranchAddress("tau_phi", &tau_phi, &b_tau_phi);
-   tree->SetBranchAddress("tau_charge", &tau_charge, &b_tau_charge);
-   tree->SetBranchAddress("met_met", &met_met, &b_met_met);
-   tree->SetBranchAddress("met_phi", &met_phi, &b_met_phi);
-   tree->SetBranchAddress("triggers", &triggers, &b_triggers);
-   tree->SetBranchAddress("loose", &loose, &b_loose);
    if(reduce == 0){
       tree->SetBranchAddress("HLT_mu40", &HLT_mu40, &b_HLT_mu40);
       tree->SetBranchAddress("HLT_mu26_ivarmedium", &HLT_mu26_ivarmedium, &b_HLT_mu26_ivarmedium);
@@ -4201,6 +4186,21 @@ void nominal::Init(TTree *tree)
       tree->SetBranchAddress("HLT_e5_loose", &HLT_e5_loose, &b_HLT_e5_loose);
       tree->SetBranchAddress("HLT_e300_etcut", &HLT_e300_etcut, &b_HLT_e300_etcut);
    }
+   tree->SetBranchAddress("eventNumber", &eventNumber, &b_eventNumber);
+   tree->SetBranchAddress("runNumber", &runNumber, &b_runNumber);
+   tree->SetBranchAddress("randomRunNumber", &randomRunNumber, &b_randomRunNumber);
+   tree->SetBranchAddress("mcChannelNumber", &mcChannelNumber, &b_mcChannelNumber);
+   tree->SetBranchAddress("mu", &mu, &b_mu);
+   tree->SetBranchAddress("backgroundFlags", &backgroundFlags, &b_backgroundFlags);
+   tree->SetBranchAddress("hasBadMuon", &hasBadMuon, &b_hasBadMuon);
+   tree->SetBranchAddress("tau_pt", &tau_pt, &b_tau_pt);
+   tree->SetBranchAddress("tau_eta", &tau_eta, &b_tau_eta);
+   tree->SetBranchAddress("tau_phi", &tau_phi, &b_tau_phi);
+   tree->SetBranchAddress("tau_charge", &tau_charge, &b_tau_charge);
+   tree->SetBranchAddress("met_met", &met_met, &b_met_met);
+   tree->SetBranchAddress("met_phi", &met_phi, &b_met_phi);
+   tree->SetBranchAddress("triggers", &triggers, &b_triggers);
+   tree->SetBranchAddress("loose", &loose, &b_loose);
    tree->SetBranchAddress("mcWeightOrg", &mcWeightOrg, &b_mcWeightOrg);
    tree->SetBranchAddress("mcEventWeights", &mcEventWeights, &b_mcEventWeights);
    tree->SetBranchAddress("pileupEventWeight_090", &pileupEventWeight_090, &b_pileupEventWeight_090);
@@ -4219,9 +4219,9 @@ void nominal::Init(TTree *tree)
    tree->SetBranchAddress("pileupEventWeight_DOWN", &pileupEventWeight_DOWN, &b_pileupEventWeight_DOWN);
    if(version == 7){
       tree->SetBranchAddress("HLT_mu24", &HLT_mu24, &b_HLT_mu24);
+      tree->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70", &bTagSF_weight_DL1_FixedCutBEff_70, &b_bTagSF_weight_DL1_FixedCutBEff_70);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70", &bTagSF_weight_MV2c10_FixedCutBEff_70, &b_bTagSF_weight_MV2c10_FixedCutBEff_70);
       if(dosys){
-         tree->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70", &bTagSF_weight_DL1_FixedCutBEff_70, &b_bTagSF_weight_DL1_FixedCutBEff_70);
          tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up);
          tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down", &bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down);
          tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B1_up", &bTagSF_weight_MV2c10_FixedCutBEff_70_B1_up, &b_bTagSF_weight_MV2c10_FixedCutBEff_70_B1_up);
@@ -4294,23 +4294,6 @@ void nominal::Init(TTree *tree)
          tree->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_down", &bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_down);
          tree->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_up", &bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_up, &b_bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_up);
          tree->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_down", &bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_down, &b_bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_down);
-      }
-         tree->SetBranchAddress("lep_firstEgMotherPdgId_0", &lep_firstEgMotherPdgId_0, &b_lep_firstEgMotherPdgId_0);
-         tree->SetBranchAddress("lep_firstEgMotherTruthType_0", &lep_firstEgMotherTruthType_0, &b_lep_firstEgMotherTruthType_0);
-         tree->SetBranchAddress("lep_firstEgMotherTruthOrigin_0", &lep_firstEgMotherTruthOrigin_0, &b_lep_firstEgMotherTruthOrigin_0);
-         tree->SetBranchAddress("lep_firstEgMotherPdgId_1", &lep_firstEgMotherPdgId_1, &b_lep_firstEgMotherPdgId_1);
-         tree->SetBranchAddress("lep_firstEgMotherTruthType_1", &lep_firstEgMotherTruthType_1, &b_lep_firstEgMotherTruthType_1);
-         tree->SetBranchAddress("lep_firstEgMotherTruthOrigin_1", &lep_firstEgMotherTruthOrigin_1, &b_lep_firstEgMotherTruthOrigin_1);
-         tree->SetBranchAddress("lep_firstEgMotherPdgId_2", &lep_firstEgMotherPdgId_2, &b_lep_firstEgMotherPdgId_2);
-         tree->SetBranchAddress("lep_firstEgMotherTruthType_2", &lep_firstEgMotherTruthType_2, &b_lep_firstEgMotherTruthType_2);
-         tree->SetBranchAddress("lep_firstEgMotherTruthOrigin_2", &lep_firstEgMotherTruthOrigin_2, &b_lep_firstEgMotherTruthOrigin_2);
-         tree->SetBranchAddress("lep_firstEgMotherPdgId_3", &lep_firstEgMotherPdgId_3, &b_lep_firstEgMotherPdgId_3);
-         tree->SetBranchAddress("lep_firstEgMotherTruthType_3", &lep_firstEgMotherTruthType_3, &b_lep_firstEgMotherTruthType_3);
-         tree->SetBranchAddress("lep_firstEgMotherTruthOrigin_3", &lep_firstEgMotherTruthOrigin_3, &b_lep_firstEgMotherTruthOrigin_3);
-         tree->SetBranchAddress("lep_firstEgMotherPdgId_4", &lep_firstEgMotherPdgId_4, &b_lep_firstEgMotherPdgId_4);
-         tree->SetBranchAddress("lep_firstEgMotherTruthType_4", &lep_firstEgMotherTruthType_4, &b_lep_firstEgMotherTruthType_4);
-         tree->SetBranchAddress("lep_firstEgMotherTruthOrigin_4", &lep_firstEgMotherTruthOrigin_4, &b_lep_firstEgMotherTruthOrigin_4);
-      if(dosys){
          tree->SetBranchAddress("lepEffTrigLoose_MU_SF_Trigger_SYST_UP", &lepEffTrigLoose_MU_SF_Trigger_SYST_UP, &b_lepEffTrigLoose_MU_SF_Trigger_SYST_UP);
          tree->SetBranchAddress("lepEffTrigTight_MU_SF_Trigger_SYST_UP", &lepEffTrigTight_MU_SF_Trigger_SYST_UP, &b_lepEffTrigTight_MU_SF_Trigger_SYST_UP);
          tree->SetBranchAddress("lepEffTrigTightLoose_MU_SF_Trigger_SYST_UP", &lepEffTrigTightLoose_MU_SF_Trigger_SYST_UP, &b_lepEffTrigTightLoose_MU_SF_Trigger_SYST_UP);
@@ -4332,10 +4315,25 @@ void nominal::Init(TTree *tree)
          tree->SetBranchAddress("lepDataEffTrigTightLoose_MU_SF_Trigger_SYST_DOWN", &lepDataEffTrigTightLoose_MU_SF_Trigger_SYST_DOWN, &b_lepDataEffTrigTightLoose_MU_SF_Trigger_SYST_DOWN);
          tree->SetBranchAddress("lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN", &lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN, &b_lepDataEffTrigLooseTight_MU_SF_Trigger_SYST_DOWN);
       }
+      tree->SetBranchAddress("lep_firstEgMotherPdgId_0", &lep_firstEgMotherPdgId_0, &b_lep_firstEgMotherPdgId_0);
+      tree->SetBranchAddress("lep_firstEgMotherTruthType_0", &lep_firstEgMotherTruthType_0, &b_lep_firstEgMotherTruthType_0);
+      tree->SetBranchAddress("lep_firstEgMotherTruthOrigin_0", &lep_firstEgMotherTruthOrigin_0, &b_lep_firstEgMotherTruthOrigin_0);
+      tree->SetBranchAddress("lep_firstEgMotherPdgId_1", &lep_firstEgMotherPdgId_1, &b_lep_firstEgMotherPdgId_1);
+      tree->SetBranchAddress("lep_firstEgMotherTruthType_1", &lep_firstEgMotherTruthType_1, &b_lep_firstEgMotherTruthType_1);
+      tree->SetBranchAddress("lep_firstEgMotherTruthOrigin_1", &lep_firstEgMotherTruthOrigin_1, &b_lep_firstEgMotherTruthOrigin_1);
+      tree->SetBranchAddress("lep_firstEgMotherPdgId_2", &lep_firstEgMotherPdgId_2, &b_lep_firstEgMotherPdgId_2);
+      tree->SetBranchAddress("lep_firstEgMotherTruthType_2", &lep_firstEgMotherTruthType_2, &b_lep_firstEgMotherTruthType_2);
+      tree->SetBranchAddress("lep_firstEgMotherTruthOrigin_2", &lep_firstEgMotherTruthOrigin_2, &b_lep_firstEgMotherTruthOrigin_2);
+      tree->SetBranchAddress("lep_firstEgMotherPdgId_3", &lep_firstEgMotherPdgId_3, &b_lep_firstEgMotherPdgId_3);
+      tree->SetBranchAddress("lep_firstEgMotherTruthType_3", &lep_firstEgMotherTruthType_3, &b_lep_firstEgMotherTruthType_3);
+      tree->SetBranchAddress("lep_firstEgMotherTruthOrigin_3", &lep_firstEgMotherTruthOrigin_3, &b_lep_firstEgMotherTruthOrigin_3);
+      tree->SetBranchAddress("lep_firstEgMotherPdgId_4", &lep_firstEgMotherPdgId_4, &b_lep_firstEgMotherPdgId_4);
+      tree->SetBranchAddress("lep_firstEgMotherTruthType_4", &lep_firstEgMotherTruthType_4, &b_lep_firstEgMotherTruthType_4);
+      tree->SetBranchAddress("lep_firstEgMotherTruthOrigin_4", &lep_firstEgMotherTruthOrigin_4, &b_lep_firstEgMotherTruthOrigin_4);
    }else{
+      tree->SetBranchAddress("bTagSF_weight_DL1_Continuous", &bTagSF_weight_DL1_Continuous, &b_bTagSF_weight_DL1_Continuous);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_Continuous", &bTagSF_weight_MV2c10_Continuous, &b_bTagSF_weight_MV2c10_Continuous);
       if(dosys){
-         tree->SetBranchAddress("bTagSF_weight_DL1_Continuous", &bTagSF_weight_DL1_Continuous, &b_bTagSF_weight_DL1_Continuous);
          tree->SetBranchAddress("bTagSF_weight_MV2c10_Continuous_B0_up", &bTagSF_weight_MV2c10_Continuous_B0_up, &b_bTagSF_weight_MV2c10_Continuous_B0_up);
          tree->SetBranchAddress("bTagSF_weight_MV2c10_Continuous_B0_down", &bTagSF_weight_MV2c10_Continuous_B0_down, &b_bTagSF_weight_MV2c10_Continuous_B0_down);
          tree->SetBranchAddress("bTagSF_weight_MV2c10_Continuous_B1_up", &bTagSF_weight_MV2c10_Continuous_B1_up, &b_bTagSF_weight_MV2c10_Continuous_B1_up);
