@@ -226,7 +226,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
 
       if(!triggered) continue;
     }
-    if(reduce <= 2) weight = mc_channel_number>0?mc_norm*mcWeightOrg*pileupEventWeight_090*(V7NTUP?bTagSF_weight_MV2c10_FixedCutBEff_70:bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
+    if(reduce <= 2) weight = mc_channel_number>0?mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7?bTagSF_weight_MV2c10_FixedCutBEff_70:bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
     if(debug) printf("event weight: %f\n", weight);
     if (debug == 2)
     {
