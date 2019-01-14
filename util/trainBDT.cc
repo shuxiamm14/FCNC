@@ -282,12 +282,12 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
 
 int main(int argc, char const *argv[])
 {
-   if (argc!=6)
+   if (argc!=5)
    {
     printf("please give the setting: region\nand mva splitting: 2 or 5\nnumber of cuts\nnumber of trees\n");
     return 0;
    }
-   TString catname=*argv[1];
+   TString catname=argv[1];
    int classnb(*argv[2]-'0');
    TString cutnb = "(EventNumber%";
    cutnb += char(*argv[2]);

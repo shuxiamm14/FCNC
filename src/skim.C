@@ -683,10 +683,10 @@ void nominal::definetree(TTree* tree){
     tree->Branch("lep_firstEgMotherTruthType_4",&lep_firstEgMotherTruthType_4,"lep_firstEgMotherTruthType_4/I");
     tree->Branch("lep_firstEgMotherTruthOrigin_4",&lep_firstEgMotherTruthOrigin_4,"lep_firstEgMotherTruthOrigin_4/I");
   }else{
-    tree->Branch("bTagSF_weight_MV2c10_Continuous", &bTagSF_weight_MV2c10_Continuous, "bTagSF_weight_MV2c10_Continuous/F");
+    tree->Branch("bTagSF_weight_DL1_Continuous", &bTagSF_weight_DL1_Continuous, "bTagSF_weight_DL1_Continuous/D");
+    tree->Branch("bTagSF_weight_MV2c10_Continuous", &bTagSF_weight_MV2c10_Continuous, "bTagSF_weight_MV2c10_Continuous/D");
     if (dosys)
     {
-      tree->Branch("bTagSF_weight_DL1_Continuous", &bTagSF_weight_DL1_Continuous, "bTagSF_weight_DL1_Continuous/F");
       tree->Branch("bTagSF_weight_MV2c10_Continuous_B0_up", &bTagSF_weight_MV2c10_Continuous_B0_up, "bTagSF_weight_MV2c10_Continuous_B0_up/F");
       tree->Branch("bTagSF_weight_MV2c10_Continuous_B0_down", &bTagSF_weight_MV2c10_Continuous_B0_down, "bTagSF_weight_MV2c10_Continuous_B0_down/F");
       tree->Branch("bTagSF_weight_MV2c10_Continuous_B1_up", &bTagSF_weight_MV2c10_Continuous_B1_up, "bTagSF_weight_MV2c10_Continuous_B1_up/F");
