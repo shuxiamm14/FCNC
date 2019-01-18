@@ -16,7 +16,8 @@ public :
       {1.157861, 0.792569, 1.349050, 1.426554},   //3prong <35
       {0.818782, 0.614790, 5.756198, 0.489836}    //3prong >35
    };
-
+   bool writetree = 1;
+   void init_hist();
    TString bwps[4] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
    TString ptbin[2] = {"below35","above35"};
    map<TString, bool> ifregions;
@@ -29,8 +30,9 @@ public :
    void plot();
    bool initdata = 0;
    bool initttbar = 0;
+   bool doseppt = 0;
    bool dohist = 0;
-   int version = 6;
+   int version;
    TFile *outputtreefile = 0;
    map<TString, TTree*> outputtree;
    virtual void     Init(TTree *tree);
@@ -49,10 +51,10 @@ public :
    float pt_b = 0;
    float pt_ljet = 0;
    float taulmass = 0;
-   float t1_mass = 0;
-   float Wmass     = 0;
-   float t2_mass    = 0;
-   float higgs_mass = 0;
+   float t1mass = 0;
+   float wmass     = 0;
+   float t2mass    = 0;
+   float tautaumass = 0;
    int cjet_index = 0;
    int wjet1_index = 0;
    int wjet2_index = 0;
@@ -66,9 +68,9 @@ public :
 
    histSaver *tau_plots = 0;
    histSaver *notau_plots = 0;
-   Double_t        t2vis_mass;
-   Double_t        t1vis_mass;
-   Double_t        ttvis_mass;
+   Double_t        t2vismass;
+   Double_t        t1vismass;
+   Double_t        ttvismass;
    Double_t        weight;
    Double_t        fakeSF;
    Double_t        x1fit;
@@ -3789,6 +3791,7 @@ public :
 
 void nominal::Init(TTree *tree)
 {
+   printf("init tree: version %d\n", version);
    // The Init() function is called when the selector needs to initialize
    // a new tree or chain. Typically here the branch addresses and branch
    // pointers of the tree will be set.
@@ -4094,10 +4097,10 @@ void nominal::Init(TTree *tree)
    printf("init tree: %s\n", tree->GetName());
    tree->SetMakeClass(1);
    if(reduce>=1){
-      tree->SetBranchAddress("t1mass",&t1_mass);
-      tree->SetBranchAddress("tautaumass",&higgs_mass);
-      tree->SetBranchAddress("wmass",&Wmass);
-      tree->SetBranchAddress("t2mass",&t2_mass);
+      tree->SetBranchAddress("t1mass",&t1mass);
+      tree->SetBranchAddress("tautaumass",&tautaumass);
+      tree->SetBranchAddress("wmass",&wmass);
+      tree->SetBranchAddress("t2mass",&t2mass);
    }
    if(reduce>=2){
       tree->SetBranchAddress("neutrino_pt" , &neutrino_pt );
@@ -4113,8 +4116,9 @@ void nominal::Init(TTree *tree)
       tree->SetBranchAddress("x2fit",&x2fit);
       tree->SetBranchAddress("tau_leadpt", &tau_leadpt, &b_tau_leadpt);
       tree->SetBranchAddress("tau_subpt", &tau_subpt, &b_tau_subpt);
-      tree->SetBranchAddress("t2vismass",&t2vis_mass);
-      tree->SetBranchAddress("t1vismass",&t1vis_mass);
+      tree->SetBranchAddress("t2vismass",&t2vismass);
+      tree->SetBranchAddress("t1vismass",&t1vismass);
+      tree->SetBranchAddress("ttvismass",&ttvismass);
 
    }
 

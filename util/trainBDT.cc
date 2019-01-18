@@ -37,7 +37,7 @@
 #include "TObjString.h"
 #include "TSystem.h"
 #include "TROOT.h"
-#include "TMVAGui.C"
+#include "TMVA/TMVAGui.h"
 
 
 #if not defined(__CINT__) || defined(__MAKECINT__)
@@ -113,7 +113,6 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
    // --------------------------------------------------------------------------------------------------
 
    // --- Here the preparation phase begins
-
    // Create a new root output file
    //TString outfileName( "output.root" );
    TFile* outputFile = TFile::Open( region+"_out.root", "RECREATE" );
@@ -135,18 +134,19 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
    // note that you may also use variable expressions, such as: "3*var1/var2*abs(var3)"
    // [all types of expressions that can also be parsed by TTree::Draw( "expression" )]
 
-   factory->AddVariable("t1mass",'F');
+   if(region != "reg1l1tau1b2j") {
+      factory->AddVariable("t1mass",'F');
+      factory->AddVariable("wmass",'F');
+      factory->AddVariable("t1vismass",'F');
+      factory->AddVariable("tau_subpt",'F');
+   }
    factory->AddVariable("tautaumass",'F');
-   factory->AddVariable("wmass",'F');
+   factory->AddVariable("ttvismass",'F');
    factory->AddVariable("t2mass",'F');
    factory->AddVariable("x1fit", 'F');
    factory->AddVariable("x2fit", 'F');
-   factory->AddVariable("t1vismass",'F');
-   factory->AddVariable("t2vismass",'F');
-   factory->AddVariable("t1vismass",'F');
    factory->AddVariable("t2vismass",'F');
    factory->AddVariable("tau_leadpt",'F');
-   factory->AddVariable("tau_subpt",'F');
    
    // You can add so-called "Spectator variables", which are not used in the MVA training, 
    // but will appear in the final "TestTree" produced by TMVA. This TestTree will contain the 
@@ -167,10 +167,12 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
 
    TString inputbkgnames[] = {"Vjets","diboson","ttV","ttbarnohad","other","ttH","ttbargamma"};
 
+   TString prefix = PACKAGE_DIR;
+   prefix += "/data/reduce2/";
    for (int i = 0; i < 2; ++i)
-      signal->Add(inputsignames[i]+".root");
+      signal->Add(prefix + inputsignames[i]+"_tree.root");
    for (int i = 0; i < 7; ++i)
-      background->Add(inputbkgnames[i]+".root");
+      background->Add(prefix + inputbkgnames[i]+"_tree.root");
 
    TCut mycuts = "";
    TCut mycutb = "";
@@ -277,7 +279,7 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
    delete factory;
 
    // Launch the GUI for the root macros
-   //if (!gROOT->IsBatch()) TMVAGui( outputFile->GetName() );
+   if (!gROOT->IsBatch()) TMVAGui( outputFile->GetName() );
 }
 
 int main(int argc, char const *argv[])

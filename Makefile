@@ -4,7 +4,7 @@
 
 ROOTCFLAGS      := $(shell root-config --cflags)
 ROOTLIBS        := $(shell root-config --libs)
-ROOTGLIBS       := $(shell root-config --glibs) -lMinuit -lTMVA
+ROOTGLIBS       := $(shell root-config --glibs) -lMinuit -lTMVA -lTMVAGui
 
 DELPHES_DIR := /Users/Liby/Desktop/software/delphes/Delphes-3.4.0
 DELPHESLIBS := -L$(DELPHES_DIR) -lDelphes
@@ -67,7 +67,7 @@ bin/.%.o: util/%.cc
 
 bin/reduce%_run: bin/.reduce%.o bin/.dict.o
 	@echo Linking $@ with $^
-	@$(CXX) $(CPPFLAGS) -D V7NTUP=1 $(EXTRALIBS)  -Llib -lskim -o $@ $^
+	@$(CXX) $(CPPFLAGS) -D $(EXTRALIBS)  -Llib -lskim -o $@ $^
 
 bin/%_run: bin/.%.o bin/.dict.o
 	@echo Linking $@ with $^

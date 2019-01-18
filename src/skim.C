@@ -8,40 +8,6 @@
 TMinuit* gM = 0;
 const double btag70wt = 0.8303;
 nominal::nominal(){
-  //init histSaver here:
-  if(dohist){
-    tau_plots = new histSaver();
-    tau_plots->set_weight(&weight);
-    tau_plots->debug = 1;
-    debug = 1;
-    tau_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-    tau_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
-    tau_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
-    tau_plots->add(120,50.,250.,"m_{t,SM}","t1mass",&t1_mass,true,"GeV");
-    tau_plots->add(120,50.,250.,"m_{#tau,#tau}","tautaumass",&higgs_mass,true,"GeV");
-    tau_plots->add(120,50.,250.,"m_{W}","wmass",&Wmass,true,"GeV");
-    tau_plots->add(120,50.,250.,"m_{t,FCNC}","t2mass",&t2_mass,true,"GeV");
-    tau_plots->add(120,50.,250.,"m_{#tau#tau,vis}","tautauvismass",&ttvis_mass,true,"GeV");
-    tau_plots->add(120,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vis_mass,true,"GeV");
-  
-    TString regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
-    TString nprong[] = {"1prong","3prong"};
-
-    for (int j = 0; j < 3; ++j)
-      for (int k = 0; k < 2; ++k)
-      {
-        for (int i = 0; i < 4; ++i)
-        {
-          for (int iptbin = 0; iptbin < 2; ++iptbin)
-          {
-            if(debug) printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-            tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
-            tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
-          }
-        }
-      }
-  }
-
   TLorentzVector v1;
   for(int i = 0 ; i < 2 ; ++i){
     taus_v.push_back(v1);
@@ -58,7 +24,42 @@ nominal::nominal(){
   neutrino_phi = new vector<float>();
   neutrino_m   = new vector<float>();
 }
+void nominal::init_hist(){
+  //init histSaver here:
+  dohist = 1;
+  tau_plots = new histSaver();
+  tau_plots->set_weight(&weight);
+  tau_plots->debug = debug;
+  tau_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+  tau_plots->add(100,50.,250.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
+  tau_plots->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
+  tau_plots->add(100,50.,250.,"m_{W}","wmass",&wmass,true,"GeV");
+  tau_plots->add(100,50.,250.,"m_{t,FCNC}","t2mass",&t2mass,true,"GeV");
+  tau_plots->add(100,50.,250.,"m_{#tau#tau,vis}","tautauvismass",&ttvismass,true,"GeV");
+  tau_plots->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,true,"GeV");
+  tau_plots->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
+  tau_plots->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
+  
+  TString regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
+  TString nprong[] = {"1prong","3prong"};
 
+  for (int j = 0; j < 3; ++j)
+    for (int k = 0; k < 2; ++k)
+    {
+      for (int i = 0; i < 4; ++i)
+      {
+        if(doseppt)
+          for (int iptbin = 0; iptbin < 2; ++iptbin)
+          {
+            if(debug) printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
+            tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
+            tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+          }
+        tau_plots->add_region(regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
+        tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
+      }
+    }
+}
 nominal::~nominal(){
   deletepointer(tau_plots);
   deletepointer(gM);
@@ -72,60 +73,66 @@ void nominal::fill_tau(TString region, int nprong, TString sample, int iptbin){
   for (int i = 0; i < 4; ++i){
     if(tau_MV2c10_0>btagwpCut[i]) {
       if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[i]).Data(), sample.Data());
-      tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
+      if(doseppt) tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
+      tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[i]);
     }else{
-      tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
+      if(doseppt) tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
+      tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + "veto" + bwps[i]);
+      if(debug) printf("ttvismass: %f\n", ttvismass);
     }
   }
 }
 
 
 void nominal::init_sample(TString sample, TString sampletitle){
-
+  tau_plots->histfilename = sample;
 //==========================init output n-tuple==========================
-  outputtreefile = new TFile(sample + ".root","update");
-  map<TString, TTree*>::iterator iter;
-  if (outputtreefile->Get("reg1l1tau1b2j"))
-  {      
-    outputtree["reg1l1tau1b2j"] = (TTree*)(outputtreefile->Get("reg1l1tau1b2j"));
-    outputtree["reg1l1tau1b3j"] = (TTree*)(outputtreefile->Get("reg1l1tau1b3j"));
-    outputtree["reg1l2tau1bnj"] = (TTree*)(outputtreefile->Get("reg1l2tau1bnj"));
-    for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
-      Init(iter->second);
-  }else{
-    outputtree["reg1l1tau1b2j"] = new TTree("reg1l1tau1b2j","reg1l1tau1b2j");
-    definetree(outputtree["reg1l1tau1b2j"]);
-    outputtree["reg1l1tau1b3j"] = new TTree("reg1l1tau1b3j","reg1l1tau1b3j");
-    definetree(outputtree["reg1l1tau1b3j"]);
-    outputtree["reg1l2tau1bnj"] = new TTree("reg1l2tau1bnj","reg1l2tau1bnj");
-    definetree(outputtree["reg1l2tau1bnj"]);
-
-    if(reduce >= 1 || reduce == 0)
+  if(writetree){
+    outputtreefile = new TFile(sample + "_tree.root","update");
+    map<TString, TTree*>::iterator iter;
+    if (outputtreefile->Get("reg1l1tau1b2j"))
+    {      
+      outputtree["reg1l1tau1b2j"] = (TTree*)(outputtreefile->Get("reg1l1tau1b2j"));
+      outputtree["reg1l1tau1b3j"] = (TTree*)(outputtreefile->Get("reg1l1tau1b3j"));
+      outputtree["reg1l2tau1bnj"] = (TTree*)(outputtreefile->Get("reg1l2tau1bnj"));
       for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
-      {
-        iter->second->Branch("t1mass",&t1_mass);
-        iter->second->Branch("tautaumass",&higgs_mass);
-        iter->second->Branch("wmass",&Wmass);
-        iter->second->Branch("t2mass",&t2_mass);
-      }
-    if(reduce==2 || reduce == 0)
-      for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
-      {
-        iter->second->Branch("neutrino_pt" , &neutrino_pt );
-        iter->second->Branch("neutrino_eta", &neutrino_eta);
-        iter->second->Branch("neutrino_phi", &neutrino_phi);
-        iter->second->Branch("neutrino_m"  , &neutrino_m  );
-        iter->second->Branch("weight",&weight);
-        iter->second->Branch("fakeSF",&fakeSF);
-        iter->second->Branch("cjet_index", &cjet_index );
-        iter->second->Branch("wjet1_index", &wjet1_index);
-        iter->second->Branch("wjet2_index", &wjet2_index);
-        iter->second->Branch("x1fit", &x1fit);
-        iter->second->Branch("x2fit", &x2fit);
-        iter->second->Branch("t1vismass",&t1vis_mass);
-        iter->second->Branch("t2vismass",&t2vis_mass);
-      }
+        Init(iter->second);
+    }else{
+      outputtree["reg1l1tau1b2j"] = new TTree("reg1l1tau1b2j","reg1l1tau1b2j");
+      definetree(outputtree["reg1l1tau1b2j"]);
+      outputtree["reg1l1tau1b3j"] = new TTree("reg1l1tau1b3j","reg1l1tau1b3j");
+      definetree(outputtree["reg1l1tau1b3j"]);
+      outputtree["reg1l2tau1bnj"] = new TTree("reg1l2tau1bnj","reg1l2tau1bnj");
+      definetree(outputtree["reg1l2tau1bnj"]);
+  
+      if(reduce >= 1 || reduce == 0)
+        for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
+        {
+          iter->second->Branch("t1mass",&t1mass);
+          iter->second->Branch("tautaumass",&tautaumass);
+          iter->second->Branch("wmass",&wmass);
+          iter->second->Branch("t2mass",&t2mass);
+        }
+      if(reduce==2 || reduce == 0)
+        for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
+        {
+          iter->second->Branch("neutrino_pt" , &neutrino_pt );
+          iter->second->Branch("neutrino_eta", &neutrino_eta);
+          iter->second->Branch("neutrino_phi", &neutrino_phi);
+          iter->second->Branch("neutrino_m"  , &neutrino_m  );
+          iter->second->Branch("weight",&weight);
+          iter->second->Branch("fakeSF",&fakeSF);
+          iter->second->Branch("cjet_index", &cjet_index );
+          iter->second->Branch("wjet1_index", &wjet1_index);
+          iter->second->Branch("wjet2_index", &wjet2_index);
+          iter->second->Branch("x1fit", &x1fit);
+          iter->second->Branch("x2fit", &x2fit);
+          iter->second->Branch("t1vismass",&t1vismass);
+          iter->second->Branch("t2vismass",&t2vismass);
+          iter->second->Branch("ttvismass",&ttvismass);
+        }
     }
+  }
 //  for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
 //    iter->second->SetDirectory(outputtreefile);
 
@@ -152,16 +159,17 @@ void nominal::init_sample(TString sample, TString sampletitle){
 
 
 void nominal::finalise_sample(){
-  outputtreefile->Close();
-  deletepointer(outputtreefile);
+  if(writetree) {
+    outputtreefile->Close();
+    deletepointer(outputtreefile);
+  }
 }
 void nominal::Loop(TTree *inputtree, TString samplename)
 {
-  int reducetmp = reduce;
   reduce -= 1;
   Init(inputtree);
-  reduce = reducetmp;
-
+  reduce += 1;
+  printf("reduce scheme: %d\n", reduce);
   if(reduce > 1) {
       ifregions["reg1l1tau1b2j"]  = 0;
       ifregions["reg1l1tau1b3j"]  = 0;
@@ -226,8 +234,8 @@ void nominal::Loop(TTree *inputtree, TString samplename)
 
       if(!triggered) continue;
     }
-    if(reduce <= 2) weight = mc_channel_number>0?mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7?bTagSF_weight_MV2c10_FixedCutBEff_70:bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0; 
-    if(debug) printf("event weight: %f\n", weight);
+    if(reduce <= 2) weight = mc_channel_number>0?mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7?bTagSF_weight_MV2c10_FixedCutBEff_70:bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0;
+    if(debug==2) printf("event weight: %f\n", weight);
     if (debug == 2)
     {
       for(iter = ifregions.begin(); iter!= ifregions.end(); iter++){
@@ -238,119 +246,123 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       }
     }
 //===============================find leading b,non b jets===============================
-    leading_b = -1;
-    leading_ljet = -1;
-    pt_b = 0;
-    pt_ljet = 0;
-    bool reloop = 1;
-    if(nJets_OR_T != selected_jets_T->size()){
-      printf("ERROR: nJets_OR_T,%d != selected_jets_T->size(),%d; Entry: %d\n", nJets_OR_T,selected_jets_T->size(),jentry);
-      continue;
-    }
-    for (int i = 0; i < nJets_OR_T; ++i)
-    {
-      if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > btag70wt && leading_b == -1) {
-        leading_b = selected_jets_T->at(i);
-        pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
-      }else if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < btag70wt && reloop == 1){
-        leading_ljet = selected_jets_T->at(i);
-        cjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_ljet],(*m_jet_eta)[leading_ljet],(*m_jet_phi)[leading_ljet],(*m_jet_E)[leading_ljet]);
-        if((cjet_v + taus_v[0] + taus_v[1]).M() < 175) reloop = 0;
-        pt_ljet = (*m_jet_pt)[selected_jets_T->at(i)];
-        cjet_index = selected_jets_T->at(i);
+    if(reduce <= 2){
+      leading_b = -1;
+      leading_ljet = -1;
+      pt_b = 0;
+      pt_ljet = 0;
+      bool reloop = 1;
+      if(nJets_OR_T != selected_jets_T->size()){
+        printf("ERROR: nJets_OR_T,%d != selected_jets_T->size(),%d; Entry: %d\n", nJets_OR_T,selected_jets_T->size(),jentry);
+        continue;
       }
-      if(reloop == 0 && leading_b != -1) break;
-    }
-
-    if(ifregions["reg1l2tau1bnj"]){
-      for (int i = 0; i < 2; ++i) taus_v[i].SetPtEtaPhiE((*m_tau_pt)[i],(*m_tau_eta)[i],(*m_tau_phi)[i],(*m_tau_E)[i]);
-      if (abs(lep_ID_0)==11) lep_v.SetPtEtaPhiE((*electron_pt)[0],(*electron_eta)[0],(*electron_phi)[0],(*electron_E)[0]);
-      else lep_v.SetPtEtaPhiE((*muon_pt)[0],(*muon_eta)[0],(*muon_phi)[0],(*muon_E)[0]);
-      bjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b],(*m_jet_eta)[leading_b],(*m_jet_phi)[leading_b],(*m_jet_E)[leading_b]);
-    }
-    else{
-      if (abs(lep_ID_0)==11) taus_v[0].SetPtEtaPhiE((*electron_pt)[0],(*electron_eta)[0],(*electron_phi)[0],(*electron_E)[0]);
-      else taus_v[0].SetPtEtaPhiE((*muon_pt)[0],(*muon_eta)[0],(*muon_phi)[0],(*muon_E)[0]);
-      taus_v[1].SetPtEtaPhiE((*m_tau_pt)[0],(*m_tau_eta)[0],(*m_tau_phi)[0],(*m_tau_E)[0]);
-      lep_v.SetPtEtaPhiE(0,0,0,0);
-      bjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b],(*m_jet_eta)[leading_b],(*m_jet_phi)[leading_b],(*m_jet_E)[leading_b]);
-      cjet_index = findcjet();
-      if(debug) {
-        printf("Wmass: %f, t1_mass: %f, cjet %d, wjet1 %d\n", Wmass, t1_mass, cjet_index, wjet1_index);
+      for (int i = 0; i < nJets_OR_T; ++i)
+      {
+        if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > btag70wt && leading_b == -1) {
+          leading_b = selected_jets_T->at(i);
+          pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
+        }else if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < btag70wt && reloop == 1){
+          leading_ljet = selected_jets_T->at(i);
+          cjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_ljet],(*m_jet_eta)[leading_ljet],(*m_jet_phi)[leading_ljet],(*m_jet_E)[leading_ljet]);
+          if((cjet_v + taus_v[0] + taus_v[1]).M() < 175) reloop = 0;
+          pt_ljet = (*m_jet_pt)[selected_jets_T->at(i)];
+          cjet_index = selected_jets_T->at(i);
+        }
+        if(reloop == 0 && leading_b != -1) break;
       }
-      cjet_v.SetPtEtaPhiE((*m_jet_pt)[cjet_index],(*m_jet_eta)[cjet_index],(*m_jet_phi)[cjet_index],(*m_jet_E)[cjet_index]);
-    }
-    if(cjet_index == wjet1_index && !ifregions["reg1l2tau1bnj"]) printf("bug: cjet=w1jet %d\n",cjet_index);
-    mets.SetXYZ(met_met*cos(met_phi), met_met*sin(met_phi), MET_RefFinal_sumet);
-//===============================fit neutrino===============================
-    gM->mnparm(0, "rpt1", 0.4, 0.01, 0.,2.,ierflg);
-    gM->mnparm(1, "rpt2", 0.4, 0.01, 0.,2.,ierflg);
-
-    if(nTaus_OR_Pt25>=2){
-      gM->mnparm(2, "pt3", 10000, 10000, 0.,1000000.,ierflg);
-      gM->mnparm(3, "eta3",0, 0.1, -5,5,ierflg);
-      gM->mnparm(4, "phi3",0, 0.1, -PI,PI,ierflg);
-      arglist[0] = 5;
-    }else{
-      gM->mnparm(2, "v1mass", 1000, 1, 0.,1776,ierflg);
-      arglist[0] = 3;
-    }
-    gM->SetObjectFit(&forFit);
-
-    arglist[1] = 60.;
-    Double_t val[5] = {0,0,0,0,0};
-    Double_t err[5] = {0,0,0,0,0};
-   
-    gM->mnexcm("SCAN", arglist ,2,ierflg);
-    for (int i = 0; i < 5; ++i) gM->GetParameter(i,val[i],err[i]);
-    gM->mnparm(0, "rpt1", val[0], 0.01, 0.,2.,ierflg);
-    gM->mnparm(1, "rpt2", val[1], 0.01, 0.,2.,ierflg);
-    if(nTaus_OR_Pt25>=2){
-      gM->mnparm(2, "pt3",  val[2], 10, 0.,1000.,ierflg);
-      gM->mnparm(3, "eta3", val[3], 0.1, -5,5,ierflg);
-      gM->mnparm(4, "phi3", val[4], 0.1, -PI,PI,ierflg);
-    }else{
-      gM->mnparm(2, "v1mass", val[2], 1, 0.,1776,ierflg);
-    }
-   
-    arglist[0] = 1000;
-    arglist[1] = 0;
-   
-    gM->mnexcm("MIGRADE", arglist ,2,ierflg);
-    for (int i = 0; i < (nTaus_OR_Pt25>=2?5:3); ++i) gM->GetParameter(i,val[i],err[i]);
-   
-   
-    Double_t fmin, fedm, errdef;
-    Int_t npari, nparx, istat;
-    gM->mnstat(fmin, fedm, errdef,npari, nparx, istat);
-    TLorentzVector tauv1_v; tauv1_v.SetPtEtaPhiM(val[0]*(*m_tau_pt)[0],(*m_tau_eta)[0],(*m_tau_phi)[0],nJets_OR_T>=2?0:val[2]);
-    TLorentzVector tauv2_v; tauv2_v.SetPtEtaPhiM(val[1]*(*m_tau_pt)[1],(*m_tau_eta)[1],(*m_tau_phi)[1],0);
-    x1fit = val[0];
-    x2fit = val[1];
-    neutrino_pt  ->push_back (tauv1_v.Pt ()); neutrino_pt  ->push_back (tauv2_v.Pt ());
-    neutrino_eta ->push_back (tauv1_v.Eta()); neutrino_eta ->push_back (tauv2_v.Eta());
-    neutrino_phi ->push_back (tauv1_v.Phi()); neutrino_phi ->push_back (tauv2_v.Phi());
-    neutrino_m   ->push_back (tauv1_v.M  ()); neutrino_m   ->push_back (tauv2_v.M  ());
-    if (nTaus_OR_Pt25>=2)
-    {
-      TLorentzVector wv_v   ; wv_v   .SetPtEtaPhiM(val[2],val[3],val[4],0);
-      neutrino_pt  ->push_back (wv_v.Pt ());
-      neutrino_eta ->push_back (wv_v.Eta());
-      neutrino_phi ->push_back (wv_v.Phi());
-      neutrino_m   ->push_back (wv_v.M  ());
-      t1_mass     = ( lep_v + wv_v + bjet_v ) .M();
-      t1vis_mass = ( lep_v + bjet_v ) .M();
-      Wmass      = ( lep_v + wv_v ).M();
-    }else{
-      t1vis_mass = t1_mass;
-    }
+  
+      if(ifregions["reg1l2tau1bnj"]){
+        for (int i = 0; i < 2; ++i) taus_v[i].SetPtEtaPhiE((*m_tau_pt)[i],(*m_tau_eta)[i],(*m_tau_phi)[i],(*m_tau_E)[i]);
+        if (abs(lep_ID_0)==11) lep_v.SetPtEtaPhiE((*electron_pt)[0],(*electron_eta)[0],(*electron_phi)[0],(*electron_E)[0]);
+        else lep_v.SetPtEtaPhiE((*muon_pt)[0],(*muon_eta)[0],(*muon_phi)[0],(*muon_E)[0]);
+        bjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b],(*m_jet_eta)[leading_b],(*m_jet_phi)[leading_b],(*m_jet_E)[leading_b]);
+      }
+      else{
+        if (abs(lep_ID_0)==11) taus_v[0].SetPtEtaPhiE((*electron_pt)[0],(*electron_eta)[0],(*electron_phi)[0],(*electron_E)[0]);
+        else taus_v[0].SetPtEtaPhiE((*muon_pt)[0],(*muon_eta)[0],(*muon_phi)[0],(*muon_E)[0]);
+        taus_v[1].SetPtEtaPhiE((*m_tau_pt)[0],(*m_tau_eta)[0],(*m_tau_phi)[0],(*m_tau_E)[0]);
+        lep_v.SetPtEtaPhiE(0,0,0,0);
+        bjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b],(*m_jet_eta)[leading_b],(*m_jet_phi)[leading_b],(*m_jet_E)[leading_b]);
+        cjet_index = findcjet();
+        if(debug) {
+          printf("wmass: %f, t1mass: %f, cjet %d, wjet1 %d\n", wmass, t1mass, cjet_index, wjet1_index);
+        }
+        cjet_v.SetPtEtaPhiE((*m_jet_pt)[cjet_index],(*m_jet_eta)[cjet_index],(*m_jet_phi)[cjet_index],(*m_jet_E)[cjet_index]);
+      }
+      if(cjet_index == wjet1_index && !ifregions["reg1l2tau1bnj"]) printf("bug: cjet=w1jet %d\n",cjet_index);
+      mets.SetXYZ(met_met*cos(met_phi), met_met*sin(met_phi), MET_RefFinal_sumet);
+//==  =============================fit neutrino===============================
+      gM->mnparm(0, "rpt1", 0.4, 0.01, 0.,2.,ierflg);
+      gM->mnparm(1, "rpt2", 0.4, 0.01, 0.,2.,ierflg);
+  
+      if(nTaus_OR_Pt25>=2){
+        gM->mnparm(2, "pt3", 10000, 10000, 0.,1000000.,ierflg);
+        gM->mnparm(3, "eta3",0, 0.1, -5,5,ierflg);
+        gM->mnparm(4, "phi3",0, 0.1, -PI,PI,ierflg);
+        arglist[0] = 5;
+      }else{
+        gM->mnparm(2, "v1mass", 1000, 1, 0.,1776,ierflg);
+        arglist[0] = 3;
+      }
+      gM->SetObjectFit(&forFit);
+  
+      arglist[1] = 60.;
+      Double_t val[5] = {0,0,0,0,0};
+      Double_t err[5] = {0,0,0,0,0};
+    
+      gM->mnexcm("SCAN", arglist ,2,ierflg);
+      for (int i = 0; i < 5; ++i) gM->GetParameter(i,val[i],err[i]);
+      gM->mnparm(0, "rpt1", val[0], 0.01, 0.,2.,ierflg);
+      gM->mnparm(1, "rpt2", val[1], 0.01, 0.,2.,ierflg);
+      if(nTaus_OR_Pt25>=2){
+        gM->mnparm(2, "pt3",  val[2], 10, 0.,1000.,ierflg);
+        gM->mnparm(3, "eta3", val[3], 0.1, -5,5,ierflg);
+        gM->mnparm(4, "phi3", val[4], 0.1, -PI,PI,ierflg);
+      }else{
+        gM->mnparm(2, "v1mass", val[2], 1, 0.,1776,ierflg);
+      }
+    
+      arglist[0] = 1000;
+      arglist[1] = 0;
+    
+      gM->mnexcm("MIGRADE", arglist ,2,ierflg);
+      for (int i = 0; i < (nTaus_OR_Pt25>=2?5:3); ++i) gM->GetParameter(i,val[i],err[i]);
+    
+    
+      Double_t fmin, fedm, errdef;
+      Int_t npari, nparx, istat;
+      gM->mnstat(fmin, fedm, errdef,npari, nparx, istat);
+      TLorentzVector tauv1_v; tauv1_v.SetPtEtaPhiM(val[0]*(*m_tau_pt)[0],(*m_tau_eta)[0],(*m_tau_phi)[0],nJets_OR_T>=2?0:val[2]);
+      TLorentzVector tauv2_v; tauv2_v.SetPtEtaPhiM(val[1]*(*m_tau_pt)[1],(*m_tau_eta)[1],(*m_tau_phi)[1],0);
+      x1fit = val[0];
+      x2fit = val[1];
+      neutrino_pt  ->push_back (tauv1_v.Pt ()); neutrino_pt  ->push_back (tauv2_v.Pt ());
+      neutrino_eta ->push_back (tauv1_v.Eta()); neutrino_eta ->push_back (tauv2_v.Eta());
+      neutrino_phi ->push_back (tauv1_v.Phi()); neutrino_phi ->push_back (tauv2_v.Phi());
+      neutrino_m   ->push_back (tauv1_v.M  ()); neutrino_m   ->push_back (tauv2_v.M  ());
+      if (nTaus_OR_Pt25>=2)
+      {
+        TLorentzVector wv_v   ; wv_v   .SetPtEtaPhiM(val[2],val[3],val[4],0);
+        neutrino_pt  ->push_back (wv_v.Pt ());
+        neutrino_eta ->push_back (wv_v.Eta());
+        neutrino_phi ->push_back (wv_v.Phi());
+        neutrino_m   ->push_back (wv_v.M  ());
+        t1mass     = ( lep_v + wv_v + bjet_v ) .M();
+        t1vismass = ( lep_v + bjet_v ) .M();
+        wmass      = ( lep_v + wv_v ).M();
+      }else{
+        t1vismass = t1mass;
+      }
       tau_leadpt = taus_v[0].Pt();
-      tau_subpt = taus_v[1].Pt();
-      t2_mass     = ( tauv2_v + taus_v[0] + tauv1_v + taus_v[1] + cjet_v) .M();
-      higgs_mass  = ( tauv2_v + taus_v[0] + tauv1_v + taus_v[1] ) .M();
-      ttvis_mass  = ( taus_v[0] + taus_v[1] ) .M();
-      t2vis_mass = ( taus_v[0] + taus_v[1] + cjet_v ) .M();
-
+      tau_subpt  = taus_v[1].Pt();
+      t2mass     = ( tauv2_v + taus_v[0] + tauv1_v + taus_v[1] + cjet_v) .M();
+      tautaumass  = ( tauv2_v + taus_v[0] + tauv1_v + taus_v[1] ) .M();
+      ttvismass  = ( taus_v[0] + taus_v[1] ) .M();
+      t2vismass = ( taus_v[0] + taus_v[1] + cjet_v ) .M();
+    }else{
+      x1fit = 1./(x1fit+1);
+      x2fit = 1./(x2fit+1);
+    }
 
 //===============================fill histograms, fill tree===============================
     TString tauorigin;
@@ -380,13 +392,15 @@ void nominal::Loop(TTree *inputtree, TString samplename)
             fakeSF = fakeSFs[SFbin][3];
         }
     }
-
     for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
     {
       if(iter->second == 1) {
-        if(dohist) fill_tau(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
-        outputtree[iter->first]->Fill();
-//       outputtree[iter->first]->AutoSave();
+        if(writetree) outputtree[iter->first]->Fill();
+        if(dohist) {
+          //weight *= fakeSF;
+          fill_tau(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
+        }
+//      outputtree[iter->first]->AutoSave();
       }
     }
     neutrino_pt  -> clear();
@@ -394,15 +408,17 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     neutrino_phi -> clear();
     neutrino_m   -> clear();
   }
-  outputtreefile->cd();
-  map<TString, TTree*>::iterator iter;
-  for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
-    iter->second->Write(iter->first,TObject::kWriteDelete);
-
+  if(writetree) {
+    outputtreefile->cd();
+    map<TString, TTree*>::iterator iter;
+    for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
+      iter->second->Write(iter->first,TObject::kWriteDelete);
+  }
 }
 
 void nominal::plot(){
   tau_plots->write();
+  tau_plots->clearhist();
 }
 
 void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag) {
@@ -445,11 +461,11 @@ void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t 
       TLorentzVector t1 = neutrino[2]+vectors[lep]+vectors[bj];
   
       Float_t t2mass= (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]+vectors[cj]).M();
-      Float_t Wmass = (vectors[lep] + neutrino[2]).M();
+      Float_t wmass = (vectors[lep] + neutrino[2]).M();
       Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px()+neutrino[2].Px();
       Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py()+neutrino[2].Py();
       Float_t pConstrain = (vectors[bj].Dot(vectors[lep])/100) + (vectors[bj].Dot(neutrino[2])/100);
-      chisq =  pow((Wmass-81000)/10000,2) + pow((t1.M()-172500)/25000,2) +pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2) + pow((Hmass-125000)/10000,2);// + pow((t2mass-172.5)/30,2);// + pow((pConstrain-110)/20,2);
+      chisq =  pow((wmass-81000)/10000,2) + pow((t1.M()-172500)/25000,2) +pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2) + pow((Hmass-125000)/10000,2);// + pow((t2mass-172.5)/30,2);// + pow((pConstrain-110)/20,2);
     }else{
       Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px();
       Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py();
@@ -478,8 +494,8 @@ int nominal::findcjet(){
     }
   }
   if (nlightj == 2) {
-    t1_mass = 0;
-    Wmass = 0;
+    t1mass = 0;
+    wmass = 0;
     wjet2_index = 0;
     if(debug) printf("1st ljet: %d, 2nd ljet: %d\n", nljet[0],nljet[1]);
     if(ljet[0].DeltaR(taus_v[0] + taus_v[0]) + ljet[1].DeltaR(bjet_v) < ljet[1].DeltaR(taus_v[0] + taus_v[0]) + ljet[0].DeltaR(bjet_v)){
@@ -499,30 +515,30 @@ int nominal::findcjet(){
     if( abs((ljet[0] + ljet[1]).M() - m_w) > abs((ljet[0] + ljet[2]).M() - m_w) )
       if(abs((ljet[0] + ljet[2]).M() - m_w) > abs((ljet[1] + ljet[2]).M() - m_w)) 
       {
-        t1_mass     = ( ljet[1] + ljet[2] + bjet_v ) .M();
-        Wmass      = ( ljet[1] + ljet[2] ).M();
+        t1mass     = ( ljet[1] + ljet[2] + bjet_v ) .M();
+        wmass      = ( ljet[1] + ljet[2] ).M();
         wjet1_index = nljet[1];
         wjet2_index = nljet[2];
         return nljet[0];
       }
       else{
-        t1_mass     = ( ljet[0] + ljet[2] + bjet_v ) .M();
-        Wmass      = ( ljet[0] + ljet[2] ).M();
+        t1mass     = ( ljet[0] + ljet[2] + bjet_v ) .M();
+        wmass      = ( ljet[0] + ljet[2] ).M();
         wjet1_index = nljet[0];
         wjet2_index = nljet[2];
         return nljet[1];
       }
     else if(abs((ljet[0] + ljet[1]).M() - m_w) > abs((ljet[1] + ljet[2]).M() - m_w)) 
       {
-        t1_mass     = ( ljet[1] + ljet[2] + bjet_v ) .M();
-        Wmass      = ( ljet[1] + ljet[2] ).M();
+        t1mass     = ( ljet[1] + ljet[2] + bjet_v ) .M();
+        wmass      = ( ljet[1] + ljet[2] ).M();
         wjet1_index = nljet[1];
         wjet2_index = nljet[2];
         return nljet[0];
       }
       else{
-        t1_mass     = ( ljet[0] + ljet[1] + bjet_v ) .M();
-        Wmass      = ( ljet[0] + ljet[1] ).M();
+        t1mass     = ( ljet[0] + ljet[1] + bjet_v ) .M();
+        wmass      = ( ljet[0] + ljet[1] ).M();
         wjet1_index = nljet[0];
         wjet2_index = nljet[1];
         return nljet[2];

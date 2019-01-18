@@ -5,7 +5,7 @@
 #include <TCanvas.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+void init_hist(){}
 nominal::nominal(){
   //init histSaver here:
   tau_plots = new histSaver();
@@ -148,14 +148,14 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       leading_ljet = -1;
       pt_b = 0;
       pt_ljet = 0;
-      for (int i = 0; i < m_jet_flavor_weight_MV2c10->size(); ++i)
+      for (int i = 0; i < selected_jets_T->size(); ++i)
       {
-        if((*m_jet_flavor_weight_MV2c10)[i] > 0.83 && leading_b == -1) {
-          leading_b = i;
-          pt_b = (*m_jet_pt)[i];
-        }else if((*m_jet_flavor_weight_MV2c10)[i] < 0.83 && leading_ljet == -1){
-          leading_ljet = i;
-          pt_ljet = (*m_jet_pt)[i];
+        if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > 0.83 && leading_b == -1) {
+          leading_b = selected_jets_T->at(i);
+          pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
+        }else if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < 0.83 && leading_ljet == -1){
+          leading_ljet = selected_jets_T->at(i);
+          pt_ljet = (*m_jet_pt)[selected_jets_T->at(i)];
         }
       }
       TLorentzVector lp, taup;

@@ -16,14 +16,14 @@ int main(int argc, char const *argv[])
 
 	fitter->setparam("sf_b", 1, 0.1, 0.,2.);
 	fitter->setparam("sf_c", 1, 0.1, 0.,2.);
-	fitter->setparam("sf_g", 2, 0.1, 0.,3.);
+	fitter->setparam("sf_g", 2, 0.1, 0.,10.);
 	fitter->setparam("sf_j", 1, 0.1, 0.,2.);
 	int plot_option = *argv[1] - '0';
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver();
 	tau_plots->debug = 0;
-	histSaver *notau_plots = new histSaver();
-	notau_plots->debug = 0;
+	//histSaver *notau_plots = new histSaver();
+	//notau_plots->debug = 0;
   	tau_plots->irebin = 1;
 
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
@@ -32,13 +32,13 @@ int main(int argc, char const *argv[])
 	tau_plots->add("p_{T,b}","bpt","GeV");
   	tau_plots->add("E_{miss}^{T}","met","GeV");
 	tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
-	notau_plots->add("p_{T,b}","bpt","GeV");
-	notau_plots->add("p_{T,light-jet}","ljetpt","GeV");
+	//notau_plots->add("p_{T,b}","bpt","GeV");
+	//notau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 	TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
 
 	TString nprong[] = {"1prong","3prong"};
 	for (int j = 0; j < 8; ++j)
-	  if(j>4) notau_plots->add_region(regions[j]);
+	  if(j>4) continue;//notau_plots->add_region(regions[j]);
 	  else for (int i = 1; i < 4; i+=2)
 	  	for (int k = 0; k < 2; ++k){
 			printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
@@ -55,7 +55,7 @@ int main(int argc, char const *argv[])
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed};
 
 	tau_plots->read_sample("data","data","data",kBlack,1);
-	notau_plots->read_sample("data","data_notau","data",kBlack,1);
+	//notau_plots->read_sample("data","data_notau","data",kBlack,1);
 
 //============================ merge_other ============================
 	if (plot_option == 0)
@@ -85,10 +85,10 @@ int main(int argc, char const *argv[])
 			}
 
 	if(doPlots){
-		for (int i = 0; i < 6; ++i)
-		{
-			notau_plots->read_sample(samples[i] ,samples[i] + "_notau", sampletitle[i], (enum EColor)colors[i],1);
-		}
+		//for (int i = 0; i < 6; ++i)
+		//{
+		//	notau_plots->read_sample(samples[i] ,samples[i] + "_notau", sampletitle[i], (enum EColor)colors[i],1);
+		//}
 		tau_plots  ->plot_stack(outputdir[plot_option]);
 	
 		//notau_plots->plot_stack(outputdir[plot_option]);
@@ -134,7 +134,7 @@ int main(int argc, char const *argv[])
 				Double_t val[4],err[4];
 				fitter->debug();
 //============================ do fit here============================
-				//fitter->asimovfit(100,nprong[iprong]+"ptbin"+char(ptbin+'0')+".root");
+				fitter->asimovfit(100,nprong[iprong]+"ptbin"+char(ptbin+'0')+".root");
 				double chi2 = fitter->fit(val,err,0);
 				printf("%s, ptbin: %d, b: %f+/-%f, c: %f+/-%f, g: %f+/-%f, j: %f+/-%f;  Chi2:%f\n",nprong[iprong].Data(), ptbin+1, val[0],err[0], val[1],err[1], val[2],err[2], val[3],err[3], chi2);
 				fitter->clear();
