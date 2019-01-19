@@ -27,7 +27,7 @@ MAKESHARED = clang++ -shared -fPIC -dynamiclib -single_module -O2 -mmacosx-versi
 
 TARGETS 		= $(patsubst util/%.cc,bin/%_run,$(wildcard util/*.cc))
 
-all: makebin lib/libskim.so lib/libfake_analysis.so $(TARGETS)
+all: makebin lib/libskim.so lib/libfake_analysis.so $(TARGETS) bin/plot_fake_run
 
 makebin:
 	@echo using compiler: $(CXX)
@@ -68,6 +68,10 @@ bin/.%.o: util/%.cc
 bin/reduce%_run: bin/.reduce%.o bin/.dict.o
 	@echo Linking $@ with $^
 	@$(CXX) $(CPPFLAGS) -D $(EXTRALIBS)  -Llib -lskim -o $@ $^
+
+bin/plot_fake_run: bin/.reduce1.o lib/libfake_analysis.so
+	@echo Linking $@ with $^
+	@$(CXX) $(CPPFLAGS) -D $(EXTRALIBS)  -Llib -lfake_analysis -o $@ $^
 
 bin/%_run: bin/.%.o bin/.dict.o
 	@echo Linking $@ with $^
