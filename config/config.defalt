@@ -1,39 +1,21 @@
-#7 fcnc_cH_mc16a fcnc_ch #bar{t}t#rightarrowbWcH 
-#7 fcnc_cH_mc16d fcnc_ch #bar{t}t#rightarrowbWcH
-7 fcnc_cHtautau_mc16a fcnc_ch #bar{t}t#rightarrowbWcH
-7 fcnc_uHtautau_mc16a fcnc_ch #bar{t}t#rightarrowbWuH
-7 fcnc_cHtautau_mc16d fcnc_ch #bar{t}t#rightarrowbWcH
-7 fcnc_uHtautau_mc16d fcnc_ch #bar{t}t#rightarrowbWuH
+#7 fcnc_cHtautau_mc16a fcnc_ch #bar{t}t#rightarrowbWcH
+#7 fcnc_uHtautau_mc16a fcnc_uh #bar{t}t#rightarrowbWuH
+#7 fcnc_cHtautau_mc16d fcnc_ch #bar{t}t#rightarrowbWcH
+#7 fcnc_uHtautau_mc16d fcnc_uh #bar{t}t#rightarrowbWuH
 
-#data_combined_25ns_R21_data1516 data
-#data_combined_25ns_R21_data17 data
-#diboson_mc16a other
-#diboson_mc16d other
-#Others_mc16a other
-#Others_mc16d other
-ttbargamma_madpy8_mc16a ttbargamma
-#ttbargamma_madpy8_mc16d ttbargamma
-#ttbarnohad_powhpy8showerwt_mc16a ttbarnohad
-#ttbarnohad_powhpy8showerwt_mc16d ttbarnohad
-#ttbarnohad_sherpa_mc16a ttbarnohad
-#ttbarnohad_sherpa_mc16d ttbarnohad
-#tth_aMChpp_mc16a other
-#tth_aMChpp_mc16d other
-#tth_aMCpy8_mc16a other
-#tth_aMCpy8_mc16d other
-#tth_powhpy8showerwt_mc16a other
-#tth_powhpy8showerwt_mc16d other
-#ttV_aMCpy8_mc16a other
-#ttV_aMCpy8_mc16d other
-#ttV_sherpa_mc16a other
-#ttV_sherpa_mc16d other
-#ttW_aMCpy8_mc16a other
-#ttW_aMCpy8_mc16d other
-#ttZ_aMCpy8_mc16a other
-#ttZ_aMCpy8_mc16d other
-#vjets_mc16a other
-#vjets_mc16d other
-#wjets_mc16a other
-#wjets_mc16d other
-#zjets_mc16a other
-#zjets_mc16d other
+6 data_combined_25ns_R21_data1516 data Data
+6 data_combined_25ns_R21_data17 data Data
+6 diboson_mc16a diboson Diboson
+6 diboson_mc16d diboson Other
+6 Others_mc16a other Other
+6 Others_mc16d other Other
+6 ttbargamma_madpy8_mc16a ttbar #bar{t}t
+6 ttbargamma_madpy8_mc16d ttbar #bar{t}t
+6 ttbarnohad_powhpy8showerwt_mc16a ttbar #bar{t}t
+6 ttbarnohad_powhpy8showerwt_mc16d ttbar #bar{t}t
+6 tth_powhpy8showerwt_mc16a tth #bar{t}tH
+6 tth_powhpy8showerwt_mc16d tth #bar{t}tH
+6 ttV_aMCpy8_mc16a ttv #bar{t}tV
+6 ttV_aMCpy8_mc16d ttv #bar{t}tV
+6 vjets_mc16a vjets V+jets
+6 vjets_mc16d vjets V+jets
