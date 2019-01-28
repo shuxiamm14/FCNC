@@ -18,6 +18,8 @@ public :
       {1.157861, 0.792569, 1.349050, 1.426554},   //3prong <35
       {0.818782, 0.614790, 5.756198, 0.489836}    //3prong >35
    };
+   TString *regions;
+   int nregions;
    bool writetree = 1;
    void init_hist();
    TString bwps[4] = {"btagwp60","btagwp70","btagwp77","btagwp85"};

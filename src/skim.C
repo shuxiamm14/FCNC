@@ -39,7 +39,9 @@ void nominal::init_hist(){
   tau_plots->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
   tau_plots->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
   
-  TString regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
+  TString _regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
+  regions = _regions;
+
   TString nprong[] = {"1prong","3prong"};
 
   for (int j = 0; j < 3; ++j)
@@ -89,47 +91,37 @@ void nominal::init_sample(TString sample, TString sampletitle){
   if(writetree){
     outputtreefile = new TFile(sample + "_tree.root","update");
     map<TString, TTree*>::iterator iter;
-    if (outputtreefile->Get("reg1l1tau1b2j"))
-    {      
-      outputtree["reg1l1tau1b2j"] = (TTree*)(outputtreefile->Get("reg1l1tau1b2j"));
-      outputtree["reg1l1tau1b3j"] = (TTree*)(outputtreefile->Get("reg1l1tau1b3j"));
-      outputtree["reg1l2tau1bnj"] = (TTree*)(outputtreefile->Get("reg1l2tau1bnj"));
-      for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
-        Init(iter->second);
-    }else{
-      outputtree["reg1l1tau1b2j"] = new TTree("reg1l1tau1b2j","reg1l1tau1b2j");
-      definetree(outputtree["reg1l1tau1b2j"]);
-      outputtree["reg1l1tau1b3j"] = new TTree("reg1l1tau1b3j","reg1l1tau1b3j");
-      definetree(outputtree["reg1l1tau1b3j"]);
-      outputtree["reg1l2tau1bnj"] = new TTree("reg1l2tau1bnj","reg1l2tau1bnj");
-      definetree(outputtree["reg1l2tau1bnj"]);
-  
-      if(reduce >= 1 || reduce == 0)
-        for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
-        {
-          iter->second->Branch("t1mass",&t1mass);
-          iter->second->Branch("tautaumass",&tautaumass);
-          iter->second->Branch("wmass",&wmass);
-          iter->second->Branch("t2mass",&t2mass);
-        }
-      if(reduce==2 || reduce == 0)
-        for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
-        {
-          iter->second->Branch("neutrino_pt" , &neutrino_pt );
-          iter->second->Branch("neutrino_eta", &neutrino_eta);
-          iter->second->Branch("neutrino_phi", &neutrino_phi);
-          iter->second->Branch("neutrino_m"  , &neutrino_m  );
-          iter->second->Branch("weight",&weight);
-          iter->second->Branch("fakeSF",&fakeSF);
-          iter->second->Branch("cjet_index", &cjet_index );
-          iter->second->Branch("wjet1_index", &wjet1_index);
-          iter->second->Branch("wjet2_index", &wjet2_index);
-          iter->second->Branch("x1fit", &x1fit);
-          iter->second->Branch("x2fit", &x2fit);
-          iter->second->Branch("t1vismass",&t1vismass);
-          iter->second->Branch("t2vismass",&t2vismass);
-          iter->second->Branch("ttvismass",&ttvismass);
-        }
+    for (int i = 0; i < sizeof(regions)/sizeof(TString); ++i)
+    {
+      if (outputtreefile->Get(regions[i])) {
+        outputtree[regions[i]] = (TTree*)(outputtreefile->Get(regions[i]));
+        Init(outputtree[regions[i]]);
+      }else{
+        outputtree[regions[i]] = new TTree(regions[i],regions[i]);
+        definetree(outputtree[regions[i]]);
+      }
+      if(reduce >= 1 || reduce == 0){
+        outputtree[regions[i]]->Branch("t1mass",&t1mass);
+        outputtree[regions[i]]->Branch("tautaumass",&tautaumass);
+        outputtree[regions[i]]->Branch("wmass",&wmass);
+        outputtree[regions[i]]->Branch("t2mass",&t2mass);
+      }
+      if(reduce==2 || reduce == 0){
+        outputtree[regions[i]]->Branch("neutrino_pt" , &neutrino_pt );
+        outputtree[regions[i]]->Branch("neutrino_eta", &neutrino_eta);
+        outputtree[regions[i]]->Branch("neutrino_phi", &neutrino_phi);
+        outputtree[regions[i]]->Branch("neutrino_m"  , &neutrino_m  );
+        outputtree[regions[i]]->Branch("weight",&weight);
+        outputtree[regions[i]]->Branch("fakeSF",&fakeSF);
+        outputtree[regions[i]]->Branch("cjet_index", &cjet_index );
+        outputtree[regions[i]]->Branch("wjet1_index", &wjet1_index);
+        outputtree[regions[i]]->Branch("wjet2_index", &wjet2_index);
+        outputtree[regions[i]]->Branch("x1fit", &x1fit);
+        outputtree[regions[i]]->Branch("x2fit", &x2fit);
+        outputtree[regions[i]]->Branch("t1vismass",&t1vismass);
+        outputtree[regions[i]]->Branch("t2vismass",&t2vismass);
+        outputtree[regions[i]]->Branch("ttvismass",&ttvismass);
+      }
     }
   }
 //  for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)

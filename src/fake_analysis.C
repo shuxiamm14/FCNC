@@ -24,18 +24,24 @@ nominal::nominal(){
   notau_plots->add(10,0.,200.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   notau_plots->add(10,0.,200.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
 
-  TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
+  TString _regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b"};
+  
+  regions = _regions;
+  nregions = sizeof(_regions)/sizeof(TString);
+
+  TString regions_notau[] = {"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
   TString nprong[] = {"1prong","3prong"};
 
-  for (int j = 0; j < 9; ++j)
-    if(j>5) notau_plots->add_region(regions[j]);
-    else for (int k = 0; k < 2; ++k){
+  for (int j = 0; j < nregions; ++j)
+    for (int k = 0; k < 2; ++k){
       for (int i = 1; i < 4; i+=2){
         printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
         tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
         tau_plots->add_region(regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
       }
     }
+  for (int j = 0; j < sizeof(regions_notau)/sizeof(TString); ++j)
+    notau_plots->add_region(regions_notau[j]);
 
 
 }
@@ -86,6 +92,15 @@ void nominal::init_sample(TString sample, TString sampletitle){
 void nominal::Loop(TTree *inputtree, TString samplename)
 {
   Init(inputtree);
+  TFile outputfile(samplename+".root","update");
+  TTree *outputtree;
+  if(outputfile.Get("tree")) {
+    outputtree = (TTree*) outputfile.Get("tree");
+    Init(outputtree);
+  }else{
+    outputtree = new TTree();
+    definetree(outputtree);
+  }
   if (inputtree == 0) return;
   Long64_t nentries = inputtree->GetEntriesFast();
   Long64_t nbytes = 0, nb = 0;
@@ -170,6 +185,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     }else if(ifregions["reg1e1mu1tau2b"]||ifregions["reg1e1mu1tau1b"]||ifregions["reg1e1mu2b"]){
       taulmass = 0;
     }else continue;
+    outputtree->Fill();
 //===============================fill histograms===============================
     map<TString, bool>::iterator iter;
     TString tauorigin;
@@ -197,9 +213,12 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
     {
       if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) { fill_tau(iter->first,tau_numTrack_0,tauorigin,0); }
-      if(iter->second == 1 & !iter->first.Contains("tau") ) { if(debug) printf("fill_notau: %s\n", iter->first.Data()); fill_notau(iter->first,sample); }
+      if(iter->second == 1 & !iter->first.Contains("tau") ) { fill_notau(iter->first,sample); }
     }
   }
+  outputfile.cd();
+  outputtree->Write("tree",TObject::kWriteDelete);
+  outputfile.Close();
 }
 
 void nominal::plot(){
