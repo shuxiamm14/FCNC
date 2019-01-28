@@ -28,7 +28,7 @@ makebin:
 	@mkdir -p ./bin ./lib
 	@echo current directory: $(PWD)
 
-bin/.%.o: src/%.cc include/%.h
+bin/.%.o: src/%.C include/%.h
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
 
@@ -51,6 +51,7 @@ bin/.dict.cxx: include/LinkDef.h
 bin/.dict.o: bin/.dict.cxx
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
 	@mv bin/.dict_rdict.pcm lib/.
+
 bin/.%.o: util/%.cc include/%.h
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
@@ -71,9 +72,9 @@ bin/%_run: bin/.%.o bin/.dict.o
 	@echo Linking $@ with $^
 	@$(CXX) $(CPPFLAGS) $(EXTRALIBS) -o $@ $^
 
-lib/lib%.so: bin/.%.o
+lib/lib%.so: bin/.%.o bin/.nominal.o
 	@echo Linking $@ with $^
-	@$(MAKESHARED) $(CPPFLAGS) $(EXTRALIBS) $< -o $@
+	@$(MAKESHARED) $(CPPFLAGS) $(EXTRALIBS) $^ -o $@
 
 .PRECIOUS: bin/.%.o
 
