@@ -14,8 +14,9 @@ int main(int argc, char const *argv[])
 	char inputline[100];
 
 	nominal *analysis = new nominal();
-	analysis->reduce = 1;
+	analysis->reduce = 0;
 	analysis->dohist = doplot;
+	analysis->debug = 0;
 	while(!fn.eof()){
 		fn.getline(inputline,200);
 		if(strlen(inputline)==0) continue;
