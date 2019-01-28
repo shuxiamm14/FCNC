@@ -6,11 +6,7 @@ ROOTCFLAGS      := $(shell root-config --cflags)
 ROOTLIBS        := $(shell root-config --libs)
 ROOTGLIBS       := $(shell root-config --glibs) -lMinuit -lTMVA -lTMVAGui
 
-DELPHES_DIR := /Users/Liby/Desktop/software/delphes/Delphes-3.4.0
-DELPHESLIBS := -L$(DELPHES_DIR) -lDelphes
-DELPHESINCS := -I$(DELPHES_DIR)
-
-FCNC_DIR := /Users/Liby/work/tau_analysis/FCNC/plotTools
+FCNC_DIR := ../plotTools
 FCNCLIBS := -L$(FCNC_DIR)/lib -lAtlasStyle -lPlotTool
 FCNCINCS := -I$(FCNC_DIR)/include/fcnc -I$(FCNC_DIR)/include/atlasstyle 
 
@@ -19,11 +15,9 @@ EXTRALIBS +=$(ROOTLIBS) $(ROOTGLIBS) $(FCNCLIBS)
 CPPFLAGS += $(ROOTCFLAGS) $(FCNCINCS) -Iinclude
 CPPFLAGS += -D PACKAGE_DIR=\"$(PWD)\"
 
-CPPFLAGS  += -Wno-long-long -fPIC -w -g
+CPPFLAGS  += -Wno-long-long -fPIC -w -g 
 
-CXX=/Applications/Xcode.app/Contents/Developer/usr/bin/g++
-
-MAKESHARED = clang++ -shared -fPIC -dynamiclib -single_module -O2 -mmacosx-version-min=10.10 -m64 -Wl,-install_name,@rpath/$(patsubst lib/%,%,$@)
+MAKESHARED = $(CXX) -shared -fPIC #-dynamiclib -O2 -m64
 
 TARGETS 		= $(patsubst util/%.cc,bin/%_run,$(wildcard util/*.cc))
 
@@ -69,7 +63,7 @@ bin/reduce%_run: bin/.reduce%.o bin/.dict.o
 	@echo Linking $@ with $^
 	@$(CXX) $(CPPFLAGS) -D $(EXTRALIBS)  -Llib -lskim -o $@ $^
 
-bin/plot_fake_run: bin/.reduce1.o lib/libfake_analysis.so
+bin/plot_fake_run: bin/.reduce1.o 
 	@echo Linking $@ with $^
 	@$(CXX) $(CPPFLAGS) -D $(EXTRALIBS)  -Llib -lfake_analysis -o $@ $^
 
