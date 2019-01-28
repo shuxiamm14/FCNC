@@ -201,31 +201,8 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     }
   }
 }
-int nominal::findcjet(){}
+
 void nominal::plot(){
   tau_plots->write();
   notau_plots->write();
 }
-
-bool nominal::SelectTLepid(int id){
-  bool pass(false);
-  //lep_ambiguityType_0==0 for electron
-  if(id==0){
-    pass = lep_isolationFixedCutLoose_0&&(abs(lep_ID_0)==13||((abs(lep_ID_0)==11)&&lep_isTightLH_0));
-  }
-  else if(id==1){
-    pass = lep_isolationFixedCutLoose_1&&(abs(lep_ID_1)==13||((abs(lep_ID_1)==11)&&lep_isTightLH_1));
-  }
-  else if(id==2){
-    pass = lep_isolationFixedCutLoose_2&&(abs(lep_ID_2)==13||((abs(lep_ID_2)==11)&&lep_isTightLH_2));
-  }
-  else if(id==3){
-    pass = lep_isolationFixedCutLoose_3&&(abs(lep_ID_3)==13||((abs(lep_ID_3)==11)&&lep_isTightLH_3));
-  }
-  else if(id==4){
-    pass = lep_isolationFixedCutLoose_4&&(abs(lep_ID_4)==13||((abs(lep_ID_4)==11)&&lep_isTightLH_4));
-  }
-  return pass;
-}
-
-void nominal::finalise_sample(){}
