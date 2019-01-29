@@ -5,8 +5,7 @@
 #include <TCanvas.h>
 #include <stdio.h>
 #include <stdlib.h>
-void init_hist(){  
-
+void nominal::init_hist(){  
   //init histSaver here:
   dohist = 1;
   tau_plots = new histSaver();
