@@ -96,22 +96,28 @@ void nominal::Loop(TTree *inputtree, TString samplename)
   TTree *outputtree;
   if(outputfile.Get("tree")) {
     outputtree = (TTree*) outputfile.Get("tree");
+    reduce = 1;
     Init(outputtree);
+    reduce = 0;
   }else{
-    outputtree = new TTree();
+    outputtree = new TTree("tree","tree");
     definetree(outputtree);
   }
   if (inputtree == 0) return;
   Long64_t nentries = inputtree->GetEntriesFast();
-  Long64_t nbytes = 0, nb = 0;
   TString sample = samplename;
   if(samplename.Contains("ttbar")) sample = "ttbar";
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
-    nb = inputtree->GetEntry(jentry);
+  //for (Long64_t jentry=0; jentry<6000;jentry++) {
+    inputtree->GetEntry(jentry);
     if((jentry%100000==0))
       std::cout<<" I am here event "<<jentry<<" Event "<<EventNumber<<" Run "<<RunNumber<<" ismc "<<mc_channel_number<<std::endl;
 //===============================pre-selections===============================
 
+      if(selected_jets_T->size() == 0 && nJets_OR_T !=0 ) {
+        printf("error: read vector failed entry: %d\n",jentry);
+        continue;
+      }
     bool basic_selection = passEventCleaning;
 
     if (!basic_selection) continue;
@@ -164,19 +170,23 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       leading_ljet = -1;
       pt_b = 0;
       pt_ljet = 0;
-      for (int i = 0; i < selected_jets_T->size(); ++i)
+      for (int i = 0; i < nJets_OR_T; ++i)
       {
-        if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > 0.83 && leading_b == -1) {
+        if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > btag70wt && leading_b == -1) {
           leading_b = selected_jets_T->at(i);
           pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
-        }else if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < 0.83 && leading_ljet == -1){
+        }else if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < btag70wt && leading_ljet == -1){
           leading_ljet = selected_jets_T->at(i);
           pt_ljet = (*m_jet_pt)[selected_jets_T->at(i)];
         }
       }
       TLorentzVector lp, taup;
       if(leading_ljet>=0) lp.SetPtEtaPhiE((*m_jet_pt)[leading_ljet],(*m_jet_eta)[leading_ljet],(*m_jet_phi)[leading_ljet],(*m_jet_E)[leading_ljet]);
-      else printf("ERROR: no light jet found\n");
+      else {
+        printf("ERROR: no light jet found\n");
+        printf("nJets_OR_T_MV2c10_70: %d, nJets_OR_T: %d\n",nJets_OR_T_MV2c10_70,nJets_OR_T);
+        for(int i = 0; i < nJets_OR_T; ++i) printf("btag: %f\n",(*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)]);
+      }
       if(ifregions["reg1l1tau2b1j_os"] || ifregions["reg1l1tau2b1j_ss"]){
         taup.SetPtEtaPhiE((*m_tau_pt)[0],(*m_tau_eta)[0],(*m_tau_phi)[0],(*m_tau_E)[0]);
         taulmass = (taup+lp).M();

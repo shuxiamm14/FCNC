@@ -19,6 +19,7 @@ public :
       {0.818782, 0.614790, 5.756198, 0.489836}    //3prong >35
    };
    TString *regions;
+   bool fcnc = 0;
    int nregions;
    bool writetree = 1;
    void init_hist();
@@ -36,7 +37,7 @@ public :
    bool initttbar = 0;
    bool doseppt = 0;
    bool dohist = 0;
-   int version;
+   int version = 0;
    TFile *outputtreefile = 0;
    map<TString, TTree*> outputtree;
    virtual void     Init(TTree *tree);

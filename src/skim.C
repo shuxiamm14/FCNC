@@ -86,7 +86,7 @@ void nominal::fill_tau(TString region, int nprong, TString sample, int iptbin){
 
 
 void nominal::init_sample(TString sample, TString sampletitle){
-  tau_plots->histfilename = sample;
+  if(dohist) tau_plots->histfilename = sample;
 //==========================init output n-tuple==========================
   if(writetree){
     outputtreefile = new TFile(sample + "_tree.root","update");

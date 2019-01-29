@@ -304,9 +304,9 @@ void nominal::Init(TTree *tree)
    selected_jets_T_mv2c10_Ordrd = 0;
    // Set branch addresses and branch pointers
    if (!tree) return;
-   printf("init tree: %s\n", tree->GetName());
+   printf("init tree: %s \nreduce scheme: %d\n", tree->GetName(),reduce);
    tree->SetMakeClass(1);
-   if(reduce>=1){
+   if(reduce>=1 && fcnc){
       tree->SetBranchAddress("t1mass",&t1mass);
       tree->SetBranchAddress("tautaumass",&tautaumass);
       tree->SetBranchAddress("wmass",&wmass);
@@ -1013,7 +1013,6 @@ void nominal::Init(TTree *tree)
          tree->SetBranchAddress("lepEffTrigLoose_MU_SF_Trigger_STAT_UP", &lepEffTrigLoose_MU_SF_Trigger_STAT_UP, &b_lepEffTrigLoose_MU_SF_Trigger_STAT_UP);
          tree->SetBranchAddress("lepEffTrigTight_MU_SF_Trigger_STAT_UP", &lepEffTrigTight_MU_SF_Trigger_STAT_UP, &b_lepEffTrigTight_MU_SF_Trigger_STAT_UP);
       }
-      tree->SetBranchAddress("m_jet_tagWeightBin", &m_jet_tagWeightBin, &b_m_jet_tagWeightBin);
    }
    tree->SetBranchAddress("JVT_EventWeight_UP", &JVT_EventWeight_UP, &b_JVT_EventWeight_UP);
    tree->SetBranchAddress("JVT_EventWeight_DOWN", &JVT_EventWeight_DOWN, &b_JVT_EventWeight_DOWN);
