@@ -61,10 +61,7 @@ void nominal::fill_tau(TString region, int nprong, TString sample, int iptbin){
   }
 }
 
-void nominal::fill_notau(TString region, TString sample){
-  if(debug) printf("fill region: %s sample: %s\n", (region).Data(), (sample).Data());
-  notau_plots->fill_hist(sample, region);
-}
+
 
 void nominal::init_sample(TString sample, TString sampletitle){
 

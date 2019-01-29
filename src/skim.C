@@ -182,14 +182,13 @@ void nominal::init_sample(TString sample, TString sampletitle){
 
 //==========================init output histogram==========================
   if(dohist){
-    if(sample.Contains("ttbar")) sample = "ttbar";
-  
     if (sample.Contains("data"))
     {
       tau_plots->init_sample("data","data","data",kBlack);
-      
       initdata = 1;
     }else{
+      if(sample.Contains("ttbar")) sample = "ttbar";
+      else sample.Remove(sample.Sizeof()-2);
       tau_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
       tau_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
       tau_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
@@ -217,7 +216,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
   Long64_t nentries = inputtree->GetEntriesFast();
   TString sample = samplename;
   if(samplename.Contains("ttbar")) sample = "ttbar";
-
+  else sample.Remove(sample.Sizeof()-2);
   if(dofcnc) initgM();
 
   if(dumptruth){
@@ -478,8 +477,8 @@ void nominal::Loop(TTree *inputtree, TString samplename)
         if(writetree) outputtree[iter->first]->Fill();
         if(dohist) {
           //weight *= fakeSF;
-          if(iter->first.Contains("tau") fill_tau(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
-            else fill_notau(iter->first);
+          if(iter->first.Contains("tau")) fill_tau(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
+            else fill_notau(iter->first,sample);
         }
 //      outputtree[iter->first]->AutoSave();
       }
