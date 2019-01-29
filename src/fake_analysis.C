@@ -25,7 +25,7 @@ nominal::nominal(){
   notau_plots->add(10,0.,200.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
 
   TString _regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b"};
-  
+
   regions = _regions;
   nregions = sizeof(_regions)/sizeof(TString);
 
@@ -229,6 +229,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
   outputfile.cd();
   outputtree->Write("tree",TObject::kWriteDelete);
   outputfile.Close();
+  deletepointer(outputtree);
 }
 
 void nominal::plot(){

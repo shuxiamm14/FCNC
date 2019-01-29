@@ -18,6 +18,7 @@ public :
       {1.157861, 0.792569, 1.349050, 1.426554},   //3prong <35
       {0.818782, 0.614790, 5.756198, 0.489836}    //3prong >35
    };
+   bool dumptruth = 0;
    TString *regions;
    bool fcnc = 0;
    int nregions;

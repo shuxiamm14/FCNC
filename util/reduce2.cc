@@ -16,10 +16,11 @@ int main(int argc, char const *argv[])
 	regions.push_back("reg1l1tau1b3j");
 
 	nominal *analysis = new nominal();
-	analysis->debug = 0;
-	if(doplot) analysis->init_hist();
+	analysis->debug = 1;
 	analysis->writetree = 0;
 	analysis->reduce = 3;
+	analysis->dumptruth = 1;
+	if(doplot) analysis->init_hist();
 	while(!fn.eof()){
 		fn.getline(inputline,200);
 		if(strlen(inputline)==0) continue;
