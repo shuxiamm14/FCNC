@@ -43,10 +43,10 @@ void nominal::init_hist(){
     TString _regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
 
     nregions = sizeof(_regions)/sizeof(TString);
-    regions = (TString*)malloc(sizeof(_regions));
+    regions = (TString**)malloc(nregions*sizeof(TString*));
     for (int i = 0; i < nregions; ++i)
     {
-      regions[i] = _regions[i];
+      regions[i] = new TString(_regions[i]);
     }
 
     TString nprong[] = {"1prong","3prong"};
@@ -59,12 +59,12 @@ void nominal::init_hist(){
           if(doseppt)
             for (int iptbin = 0; iptbin < 2; ++iptbin)
             {
-              if(debug) printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-              tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
-              tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+              if(debug) printf("adding region: %s\n", (*regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
+              tau_plots->add_region(*regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
+              tau_plots->add_region(*regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
             }
-          tau_plots->add_region(regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
-          tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
+          tau_plots->add_region(*regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
+          tau_plots->add_region(*regions[j] + "_" + nprong[k] + "_" + bwps[i]);
         }
       }
     }
@@ -83,10 +83,10 @@ void nominal::init_hist(){
     TString _regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b"};
   
     nregions = sizeof(_regions)/sizeof(TString);
-    regions = (TString*)malloc(sizeof(_regions));
+    regions = (TString**)malloc(nregions*sizeof(TString*));
     for (int i = 0; i < nregions; ++i)
     {
-      regions[i] = _regions[i];
+      regions[i] = new TString(_regions[i]);
     }
     TString regions_notau[] = {"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
     TString nprong[] = {"1prong","3prong"};
@@ -94,9 +94,9 @@ void nominal::init_hist(){
     for (int j = 0; j < nregions; ++j)
       for (int k = 0; k < 2; ++k){
         for (int i = 1; i < 4; i+=2){
-          printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-          tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-          tau_plots->add_region(regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
+          printf("adding region: %s\n", (*regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
+          tau_plots->add_region(*regions[j] + "_" + nprong[k] + "_" + bwps[i]);
+          tau_plots->add_region(*regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
         }
       }
     for (int j = 0; j < sizeof(regions_notau)/sizeof(TString); ++j)
@@ -144,36 +144,36 @@ void nominal::init_sample(TString sample, TString sampletitle){
   if(writetree){
     outputtreefile = new TFile(sample + "_tree.root","update");
     map<TString, TTree*>::iterator iter;
-    for (int i = 0; i < sizeof(regions)/sizeof(TString); ++i)
+    for (int i = 0; i < nregions; ++i)
     {
-      if (outputtreefile->Get(regions[i])) {
-        outputtree[regions[i]] = (TTree*)(outputtreefile->Get(regions[i]));
-        Init(outputtree[regions[i]]);
+      if (outputtreefile->Get(*regions[i])) {
+        outputtree[*regions[i]] = (TTree*)(outputtreefile->Get(*regions[i]));
+        Init(outputtree[*regions[i]]);
       }else{
-        outputtree[regions[i]] = new TTree(regions[i],regions[i]);
-        definetree(outputtree[regions[i]]);
+        outputtree[*regions[i]] = new TTree(*regions[i],*regions[i]);
+        definetree(outputtree[*regions[i]]);
       }
       if(reduce >= 1 || reduce == 0){
-        outputtree[regions[i]]->Branch("t1mass",&t1mass);
-        outputtree[regions[i]]->Branch("tautaumass",&tautaumass);
-        outputtree[regions[i]]->Branch("wmass",&wmass);
-        outputtree[regions[i]]->Branch("t2mass",&t2mass);
+        outputtree[*regions[i]]->Branch("t1mass",&t1mass);
+        outputtree[*regions[i]]->Branch("tautaumass",&tautaumass);
+        outputtree[*regions[i]]->Branch("wmass",&wmass);
+        outputtree[*regions[i]]->Branch("t2mass",&t2mass);
       }
       if(reduce==2 || reduce == 0){
-        outputtree[regions[i]]->Branch("neutrino_pt" , &neutrino_pt );
-        outputtree[regions[i]]->Branch("neutrino_eta", &neutrino_eta);
-        outputtree[regions[i]]->Branch("neutrino_phi", &neutrino_phi);
-        outputtree[regions[i]]->Branch("neutrino_m"  , &neutrino_m  );
-        outputtree[regions[i]]->Branch("weight",&weight);
-        outputtree[regions[i]]->Branch("fakeSF",&fakeSF);
-        outputtree[regions[i]]->Branch("cjet_index", &cjet_index );
-        outputtree[regions[i]]->Branch("wjet1_index", &wjet1_index);
-        outputtree[regions[i]]->Branch("wjet2_index", &wjet2_index);
-        outputtree[regions[i]]->Branch("x1fit", &x1fit);
-        outputtree[regions[i]]->Branch("x2fit", &x2fit);
-        outputtree[regions[i]]->Branch("t1vismass",&t1vismass);
-        outputtree[regions[i]]->Branch("t2vismass",&t2vismass);
-        outputtree[regions[i]]->Branch("ttvismass",&ttvismass);
+        outputtree[*regions[i]]->Branch("neutrino_pt" , &neutrino_pt );
+        outputtree[*regions[i]]->Branch("neutrino_eta", &neutrino_eta);
+        outputtree[*regions[i]]->Branch("neutrino_phi", &neutrino_phi);
+        outputtree[*regions[i]]->Branch("neutrino_m"  , &neutrino_m  );
+        outputtree[*regions[i]]->Branch("weight",&weight);
+        outputtree[*regions[i]]->Branch("fakeSF",&fakeSF);
+        outputtree[*regions[i]]->Branch("cjet_index", &cjet_index );
+        outputtree[*regions[i]]->Branch("wjet1_index", &wjet1_index);
+        outputtree[*regions[i]]->Branch("wjet2_index", &wjet2_index);
+        outputtree[*regions[i]]->Branch("x1fit", &x1fit);
+        outputtree[*regions[i]]->Branch("x2fit", &x2fit);
+        outputtree[*regions[i]]->Branch("t1vismass",&t1vismass);
+        outputtree[*regions[i]]->Branch("t2vismass",&t2vismass);
+        outputtree[*regions[i]]->Branch("ttvismass",&ttvismass);
       }
     }
   }
@@ -207,9 +207,6 @@ void nominal::Loop(TTree *inputtree, TString samplename)
   reduce += 1;
   printf("reduce scheme: %d\n", reduce);
   if(reduce > 1) {
-    ifregions["reg1l1tau1b2j"]  = 0;
-    ifregions["reg1l1tau1b3j"]  = 0;
-    ifregions["reg1l2tau1bnj"]  = 0;
     ifregions[inputtree->GetName()] = 1;
   }
   if (inputtree == 0) return;
