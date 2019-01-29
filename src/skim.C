@@ -153,13 +153,13 @@ void nominal::init_sample(TString sample, TString sampletitle){
         outputtree[*regions[i]] = new TTree(*regions[i],*regions[i]);
         definetree(outputtree[*regions[i]]);
       }
-      if(reduce >= 1 || reduce == 0){
+      if(reduce >= 1 || reduce == 0 && dofcnc){
         outputtree[*regions[i]]->Branch("t1mass",&t1mass);
         outputtree[*regions[i]]->Branch("tautaumass",&tautaumass);
         outputtree[*regions[i]]->Branch("wmass",&wmass);
         outputtree[*regions[i]]->Branch("t2mass",&t2mass);
       }
-      if(reduce==2 || reduce == 0){
+      if(reduce==2 || reduce == 0 && dofcnc){
         outputtree[*regions[i]]->Branch("neutrino_pt" , &neutrino_pt );
         outputtree[*regions[i]]->Branch("neutrino_eta", &neutrino_eta);
         outputtree[*regions[i]]->Branch("neutrino_phi", &neutrino_phi);
