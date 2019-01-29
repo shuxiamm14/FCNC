@@ -5,9 +5,9 @@
 #include <TCanvas.h>
 #include <stdio.h>
 #include <stdlib.h>
-void init_hist(){}
-nominal::nominal(){
+void nominal::init_hist(){  
   //init histSaver here:
+  dohist = 1;
   tau_plots = new histSaver();
   tau_plots->set_weight(&weight);
   tau_plots->debug = 0;
@@ -41,9 +41,8 @@ nominal::nominal(){
       }
     }
   for (int j = 0; j < sizeof(regions_notau)/sizeof(TString); ++j)
-    notau_plots->add_region(regions_notau[j]);
-
-
+    notau_plots->add_region(regions_notau[j]);}
+nominal::nominal(){
 }
 
 nominal::~nominal(){
@@ -70,23 +69,22 @@ void nominal::fill_notau(TString region, TString sample){
 void nominal::init_sample(TString sample, TString sampletitle){
 
   if(sample.Contains("ttbar")) sample = "ttbar";
-
-  if (sample.Contains("data"))
-  {
-    tau_plots->init_sample("data","data","data",kBlack);
-    notau_plots->init_sample("data","data_notau","data",kBlack);
-    initdata = 1;
-  }else{
-    tau_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
-    tau_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
-    tau_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
-    tau_plots->init_sample(sample + "_lep",sample + "_lep",sampletitle + "(lepton fake #tau)",kGreen);
-    tau_plots->init_sample(sample + "_real",sample + "_real",sampletitle + "(real #tau)",kRed);
-    tau_plots->init_sample(sample + "_c",sample + "_c",sampletitle + "(c-jets fake #tau)",kOrange);
-    tau_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
-    notau_plots->init_sample(sample,sample + "_notau",sampletitle + "",kRed);
-  }
-  
+  if(dohist)
+    if (sample.Contains("data"))
+    {
+      tau_plots->init_sample("data","data","data",kBlack);
+      notau_plots->init_sample("data","data_notau","data",kBlack);
+      initdata = 1;
+    }else{
+      tau_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
+      tau_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
+      tau_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
+      tau_plots->init_sample(sample + "_lep",sample + "_lep",sampletitle + "(lepton fake #tau)",kGreen);
+      tau_plots->init_sample(sample + "_real",sample + "_real",sampletitle + "(real #tau)",kRed);
+      tau_plots->init_sample(sample + "_c",sample + "_c",sampletitle + "(c-jets fake #tau)",kOrange);
+      tau_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
+      notau_plots->init_sample(sample,sample + "_notau",sampletitle + "",kRed);
+    }
 }
 
 void nominal::Loop(TTree *inputtree, TString samplename)
@@ -197,33 +195,35 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     }else continue;
     outputtree->Fill();
 //===============================fill histograms===============================
-    map<TString, bool>::iterator iter;
-    TString tauorigin;
-    if(sample == "data"){
-      tauorigin = "data";
-    }else if(nTaus_OR_Pt25>=1){
-      if(tau_truthType_0 == 10) tauorigin = sample + "_real";
-      else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)) tauorigin = sample + "_lep";
-      else
-        switch (tau_truthJetFlavour_0){
-          case 5:
-            tauorigin = sample + "_b";
-            break;
-          case 21:
-            tauorigin = sample + "_g";
-            break;
-          case 4:
-            tauorigin = sample + "_c";
-            break;
-          default:
-            tauorigin = sample + "_j";
-        }
-    }
-
-    for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
-    {
-      if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) { fill_tau(iter->first,tau_numTrack_0,tauorigin,0); }
-      if(iter->second == 1 & !iter->first.Contains("tau") ) { fill_notau(iter->first,sample); }
+    if(dohist){
+      map<TString, bool>::iterator iter;
+      TString tauorigin;
+      if(sample == "data"){
+        tauorigin = "data";
+      }else if(nTaus_OR_Pt25>=1){
+        if(tau_truthType_0 == 10) tauorigin = sample + "_real";
+        else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)) tauorigin = sample + "_lep";
+        else
+          switch (tau_truthJetFlavour_0){
+            case 5:
+              tauorigin = sample + "_b";
+              break;
+            case 21:
+              tauorigin = sample + "_g";
+              break;
+            case 4:
+              tauorigin = sample + "_c";
+              break;
+            default:
+              tauorigin = sample + "_j";
+          }
+      }
+  
+      for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
+      {
+        if(iter->second == 1 & iter->first.Contains("tau")  & ( tau_numTrack_0 == 1 | tau_numTrack_0 == 3 ) ) { fill_tau(iter->first,tau_numTrack_0,tauorigin,0); }
+        if(iter->second == 1 & !iter->first.Contains("tau") ) { fill_notau(iter->first,sample); }
+      }
     }
   }
   outputfile.cd();
