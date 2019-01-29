@@ -78,7 +78,11 @@ void nominal::init_hist(){
   
     regions = _regions;
     nregions = sizeof(_regions)/sizeof(TString);
-  
+    regions = (TString*)malloc(sizeof(_regions));
+    for (int i = 0; i < nregions; ++i)
+    {
+      regions[i] = _regions[i];
+    }
     TString regions_notau[] = {"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
     TString nprong[] = {"1prong","3prong"};
   
@@ -210,8 +214,6 @@ void nominal::Loop(TTree *inputtree, TString samplename)
   if(samplename.Contains("ttbar")) sample = "ttbar";
 
   if(dofcnc) initgM();
-
-  ofstream filetruth[6];
 
   if(dumptruth){
     if(TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) filetruth[0].open("lephad2j.txt");
