@@ -28,7 +28,7 @@ void nominal::init_hist(){
   dohist = 1;
   tau_plots = new histSaver();
   tau_plots->set_weight(&weight);
-  tau_plots->debug = debug;
+  tau_plots->debug = 0;
   tau_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
   tau_plots->add(100,50.,250.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
   tau_plots->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
@@ -79,14 +79,13 @@ void nominal::fill_tau(TString region, int nprong, TString sample, int iptbin){
     }else{
       if(doseppt) tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
       tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + "veto" + bwps[i]);
-      if(debug) printf("ttvismass: %f\n", ttvismass);
     }
   }
 }
 
 
 void nominal::init_sample(TString sample, TString sampletitle){
-  tau_plots->histfilename = sample;
+  if(dohist) tau_plots->histfilename = sample;
 //==========================init output n-tuple==========================
   if(writetree){
     outputtreefile = new TFile(sample + "_tree.root","update");
@@ -154,11 +153,14 @@ void nominal::Loop(TTree *inputtree, TString samplename)
   Init(inputtree);
   reduce += 1;
   printf("reduce scheme: %d\n", reduce);
+  int ntau;
   if(reduce > 1) {
-      ifregions["reg1l1tau1b2j"]  = 0;
-      ifregions["reg1l1tau1b3j"]  = 0;
-      ifregions["reg1l2tau1bnj"]  = 0;
-      ifregions[inputtree->GetName()] = 1;
+    ifregions["reg1l1tau1b2j"]  = 0;
+    ifregions["reg1l1tau1b3j"]  = 0;
+    ifregions["reg1l2tau1bnj"]  = 0;
+    ifregions[inputtree->GetName()] = 1;
+    if(TString(inputtree->GetName()).Contains("reg1l2tau1bnj")) ntau = 2;
+    else ntau = 1;
   }
   if (inputtree == 0) return;
   Long64_t nentries = inputtree->GetEntriesFast();
@@ -175,7 +177,17 @@ void nominal::Loop(TTree *inputtree, TString samplename)
   arglist[0] = 1;
   gM->mnexcm("SET ERR", arglist ,1,ierflg);
 
+  ofstream filetruth[6];
 
+  if(dumptruth){
+    if(inputtree->GetName() == "reg1l1tau1b2j") filetruth[0].open("lephad2j.txt");
+    else
+      for (int i = 0; i < 3; ++i)
+      {
+        if(inputtree->GetName() == "reg1l1tau1b3j") filetruth[i].open(CharAppend("lephad",i+2) + "j.txt");
+        else filetruth[i].open(CharAppend("lep2tau",i+1) + "j.txt");
+      }
+  }
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
     inputtree->GetEntry(jentry);
     if((jentry%100000==0))
@@ -220,13 +232,10 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     }
     if(reduce <= 2) weight = mc_channel_number>0?mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7?bTagSF_weight_MV2c10_FixedCutBEff_70:bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0;
     if(debug==2) printf("event weight: %f\n", weight);
-    if (debug == 2)
-    {
+    if (debug == 2){
       for(iter = ifregions.begin(); iter!= ifregions.end(); iter++){
         if (iter->second)
-        {
           printf("region: %s\n", iter->first.Data());
-        }
       }
     }
 //===============================find leading b,non b jets===============================
@@ -257,12 +266,12 @@ void nominal::Loop(TTree *inputtree, TString samplename)
   
       if(ifregions["reg1l2tau1bnj"]){
         for (int i = 0; i < 2; ++i) taus_v[i].SetPtEtaPhiE((*m_tau_pt)[i],(*m_tau_eta)[i],(*m_tau_phi)[i],(*m_tau_E)[i]);
-        if (abs(lep_ID_0)==11) lep_v.SetPtEtaPhiE((*electron_pt)[0],(*electron_eta)[0],(*electron_phi)[0],(*electron_E)[0]);
+        if (fabs(lep_ID_0)==11) lep_v.SetPtEtaPhiE((*electron_pt)[0],(*electron_eta)[0],(*electron_phi)[0],(*electron_E)[0]);
         else lep_v.SetPtEtaPhiE((*muon_pt)[0],(*muon_eta)[0],(*muon_phi)[0],(*muon_E)[0]);
         bjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b],(*m_jet_eta)[leading_b],(*m_jet_phi)[leading_b],(*m_jet_E)[leading_b]);
       }
       else{
-        if (abs(lep_ID_0)==11) taus_v[0].SetPtEtaPhiE((*electron_pt)[0],(*electron_eta)[0],(*electron_phi)[0],(*electron_E)[0]);
+        if (fabs(lep_ID_0)==11) taus_v[0].SetPtEtaPhiE((*electron_pt)[0],(*electron_eta)[0],(*electron_phi)[0],(*electron_E)[0]);
         else taus_v[0].SetPtEtaPhiE((*muon_pt)[0],(*muon_eta)[0],(*muon_phi)[0],(*muon_E)[0]);
         taus_v[1].SetPtEtaPhiE((*m_tau_pt)[0],(*m_tau_eta)[0],(*m_tau_phi)[0],(*m_tau_E)[0]);
         lep_v.SetPtEtaPhiE(0,0,0,0);
@@ -376,6 +385,73 @@ void nominal::Loop(TTree *inputtree, TString samplename)
             fakeSF = fakeSFs[SFbin][3];
         }
     }
+
+    if(dumptruth){
+      TLorentzVector wchild[2],fcncjet;
+      ofstream *truthfile = &(filetruth[min(nJets_OR_T-(ntau==1?3:2),2)]);
+      printf("nfile: %d, %d\n", nJets_OR_T, ntau);
+      if(debug) printf("truth particles: %d\n", m_truth_pdgId->size());
+      bool foundcjet = 0;
+      bool foundw = 0;
+      for (int itruth = 0; itruth < m_truth_pdgId->size(); ++itruth)
+      {            
+        if(debug) printf("pdg: %d,\tbarcode: %d\n", m_truth_pdgId->at(itruth), m_truth_barcode->at(itruth));
+        if(abs(m_truth_pdgId->at(itruth)) == 24 && m_truth_m->at(itruth)/GeV > 70 && m_truth_m->at(itruth)/GeV < 90 ){
+          if (m_truth_children->at(itruth).size()!=2) continue;
+          for (int ichild = 0; ichild < 2; ++ichild)
+          {
+            int childbarcode = m_truth_children->at(itruth)[ichild];
+            if(debug) printf("child barcode %d\n", childbarcode);
+            int childid = 0;
+            for (int i = 0; i < m_truth_barcode->size(); ++i)
+            {
+              if(m_truth_barcode->at(i) == childbarcode) {
+                childid = i;
+                break;
+              }
+            }
+            if(debug) printf("child pdg: %d\n",m_truth_pdgId->at(childid));
+            if(abs(m_truth_pdgId->at(childid))>4 || abs(m_truth_pdgId->at(childid))<1) {
+            }
+            if(debug) printf("childid: %d\n", childid);
+            foundw = 1;
+            wchild[ichild].SetPtEtaPhiM(m_truth_pt->at(childid),m_truth_eta->at(childid),m_truth_phi->at(childid),m_truth_m->at(childid));
+          }
+        }else if((abs(m_truth_pdgId->at(itruth))==2 || abs(m_truth_pdgId->at(itruth))==4)){
+            foundcjet = 1;
+            fcncjet.SetPtEtaPhiM(m_truth_pt->at(itruth),m_truth_eta->at(itruth),m_truth_phi->at(itruth),m_truth_m->at(itruth));
+        }
+      }
+      if(!foundw) printf("coundn't find truth w jets\n");
+      if(!foundcjet) printf("coundn't find truth fcnc jets\n");
+      if(foundw&&foundcjet){
+        for (int i = 0; i < min(nJets_OR_T,(ntau==1?3:2)+2); ++i)
+        {
+          if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < btag70wt) {
+            TLorentzVector tmpv;
+            tmpv.SetPtEtaPhiE((*m_jet_pt)[selected_jets_T->at(i)],(*m_jet_eta)[selected_jets_T->at(i)],(*m_jet_phi)[selected_jets_T->at(i)],(*m_jet_E)[selected_jets_T->at(i)]);
+            (*truthfile)<<tmpv.Pt()<<" "<<tmpv.Eta()<<" "<<tmpv.Phi()<<" "<<tmpv.E();
+            bool wmatched = 0;
+            if(tmpv.DeltaR(fcncjet)<0.4) {
+              (*truthfile)<<" 1 0\n";
+              continue;
+            }
+            else{
+              for (int ichild = 0; ichild < 2; ++ichild)
+              {
+                if(tmpv.DeltaR(wchild[ichild])<0.4) {
+                  (*truthfile)<<" 0 1\n";
+                  wmatched = 1;
+                }
+                break;
+              }
+            }
+            if(!wmatched) (*truthfile)<<" 0 0\n";
+          }
+        }
+      }
+    }
+
     for(iter=ifregions.begin(); iter!=ifregions.end(); iter++)
     {
       if(iter->second == 1) {
@@ -392,12 +468,23 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     neutrino_phi -> clear();
     neutrino_m   -> clear();
   }
+
+  if(dumptruth){
+    if(inputtree->GetName() == "reg1l1tau1b2j") filetruth[0].close();
+    else
+      for (int i = 0; i < 6; ++i)
+      {
+        if(inputtree->GetName() == "reg1l1tau1b3j") filetruth[i].close();
+        else filetruth[i].close();
+      }
+  }
   if(writetree) {
     outputtreefile->cd();
     map<TString, TTree*>::iterator iter;
     for (iter = outputtree.begin(); iter!=outputtree.end(); ++iter)
       iter->second->Write(iter->first,TObject::kWriteDelete);
   }
+
 }
 
 void nominal::plot(){
