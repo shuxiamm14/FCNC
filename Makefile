@@ -21,7 +21,7 @@ MAKESHARED = $(CXX) -shared -fPIC #-dynamiclib -O2 -m64
 
 TARGETS 		= $(patsubst util/%.cc,bin/%_run,$(wildcard util/*.cc))
 
-all: makebin lib/libskim.so lib/libfake_analysis.so $(TARGETS) bin/plot_fake_run
+all: makebin lib/libskim.so $(TARGETS)
 
 makebin:
 	@echo using compiler: $(CXX)
@@ -63,10 +63,6 @@ bin/.%.o: util/%.cc
 bin/reduce%_run: bin/.reduce%.o bin/.dict.o
 	@echo Linking $@ with $^
 	@$(CXX) $(CPPFLAGS) -D $(EXTRALIBS)  -Llib -lskim -o $@ $^
-
-bin/plot_fake_run: bin/.reduce1.o bin/.dict.o 
-	@echo Linking $@ with $^
-	@$(CXX) $(CPPFLAGS) -D $(EXTRALIBS)  -Llib -lfake_analysis -o $@ $^
 
 bin/%_run: bin/.%.o bin/.dict.o
 	@echo Linking $@ with $^

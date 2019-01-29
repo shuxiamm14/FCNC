@@ -23,7 +23,7 @@ public :
    Double_t arglist[10];
    Int_t ierflg = 0;
    bool dumptruth = 0;
-   TString *regions;
+   TString **regions;
    bool fcnc = 0;
    int nregions;
    bool writetree = 1;
