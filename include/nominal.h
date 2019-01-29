@@ -18,6 +18,10 @@ public :
       {1.157861, 0.792569, 1.349050, 1.426554},   //3prong <35
       {0.818782, 0.614790, 5.756198, 0.489836}    //3prong >35
    };
+   ofstream filetruth[6];
+   bool dofcnc = 0;
+   Double_t arglist[10];
+   Int_t ierflg = 0;
    bool dumptruth = 0;
    TString *regions;
    bool fcnc = 0;
@@ -41,6 +45,8 @@ public :
    int version = 0;
    TFile *outputtreefile = 0;
    map<TString, TTree*> outputtree;
+   void initgM();
+   void dumpTruth();
    virtual void     Init(TTree *tree);
    virtual void     Loop(TTree *inputtree, TString sample);
    virtual int      findcjet();
