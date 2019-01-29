@@ -41,8 +41,14 @@ void nominal::init_hist(){
     tau_plots->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
     
     TString _regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
-    regions = _regions;
-  
+
+    nregions = sizeof(_regions)/sizeof(TString);
+    regions = (TString*)malloc(sizeof(_regions));
+    for (int i = 0; i < nregions; ++i)
+    {
+      regions[i] = _regions[i];
+    }
+
     TString nprong[] = {"1prong","3prong"};
   
     for (int j = 0; j < 3; ++j){
@@ -76,9 +82,12 @@ void nominal::init_hist(){
   
     TString _regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b"};
   
-    regions = _regions;
     nregions = sizeof(_regions)/sizeof(TString);
-  
+    regions = (TString*)malloc(sizeof(_regions));
+    for (int i = 0; i < nregions; ++i)
+    {
+      regions[i] = _regions[i];
+    }
     TString regions_notau[] = {"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
     TString nprong[] = {"1prong","3prong"};
   
@@ -173,14 +182,13 @@ void nominal::init_sample(TString sample, TString sampletitle){
 
 //==========================init output histogram==========================
   if(dohist){
-    if(sample.Contains("ttbar")) sample = "ttbar";
-  
     if (sample.Contains("data"))
     {
       tau_plots->init_sample("data","data","data",kBlack);
-      
       initdata = 1;
     }else{
+      if(sample.Contains("ttbar")) sample = "ttbar";
+      else sample.Remove(sample.Sizeof()-2);
       tau_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
       tau_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
       tau_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
@@ -205,10 +213,8 @@ void nominal::Loop(TTree *inputtree, TString samplename)
   Long64_t nentries = inputtree->GetEntriesFast();
   TString sample = samplename;
   if(samplename.Contains("ttbar")) sample = "ttbar";
-
+  else sample.Remove(sample.Sizeof()-2);
   if(dofcnc) initgM();
-
-  ofstream filetruth[6];
 
   if(dumptruth){
     if(TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) filetruth[0].open("lephad2j.txt");
@@ -468,7 +474,8 @@ void nominal::Loop(TTree *inputtree, TString samplename)
         if(writetree) outputtree[iter->first]->Fill();
         if(dohist) {
           //weight *= fakeSF;
-          fill_tau(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
+          if(iter->first.Contains("tau")) fill_tau(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
+            else fill_notau(iter->first,sample);
         }
 //      outputtree[iter->first]->AutoSave();
       }
