@@ -16,7 +16,7 @@ int main(int argc, char const *argv[])
 	regions.push_back("reg1l1tau1b3j");
 
 	nominal *analysis = new nominal();
-	analysis->debug = 1;
+	analysis->debug = 0;
 	analysis->writetree = 0;
 	analysis->reduce = 3;
 	analysis->dumptruth = 1;
