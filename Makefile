@@ -64,7 +64,7 @@ bin/reduce%_run: bin/.reduce%.o bin/.dict.o
 	@echo Linking $@ with $^
 	@$(CXX) $(CPPFLAGS) -D $(EXTRALIBS)  -Llib -lskim -o $@ $^
 
-bin/plot_fake_run: bin/.reduce1.o bin/.dict.o lib/libfake_analysis.so 
+bin/plot_fake_run: bin/.reduce1.o bin/.dict.o 
 	@echo Linking $@ with $^
 	@$(CXX) $(CPPFLAGS) -D $(EXTRALIBS)  -Llib -lfake_analysis -o $@ $^
 

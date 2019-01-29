@@ -68,14 +68,16 @@ void nominal::fill_notau(TString region, TString sample){
 
 void nominal::init_sample(TString sample, TString sampletitle){
 
-  if(sample.Contains("ttbar")) sample = "ttbar";
-  if(dohist)
+  if(dohist){
+    tau_plots->histfilename = sample;
     if (sample.Contains("data"))
     {
       tau_plots->init_sample("data","data","data",kBlack);
       notau_plots->init_sample("data","data_notau","data",kBlack);
       initdata = 1;
     }else{
+      if(sample.Contains("ttbar")) sample = "ttbar";
+      else sample.Remove(sample.Sizeof()-2);
       tau_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
       tau_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
       tau_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
@@ -85,12 +87,12 @@ void nominal::init_sample(TString sample, TString sampletitle){
       tau_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
       notau_plots->init_sample(sample,sample + "_notau",sampletitle + "",kRed);
     }
+  }
 }
 
 void nominal::Loop(TTree *inputtree, TString samplename)
 {
-  Init(inputtree);
-  TFile outputfile(samplename+".root","update");
+  TFile outputfile(samplename+"_tree.root","update");
   TTree *outputtree;
   if(outputfile.Get("tree")) {
     outputtree = (TTree*) outputfile.Get("tree");
@@ -101,10 +103,17 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     outputtree = new TTree("tree","tree");
     definetree(outputtree);
   }
+  Init(inputtree);
   if (inputtree == 0) return;
   Long64_t nentries = inputtree->GetEntriesFast();
-  TString sample = samplename;
+  TString sample;
   if(samplename.Contains("ttbar")) sample = "ttbar";
+  else if(samplename.Contains("data")) sample = "data";
+  else {
+    samplename.Remove(samplename.Sizeof()-2);
+    sample = samplename;
+  }
+  int nfail = 0;
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
   //for (Long64_t jentry=0; jentry<6000;jentry++) {
     inputtree->GetEntry(jentry);
@@ -114,6 +123,8 @@ void nominal::Loop(TTree *inputtree, TString samplename)
 
       if(selected_jets_T->size() == 0 && nJets_OR_T !=0 ) {
         printf("error: read vector failed entry: %d\n",jentry);
+        nfail ++;
+        if(nfail==10) exit(1);
         continue;
       }
     bool basic_selection = passEventCleaning;
@@ -229,7 +240,6 @@ void nominal::Loop(TTree *inputtree, TString samplename)
   outputfile.cd();
   outputtree->Write("tree",TObject::kWriteDelete);
   outputfile.Close();
-  deletepointer(outputtree);
 }
 
 void nominal::plot(){
