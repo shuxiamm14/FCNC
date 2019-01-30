@@ -92,7 +92,7 @@ void nominal::init_hist(){
     for (int j = 0; j < nregions; ++j){
       regions[j] = new TString(_regions[j]);
       for (int k = 0; k < 2; ++k){
-        for (int i = 1; i < 4; i+=2){
+        for (int i = 0; i < 4; i+=1){
           printf("adding region: %s\n", (*regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
           tau_plots->add_region(*regions[j] + "_" + nprong[k] + "_" + bwps[i]);
           tau_plots->add_region(*regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
@@ -103,7 +103,7 @@ void nominal::init_hist(){
       notau_plots->add_region(regions_notau[j]);
       regions[j+nregions] = new TString(regions_notau[j]);
     }
-    nregions+=regions_notau;
+    nregions+=nregionsnotau;
   }
 }
 nominal::~nominal(){
@@ -143,12 +143,14 @@ void nominal::initgM(){
 }
 void nominal::init_sample(TString sample, TString sampletitle){
   if(dohist) tau_plots->histfilename = sample;
+  if(dohist) notau_plots->histfilename = sample+"_notau";
 //==========================init output n-tuple==========================
   if(writetree){
     outputtreefile = new TFile(sample + "_tree.root","update");
     map<TString, TTree*>::iterator iter;
     for (int i = 0; i < nregions; ++i)
     {
+      if(debug) printf("init sample:: get region: %s\n", regions[i]->Data());
       if (outputtreefile->Get(*regions[i])) {
         outputtree[*regions[i]] = (TTree*)(outputtreefile->Get(*regions[i]));
         Init(outputtree[*regions[i]]);
@@ -188,6 +190,7 @@ void nominal::init_sample(TString sample, TString sampletitle){
     if (sample.Contains("data"))
     {
       tau_plots->init_sample("data","data","data",kBlack);
+      if(!dofcnc) notau_plots->init_sample("data","data_notau","data",kBlue);
       initdata = 1;
     }else{
       if(sample.Contains("ttbar")) sample = "ttbar";
@@ -199,12 +202,14 @@ void nominal::init_sample(TString sample, TString sampletitle){
       tau_plots->init_sample(sample + "_real",sample + "_real",sampletitle + "(real #tau)",kRed);
       tau_plots->init_sample(sample + "_c",sample + "_c",sampletitle + "(c-jets fake #tau)",kOrange);
       tau_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
+     if(!dofcnc) notau_plots->init_sample(sample,sample+"_notau",sampletitle,kRed);
     }
   }
 }
 
 void nominal::Loop(TTree *inputtree, TString samplename)
 {
+  int cutflow[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   reduce -= 1;
   Init(inputtree);
   reduce += 1;
@@ -228,7 +233,8 @@ void nominal::Loop(TTree *inputtree, TString samplename)
         else filetruth[i].open(CharAppend("lep2tau",i+1) + "j.txt");
       }
   }
-  for (Long64_t jentry=0; jentry<nentries;jentry++) {
+  int nloop = debug? 1000:nentries;
+  for (Long64_t jentry=0; jentry<nloop;jentry++) {
     inputtree->GetEntry(jentry);
     if((jentry%100000==0))
       std::cout<<" I am here event "<<jentry<<" Event "<<EventNumber<<" Run "<<RunNumber<<" ismc "<<mc_channel_number<<std::endl;
@@ -238,11 +244,11 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       printf("error: read vector failed entry: %d\n",jentry);
       continue;
     }
-
+    if(debug == 2) printf("reduce scheme during loop: %d\n",reduce);
     map<TString, bool>::iterator iter;
-    if(reduce == 1 || reduce == 0){
+    if(reduce == 1 ){
       bool basic_selection = passEventCleaning;
-  
+      if(debug == 2) printf("passEventCleaning: %d\n",passEventCleaning);
       if(samplename.Contains("ttbargamma")) { basic_selection &=m_hasMEphoton_DRgt02_nonhad;}
       if(samplename.Contains("ttbarnohad")) { basic_selection &=!m_hasMEphoton_DRgt02_nonhad;}
   
@@ -252,9 +258,29 @@ void nominal::Loop(TTree *inputtree, TString samplename)
         (RunYear>=2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0 ))||
         (RunYear>=2016 && (HLT_2e17_lhvloose_nod0||HLT_e17_lhloose_nod0_mu14||HLT_mu22_mu8noL1));
 
+      if(debug == 2) {
+        printf("trigger: HLT_mu20_iloose_L1MU15 = %d\n", HLT_mu20_iloose_L1MU15);
+        printf("trigger: HLT_mu50 = %d\n", HLT_mu50);
+        printf("trigger: HLT_e24_lhmedium_L1EM20VH = %d\n", HLT_e24_lhmedium_L1EM20VH);
+        printf("trigger: HLT_e60_lhmedium = %d\n", HLT_e60_lhmedium);
+        printf("trigger: HLT_e120_lhloose = %d\n", HLT_e120_lhloose);
+        printf("trigger: HLT_2e12_lhloose_L12EM10VH = %d\n", HLT_2e12_lhloose_L12EM10VH);
+        printf("trigger: HLT_e17_lhloose_mu14 = %d\n", HLT_e17_lhloose_mu14);
+        printf("trigger: HLT_mu18_mu8noL1 = %d\n", HLT_mu18_mu8noL1);
+        printf("trigger: HLT_mu26_ivarmedium = %d\n", HLT_mu26_ivarmedium);
+        printf("trigger: HLT_mu50 = %d\n", HLT_mu50);
+        printf("trigger: HLT_e26_lhtight_nod0_ivarloose = %d\n", HLT_e26_lhtight_nod0_ivarloose);
+        printf("trigger: HLT_e60_lhmedium_nod0 = %d\n", HLT_e60_lhmedium_nod0);
+        printf("trigger: HLT_e140_lhloose_nod0 = %d\n", HLT_e140_lhloose_nod0);
+        printf("trigger: HLT_2e17_lhvloose_nod0 = %d\n", HLT_2e17_lhvloose_nod0);
+        printf("trigger: HLT_e17_lhloose_nod0_mu14 = %d\n", HLT_e17_lhloose_nod0_mu14);
+        printf("trigger: HLT_mu22_mu8noL1 = %d\n", HLT_mu22_mu8noL1);
+      }
+
       if(dofcnc)  basic_selection = basic_selection&&(tau_numTrack_0 == 1 || tau_numTrack_0 == 3); // assuming triggers for 2017 is same for 2016 
   
       if (!basic_selection) continue;
+      cutflow[0]+=1;
   
       bool trig_match = (lep_isTrigMatch_0||lep_isTrigMatch_1||lep_isTrigMatch_2||lep_isTrigMatch_3||matchDLTll01||matchDLTll02||matchDLTll12||matchDLTll03||matchDLTll13||matchDLTll23);
       bool SLtrig_match = 
@@ -284,7 +310,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
         }
         ifregions["reg1l2b2j"]      = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=4 && nTaus_OR_Pt25==0;
         ifregions["reg1l1tau2b1j_os"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=3 && nTaus_OR_Pt25>=1 && (lep_ID_0>0?-1:1)*tau_charge_0<0;
-        TString reg1l1tau2b1j_ss = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=3 && nTaus_OR_Pt25>=1 && (lep_ID_0>0?-1:1)*tau_charge_0>0;
+        bool reg1l1tau2b1j_ss = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=3 && nTaus_OR_Pt25>=1 && (lep_ID_0>0?-1:1)*tau_charge_0>0;
         ifregions["reg1l1tau2b1j_ss_ptbin1"] = reg1l1tau2b1j_ss && tau_pt_0/GeV <= 35;
         ifregions["reg1l1tau2b1j_ss_ptbin2"] = reg1l1tau2b1j_ss && tau_pt_0/GeV > 35;
       }
@@ -298,6 +324,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
 
       if(!triggered) continue;
     }
+    cutflow[1]+=1;
     if(reduce <= 2) weight = mc_channel_number>0?mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7?bTagSF_weight_MV2c10_FixedCutBEff_70:bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type||trilep_type)*lepSFObjTight+(onelep_type||quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25>0?tauSFTight:1.0):1.0;
     if(debug==2) printf("event weight: %f\n", weight);
     if(debug == 2){
@@ -331,6 +358,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
         }
         if(reloop == 0 && leading_b != -1) break;
       }
+      if(leading_b == -1) printf("ERROR: bjet not found");
       if(dofcnc){
         if(ifregions["reg1l2tau1bnj"]){
           for (int i = 0; i < 2; ++i) taus_v[i].SetPtEtaPhiE((*m_tau_pt)[i],(*m_tau_eta)[i],(*m_tau_phi)[i],(*m_tau_E)[i]);
@@ -444,8 +472,9 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     TString tauorigin;
     int SFbin = (tau_pt_0/GeV > 35)+(tau_numTrack_0)-1;
     fakeSF = 1;
-    if(sample == "data"){
+    if(sample.Contains("data")){
       tauorigin = "data";
+      sample = "data";
     }else if(nTaus_OR_Pt25>=1){
       if(tau_truthType_0 == 10) tauorigin = sample + "_real";
       else if(tau_truthJetFlavour_0<0&&(tau_truthType_0==2||tau_truthType_0==6)) tauorigin = sample + "_lep";
@@ -488,7 +517,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     neutrino_phi -> clear();
     neutrino_m   -> clear();
   }
-
+  printf("cutflow:\n%d, %d\n",cutflow[0],cutflow[1]);
   if(dumptruth){
     if(TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) filetruth[0].close();
     else

@@ -42,10 +42,6 @@ bin/.skim.o: src/skim.C include/nominal.h
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -D V7NTUP=1 -c $< -o $@
 
-bin/.fake_analysis.o: src/fake_analysis.C include/nominal.h
-	@echo Compiling $@ with $^
-	@$(CXX) $(CPPFLAGS) -D V7NTUP=0 -c $< -o $@
-
 bin/.%.o: util/.C include/%.h
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -c $< -o $@

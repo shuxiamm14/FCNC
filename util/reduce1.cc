@@ -3,7 +3,7 @@
 int main(int argc, char const *argv[])
 {
 
-	bool doplot = 0;
+	bool doplot = 1;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	ifstream fn(argv[1]);
@@ -14,9 +14,9 @@ int main(int argc, char const *argv[])
 	char inputline[100];
 
 	nominal *analysis = new nominal();
-	analysis->reduce = 0;
-	analysis->dohist = doplot;
+	analysis->reduce = 1;
 	analysis->debug = 0;
+	analysis->init_hist();
 	while(!fn.eof()){
 		fn.getline(inputline,200);
 		if(strlen(inputline)==0) continue;
