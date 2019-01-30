@@ -80,18 +80,17 @@ void nominal::init_hist(){
     notau_plots->add(10,0.,200.,"p_{T,b}","bpt",&pt_b,true,"GeV");
     notau_plots->add(10,0.,200.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
   
-    TString _regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b"};
-  
-    nregions = sizeof(_regions)/sizeof(TString);
-    regions = (TString**)malloc(nregions*sizeof(TString*));
-    for (int i = 0; i < nregions; ++i)
-    {
-      regions[i] = new TString(_regions[i]);
-    }
+    TString _regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b"};
+
     TString regions_notau[] = {"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
     TString nprong[] = {"1prong","3prong"};
   
-    for (int j = 0; j < nregions; ++j)
+    nregions = sizeof(_regions)/sizeof(TString);
+    int nregionsnotau = sizeof(regions_notau)/sizeof(TString);
+    regions = (TString**)malloc((nregions+nregionsnotau)*sizeof(TString*));
+  
+    for (int j = 0; j < nregions; ++j){
+      regions[j] = new TString(_regions[j]);
       for (int k = 0; k < 2; ++k){
         for (int i = 1; i < 4; i+=2){
           printf("adding region: %s\n", (*regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
@@ -99,8 +98,12 @@ void nominal::init_hist(){
           tau_plots->add_region(*regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
         }
       }
-    for (int j = 0; j < sizeof(regions_notau)/sizeof(TString); ++j)
+    }
+    for (int j = 0; j < sizeof(regions_notau)/sizeof(TString); ++j){
       notau_plots->add_region(regions_notau[j]);
+      regions[j+nregions] = new TString(regions_notau[j]);
+    }
+    nregions+=regions_notau;
   }
 }
 nominal::~nominal(){
@@ -601,12 +604,16 @@ void nominal::dumpTruth(){
   if(debug && !foundcjet) printf("coundn't find truth fcnc jets\n");
   if(foundw&&foundcjet){
     int loopmax = min(nJets_OR_T,(nTaus_OR_Pt25==1?3:2)+2)-1;
+    (*truthfile)<<"cjet:\t"<<fcncjet.Pt()<<" "<<fcncjet.Eta()<<" "<<fcncjet.Phi()<<" "<<fcncjet.E()<<endl;
+    (*truthfile)<<"wjet:\t"<<wchild[0].Pt()<<" "<<wchild[0].Eta()<<" "<<wchild[0].Phi()<<" "<<wchild[0].E()<<endl;
+    (*truthfile)<<"wjet:\t"<<wchild[1].Pt()<<" "<<wchild[1].Eta()<<" "<<wchild[1].Phi()<<" "<<wchild[1].E()<<endl;
+
     for (int i = 0; i < loopmax; ++i)
     {
       if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < btag70wt) {
         TLorentzVector tmpv;
         tmpv.SetPtEtaPhiE((*m_jet_pt)[selected_jets_T->at(i)],(*m_jet_eta)[selected_jets_T->at(i)],(*m_jet_phi)[selected_jets_T->at(i)],(*m_jet_E)[selected_jets_T->at(i)]);
-        (*truthfile)<<tmpv.Pt()<<" "<<tmpv.Eta()<<" "<<tmpv.Phi()<<" "<<tmpv.E();
+        (*truthfile)<<"pool:\t"<<tmpv.Pt()<<" "<<tmpv.Eta()<<" "<<tmpv.Phi()<<" "<<tmpv.E();
         bool wmatched = 0;
         if(tmpv.DeltaR(fcncjet)<0.4) {
           (*truthfile)<<" 1 0\n";
@@ -630,7 +637,7 @@ void nominal::dumpTruth(){
     for (int i = 0; i < nJets_OR_T; ++i)
     {
       if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > btag70wt) {
-        (*truthfile)<<"pool:\t"<<(*m_jet_pt)[selected_jets_T->at(i)]<<" "<<(*m_jet_eta)[selected_jets_T->at(i)]<<" "<<(*m_jet_phi)[selected_jets_T->at(i)]<<" "<<(*m_jet_E)[selected_jets_T->at(i)]<<" 0 0\n";
+        (*truthfile)<<"bjet:\t"<<(*m_jet_pt)[selected_jets_T->at(i)]<<" "<<(*m_jet_eta)[selected_jets_T->at(i)]<<" "<<(*m_jet_phi)[selected_jets_T->at(i)]<<" "<<(*m_jet_E)[selected_jets_T->at(i)]<<" 0 0\n";
       }
     }
     if(nTaus_OR_Pt25 >= 2){
