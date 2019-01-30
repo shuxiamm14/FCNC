@@ -3,7 +3,7 @@
 int main(int argc, char const *argv[])
 {
 
-	bool doplot = 0;
+	bool doplot = 1;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	ifstream fn(argv[1]);

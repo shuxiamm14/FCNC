@@ -103,7 +103,7 @@ void nominal::init_hist(){
       notau_plots->add_region(regions_notau[j]);
       regions[j+nregions] = new TString(regions_notau[j]);
     }
-    nregions+=regions_notau;
+    nregions+=nregionsnotau;
   }
 }
 nominal::~nominal(){
