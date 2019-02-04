@@ -8,18 +8,17 @@ int main(int argc, char const *argv[])
 	int plot_option = 2;
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver();
-	tau_plots->debug = 1;
+	tau_plots->debug = 0;
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
-  	tau_plots->add("p_{T,#tau}","taupt","GeV");
-  	//tau_plots->add("m_{t,SM}","t1mass","GeV");
-  	//tau_plots->add("m_{#tau,#tau}","tautaumass","GeV");
-  	//tau_plots->add("m_{W}","wmass","GeV");
-  	//tau_plots->add("m_{t,FCNC}","t2mass","GeV");
-  	//tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV");
-  	//tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV");
-  	//tau_plots->add("E_{#nu,1}/E_{#tau,1}","x1fit","");
-  	//tau_plots->add("E_{#nu,2}/E_{#tau,2}","x2fit","");
-  	tau_plots->rebin(1);
+  	tau_plots->add("p_{T,#tau}","taupt","GeV",1);
+  	tau_plots->add("m_{t,SM}","t1mass","GeV",5);
+  	tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
+  	tau_plots->add("m_{W}","wmass","GeV",5);
+  	tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
+  	tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",5);
+  	tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",5);
+  	//tau_plots->add("E_{#nu,1}/E_{#tau,1}","x1fit","",5);
+  	//tau_plots->add("E_{#nu,2}/E_{#tau,2}","x2fit","",5);
   	tau_plots->blinding = 30;
 	TString regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
 	TString nprong[] = {"1prong","3prong"};
@@ -58,6 +57,16 @@ int main(int argc, char const *argv[])
 			for (int i = 0; i < 7; ++i)
 				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i], sampletitle[j], (enum EColor)colors[j], norm[j]);
 	}
+//	for (int j = 0; j < 3; ++j)
+//		for (int k = 0; k < 2; ++k)
+//		  for (int i = 1; i < 4; i+=2){
+//		    printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
+////		    tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
+//		    tau_plots->merge_regions(regions[j] + "_" + nprong[k] + "_above35_veto" + bwps[i],regions[j] + "_" + nprong[k] + "_below35_veto" + bwps[i],regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
+//		    //tau_plots->merge_regions(regions[j] + "_" + nprong[k] + "_above35_" + bwps[i],regions[j] + "_" + nprong[k] + "_below35_" + bwps[i],regions[j] + "_" + nprong[k] + "_" + bwps[i]);
+//		    //tau_plots->add_region(regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
+//		  }
+
 	if(doPlots){
 		tau_plots  ->plot_stack(outputdir[plot_option]);
 	}

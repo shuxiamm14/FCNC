@@ -229,7 +229,10 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     else
       for (int i = 0; i < 3; ++i)
       {
-        if(TString(inputtree->GetName()).Contains("reg1l1tau1b3j")) filetruth[i].open(CharAppend("lephad",i+2) + "j.txt");
+        if(TString(inputtree->GetName()).Contains("reg1l1tau1b3j")){
+          if(i != 0)
+            filetruth[i].open(CharAppend("lephad",i+2) + "j.txt");
+        }
         else filetruth[i].open(CharAppend("lep2tau",i+1) + "j.txt");
       }
   }
@@ -290,7 +293,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
 //===============================define regions===============================
       if(dofcnc){
         ifregions["reg1l1tau1b2j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T==3 && nTaus_OR_Pt25==1;
-        ifregions["reg1l1tau1b3j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T>4 && nTaus_OR_Pt25==1;
+        ifregions["reg1l1tau1b3j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T>=4 && nTaus_OR_Pt25==1;
         ifregions["reg1l2tau1bnj"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T>=2 && nTaus_OR_Pt25>=2;
       }else{
         if(trig_match&&dilep_type&&total_charge==0&&lep_Pt_0>20e3&&lep_Pt_1>20e3&&
@@ -523,7 +526,10 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     else
       for (int i = 0; i < 6; ++i)
       {
-        if(TString(inputtree->GetName()).Contains("reg1l1tau1b3j")) filetruth[i].close();
+        if(TString(inputtree->GetName()).Contains("reg1l1tau1b3j")){
+          if(i!=0)
+            filetruth[i].close();
+        }
         else filetruth[i].close();
       }
   }
@@ -619,15 +625,28 @@ void nominal::dumpTruth(){
         }
         if(debug) printf("child pdg: %d\n",m_truth_pdgId->at(childid));
         if(abs(m_truth_pdgId->at(childid))>4 || abs(m_truth_pdgId->at(childid))<1) {
+          foundw = 0;
+          break;
         }
         if(debug) printf("childid: %d\n", childid);
         foundw = 1;
         wchild[ichild].SetPtEtaPhiM(m_truth_pt->at(childid),m_truth_eta->at(childid),m_truth_phi->at(childid),m_truth_m->at(childid));
       }
     }else if((abs(m_truth_pdgId->at(itruth))==2 || abs(m_truth_pdgId->at(itruth))==4)){
+      int parent = -1;
+      for (int i = 0; i < m_truth_barcode->size(); ++i)
+      {
+        if(m_truth_barcode->at(i) == m_truth_parents->at(itruth)[0]) {
+          parent = i;
+          break;
+        }
+      }
+      if(abs(m_truth_pdgId->at(parent)) == 6){
         foundcjet = 1;
         fcncjet.SetPtEtaPhiM(m_truth_pt->at(itruth),m_truth_eta->at(itruth),m_truth_phi->at(itruth),m_truth_m->at(itruth));
+      }
     }
+    if(foundw&&foundcjet) break;
   }
   if(debug && !foundw) printf("coundn't find truth w jets\n");
   if(debug && !foundcjet) printf("coundn't find truth fcnc jets\n");

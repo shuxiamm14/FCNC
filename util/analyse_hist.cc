@@ -9,7 +9,7 @@ int main(int argc, char const *argv[])
 		return 1;
 	}
 	bool dofit = 1;
-	bool doPlots = 0;
+	bool doPlots = 1;
 	int binning = 2;
 
 	HISTFITTER* fitter = new HISTFITTER();
@@ -24,33 +24,32 @@ int main(int argc, char const *argv[])
 	tau_plots->debug = 0;
 	//histSaver *notau_plots = new histSaver();
 	//notau_plots->debug = 0;
-  	tau_plots->irebin = 1;
 
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
 	tau_plots->add("p_{T,#tau}","taupt","GeV");
 	tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
 	tau_plots->add("p_{T,b}","bpt","GeV");
   	tau_plots->add("E_{miss}^{T}","met","GeV");
-	tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
+	tau_plots->add("p_{T,light-jet}","ljetpt","GeV",5);
 	//notau_plots->add("p_{T,b}","bpt","GeV");
 	//notau_plots->add("p_{T,light-jet}","ljetpt","GeV");
-	TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
+	TString regions1[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
+	TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
 
 	TString nprong[] = {"1prong","3prong"};
 	for (int j = 0; j < 7; ++j)
-	  if(j>3) continue;//notau_plots->add_region(regions[j]);
+	  if(j>3) continue;//notau_plots->add_region(regions1[j]);
 	  else for (int i = 1; i < 4; i+=2)
 	  	for (int k = 0; k < 2; ++k){
-			printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-			tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-			tau_plots->add_region(regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
+			printf("adding region: %s\n", (regions1[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
+			tau_plots->add_region(regions1[j] + "_" + nprong[k] + "_" + bwps[i]);
+			tau_plots->add_region(regions1[j] + "_" + nprong[k] + "_veto" + bwps[i]);
 	    }
 
 	TString samples[] = {"other", "Vjets", "diboson", "ttH", "ttV", "ttbar"};
 	TString sampletitle[] = {"Other", "V+jets", "Diboson", "#bar{t}tH", "#bar{t}tV", "#bar{t}t"};
 
 	TString origin[] = {"b", "c", "g", "j", "lep", "nomatch", "real", "data"};
-	double pseudodataratio[] = {1,0.5,3,1,1,1,1};
 	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "(real #tau)"};
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed};
 
@@ -83,7 +82,11 @@ int main(int argc, char const *argv[])
 			for (int i = 0; i < 7; ++i){
 				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i], sampletitle[j], (enum EColor)colors[j],1);
 			}
-
+	for (int i = 1; i < 4; i+=2)
+	  	for (int k = 0; k < 2; ++k){
+			tau_plots->merge_regions(regions1[1] + "_" + nprong[k] + "_" + bwps[i],regions1[2] + "_" + nprong[k] + "_" + bwps[i],regions[1] + "_" + nprong[k] + "_" + bwps[i]);
+			tau_plots->merge_regions(regions1[1] + "_" + nprong[k] + "_veto" + bwps[i],regions1[2] + "_" + nprong[k] + "_veto" + bwps[i],regions[1] + "_" + nprong[k] + "_veto" + bwps[i]);
+	    }
 	if(doPlots){
 		//for (int i = 0; i < 6; ++i)
 		//{
