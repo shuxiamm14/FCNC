@@ -100,7 +100,7 @@ void nominal::init_hist(){
       }
     }
     for (int j = 0; j < sizeof(regions_notau)/sizeof(TString); ++j){
-      notau_plots->add_region(regions_notau[j]);
+      if(!dofcnc) notau_plots->add_region(regions_notau[j]);
       regions[j+nregions] = new TString(regions_notau[j]);
     }
     nregions+=nregionsnotau;
@@ -143,7 +143,7 @@ void nominal::initgM(){
 }
 void nominal::init_sample(TString sample, TString sampletitle){
   if(dohist) tau_plots->histfilename = sample;
-  if(dohist) notau_plots->histfilename = sample+"_notau";
+  if(dohist&!dofcnc) notau_plots->histfilename = sample+"_notau";
 //==========================init output n-tuple==========================
   if(writetree){
     outputtreefile = new TFile(sample + "_tree.root","update");

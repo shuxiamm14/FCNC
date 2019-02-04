@@ -34,11 +34,11 @@ int main(int argc, char const *argv[])
 	tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 	//notau_plots->add("p_{T,b}","bpt","GeV");
 	//notau_plots->add("p_{T,light-jet}","ljetpt","GeV");
-	TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
+	TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
 
 	TString nprong[] = {"1prong","3prong"};
-	for (int j = 0; j < 8; ++j)
-	  if(j>4) continue;//notau_plots->add_region(regions[j]);
+	for (int j = 0; j < 7; ++j)
+	  if(j>3) continue;//notau_plots->add_region(regions[j]);
 	  else for (int i = 1; i < 4; i+=2)
 	  	for (int k = 0; k < 2; ++k){
 			printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
@@ -46,7 +46,7 @@ int main(int argc, char const *argv[])
 			tau_plots->add_region(regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
 	    }
 
-	TString samples[] = {"Other", "Vjets", "diboson", "ttH", "ttV", "ttbar"};
+	TString samples[] = {"other", "Vjets", "diboson", "ttH", "ttV", "ttbar"};
 	TString sampletitle[] = {"Other", "V+jets", "Diboson", "#bar{t}tH", "#bar{t}tV", "#bar{t}t"};
 
 	TString origin[] = {"b", "c", "g", "j", "lep", "nomatch", "real", "data"};

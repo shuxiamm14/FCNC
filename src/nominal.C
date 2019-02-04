@@ -4032,11 +4032,11 @@ void nominal::printv(TLorentzVector v){
 }
 
 int nominal::findcjet(){
-  TLorentzVector ljet[3];
   int nljet[3];
   int j = 0;
   double m_w = 81000;
   int nlightj = nJets_OR_T - nJets_OR_T_MV2c10_70;
+  TLorentzVector ljet[3];
   if(debug) printf("nlightj: %d\n", nlightj); 
   for (int i = 0; i < nJets_OR_T; ++i){
     if (debug)
