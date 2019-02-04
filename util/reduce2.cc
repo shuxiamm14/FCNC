@@ -32,8 +32,8 @@ int main(int argc, char const *argv[])
 		sscanf(inputline,"%d %s %s",&version,&cate,&title);
 		analysis->version = version;
 		analysis->init_sample(cate, title);
-		printf("reading Root file: %s\n", (prefix + "/data/reduce2/" + cate + "_tree.root").Data());
-		TFile inputfile(prefix + "/data/reduce2/" + cate + "_tree.root");
+		printf("reading Root file: %s\n", (prefix + "/data/reduce1/" + cate + ".root").Data());
+		TFile inputfile(prefix + "/data/reduce1/" + cate + ".root");
 		for (std::vector<TString>::iterator i = regions.begin(); i != regions.end(); ++i)
 		{
 			printf("region: %s\n", i->Data());
