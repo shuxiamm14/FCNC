@@ -284,6 +284,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       continue;
     }
     if(debug == 2) printf("reduce scheme during loop: %d\n",reduce);
+    bool reg1l1tau2b1j_ss = 0;
     map<TString, bool>::iterator iter;
     if(reduce == 1 ){
       bool basic_selection = passEventCleaning;
@@ -325,7 +326,6 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       bool SLtrig_match = 
         ((RunYear==2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose ))|| 
       	(RunYear>=2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0 )))&&lep_isTrigMatch_0;
-
 //===============================define regions===============================
       
       ifregions["reg1l1tau1b2j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T==3 && nTaus_OR_Pt25==1;
@@ -495,9 +495,13 @@ void nominal::Loop(TTree *inputtree, TString samplename)
           printf("nJets_OR_T_MV2c10_70: %d, nJets_OR_T: %d\n",nJets_OR_T_MV2c10_70,nJets_OR_T);
           for(int i = 0; i < nJets_OR_T; ++i) printf("btag: %f\n",(*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)]);
         }
-        if(ifregions["reg1l1tau2b1j_os"] || ifregions["reg1l1tau2b1j_ss"]){
+        if(ifregions["reg1l1tau2b1j_os"] || reg1l1tau2b1j_ss){
           taup.SetPtEtaPhiE((*m_tau_pt)[0],(*m_tau_eta)[0],(*m_tau_phi)[0],(*m_tau_E)[0]);
           taulmass = (taup+lp).M();
+          if(taulmass<25/GeV){
+            printv(taup);
+            printv(lp);
+          }
         } else taulmass = 0;
       }
     }else{

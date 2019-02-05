@@ -14,7 +14,7 @@ int main(int argc, char const *argv[])
 	char inputline[100];
 
 	nominal *analysis = new nominal();
-        analysis->dofcnc = 1;
+        analysis->dofcnc = 0;
 	analysis->reduce = 1;
 	analysis->debug = 0;
 	analysis->init_hist();
