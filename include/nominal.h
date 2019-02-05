@@ -23,9 +23,12 @@ public :
    Double_t arglist[10];
    Int_t ierflg = 0;
    bool dumptruth = 0;
-   TString **regions;
+   TString **fcnc_regions;
+   int fcnc_nregions;
+   TString **fake_regions;
+   int fake_nregions;
+
    bool fcnc = 0;
-   int nregions;
    bool writetree = 1;
    void init_hist();
    TString bwps[4] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
@@ -52,7 +55,8 @@ public :
    virtual int      findcjet();
    void finalise_sample();
    static  void     fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
-   void fill_tau(TString region, int nprong, TString sample, int ptbin);
+   void fill_fake(TString region, int nprong, TString sample, int ptbin);
+   void fill_fcnc(TString region, int nprong, TString sample, int ptbin);
    void fill_notau(TString region, TString sample);
    void init_sample(TString sample, TString sampletitle);
    void definetree(TTree *tree);
@@ -78,8 +82,9 @@ public :
    TVector3 truth_mets;
    TList forFit;
 
-   histSaver *tau_plots = 0;
-   histSaver *notau_plots = 0;
+   histSaver *fcnc_plots = 0;
+   histSaver *fake_plots = 0;
+   histSaver *fake_notau_plots = 0;
    Double_t        t2vismass;
    Double_t        t1vismass;
    Double_t        ttvismass;

@@ -2,7 +2,7 @@
 
 void nominal::fill_notau(TString region, TString sample){
   if(debug) printf("fill region: %s sample: %s\n", (region).Data(), (sample).Data());
-  notau_plots->fill_hist(sample, region);
+  fake_notau_plots->fill_hist(sample, region);
 }
 
 void nominal::Init(TTree *tree)
