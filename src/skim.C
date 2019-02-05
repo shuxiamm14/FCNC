@@ -72,6 +72,9 @@ void nominal::init_hist(){
   fake_notau_plots = new histSaver();
   fake_notau_plots->set_weight(&weight);
   fake_notau_plots->debug = 0;
+  fake_plots = new histSaver();
+  fake_plots->set_weight(&weight);
+  fake_plots->debug = 0;
   fake_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
   fake_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   fake_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
