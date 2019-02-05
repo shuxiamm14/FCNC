@@ -26,88 +26,88 @@ nominal::nominal(){
 void nominal::init_hist(){
   //init histSaver here:
   dohist = 1;
-  tau_plots = new histSaver();
-  tau_plots->set_weight(&weight);
-  tau_plots->debug = 0;
-  if (dofcnc){
-    tau_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-    tau_plots->add(100,50.,250.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
-    tau_plots->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
-    tau_plots->add(100,50.,250.,"m_{W}","wmass",&wmass,true,"GeV");
-    tau_plots->add(100,50.,250.,"m_{t,FCNC}","t2mass",&t2mass,true,"GeV");
-    tau_plots->add(100,50.,250.,"m_{#tau#tau,vis}","tautauvismass",&ttvismass,true,"GeV");
-    tau_plots->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,true,"GeV");
-    tau_plots->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
-    tau_plots->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
+  fcnc_plots = new histSaver();
+  fcnc_plots->set_weight(&weight);
+  fcnc_plots->debug = 0;
+
+  fcnc_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+  fcnc_plots->add(100,50.,250.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
+  fcnc_plots->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
+  fcnc_plots->add(100,50.,250.,"m_{W}","wmass",&wmass,true,"GeV");
+  fcnc_plots->add(100,50.,250.,"m_{t,FCNC}","t2mass",&t2mass,true,"GeV");
+  fcnc_plots->add(100,50.,250.,"m_{#tau#tau,vis}","tautauvismass",&ttvismass,true,"GeV");
+  fcnc_plots->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,true,"GeV");
+  fcnc_plots->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
+  fcnc_plots->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
     
-    TString _regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
+  TString _fcnc_regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
 
-    nregions = sizeof(_regions)/sizeof(TString);
-    regions = (TString**)malloc(nregions*sizeof(TString*));
-    for (int i = 0; i < nregions; ++i)
-    {
-      regions[i] = new TString(_regions[i]);
-    }
+  fcnc_nregions = sizeof(_fcnc_regions)/sizeof(TString);
+  fcnc_regions = (TString**)malloc(fcnc_nregions*sizeof(TString*));
 
-    TString nprong[] = {"1prong","3prong"};
-  
-    for (int j = 0; j < 3; ++j){
-      for (int k = 0; k < 2; ++k)
-      {
-        for (int i = 0; i < 4; ++i)
-        {
-          if(doseppt)
-            for (int iptbin = 0; iptbin < 2; ++iptbin)
-            {
-              if(debug) printf("adding region: %s\n", (*regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-              tau_plots->add_region(*regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
-              tau_plots->add_region(*regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
-            }
-          tau_plots->add_region(*regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
-          tau_plots->add_region(*regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-        }
-      }
-    }
-  }else{
-    notau_plots = new histSaver();
-    notau_plots->set_weight(&weight);
-    notau_plots->debug = 0;
-    tau_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-    tau_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
-    tau_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
-    tau_plots->add(20,20.,120.,"m_{#tau,light-jet}","taulmass",&taulmass,true,"GeV");
-    tau_plots->add(100,0.,100.,"E_{miss}^{T}","met",&MET_RefFinal_et,true,"GeV");
-    notau_plots->add(10,0.,200.,"p_{T,b}","bpt",&pt_b,true,"GeV");
-    notau_plots->add(10,0.,200.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
-  
-    TString _regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b"};
-
-    TString regions_notau[] = {"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
-    TString nprong[] = {"1prong","3prong"};
-  
-    nregions = sizeof(_regions)/sizeof(TString);
-    int nregionsnotau = sizeof(regions_notau)/sizeof(TString);
-    regions = (TString**)malloc((nregions+nregionsnotau)*sizeof(TString*));
-  
-    for (int j = 0; j < nregions; ++j){
-      regions[j] = new TString(_regions[j]);
-      for (int k = 0; k < 2; ++k){
-        for (int i = 0; i < 4; i+=1){
-          printf("adding region: %s\n", (*regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-          tau_plots->add_region(*regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-          tau_plots->add_region(*regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
-        }
-      }
-    }
-    for (int j = 0; j < sizeof(regions_notau)/sizeof(TString); ++j){
-      if(!dofcnc) notau_plots->add_region(regions_notau[j]);
-      regions[j+nregions] = new TString(regions_notau[j]);
-    }
-    nregions+=nregionsnotau;
+  for (int i = 0; i < fcnc_nregions; ++i)
+  {
+    fcnc_regions[i] = new TString(_fcnc_regions[i]);
   }
+
+  TString nprong[] = {"1prong","3prong"};
+  
+  for (int j = 0; j < 3; ++j){
+    for (int k = 0; k < 2; ++k)
+    {
+      for (int i = 0; i < 4; ++i)
+      {
+        if(doseppt)
+          for (int iptbin = 0; iptbin < 2; ++iptbin)
+          {
+            if(debug) printf("adding region: %s\n", (*fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
+            fcnc_plots->add_region(*fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
+            fcnc_plots->add_region(*fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+          }
+        fcnc_plots->add_region(*fcnc_regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
+        fcnc_plots->add_region(*fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i]);
+      }
+    }
+  }
+  fake_notau_plots = new histSaver();
+  fake_notau_plots->set_weight(&weight);
+  fake_notau_plots->debug = 0;
+  fake_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+  fake_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
+  fake_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
+  fake_plots->add(20,20.,120.,"m_{#tau,light-jet}","taulmass",&taulmass,true,"GeV");
+  fake_plots->add(100,0.,100.,"E_{miss}^{T}","met",&MET_RefFinal_et,true,"GeV");
+  fake_notau_plots->add(10,0.,200.,"p_{T,b}","bpt",&pt_b,true,"GeV");
+  fake_notau_plots->add(10,0.,200.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
+  
+  TString _fake_regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b"};
+
+  TString fake_regions_notau[] = {"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
+  
+  fake_nregions = sizeof(_fake_regions)/sizeof(TString);
+  int fake_nregionsnotau = sizeof(fake_regions_notau)/sizeof(TString);
+  fake_regions = (TString**)malloc((fake_nregions+fake_nregionsnotau)*sizeof(TString*));
+  
+  for (int j = 0; j < fake_nregions; ++j){
+    fake_regions[j] = new TString(_fake_regions[j]);
+    for (int k = 0; k < 2; ++k){
+      for (int i = 0; i < 4; i+=1){
+        printf("adding region: %s\n", (*fake_regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
+        fake_plots->add_region(*fake_regions[j] + "_" + nprong[k] + "_" + bwps[i]);
+        fake_plots->add_region(*fake_regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
+      }
+    }
+  }
+  for (int j = 0; j < sizeof(fake_regions_notau)/sizeof(TString); ++j){
+    fake_notau_plots->add_region(fake_regions_notau[j]);
+    fake_regions[j+fake_nregions] = new TString(fake_regions_notau[j]);
+  }
+  fake_nregions+=fake_nregionsnotau;
 }
 nominal::~nominal(){
-  deletepointer(tau_plots);
+  deletepointer(fake_plots);
+  deletepointer(fcnc_plots);
+  deletepointer(fake_notau_plots);
   deletepointer(gM);
   deletepointer(neutrino_pt  );
   deletepointer(neutrino_eta );
@@ -115,15 +115,28 @@ nominal::~nominal(){
   deletepointer(neutrino_m   );
 }
 
-void nominal::fill_tau(TString region, int nprong, TString sample, int iptbin){
+void nominal::fill_fake(TString region, int nprong, TString sample, int iptbin){
   for (int i = 0; i < 4; ++i){
     if(tau_MV2c10_0>btagwpCut[i]) {
       if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[i]).Data(), sample.Data());
-      if(doseppt) tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
-      tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[i]);
+      if(doseppt) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
+      fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[i]);
     }else{
-      if(doseppt) tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
-      tau_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + "veto" + bwps[i]);
+      if(doseppt) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
+      fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + "veto" + bwps[i]);
+    }
+  }
+}
+
+void nominal::fill_fcnc(TString region, int nprong, TString sample, int iptbin){
+  for (int i = 0; i < 4; ++i){
+    if(tau_MV2c10_0>btagwpCut[i]) {
+      if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[i]).Data(), sample.Data());
+      if(doseppt) fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
+      fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[i]);
+    }else{
+      if(doseppt) fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
+      fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + "veto" + bwps[i]);
     }
   }
 }
@@ -142,43 +155,58 @@ void nominal::initgM(){
 
 }
 void nominal::init_sample(TString sample, TString sampletitle){
-  if(dohist) tau_plots->histfilename = sample;
-  if(dohist&!dofcnc) notau_plots->histfilename = sample+"_notau";
+  if(dohist) {
+    fcnc_plots->histfilename = sample + "_fcnc";
+    fake_notau_plots->histfilename = sample+"_fake_notau";
+    fake_plots->histfilename = sample+"_notau";
+  }
 //==========================init output n-tuple==========================
   if(writetree){
     outputtreefile = new TFile(sample + "_tree.root","update");
     map<TString, TTree*>::iterator iter;
-    for (int i = 0; i < nregions; ++i)
+    for (int i = 0; i < fcnc_nregions; ++i)
     {
-      if(debug) printf("init sample:: get region: %s\n", regions[i]->Data());
-      if (outputtreefile->Get(*regions[i])) {
-        outputtree[*regions[i]] = (TTree*)(outputtreefile->Get(*regions[i]));
-        Init(outputtree[*regions[i]]);
+      if(debug) printf("init sample:: get region: %s\n", fcnc_regions[i]->Data());
+      if (outputtreefile->Get(*fcnc_regions[i])) {
+        outputtree[*fcnc_regions[i]] = (TTree*)(outputtreefile->Get(*fcnc_regions[i]));
+        Init(outputtree[*fcnc_regions[i]]);
       }else{
-        outputtree[*regions[i]] = new TTree(*regions[i],*regions[i]);
-        definetree(outputtree[*regions[i]]);
+        outputtree[*fcnc_regions[i]] = new TTree(*fcnc_regions[i],*fcnc_regions[i]);
+        definetree(outputtree[*fcnc_regions[i]]);
       }
-      if(reduce >= 1 || reduce == 0 && dofcnc){
-        outputtree[*regions[i]]->Branch("t1mass",&t1mass);
-        outputtree[*regions[i]]->Branch("tautaumass",&tautaumass);
-        outputtree[*regions[i]]->Branch("wmass",&wmass);
-        outputtree[*regions[i]]->Branch("t2mass",&t2mass);
+      if(reduce >= 1 || reduce == 0){
+        outputtree[*fcnc_regions[i]]->Branch("t1mass",&t1mass);
+        outputtree[*fcnc_regions[i]]->Branch("tautaumass",&tautaumass);
+        outputtree[*fcnc_regions[i]]->Branch("wmass",&wmass);
+        outputtree[*fcnc_regions[i]]->Branch("t2mass",&t2mass);
       }
-      if(reduce==2 || reduce == 0 && dofcnc){
-        outputtree[*regions[i]]->Branch("neutrino_pt" , &neutrino_pt );
-        outputtree[*regions[i]]->Branch("neutrino_eta", &neutrino_eta);
-        outputtree[*regions[i]]->Branch("neutrino_phi", &neutrino_phi);
-        outputtree[*regions[i]]->Branch("neutrino_m"  , &neutrino_m  );
-        outputtree[*regions[i]]->Branch("weight",&weight);
-        outputtree[*regions[i]]->Branch("fakeSF",&fakeSF);
-        outputtree[*regions[i]]->Branch("cjet_index", &cjet_index );
-        outputtree[*regions[i]]->Branch("wjet1_index", &wjet1_index);
-        outputtree[*regions[i]]->Branch("wjet2_index", &wjet2_index);
-        outputtree[*regions[i]]->Branch("x1fit", &x1fit);
-        outputtree[*regions[i]]->Branch("x2fit", &x2fit);
-        outputtree[*regions[i]]->Branch("t1vismass",&t1vismass);
-        outputtree[*regions[i]]->Branch("t2vismass",&t2vismass);
-        outputtree[*regions[i]]->Branch("ttvismass",&ttvismass);
+      if(reduce==2 || reduce == 0){
+        outputtree[*fcnc_regions[i]]->Branch("neutrino_pt" , &neutrino_pt );
+        outputtree[*fcnc_regions[i]]->Branch("neutrino_eta", &neutrino_eta);
+        outputtree[*fcnc_regions[i]]->Branch("neutrino_phi", &neutrino_phi);
+        outputtree[*fcnc_regions[i]]->Branch("neutrino_m"  , &neutrino_m  );
+        outputtree[*fcnc_regions[i]]->Branch("weight",&weight);
+        outputtree[*fcnc_regions[i]]->Branch("fakeSF",&fakeSF);
+        outputtree[*fcnc_regions[i]]->Branch("cjet_index", &cjet_index );
+        outputtree[*fcnc_regions[i]]->Branch("wjet1_index", &wjet1_index);
+        outputtree[*fcnc_regions[i]]->Branch("wjet2_index", &wjet2_index);
+        outputtree[*fcnc_regions[i]]->Branch("x1fit", &x1fit);
+        outputtree[*fcnc_regions[i]]->Branch("x2fit", &x2fit);
+        outputtree[*fcnc_regions[i]]->Branch("t1vismass",&t1vismass);
+        outputtree[*fcnc_regions[i]]->Branch("t2vismass",&t2vismass);
+        outputtree[*fcnc_regions[i]]->Branch("ttvismass",&ttvismass);
+      }
+    }
+
+    for (int i = 0; i < fake_nregions; ++i)
+    {
+      if(debug) printf("init sample:: get region: %s\n", fake_regions[i]->Data());
+      if (outputtreefile->Get(*fake_regions[i])) {
+        outputtree[*fake_regions[i]] = (TTree*)(outputtreefile->Get(*fake_regions[i]));
+        Init(outputtree[*fake_regions[i]]);
+      }else{
+        outputtree[*fake_regions[i]] = new TTree(*fake_regions[i],*fake_regions[i]);
+        definetree(outputtree[*fake_regions[i]]);
       }
     }
   }
@@ -189,20 +217,28 @@ void nominal::init_sample(TString sample, TString sampletitle){
   if(dohist){
     if (sample.Contains("data"))
     {
-      tau_plots->init_sample("data","data","data",kBlack);
-      if(!dofcnc) notau_plots->init_sample("data","data_notau","data",kBlue);
+      fake_plots->init_sample("data","data","data",kBlack);
+      fcnc_plots->init_sample("data","data","data",kBlack);
+      fake_notau_plots->init_sample("data","data_notau","data",kBlue);
       initdata = 1;
     }else{
       if(sample.Contains("ttbar")) sample = "ttbar";
       else sample.Remove(sample.Sizeof()-2);
-      tau_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
-      tau_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
-      tau_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
-      tau_plots->init_sample(sample + "_lep",sample + "_lep",sampletitle + "(lepton fake #tau)",kGreen);
-      tau_plots->init_sample(sample + "_real",sample + "_real",sampletitle + "(real #tau)",kRed);
-      tau_plots->init_sample(sample + "_c",sample + "_c",sampletitle + "(c-jets fake #tau)",kOrange);
-      tau_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
-     if(!dofcnc) notau_plots->init_sample(sample,sample+"_notau",sampletitle,kRed);
+      fake_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
+      fcnc_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
+      fake_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
+      fcnc_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
+      fake_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
+      fcnc_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
+      fake_plots->init_sample(sample + "_lep",sample + "_lep",sampletitle + "(lepton fake #tau)",kGreen);
+      fcnc_plots->init_sample(sample + "_lep",sample + "_lep",sampletitle + "(lepton fake #tau)",kGreen);
+      fake_plots->init_sample(sample + "_real",sample + "_real",sampletitle + "(real #tau)",kRed);
+      fcnc_plots->init_sample(sample + "_real",sample + "_real",sampletitle + "(real #tau)",kRed);
+      fake_plots->init_sample(sample + "_c",sample + "_c",sampletitle + "(c-jets fake #tau)",kOrange);
+      fcnc_plots->init_sample(sample + "_c",sample + "_c",sampletitle + "(c-jets fake #tau)",kOrange);
+      fake_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
+      fcnc_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
+      fake_notau_plots->init_sample(sample,sample+"_notau",sampletitle,kRed);
     }
   }
 }
@@ -222,7 +258,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
   TString sample = samplename;
   if(samplename.Contains("ttbar")) sample = "ttbar";
   else sample.Remove(sample.Sizeof()-2);
-  if(dofcnc) initgM();
+  initgM();
 
   if(dumptruth){
     if(TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) filetruth[0].open("lephad2j.txt");
@@ -242,7 +278,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
     if((jentry%100000==0))
       std::cout<<" I am here event "<<jentry<<" Event "<<EventNumber<<" Run "<<RunNumber<<" ismc "<<mc_channel_number<<std::endl;
 //===============================pre-selections===============================
-
+    bool triggeredfcnc = 0;
     if(selected_jets_T->size() == 0 && nJets_OR_T !=0 ) {
       printf("error: read vector failed entry: %d\n",jentry);
       continue;
@@ -280,7 +316,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
         printf("trigger: HLT_mu22_mu8noL1 = %d\n", HLT_mu22_mu8noL1);
       }
 
-      if(dofcnc)  basic_selection = basic_selection&&(tau_numTrack_0 == 1 || tau_numTrack_0 == 3); // assuming triggers for 2017 is same for 2016 
+      if(nTaus_OR_Pt25>=1)  basic_selection = basic_selection&&(tau_numTrack_0 == 1 || tau_numTrack_0 == 3); // assuming triggers for 2017 is same for 2016 
   
       if (!basic_selection) continue;
       cutflow[0]+=1;
@@ -291,32 +327,31 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       	(RunYear>=2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0 )))&&lep_isTrigMatch_0;
 
 //===============================define regions===============================
-      if(dofcnc){
-        ifregions["reg1l1tau1b2j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T==3 && nTaus_OR_Pt25==1;
-        ifregions["reg1l1tau1b3j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T>=4 && nTaus_OR_Pt25==1;
-        ifregions["reg1l2tau1bnj"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T>=2 && nTaus_OR_Pt25>=2;
+      
+      ifregions["reg1l1tau1b2j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T==3 && nTaus_OR_Pt25==1;
+      ifregions["reg1l1tau1b3j"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T>=4 && nTaus_OR_Pt25==1;
+      ifregions["reg1l2tau1bnj"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==1 && nJets_OR_T>=2 && nTaus_OR_Pt25>=2;
+      
+      if(trig_match&&dilep_type&&total_charge==0&&lep_Pt_0>20e3&&lep_Pt_1>20e3&&
+        ((abs(lep_ID_0)==11&&lep_promptLeptonVeto_TagWeight_0<-0.7)||(abs(lep_ID_0)==13&&lep_promptLeptonVeto_TagWeight_0<-0.5))&&SelectTLepid(0)&&
+        ((abs(lep_ID_1)==11&&lep_promptLeptonVeto_TagWeight_1<-0.7)||(abs(lep_ID_1)==13&&lep_promptLeptonVeto_TagWeight_1<-0.5))&&SelectTLepid(1)&&
+        (nTaus_OR_Pt25==0||(tau_passEleBDT_0&&tau_passMuonOLR_0))
+        &&(dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0){ //met>30 GeV ? ttbar vs z+bb:
+        ifregions["reg1e1mu1tau2b"] = nJets_OR_T_MV2c10_70==2&&nJets_OR_T==2&&nTaus_OR_Pt25==1;
+        ifregions["reg1e1mu2bnj"]   = nJets_OR_T_MV2c10_70==2&&nJets_OR_T>=3&&nTaus_OR_Pt25==0;
+        ifregions["reg1e1mu1tau1b"] = nJets_OR_T_MV2c10_70==1&&nJets_OR_T==1&&nTaus_OR_Pt25==1;
+        ifregions["reg1e1mu2b"]     = nJets_OR_T_MV2c10_70==2&&nJets_OR_T==2&&nTaus_OR_Pt25==0;
       }else{
-        if(trig_match&&dilep_type&&total_charge==0&&lep_Pt_0>20e3&&lep_Pt_1>20e3&&
-          ((abs(lep_ID_0)==11&&lep_promptLeptonVeto_TagWeight_0<-0.7)||(abs(lep_ID_0)==13&&lep_promptLeptonVeto_TagWeight_0<-0.5))&&SelectTLepid(0)&&
-          ((abs(lep_ID_1)==11&&lep_promptLeptonVeto_TagWeight_1<-0.7)||(abs(lep_ID_1)==13&&lep_promptLeptonVeto_TagWeight_1<-0.5))&&SelectTLepid(1)&&
-          (nTaus_OR_Pt25==0||(tau_passEleBDT_0&&tau_passMuonOLR_0))
-          &&(dilep_type==2||((dilep_type==1||dilep_type==3)&&(Mll01/GeV<80||Mll01/GeV>100)))&&total_charge==0){ //met>30 GeV ? ttbar vs z+bb:
-          ifregions["reg1e1mu1tau2b"] = nJets_OR_T_MV2c10_70==2&&nJets_OR_T==2&&nTaus_OR_Pt25==1;
-          ifregions["reg1e1mu2bnj"]   = nJets_OR_T_MV2c10_70==2&&nJets_OR_T>=3&&nTaus_OR_Pt25==0;
-          ifregions["reg1e1mu1tau1b"] = nJets_OR_T_MV2c10_70==1&&nJets_OR_T==1&&nTaus_OR_Pt25==1;
-          ifregions["reg1e1mu2b"]     = nJets_OR_T_MV2c10_70==2&&nJets_OR_T==2&&nTaus_OR_Pt25==0;
-        }else{
-          ifregions["reg1e1mu1tau2b"] = 0;
-          ifregions["reg1e1mu2bnj"]   = 0;
-          ifregions["reg1e1mu1tau1b"] = 0;
-          ifregions["reg1e1mu2b"]     = 0;
-        }
-        ifregions["reg1l2b2j"]      = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=4 && nTaus_OR_Pt25==0;
-        ifregions["reg1l1tau2b1j_os"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=3 && nTaus_OR_Pt25>=1 && (lep_ID_0>0?-1:1)*tau_charge_0<0;
-        bool reg1l1tau2b1j_ss = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=3 && nTaus_OR_Pt25>=1 && (lep_ID_0>0?-1:1)*tau_charge_0>0;
-        ifregions["reg1l1tau2b1j_ss_ptbin1"] = reg1l1tau2b1j_ss && tau_pt_0/GeV <= 35;
-        ifregions["reg1l1tau2b1j_ss_ptbin2"] = reg1l1tau2b1j_ss && tau_pt_0/GeV > 35;
+        ifregions["reg1e1mu1tau2b"] = 0;
+        ifregions["reg1e1mu2bnj"]   = 0;
+        ifregions["reg1e1mu1tau1b"] = 0;
+        ifregions["reg1e1mu2b"]     = 0;
       }
+      ifregions["reg1l2b2j"]      = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=4 && nTaus_OR_Pt25==0;
+      ifregions["reg1l1tau2b1j_os"]  = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=3 && nTaus_OR_Pt25>=1 && (lep_ID_0>0?-1:1)*tau_charge_0<0;
+      bool reg1l1tau2b1j_ss = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70==2 && nJets_OR_T>=3 && nTaus_OR_Pt25>=1 && (lep_ID_0>0?-1:1)*tau_charge_0>0;
+      ifregions["reg1l1tau2b1j_ss_ptbin1"] = reg1l1tau2b1j_ss && tau_pt_0/GeV <= 35;
+      ifregions["reg1l1tau2b1j_ss_ptbin2"] = reg1l1tau2b1j_ss && tau_pt_0/GeV > 35;
 
       bool triggered = 0;
       
@@ -337,6 +372,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       }
     }
 //===============================find leading b,non b jets===============================
+    if(ifregions["reg1l1tau1b2j"] || ifregions["reg1l1tau1b3j"] || ifregions["reg1l2tau1bnj"]) triggeredfcnc = 1;
     if(reduce <= 2){
       leading_b = -1;
       leading_ljet = -1;
@@ -362,7 +398,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
         if(reloop == 0 && leading_b != -1) break;
       }
       if(leading_b == -1) printf("ERROR: bjet not found");
-      if(dofcnc){
+      if(triggeredfcnc){
         if(ifregions["reg1l2tau1bnj"]){
           for (int i = 0; i < 2; ++i) taus_v[i].SetPtEtaPhiE((*m_tau_pt)[i],(*m_tau_eta)[i],(*m_tau_phi)[i],(*m_tau_E)[i]);
           if (fabs(lep_ID_0)==11) lep_v.SetPtEtaPhiE((*electron_pt)[0],(*electron_eta)[0],(*electron_phi)[0],(*electron_E)[0]);
@@ -465,7 +501,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
         } else taulmass = 0;
       }
     }else{
-      if(dofcnc){
+      if(triggeredfcnc){
         x1fit = 1./(x1fit+1);
         x2fit = 1./(x2fit+1);
       }
@@ -509,8 +545,11 @@ void nominal::Loop(TTree *inputtree, TString samplename)
         if(writetree) outputtree[iter->first]->Fill();
         if(dohist) {
           //weight *= fakeSF;
-          if(iter->first.Contains("tau")) fill_tau(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
-            else fill_notau(iter->first,sample);
+          if(iter->first.Contains("tau")){
+            fill_fake(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
+            fill_fcnc(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
+          }
+          else fill_notau(iter->first,sample);
         }
 //      outputtree[iter->first]->AutoSave();
       }
@@ -543,8 +582,12 @@ void nominal::Loop(TTree *inputtree, TString samplename)
 }
 
 void nominal::plot(){
-  tau_plots->write();
-  tau_plots->clearhist();
+  fake_plots->write();
+  fake_plots->clearhist();
+  fcnc_plots->write();
+  fcnc_plots->clearhist();
+  fake_notau_plots->write();
+  fake_notau_plots->clearhist();
 }
 
 void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag) {

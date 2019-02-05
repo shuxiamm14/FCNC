@@ -30,7 +30,7 @@ int main(int argc, char const *argv[])
 	tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
 	tau_plots->add("p_{T,b}","bpt","GeV");
   	tau_plots->add("E_{miss}^{T}","met","GeV");
-	tau_plots->add("p_{T,light-jet}","ljetpt","GeV",5);
+	tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 	//notau_plots->add("p_{T,b}","bpt","GeV");
 	//notau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 	TString regions1[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
@@ -166,7 +166,7 @@ int main(int argc, char const *argv[])
 				}
 			}
 		}
-		//tau_plots  ->plot_stack("postfit");
+		tau_plots  ->plot_stack("postfit");
 	}
 	return 0;
 }
