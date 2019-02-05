@@ -549,8 +549,8 @@ void nominal::Loop(TTree *inputtree, TString samplename)
         if(dohist) {
           //weight *= fakeSF;
           if(iter->first.Contains("tau")){
-            fill_fake(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
-            fill_fcnc(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
+            if(triggeredfcnc) fill_fcnc(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
+            else fill_fake(iter->first,tau_numTrack_0,tauorigin,tau_pt_0/GeV > 35);
           }
           else fill_notau(iter->first,sample);
         }
