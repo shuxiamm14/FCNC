@@ -1,0 +1,19 @@
+Hi Boyang, 
+
+   Here is my BDT training attached.
+   The variables I used are: 
+   dataloader->AddVariable( "Mtw", 'F' );
+   dataloader->AddVariable( "Lept*Leadtauch>0?Leadtaupt:Subtaupt", 'F' );
+   dataloader->AddVariable( "Lept*Leadtauch<0?Leadtaupt:Subtaupt", 'F' );                                                                                                                                                     
+   dataloader->AddVariable( "Mtautau", 'F' );
+   dataloader->AddVariable( "fabs(Etamax)", 'F' );
+   dataloader->AddVariable( "Mtauj-Mtautau", 'F' );
+   dataloader->AddVariable( "Drlbditau", 'F' );
+   dataloader->AddVariable( "Pttautau", 'F' );
+   dataloader->AddVariable( "Drltau", 'F' );
+   dataloader->AddVariable( "Drtauj", 'F' );  
+   dataloader->AddVariable( "Drtautau", 'F' ); 
+   dataloader->AddVariable( "Lbmin", 'F' ); 
+
+The meaning of variables you can find it in my code at 
+ pdsf: /global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/FakeStudy/thqMLanaV6/MakingHist/AnathqMini.cc

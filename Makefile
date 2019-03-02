@@ -12,14 +12,19 @@ DELPHESINCS := -I$(DELPHES_DIR)
 
 FCNC_DIR := /Users/Liby/work/tau_analysis/FCNC/plotTools
 FCNCLIBS := -L$(FCNC_DIR)/lib -lAtlasStyle -lPlotTool
-FCNCINCS := -I$(FCNC_DIR)/include/fcnc -I$(FCNC_DIR)/include/atlasstyle 
+FCNCINCS := -I$(FCNC_DIR)/include/fcnc -I$(FCNC_DIR)/include/atlasstyle -I$(FCNC_DIR)/include/external
 
 EXTRALIBS +=$(ROOTLIBS) $(ROOTGLIBS) $(FCNCLIBS)
 
-CPPFLAGS += $(ROOTCFLAGS) $(FCNCINCS) -Iinclude
+EXTERNALTOOLS := -I/Users/Liby/work/tools/eigen \
+				 -I/Users/Liby/work/tools/json/include\
+				 -I/Users/Liby/work/tools/frugally-deep/include\
+				 -I/Users/Liby/work/tools/FunctionalPlus/include
+
+CPPFLAGS += $(ROOTCFLAGS) $(FCNCINCS) -Iinclude $(EXTERNALTOOLS)
 CPPFLAGS += -D PACKAGE_DIR=\"$(PWD)\"
 
-CPPFLAGS  += -Wno-long-long -fPIC -w -g
+CPPFLAGS  += -Wno-long-long -fPIC -w -g -std=c++14
 
 CXX=/Applications/Xcode.app/Contents/Developer/usr/bin/g++
 
@@ -34,7 +39,19 @@ makebin:
 	@mkdir -p ./bin ./lib
 	@echo current directory: $(PWD)
 
+bin/.Predict.o: util/Predict.cc
+	@echo Compiling $@ with $^
+	@$(CXX) $(CPPFLAGS) -c $< -o $@
+
+bin/Predict_run: bin/.Predict.o lib/libapplyTF.so
+	@echo Linking $@ with $^
+	@$(CXX) $(CPPFLAGS) -D $(EXTRALIBS)  -Llib -lapplyTF -o $@ $<
+
 bin/.%.o: src/%.C include/%.h
+	@echo Compiling $@ with $^
+	@$(CXX) $(CPPFLAGS) -c $< -o $@
+
+bin/.%.o: src/%.cc include/%.h
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
 
@@ -42,7 +59,7 @@ bin/.skim.o: src/skim.C include/nominal.h
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -D V7NTUP=1 -c $< -o $@
 
-bin/.%.o: util/.C include/%.h
+bin/.%.o: util/.C include/%.h include/nominal.h
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
 
@@ -54,7 +71,7 @@ bin/.dict.o: bin/.dict.cxx
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
 	@mv bin/.dict_rdict.pcm lib/.
 
-bin/.%.o: util/%.cc include/%.h
+bin/.%.o: util/%.cc include/%.h include/nominal.h
 	@echo Compiling $@ with $^
 	@$(CXX) $(CPPFLAGS) -c $< -o $@
 
@@ -71,7 +88,17 @@ bin/%_run: bin/.%.o bin/.dict.o
 	@echo Linking $@ with $^
 	@$(CXX) $(CPPFLAGS) $(EXTRALIBS) -o $@ $^
 
+
+lib/libskim.so: bin/.skim.o bin/.nominal.o | lib/libapplyTF.so
+	@echo Linking $@ with $^
+	@$(MAKESHARED) $(CPPFLAGS) -Llib -lapplyTF $(EXTRALIBS) $^ -o $@
+
 lib/lib%.so: bin/.%.o bin/.nominal.o
+	@echo Linking $@ with $^
+	@$(MAKESHARED) $(CPPFLAGS) $(EXTRALIBS) $^ -o $@
+
+
+lib/libapplyTF.so: bin/.applyTF.o
 	@echo Linking $@ with $^
 	@$(MAKESHARED) $(CPPFLAGS) $(EXTRALIBS) $^ -o $@
 

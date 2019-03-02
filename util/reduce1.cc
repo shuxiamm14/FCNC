@@ -14,7 +14,7 @@ int main(int argc, char const *argv[])
 	char inputline[100];
 
 	nominal *analysis = new nominal();
-        analysis->dofcnc = 1;
+    analysis->dofcnc = 1;
 	analysis->reduce = 1;
 	analysis->debug = 0;
 	analysis->init_hist();
@@ -44,7 +44,10 @@ int main(int argc, char const *argv[])
 			inputfile.Close();
 		}
 		analysis->finalise_sample();
+		TFile *output = new TFile(CharAppend(cate,".root"),"recreate");
+		if(doplot) analysis->plot(output);
+		output->Close();
+		deletepointer(output);
 	}
-	if(doplot) analysis->plot();
 	return 0;
 }

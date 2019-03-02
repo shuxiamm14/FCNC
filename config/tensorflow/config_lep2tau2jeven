@@ -1,0 +1,10 @@
+[DEFAULT]
+maxCombUnitpool = 1
+maxCombUnitwatcher = 3
+unitDim = 4
+pool = 2
+watchers = 1,2,1
+outputcategory = 2
+modelname = lep2tau2jeven
+traindata = /Users/Liby/work/tau_analysis/FCNC/ttH_fakes/run/signaltruth/lep2tau2jeven.txt
+testdata = /Users/Liby/work/tau_analysis/FCNC/ttH_fakes/run/signaltruth/lep2tau2jodd.txt

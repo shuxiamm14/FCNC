@@ -318,7 +318,7 @@ void nominal::Init(TTree *tree)
       tree->SetBranchAddress("wmass",&wmass);
       tree->SetBranchAddress("t2mass",&t2mass);
    }
-   if(reduce>=2){
+   if(reduce>=2 && fcnc){
       tree->SetBranchAddress("neutrino_pt" , &neutrino_pt );
       tree->SetBranchAddress("neutrino_eta", &neutrino_eta);
       tree->SetBranchAddress("neutrino_phi", &neutrino_phi);
@@ -336,6 +336,15 @@ void nominal::Init(TTree *tree)
       tree->SetBranchAddress("t1vismass",&t1vismass);
       tree->SetBranchAddress("ttvismass",&ttvismass);
 
+      tree->SetBranchAddress("drlbditau",&drlbditau);
+      tree->SetBranchAddress("tau_pt_ss",&tau_pt_ss);
+      tree->SetBranchAddress("tau_pt_os",&tau_pt_os);
+      tree->SetBranchAddress("mtw",&mtw);
+      tree->SetBranchAddress("etamax",  &etamax  );
+      tree->SetBranchAddress("drltau",  &drltau  );
+      tree->SetBranchAddress("drtauj",  &drtauj  );
+      tree->SetBranchAddress("drtautau",&drtautau);
+      return;
    }
 
    if(reduce == 0){
@@ -4031,6 +4040,127 @@ void nominal::printv(TLorentzVector v){
   printf("Pt : %f, Eta: %f, Phi: %f, E: %f, m: %f\n", v.Pt(),v.Eta(),v.Phi(),v.E(),v.M());
 }
 
+int nominal::findcjetML(){
+   int nlightj = nJets_OR_T - nJets_OR_T_MV2c10_70;
+   vector<float> MLinput[10];
+   int lightjetsind[4];
+   int ientryML = 0;
+   TString modelname;
+   if(nTaus_OR_Pt25 == 1){
+      modelname = "lephad";
+      modelname += ( nlightj>4? char('4') : char(nlightj + '0') );
+      modelname += "j";
+   }
+   else{
+      modelname = "lep2tau";
+      modelname += ( nlightj>3? char('3') : char(nlightj + '0') );
+      modelname += "j";
+   }
+   int maxloop = (nTaus_OR_Pt25 == 1? min(nlightj,4): min(nlightj,3));
+   for (int i = 0; i < maxloop; ++i)
+   {
+      if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < btag70wt){
+         lightjetsind[ientryML] = selected_jets_T->at(i);
+         MLinput[ientryML].push_back((*m_jet_pt)[selected_jets_T->at(i)]);
+         MLinput[ientryML].push_back((*m_jet_eta)[selected_jets_T->at(i)]);
+         MLinput[ientryML].push_back((*m_jet_phi)[selected_jets_T->at(i)]);
+         MLinput[ientryML].push_back((*m_jet_E)[selected_jets_T->at(i)]);
+         ientryML++;
+      }else
+         maxloop++;
+   }
+   int npool = ientryML;
+   MLinput[npool].push_back((*m_jet_pt )[leading_b]);
+   MLinput[npool].push_back((*m_jet_eta)[leading_b]);
+   MLinput[npool].push_back((*m_jet_phi)[leading_b]);
+   MLinput[npool].push_back((*m_jet_E  )[leading_b]);
+   ientryML++;
+   for (int i = 0; i < 2; ++i)
+   {
+      MLinput[ientryML].push_back(taus_v[i].Pt());
+      MLinput[ientryML].push_back(taus_v[i].Eta());
+      MLinput[ientryML].push_back(taus_v[i].Phi());
+      MLinput[ientryML].push_back(taus_v[i].E());
+      ientryML++;
+   }
+   if(nTaus_OR_Pt25 != 1){
+      MLinput[ientryML].push_back(lep_v.Pt());
+      MLinput[ientryML].push_back(lep_v.Eta());
+      MLinput[ientryML].push_back(lep_v.Phi());
+      MLinput[ientryML].push_back(lep_v.E());
+      ientryML++;
+   }
+   modelname += (EventNumber%2) ? "even" : "odd";
+   vector<vector<float>> predicted = m_applyTF.predictEvent(modelname,MLinput,ientryML,4,npool,2);
+   float highest = 0;
+   int cjettmp = 0;
+   for (int i = 0; i < npool; ++i)
+   {
+      if(highest < predicted[i][0]) {
+         highest = predicted[i][0];
+         cjettmp = i;
+      }
+   }
+   if (nTaus_OR_Pt25 == 1){
+      double m_w = 81000;
+      int wjetcand[3];
+      int wjetcount = 0;
+      for (int i = 0; i < npool; ++i)
+      {
+         if(i!=cjettmp){
+            wjetcand[wjetcount] = i;
+            wjetcount+=1;
+         }
+      }
+      if(npool == 2) {
+         t1mass = 0;
+         wmass = 0;
+         wjet2_index = 0;
+         wjet1_index = lightjetsind[wjetcand[0]];
+      }else if(npool == 3){
+         wjet1_index = lightjetsind[wjetcand[0]];
+         wjet2_index = lightjetsind[wjetcand[1]];
+         t1mass     = ( vectorPtEtaPhiE(MLinput[wjetcand[1]]) + vectorPtEtaPhiE(MLinput[wjetcand[0]]) + bjet_v ) .M();
+         wmass      = ( vectorPtEtaPhiE(MLinput[wjetcand[1]]) + vectorPtEtaPhiE(MLinput[wjetcand[0]]) ).M();
+      }else{
+         if( abs((vectorPtEtaPhiE(MLinput[wjetcand[0]]) + vectorPtEtaPhiE(MLinput[wjetcand[1]])).M() - m_w) > abs((vectorPtEtaPhiE(MLinput[wjetcand[0]]) + vectorPtEtaPhiE(MLinput[wjetcand[2]])).M() - m_w) )
+           if(abs((vectorPtEtaPhiE(MLinput[wjetcand[0]]) + vectorPtEtaPhiE(MLinput[wjetcand[2]])).M() - m_w) > abs((vectorPtEtaPhiE(MLinput[wjetcand[1]]) + vectorPtEtaPhiE(MLinput[wjetcand[2]])).M() - m_w)) 
+           {
+             t1mass     = ( vectorPtEtaPhiE(MLinput[wjetcand[1]]) + vectorPtEtaPhiE(MLinput[wjetcand[2]]) + bjet_v ) .M();
+             wmass      = ( vectorPtEtaPhiE(MLinput[wjetcand[1]]) + vectorPtEtaPhiE(MLinput[wjetcand[2]]) ).M();
+             wjet1_index = lightjetsind[wjetcand[1]];
+             wjet2_index = lightjetsind[wjetcand[2]];
+           }
+           else{
+             t1mass     = ( vectorPtEtaPhiE(MLinput[wjetcand[0]]) + vectorPtEtaPhiE(MLinput[wjetcand[2]]) + bjet_v ) .M();
+             wmass      = ( vectorPtEtaPhiE(MLinput[wjetcand[0]]) + vectorPtEtaPhiE(MLinput[wjetcand[2]]) ).M();
+             wjet1_index = lightjetsind[wjetcand[0]];
+             wjet2_index = lightjetsind[wjetcand[2]];
+           }
+         else if(abs((vectorPtEtaPhiE(MLinput[wjetcand[0]]) + vectorPtEtaPhiE(MLinput[wjetcand[1]])).M() - m_w) > abs((vectorPtEtaPhiE(MLinput[wjetcand[1]]) + vectorPtEtaPhiE(MLinput[wjetcand[2]])).M() - m_w)) 
+           {
+             t1mass     = ( vectorPtEtaPhiE(MLinput[wjetcand[1]]) + vectorPtEtaPhiE(MLinput[wjetcand[2]]) + bjet_v ) .M();
+             wmass      = ( vectorPtEtaPhiE(MLinput[wjetcand[1]]) + vectorPtEtaPhiE(MLinput[wjetcand[2]]) ).M();
+             wjet1_index = lightjetsind[wjetcand[1]];
+             wjet2_index = lightjetsind[wjetcand[2]];
+           }
+           else{
+             t1mass     = ( vectorPtEtaPhiE(MLinput[wjetcand[0]]) + vectorPtEtaPhiE(MLinput[wjetcand[1]]) + bjet_v ) .M();
+             wmass      = ( vectorPtEtaPhiE(MLinput[wjetcand[0]]) + vectorPtEtaPhiE(MLinput[wjetcand[1]]) ).M();
+             wjet1_index = lightjetsind[wjetcand[0]];
+             wjet2_index = lightjetsind[wjetcand[1]];
+           }
+      }
+   }
+   return lightjetsind[cjettmp];
+}
+
+TLorentzVector nominal::vectorPtEtaPhiE(vector<float> vec){
+   TLorentzVector lvec;
+   lvec.SetPtEtaPhiE(vec[0],vec[1],vec[2],vec[3]);
+   return lvec;
+}
+
 int nominal::findcjet(){
   int nljet[3];
   int j = 0;
@@ -4047,6 +4177,7 @@ int nominal::findcjet(){
       nljet[j] = selected_jets_T->at(i);
       ljet[j].SetPtEtaPhiE((*m_jet_pt)[selected_jets_T->at(i)],(*m_jet_eta)[selected_jets_T->at(i)],(*m_jet_phi)[selected_jets_T->at(i)],(*m_jet_E)[selected_jets_T->at(i)]);
       ++j;
+      if(j>2) break;
     }
   }
   if (nlightj == 2) {

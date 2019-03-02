@@ -1,4 +1,4 @@
-
+#include "applyTF.h"
 #include <TROOT.h>
 #include <TChain.h>
 #include "histSaver.h"
@@ -18,7 +18,8 @@ public :
       {1.157861, 0.792569, 1.349050, 1.426554},   //3prong <35
       {0.818782, 0.614790, 5.756198, 0.489836}    //3prong >35
    };
-   ofstream filetruth[6];
+   applyTF m_applyTF;
+   fstream filetruth[6][2];
    bool dofcnc = 0;
    Double_t arglist[10];
    Int_t ierflg = 0;
@@ -27,7 +28,9 @@ public :
    int fcnc_nregions;
    TString **fake_regions;
    int fake_nregions;
-
+   double nonfcncmatched = 0;
+   double fcncmatched = 0;
+   double leptonicw = 0;
    bool fcnc = 0;
    bool writetree = 1;
    void init_hist();
@@ -40,7 +43,7 @@ public :
    int reduce = 0;
    nominal();
    virtual ~nominal();
-   void plot();
+   void plot(TFile *outputfile);
    bool initdata = 0;
    bool initttbar = 0;
    bool doseppt = 0;
@@ -48,11 +51,14 @@ public :
    int version = 0;
    TFile *outputtreefile = 0;
    map<TString, TTree*> outputtree;
+   void readTFmeanstd(TString filename);
    void initgM();
-   void dumpTruth();
+   void dumpTruth(int part);
+   TLorentzVector vectorPtEtaPhiE(vector<float> vec);
    virtual void     Init(TTree *tree);
    virtual void     Loop(TTree *inputtree, TString sample);
    virtual int      findcjet();
+   virtual int      findcjetML();
    void finalise_sample();
    static  void     fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
    void fill_fake(TString region, int nprong, TString sample, int ptbin);
@@ -68,6 +74,14 @@ public :
    float pt_ljet = 0;
    float taulmass = 0;
    float t1mass = 0;
+   float drlbditau = 0;
+   float mtw = 0;
+   float tau_pt_ss = 0;
+   float tau_pt_os = 0;
+   float etamax = 0;
+   float drltau   = 0;
+   float drtauj   = 0;
+   float drtautau = 0;
    float wmass     = 0;
    float t2mass    = 0;
    float tautaumass = 0;
