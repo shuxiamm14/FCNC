@@ -102,11 +102,13 @@ public :
    Double_t        t2vismass;
    Double_t        t1vismass;
    Double_t        ttvismass;
+   Double_t        tautauvispt;
    Double_t        weight;
    Double_t        fakeSF;
    Double_t        x1fit;
    Double_t        x2fit;
    ULong64_t       eventNumber;
+   Double_t        drtaujmin;
    UInt_t          runNumber;
    UInt_t          randomRunNumber;
    UInt_t          mcChannelNumber;

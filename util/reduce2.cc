@@ -11,14 +11,14 @@ int main(int argc, char const *argv[])
 	bool doplot = 1;
 	char inputline[100];
 	vector<TString> regions;
-	//regions.push_back("reg1l2tau1bnj");
-	//regions.push_back("reg1l1tau1b2j");
-	//regions.push_back("reg1l1tau1b3j");
+	regions.push_back("reg1l2tau1bnj");
+	regions.push_back("reg1l1tau1b2j");
+	regions.push_back("reg1l1tau1b3j");
 
 	//regions.push_back("reg1e1mu1tau1b");
 	//regions.push_back("reg1e1mu1tau2b");
 	//regions.push_back("reg1e1mu2b");
-	regions.push_back("reg1e1mu2bnj");
+	//regions.push_back("reg1e1mu2bnj");
 	//regions.push_back("reg1l1tau2b1j_os");
 	//regions.push_back("reg1l1tau2b1j_ss_ptbin1");
 	//regions.push_back("reg1l1tau2b1j_ss_ptbin2");
@@ -26,8 +26,8 @@ int main(int argc, char const *argv[])
 
 	nominal *analysis = new nominal();
 	analysis->debug = 0;
-	analysis->writetree = 0;
-	analysis->fcnc = 0;
+	analysis->writetree = 1;
+	analysis->fcnc = 1;
 	analysis->reduce = 2;
 	analysis->dumptruth = 0;
 	analysis->readTFmeanstd("meanstddevs.txt");
@@ -51,7 +51,7 @@ int main(int argc, char const *argv[])
 			printf("finish loop on region: %s\n", i->Data());
 		}
 		inputfile.Close();
-		TFile *output = new TFile(CharAppend(cate,".root"),"recreate");
+		TFile *output = new TFile(CharAppend(cate,".root"),"update");
 		if(doplot) analysis->plot(output);
 		output->Close();
 		deletepointer(output);
