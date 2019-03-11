@@ -14,5 +14,5 @@ if [ -z ${ttH_fakes_DIR+x} ] ; then
 		export LD_LIBRARY_PATH+=:$ttH_fakes_DIR/bin
 	fi
 	alias tth='cd $ttH_fakes_DIR'
-	alias tthmake='cd $ttH_fakes_DIR; make; cd -'
+	alias tthmake='cd $ttH_fakes_DIR/build; make; cd -'
 fi

@@ -58,7 +58,7 @@ void applyTF::readmeanfile(TString filename){
     while(!fn.eof()){
         fn.getline(inputline,200);
         if(strlen(inputline)==0) continue;
-        sscanf(inputline,"%s %s %f %f %f %f",&modelname,&meanorstddev,&pt,&eta,&phi,&e);
+        sscanf(inputline,"%s %s %f %f %f %f",modelname,meanorstddev,&pt,&eta,&phi,&e);
         smeanorstddev = meanorstddev;
         if(smeanorstddev.Contains("mean")){
             means[modelname].push_back(pt);

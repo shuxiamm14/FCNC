@@ -325,7 +325,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
 //===============================pre-selections===============================
     bool triggeredfcnc = 0;
     if(selected_jets_T->size() == 0 && nJets_OR_T !=0 ) {
-      printf("error: read vector failed entry: %d\n",jentry);
+      printf("error: read vector failed entry: %lld\n",jentry);
       continue;
     }
     if(debug == 2) printf("reduce scheme during loop: %d\n",reduce);
@@ -426,7 +426,7 @@ void nominal::Loop(TTree *inputtree, TString samplename)
       bool reloop = 1;
       drtaujmin = 10;
       if(nJets_OR_T != selected_jets_T->size()){
-        printf("ERROR: nJets_OR_T,%d != selected_jets_T->size(),%d; Entry: %d\n", nJets_OR_T,selected_jets_T->size(),jentry);
+        printf("ERROR: nJets_OR_T,%d != selected_jets_T->size(),%lu; Entry: %lld\n", nJets_OR_T,selected_jets_T->size(),jentry);
         continue;
       }
       for (int i = 0; i < nJets_OR_T; ++i)
@@ -738,7 +738,7 @@ void nominal::dumpTruth(int ipart){
   fstream *truthfile = &(filetruth[min(nJets_OR_T-(nTaus_OR_Pt25==1?3:2),2)][ipart]);
   fstream nonmatchedfile;
   nonmatchedfile.open("nonmatch.txt", fstream::in | fstream::out | fstream::app);
-  if(debug) printf("truth particles: %d\n", m_truth_pdgId->size());
+  if(debug) printf("truth particles: %lu\n", m_truth_pdgId->size());
   bool foundcjet = 0;
   int foundw = 0;
   bool iffcncmatched = 0;

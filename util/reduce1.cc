@@ -26,7 +26,7 @@ int main(int argc, char const *argv[])
 		char cate[100];
 		char title[100];
 		int version;
-		sscanf(inputline,"%d %s %s %s",&version,&filename,&cate,&title);
+		sscanf(inputline,"%d %s %s %s",&version,filename,cate,title);
 		prefix1 ="/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimV";
 		prefix1 += char('0'+ version);
 		prefix1 += "/MytthAnaSkim_";

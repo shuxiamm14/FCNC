@@ -39,7 +39,7 @@ int main(int argc, char const *argv[])
 		char cate[100];
 		char title[100];
 		int version;
-		sscanf(inputline,"%d %s %s",&version,&cate,&title);
+		sscanf(inputline,"%d %s %s",&version,cate,title);
 		analysis->version = version;
 		analysis->init_sample(cate, title);
 		printf("reading Root file: %s\n", (prefix + "/data/reduce1/" + cate + "_tree.root").Data());
