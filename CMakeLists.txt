@@ -19,7 +19,6 @@ set(TOOLDIR /Users/Liby/work/tools)
 set(PLOTTOOLDIR /Users/Liby/work/tau_analysis/FCNC/plotTools)
 FILE(GLOB PLOTTOOLINC ${PLOTTOOLDIR}/include/ ${PLOTTOOLDIR}/include/* )
 FILE(GLOB PLOTTOOLLIB ${PLOTTOOLDIR}/lib/*)
-message(STATUS "plot tool includes: " ${PLOTTOOLINC})
 # The following folder will be included
 
 include_directories(
@@ -48,16 +47,15 @@ add_library(nominal SHARED ${PROJECT_SOURCE_DIR}/src/nominal.C ${PROJECT_SOURCE_
 target_link_libraries(nominal ${ROOT_LIBRARIES} applyTF ${PLOTTOOLLIB})
 
 add_library(hadhadtree SHARED ${PROJECT_SOURCE_DIR}/src/hadhadtree.C ${PROJECT_SOURCE_DIR}/include/hadhadtree.h)
-target_link_libraries(hadhadtree ${ROOT_LIBRARIES} nominal)
+target_link_libraries(hadhadtree ${ROOT_LIBRARIES} nominal ${PLOTTOOLLIB})
 
 add_library(tthmltree SHARED ${PROJECT_SOURCE_DIR}/src/tthmltree.C ${PROJECT_SOURCE_DIR}/include/tthmltree.h)
-target_link_libraries(tthmltree ${ROOT_LIBRARIES} nominal)
+target_link_libraries(tthmltree ${ROOT_LIBRARIES} nominal ${PLOTTOOLLIB})
 
 file( GLOB APP_SOURCES RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/util/tth* )
 foreach( sourcefile ${APP_SOURCES} )
     string( REPLACE ".cc" "_run" exename ${sourcefile} )
     string( REPLACE "util/" "" exename ${exename} )
-    message(STATUS ${ROOT_TMVA_LIBRARY})
     add_executable( ${exename} ${sourcefile})
     target_compile_definitions(${exename} PRIVATE PACKAGE_DIR="${CMAKE_SOURCE_DIR}")
 	target_link_libraries(${exename} ${ROOT_LIBRARIES} tthmltree)
@@ -67,7 +65,6 @@ file( GLOB APP_SOURCES RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/util
 foreach( sourcefile ${APP_SOURCES} )
     string( REPLACE ".cc" "_run" exename ${sourcefile} )
     string( REPLACE "util/" "" exename ${exename} )
-    message(STATUS ${ROOT_TMVA_LIBRARY})
     add_executable( ${exename} ${sourcefile})
     target_compile_definitions(${exename} PRIVATE PACKAGE_DIR="${CMAKE_SOURCE_DIR}")
   target_link_libraries(${exename} ${ROOT_LIBRARIES} hadhadtree)
