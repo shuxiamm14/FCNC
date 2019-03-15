@@ -1,4 +1,4 @@
-#include "nominal.h"
+#include "hadhadtree.h"
 
 int main(int argc, char const *argv[])
 {
@@ -13,7 +13,7 @@ int main(int argc, char const *argv[])
 	}
 	char inputline[100];
 
-	nominal *analysis = new nominal();
+	hadhadtree *analysis = new hadhadtree();
     analysis->dofcnc = 1;
 	analysis->reduce = 1;
 	analysis->debug = 0;

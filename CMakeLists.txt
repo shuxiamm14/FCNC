@@ -30,15 +30,45 @@ include_directories(
 	${TOOLDIR}/frugally-deep/include
 	${TOOLDIR}/FunctionalPlus/include)
 
-add_library(applyTF ${PROJECT_SOURCE_DIR}/src/applyTF.cc)
-add_library(skim ${PROJECT_SOURCE_DIR}/src/nominal.C ${PROJECT_SOURCE_DIR}/src/skim.C)
+ROOT_GENERATE_DICTIONARY(dictionary
+                         LINKDEF include/LinkDef.h)
 
-file( GLOB APP_SOURCES RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/util/* )
+if (${ROOT_VERSION} VERSION_GREATER "6.0")
+   install(
+      FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/libdictionary_rdict.pcm
+      ${CMAKE_CURRENT_BINARY_DIR}/libdictionary.rootmap
+      DESTINATION ${CMAKE_SOURCE_DIR}/lib)
+endif (${ROOT_VERSION} VERSION_GREATER "6.0")
+
+add_library(applyTF SHARED ${PROJECT_SOURCE_DIR}/src/applyTF.cc)
+target_link_libraries(applyTF ${ROOT_LIBRARIES})
+
+add_library(nominal SHARED ${PROJECT_SOURCE_DIR}/src/nominal.C ${PROJECT_SOURCE_DIR}/include/nominal.h)
+target_link_libraries(nominal ${ROOT_LIBRARIES} applyTF ${PLOTTOOLLIB})
+
+add_library(hadhadtree SHARED ${PROJECT_SOURCE_DIR}/src/hadhadtree.C ${PROJECT_SOURCE_DIR}/include/hadhadtree.h)
+target_link_libraries(hadhadtree ${ROOT_LIBRARIES} nominal)
+
+add_library(tthmltree SHARED ${PROJECT_SOURCE_DIR}/src/tthmltree.C ${PROJECT_SOURCE_DIR}/include/tthmltree.h)
+target_link_libraries(tthmltree ${ROOT_LIBRARIES} nominal)
+
+file( GLOB APP_SOURCES RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/util/tth* )
 foreach( sourcefile ${APP_SOURCES} )
     string( REPLACE ".cc" "_run" exename ${sourcefile} )
     string( REPLACE "util/" "" exename ${exename} )
     message(STATUS ${ROOT_TMVA_LIBRARY})
-    add_executable( ${exename} ${sourcefile} )
+    add_executable( ${exename} ${sourcefile})
     target_compile_definitions(${exename} PRIVATE PACKAGE_DIR="${CMAKE_SOURCE_DIR}")
-	target_link_libraries(${exename} ${ROOT_LIBRARIES} applyTF skim ${PLOTTOOLLIB})
+	target_link_libraries(${exename} ${ROOT_LIBRARIES} tthmltree)
+endforeach( sourcefile ${APP_SOURCES} )
+
+file( GLOB APP_SOURCES RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/util/xtfw* )
+foreach( sourcefile ${APP_SOURCES} )
+    string( REPLACE ".cc" "_run" exename ${sourcefile} )
+    string( REPLACE "util/" "" exename ${exename} )
+    message(STATUS ${ROOT_TMVA_LIBRARY})
+    add_executable( ${exename} ${sourcefile})
+    target_compile_definitions(${exename} PRIVATE PACKAGE_DIR="${CMAKE_SOURCE_DIR}")
+  target_link_libraries(${exename} ${ROOT_LIBRARIES} hadhadtree)
 endforeach( sourcefile ${APP_SOURCES} )

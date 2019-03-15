@@ -31,24 +31,24 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
    TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
 
    if(region != "reg1l1tau1b2j") {
-      dataloader->AddVariable("t1mass",'F');
-      dataloader->AddVariable("wmass",'F');
-      dataloader->AddVariable("t1vismass",'F');
+      //dataloader->AddVariable("t1mass",'F');
+      //dataloader->AddVariable("wmass",'F');
+      dataloader->AddVariable("t1vismass-ttvismass",'F');
       dataloader->AddVariable("tau_pt_ss",'F');
       dataloader->AddVariable("tau_pt_os",'F');
       dataloader->AddVariable("drltau",'F');
       dataloader->AddVariable("drtautau",'F');
-      dataloader->AddVariable("drtauj",'F');
+      dataloader->AddVariable("drtaujmin",'F');
       dataloader->AddVariable("etamax",'F');
       dataloader->AddVariable("mtw",'F');
       dataloader->AddVariable("drlbditau",'F');
       dataloader->AddVariable("tautauvispt",'F');
    }
-   dataloader->AddVariable("tautaumass",'F');
+   //dataloader->AddVariable("tautaumass",'F');
    dataloader->AddVariable("ttvismass",'F');
-   dataloader->AddVariable("t2mass",'F');
-   dataloader->AddVariable("x1fit", 'F');
-   dataloader->AddVariable("x2fit", 'F');
+   //dataloader->AddVariable("t2mass",'F');
+   //dataloader->AddVariable("x1fit", 'F');
+   //dataloader->AddVariable("x2fit", 'F');
    dataloader->AddVariable("t2vismass",'F');
    TChain* signal = new TChain(region);
    TChain* background = new TChain(region);

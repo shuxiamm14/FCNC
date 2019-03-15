@@ -1,4 +1,4 @@
-#include "nominal.h"
+#include "tthmltree.h"
 
 int main(int argc, char const *argv[])
 {
@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
 	//regions.push_back("reg1l1tau2b1j_ss_ptbin2");
 	//regions.push_back("reg1l2b2j");
 
-	nominal *analysis = new nominal();
+	tthmltree *analysis = new tthmltree();
 	analysis->debug = 0;
 	analysis->writetree = 1;
 	analysis->fcnc = 1;
