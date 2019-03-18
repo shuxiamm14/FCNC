@@ -35,6 +35,7 @@ int main(int argc, char const *argv[])
 	analysis->init_sample(inputconfig,inputconfig);
 	ifstream xsecfile(prefix + "/config/Xsecs.txt");
 	map<int, float> xsecs;
+	printf("reading cross section file: %s\n", (prefix + "/config/Xsecs.txt").Data());
 	while(!xsecfile.eof()){
 		xsecfile.getline(inputline,500);
 		if(strlen(inputline)==0) continue;

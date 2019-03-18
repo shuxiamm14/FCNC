@@ -286,18 +286,18 @@ void hadhadtree::definetree(TTree * tree) {
 
 }
 void hadhadtree::definetaus(){
-
-  taus_b_tagged->clear();
-  taus_decay_mode->clear();
-  taus_matched_mother_pdgId->clear();
-  taus_matched_mother_status->clear();
-  taus_matched_p4->clear();
-  taus_matched_pdgId->clear();
-  taus_matched_vis_p4->clear();
-  taus_n_charged_tracks->clear();
-  taus_p4->clear();
-  taus_q->clear();
-  taus_id->clear();
+  if(taus_id->size()) taus_id->clear();
+  if(taus_b_tagged->size()) taus_b_tagged->clear();
+  if(taus_decay_mode->size()) taus_decay_mode->clear();
+  if(taus_matched_mother_pdgId->size()) taus_matched_mother_pdgId->clear();
+  if(taus_matched_mother_status->size()) taus_matched_mother_status->clear();
+  if(taus_matched_p4->size()) taus_matched_p4->clear();
+  if(taus_matched_pdgId->size()) taus_matched_pdgId->clear();
+  if(taus_matched_vis_p4->size()) taus_matched_vis_p4->clear();
+  if(taus_n_charged_tracks->size()) taus_n_charged_tracks->clear();
+  if(taus_p4->size()) taus_p4->clear();
+  if(taus_q->size()) taus_q->clear();
+  if(taus_id->size()) taus_id->clear();
 
   int tau0id = tau_0_jet_bdt_tight?3:(tau_0_jet_bdt_medium?2:1);
   int tau1id = tau_1_jet_bdt_tight?3:(tau_1_jet_bdt_medium?2:1);
@@ -358,16 +358,16 @@ void hadhadtree::definetaus(){
 }
 
 void hadhadtree::definejets(){
-  jets_fjvt->clear();
-  jets_is_Jvt_HS->clear();
-  jets_jvt->clear();
-  jets_origin->clear();
-  jets_p4->clear();
-  jets_q->clear();
-  jets_type->clear();
-  jets_width->clear();
-  jets_wztruth_p4->clear();
-  jets_wztruth_pdgid->clear();
+  if(jets_fjvt0>size()) jets_fjvt->clear();
+  if(jets_is_Jvt_HS0>size()) jets_is_Jvt_HS->clear();
+  if(jets_jvt0>size()) jets_jvt->clear();
+  if(jets_origin0>size()) jets_origin->clear();
+  if(jets_p40>size()) jets_p4->clear();
+  if(jets_q0>size()) jets_q->clear();
+  if(jets_type0>size()) jets_type->clear();
+  if(jets_width0>size()) jets_width->clear();
+  if(jets_wztruth_p40>size()) jets_wztruth_p4->clear();
+  if(jets_wztruth_pdgid0>size()) jets_wztruth_pdgid->clear();
   if (jet_0)
   {
     if(jet_0_b_tagged){
