@@ -358,16 +358,16 @@ void hadhadtree::definetaus(){
 }
 
 void hadhadtree::definejets(){
-  if(jets_fjvt0>size()) jets_fjvt->clear();
-  if(jets_is_Jvt_HS0>size()) jets_is_Jvt_HS->clear();
-  if(jets_jvt0>size()) jets_jvt->clear();
-  if(jets_origin0>size()) jets_origin->clear();
-  if(jets_p40>size()) jets_p4->clear();
-  if(jets_q0>size()) jets_q->clear();
-  if(jets_type0>size()) jets_type->clear();
-  if(jets_width0>size()) jets_width->clear();
-  if(jets_wztruth_p40>size()) jets_wztruth_p4->clear();
-  if(jets_wztruth_pdgid0>size()) jets_wztruth_pdgid->clear();
+  if(jets_fjvt->size()) jets_fjvt->clear();
+  if(jets_is_Jvt_HS->size()) jets_is_Jvt_HS->clear();
+  if(jets_jvt->size()) jets_jvt->clear();
+  if(jets_origin->size()) jets_origin->clear();
+  if(jets_p4->size()) jets_p4->clear();
+  if(jets_q->size()) jets_q->clear();
+  if(jets_type->size()) jets_type->clear();
+  if(jets_width->size()) jets_width->clear();
+  if(jets_wztruth_p4->size()) jets_wztruth_p4->clear();
+  if(jets_wztruth_pdgid->size()) jets_wztruth_pdgid->clear();
   if (jet_0)
   {
     if(jet_0_b_tagged){
