@@ -1,23 +1,27 @@
 
 if test $# -lt 1; then
   echo "Something wrong with your input arguments, please re-run it."
-  echo "Usage: ./hadhadpreparejobs.sh /datasets/path sample.txt"
+  echo "Usage: ./hadhadpreparejobs.sh /absolute/path/of/datasets"
 
 else
-mkdir -p ../../datafiles/xTFW/run
-for samplefiles in `find ../../datafiles/xTFW/*.txt`
+mkdir -p ../datafiles/xTFW/run
+rm ../datafiles/xTFW/run/mc16*
+for samplefiles in `find "${PWD}/../datafiles/xTFW/" -name *.txt`
 do
-for lines in `cat samplefiles`
+for lines in `cat $samplefiles`
+do
 	for files in `find $1/*$lines*r9364*/*`
 	do
-		echo -n $lines" "$files >> ../../datafiles/xTFW/run/mc16a_$2
+		echo $lines" "$files >> ../datafiles/xTFW/run/mc16a_`echo $samplefiles | awk -F "/" '{print $NF}'` 
 	done
 	for files in `find $1/*$lines*r10201*/*`
 	do
-		echo -n $lines" "$files >> ../../datafiles/xTFW/run/mc16d_$2
+		echo $lines" "$files >> ../datafiles/xTFW/run/mc16d_`echo $samplefiles | awk -F "/" '{print $NF}'`
 	done
 	for files in `find $1/*$lines*r10724*/*`
 	do
-		echo -n $lines" "$files >> ../../datafiles/xTFW/run/mc16e_$2
+		echo $lines" "$files >> ../datafiles/xTFW/run/mc16e_`echo $samplefiles | awk -F "/" '{print $NF}'`
 	done
 done
+done
+fi
