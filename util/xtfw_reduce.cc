@@ -12,8 +12,12 @@ int main(int argc, char const *argv[])
 	TString prefix = PACKAGE_DIR;
 	ifstream fn(prefix + "/datafiles/xTFW/run/" + argv[1]);
 	if(!fn) {
-	  fprintf(stderr,"Error: can't open file: %s\n",(prefix + "/datafiles/xTFW/run/" + argv[1]).Data());
-	  return 1;
+	  fprintf(stderr,"can't open file: %s, try %s\n",(prefix + "/datafiles/xTFW/run/" + argv[1]).Data(),argv[1]);
+	  fn.open(argv[1]);
+	  if(!fn){
+	  	fprintf(stderr,"can't open file: %s\n",argv[1]);
+	  	return 1;
+	  }
 	}
 	TString inputconfig = argv[1];
 	inputconfig.Remove(inputconfig.Sizeof()-5,4); //remove ".txt"
@@ -26,11 +30,12 @@ int main(int argc, char const *argv[])
 		exit(0);
 	}
 	char inputline[500];
-
+	gErrorIgnoreLevel=kError;
 	hadhadtree *analysis = new hadhadtree();
     analysis->dofcnc = 1;
 	analysis->reduce = 1;
-	analysis->debug = 0;
+	analysis->debug = 1;
+	analysis->writetree = 1;
 	analysis->init_hist();
 	analysis->init_sample(inputconfig,inputconfig);
 	ifstream xsecfile(prefix + "/config/Xsecs.txt");
@@ -62,9 +67,11 @@ int main(int argc, char const *argv[])
 		inputfile.Close();
 	}
 	analysis->finalise_sample();
-	TFile *output = new TFile(CharAppend(inputconfig,".root"),"recreate");
-	if(doplot) analysis->plot(output);
-	output->Close();
-	deletepointer(output);
+	if(doplot) {
+		TFile *output = new TFile(CharAppend(inputconfig,".root"),"recreate");
+		analysis->plot(output);
+		output->Close();
+		deletepointer(output);
+	}
 	return 0;
 }

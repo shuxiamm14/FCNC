@@ -13,44 +13,64 @@ public :
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
    const double btagwpCut[4]={0.94,0.83,0.64,0.11};
-   double fakeSFs[4][4] = {
+   const double fakeSFs[4][4] = {
       {1.028254, 0.060939, 2.842907, 0.802803},   //1prong <35
       {0.770841, 0.524360, 2.233151, 0.769241},   //1prong >35
       {1.157861, 0.792569, 1.349050, 1.426554},   //3prong <35
       {0.818782, 0.614790, 5.756198, 0.489836}    //3prong >35
    };
+
+   bool dofcnc;
+   Int_t ierflg;
+   bool dumptruth;
+   double nonfcncmatched;
+   double fcncmatched;
+   double leptonicw;
+   bool fcnc;
+   int debug;
+   bool dosys;
+   int reduce;
+   bool initdata;
+   bool initttbar;
+   bool doseppt;
+   bool dohist;
+   int version;
+   float pt_b;
+   float pt_ljet;
+   float taulmass;
+   float t1mass;
+   float drlbditau;
+   float mtw;
+   float tau_pt_ss;
+   float tau_pt_os;
+   float etamax;
+   float drltau  ;
+   float drtauj  ;
+   float drtautau;
+   float wmass    ;
+   float t2mass   ;
+   float tautaumass;
+   TFile *outputtreefile;
+   histSaver *fcnc_plots;
+   histSaver *fake_plots;
+   histSaver *fake_notau_plots;
+
    applyTF m_applyTF;
    vector < TLorentzVector > ljets_v;
    fstream filetruth[6][2];
-   bool dofcnc = 0;
    Double_t arglist[10];
-   Int_t ierflg = 0;
-   bool dumptruth = 0;
    vector<TString> fcnc_regions;
    int fcnc_nregions;
    TString **fake_regions;
    int fake_nregions;
-   double nonfcncmatched = 0;
-   double fcncmatched = 0;
-   double leptonicw = 0;
-   bool fcnc = 0;
    bool writetree = 1;
    TString bwps[4] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
    TString ptbin[2] = {"below35","above35"};
    map<TString, bool> ifregions;
    Double_t _lum = 80.;
-   int debug = 0;
-   bool dosys = 0;
-   int reduce = 0;
    nominal();
    virtual ~nominal();
    void plot(TFile *outputfile);
-   bool initdata = 0;
-   bool initttbar = 0;
-   bool doseppt = 0;
-   bool dohist = 0;
-   int version = 0;
-   TFile *outputtreefile = 0;
    map<TString, TTree*> outputtree;
    void readTFmeanstd(TString filename);
    void initgM();
@@ -67,26 +87,10 @@ public :
    void fill_fake(TString region, int nprong, TString sample, int ptbin, float taubtag);
    void fill_fcnc(TString region, int nprong, TString sample, int ptbin, float taubtag);
    void fill_notau(TString region, TString sample);
-   void init_sample(TString sample, TString sampletitle);
    bool SelectTLepid(int id);
    static void printv(TLorentzVector v);
    int leading_b = -1 ;
    int leading_ljet = -1 ;
-   float pt_b = 0;
-   float pt_ljet = 0;
-   float taulmass = 0;
-   float t1mass = 0;
-   float drlbditau = 0;
-   float mtw = 0;
-   float tau_pt_ss = 0;
-   float tau_pt_os = 0;
-   float etamax = 0;
-   float drltau   = 0;
-   float drtauj   = 0;
-   float drtautau = 0;
-   float wmass     = 0;
-   float t2mass    = 0;
-   float tautaumass = 0;
    vector<int>     ljet_indice;
    vector<float>   *neutrino_pt;
    vector<float>   *neutrino_eta;
@@ -103,9 +107,6 @@ public :
    TVector3 mets;
    TVector3 truth_mets;
    TList forFit;
-   histSaver *fcnc_plots = 0;
-   histSaver *fake_plots = 0;
-   histSaver *fake_notau_plots = 0;
    Double_t        t2vismass;
    Double_t        t1vismass;
    Double_t        ttvismass;

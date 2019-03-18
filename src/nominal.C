@@ -13,6 +13,40 @@ void nominal::fill_fake(TString region, int nprong, TString sample, int iptbin, 
   }
 }
 nominal::nominal(){
+  dofcnc = 0;
+  ierflg = 0;
+  dumptruth = 0;
+  nonfcncmatched = 0;
+  fcncmatched = 0;
+  leptonicw = 0;
+  fcnc = 0;
+  debug = 0;
+  dosys = 0;
+  reduce = 0;
+  initdata = 0;
+  initttbar = 0;
+  doseppt = 0;
+  dohist = 0;
+  version = 0;
+  pt_b = 0;
+  pt_ljet = 0;
+  taulmass = 0;
+  t1mass = 0;
+  drlbditau = 0;
+  mtw = 0;
+  tau_pt_ss = 0;
+  tau_pt_os = 0;
+  etamax = 0;
+  drltau   = 0;
+  drtauj   = 0;
+  drtautau = 0;
+  wmass     = 0;
+  t2mass    = 0;
+  tautaumass = 0;
+  outputtreefile = 0;
+  fcnc_plots = 0;
+  fake_plots = 0;
+  fake_notau_plots = 0;
   TLorentzVector v1;
   for(int i = 0 ; i < 2 ; ++i){
     taus_v.push_back(v1);
@@ -48,12 +82,23 @@ nominal::~nominal(){
 }
 
 void nominal::plot(TFile *outputfile){
-  fake_plots->write(outputfile);
-  fake_plots->clearhist();
-  fcnc_plots->write(outputfile);
-  fcnc_plots->clearhist();
-  fake_notau_plots->write(outputfile);
-  fake_notau_plots->clearhist();
+  if(fake_plots) {
+    if(debug) printf("fill fake_plots\n");
+    fake_plots->write(outputfile);
+    fake_plots->clearhist();
+  }
+  if(fcnc_plots) {
+    if(debug) printf("fill fcnc plots\n");
+    if(debug) fcnc_plots->show();
+    fcnc_plots->write(outputfile);
+    if(debug) printf("clear fcnc plots\n");
+    fcnc_plots->clearhist();
+  }
+  if(fake_notau_plots) {
+    if(debug) printf("fill fake_notau_plots\n");
+    fake_notau_plots->write(outputfile);
+    fake_notau_plots->clearhist();
+  }
 }
 
 void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag) {
@@ -275,100 +320,4 @@ void nominal::initgM(){
   arglist[0] = 1;
   gM->mnexcm("SET ERR", arglist ,1,ierflg);
 
-}
-void nominal::init_sample(TString sample, TString sampletitle){
-//==========================init output n-tuple==========================
-  if(writetree){
-    outputtreefile = new TFile(sample + "_tree.root","update");
-    map<TString, TTree*>::iterator iter;
-    for (int i = 0; i < fcnc_nregions; ++i)
-    {
-      if(debug) printf("init sample:: get region: %s\n",fcnc_regions[i].Data());
-      if (outputtreefile->Get(fcnc_regions[i])) {
-        outputtree[fcnc_regions[i]] = (TTree*)(outputtreefile->Get(fcnc_regions[i]));
-        Init(outputtree[fcnc_regions[i]]);
-      }else{
-        outputtree[fcnc_regions[i]] = new TTree(fcnc_regions[i],fcnc_regions[i]);
-        if(reduce<2 || !fcnc) definetree(outputtree[fcnc_regions[i]]);
-      }
-      if(reduce >= 1 || reduce == 0){
-        outputtree[fcnc_regions[i]]->Branch("t1mass",&t1mass);
-        outputtree[fcnc_regions[i]]->Branch("tautaumass",&tautaumass);
-        outputtree[fcnc_regions[i]]->Branch("wmass",&wmass);
-        outputtree[fcnc_regions[i]]->Branch("t2mass",&t2mass);
-      }
-      if(reduce==2 || reduce == 0){
-        //outputtree[fcnc_regions[i]]->Branch("tau_truthType_0",&tau_truthType_0);
-        //outputtree[fcnc_regions[i]]->Branch("tau_truthType_1",&tau_truthType_1);
-        //outputtree[fcnc_regions[i]]->Branch("tau_charge_0",&tau_charge_0);
-        //outputtree[fcnc_regions[i]]->Branch("tau_charge_1",&tau_charge_1);
-        //outputtree[fcnc_regions[i]]->Branch("tau_JetBDTSigTight_0",&tau_JetBDTSigTight_0);
-        //outputtree[fcnc_regions[i]]->Branch("tau_JetBDTSigTight_1",&tau_JetBDTSigTight_1);
-        //outputtree[fcnc_regions[i]]->Branch("eventNumber", &eventNumber);
-        outputtree[fcnc_regions[i]]->Branch("neutrino_pt" , &neutrino_pt );
-        outputtree[fcnc_regions[i]]->Branch("neutrino_eta", &neutrino_eta);
-        outputtree[fcnc_regions[i]]->Branch("neutrino_phi", &neutrino_phi);
-        outputtree[fcnc_regions[i]]->Branch("neutrino_m"  , &neutrino_m  );
-        outputtree[fcnc_regions[i]]->Branch("weight",&weight);
-        outputtree[fcnc_regions[i]]->Branch("fakeSF",&fakeSF);
-        outputtree[fcnc_regions[i]]->Branch("ljet_indice", &ljet_indice );
-        outputtree[fcnc_regions[i]]->Branch("x1fit", &x1fit);
-        outputtree[fcnc_regions[i]]->Branch("x2fit", &x2fit);
-        outputtree[fcnc_regions[i]]->Branch("t1vismass",&t1vismass);
-        outputtree[fcnc_regions[i]]->Branch("t2vismass",&t2vismass);
-        outputtree[fcnc_regions[i]]->Branch("ttvismass",&ttvismass);
-        outputtree[fcnc_regions[i]]->Branch("tautauvispt",&tautauvispt);
-        outputtree[fcnc_regions[i]]->Branch("mtw",&mtw);
-        outputtree[fcnc_regions[i]]->Branch("tau_pt_ss",&tau_pt_ss);
-        outputtree[fcnc_regions[i]]->Branch("tau_pt_os",&tau_pt_os);
-        outputtree[fcnc_regions[i]]->Branch("drlbditau", &drlbditau);
-        outputtree[fcnc_regions[i]]->Branch("etamax", &etamax);
-        outputtree[fcnc_regions[i]]->Branch("drltau",&drltau);
-        outputtree[fcnc_regions[i]]->Branch("drtauj",&drtauj);
-        outputtree[fcnc_regions[i]]->Branch("drtautau",&drtautau);
-        outputtree[fcnc_regions[i]]->Branch("drtaujmin", &drtaujmin);
-
-      }
-    }
-
-    for (int i = 0; i < fake_nregions; ++i)
-    {
-      if(debug) printf("init sample:: get region: %s\n", fake_regions[i]->Data());
-      if (outputtreefile->Get(*fake_regions[i])) {
-        outputtree[*fake_regions[i]] = (TTree*)(outputtreefile->Get(*fake_regions[i]));
-        Init(outputtree[*fake_regions[i]]);
-      }else{
-        outputtree[*fake_regions[i]] = new TTree(*fake_regions[i],*fake_regions[i]);
-        definetree(outputtree[*fake_regions[i]]);
-      }
-    }
-  }
-//==========================init output histogram==========================
-  if(dohist){
-    if (sample.Contains("data"))
-    {
-      fake_plots->init_sample("data","data","data",kBlack);
-      fcnc_plots->init_sample("data","data","data",kBlack);
-      fake_notau_plots->init_sample("data","data_notau","data",kBlue);
-      initdata = 1;
-    }else{
-      if(sample.Contains("ttbar")) sample = "ttbar";
-      else if(reduce == 1) sample.Remove(sample.Sizeof()-2);
-      fake_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
-      fcnc_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
-      fake_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
-      fcnc_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
-      fake_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
-      fcnc_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
-      fake_plots->init_sample(sample + "_lep",sample + "_lep",sampletitle + "(lepton fake #tau)",kGreen);
-      fcnc_plots->init_sample(sample + "_lep",sample + "_lep",sampletitle + "(lepton fake #tau)",kGreen);
-      fake_plots->init_sample(sample + "_real",sample + "_real",sampletitle + "(real #tau)",kRed);
-      fcnc_plots->init_sample(sample + "_real",sample + "_real",sampletitle + "(real #tau)",kRed);
-      fake_plots->init_sample(sample + "_c",sample + "_c",sampletitle + "(c-jets fake #tau)",kOrange);
-      fcnc_plots->init_sample(sample + "_c",sample + "_c",sampletitle + "(c-jets fake #tau)",kOrange);
-      fake_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
-      fcnc_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
-      fake_notau_plots->init_sample(sample,sample+"_notau",sampletitle,kRed);
-    }
-  }
 }

@@ -46,27 +46,26 @@ void hadhadtree::init_hist(){
   dohist = 1;
   fcnc_plots = new histSaver();
   fcnc_plots->set_weight(&weight);
-  fcnc_plots->debug = 0;
+  fcnc_plots->debug = debug;
 
   //fcnc_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-  fcnc_plots->add(10,25.,125.,"p_{T,lead-#tau}","tau_0_pt",&tau_pt_0,true,"GeV");
-  fcnc_plots->add(10,25.,125.,"p_{T,sublead-#tau}","tau_1_pt",&tau_pt_1,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{W}","wmass",&wmass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{t,FCNC}","t2mass",&t2mass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{#tau#tau,vis}","ttvismass",&ttvismass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,true,"GeV");
-  fcnc_plots->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
-  fcnc_plots->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
-  fcnc_plots->add(100,0.,5.,"#eta_{#tau,max}","etamax",&etamax,false,"");
-  fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
-  fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
-  fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
+  fcnc_plots->add(10,25.,125.,"p_{T,lead-#tau}","tau_0_pt",&tau_pt_0,false,"GeV");
+  fcnc_plots->add(10,25.,125.,"p_{T,sublead-#tau}","tau_1_pt",&tau_pt_1,false,"GeV");
+  //fcnc_plots->add(100,50.,250.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
+  //fcnc_plots->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
+  //fcnc_plots->add(100,50.,250.,"m_{W}","wmass",&wmass,true,"GeV");
+  //fcnc_plots->add(100,50.,250.,"m_{t,FCNC}","t2mass",&t2mass,true,"GeV");
+  //fcnc_plots->add(100,50.,250.,"m_{#tau#tau,vis}","ttvismass",&ttvismass,true,"GeV");
+  //fcnc_plots->add(100,50.,250.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,true,"GeV");
+  //fcnc_plots->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,true,"GeV");
+  //fcnc_plots->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,true,"GeV");
+  //fcnc_plots->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
+  //fcnc_plots->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
+  //fcnc_plots->add(100,0.,5.,"#eta_{#tau,max}","etamax",&etamax,false,"");
+  //fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
+  //fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
+  //fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
 
-  vector<TString> fcnc_regions;
   fcnc_regions.push_back("reg2mtau1b2jss");
   fcnc_regions.push_back("reg1mtau1ltau1b2jss");
   fcnc_regions.push_back("reg2ltau1b2jss");
@@ -82,7 +81,7 @@ void hadhadtree::init_hist(){
 
   TString nprong[] = {"1prong","3prong"};
   
-  for (int j = 0; j < 3; ++j)
+  for (int j = 0; j < fcnc_regions.size(); ++j)
   {
     for (int k = 0; k < 2; ++k)
     {
@@ -100,8 +99,7 @@ void hadhadtree::init_sample(TString sample, TString sampletitle){
 //==========================init output n-tuple==========================
   if(writetree){
     outputtreefile = new TFile(sample + "_tree.root","update");
-    map<TString, TTree*>::iterator iter;
-    for (int i = 0; i < fcnc_nregions; ++i)
+    for (int i = 0; i < fcnc_regions.size(); ++i)
     {
       if(debug) printf("init sample:: get region: %s\n",fcnc_regions[i].Data());
       if (outputtreefile->Get(fcnc_regions[i])) {
@@ -120,8 +118,7 @@ void hadhadtree::init_sample(TString sample, TString sampletitle){
       fcnc_plots->init_sample("data","data","data",kBlack);
       initdata = 1;
     }else{
-      if(sample.Contains("ttbar")) sample = "ttbar";
-      else if(reduce == 1) sample.Remove(sample.Sizeof()-2);
+      if(reduce == 1) sample.Remove(0,6);
       fcnc_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
       fcnc_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
       fcnc_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
@@ -166,7 +163,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   }
   if (inputtree == 0) return;
   Long64_t nentries = inputtree->GetEntriesFast();
-  TString sample = samplename;
+  TString sample = samplename.Contains("data")? "data":samplename.Remove(0,6).Data();
   initgM();
 
   if (dumptruth) {
@@ -259,12 +256,27 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
 
     for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
       if (iter->second == 1) {
-        if (writetree) outputtree[iter->first]->Fill();
+        if (writetree){
+          if(outputtree.find(iter->first) != outputtree.end())
+            outputtree[iter->first]->Fill();
+          else{
+            printf("Error: outputtree cannot find: %s\n", iter->first.Data());
+            for(auto itertmp : outputtree){
+              printf("output tree list: %s\n", itertmp.first.Data());
+            }
+            exit(1);
+          }
+        }
         if (dohist) {
           fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_pt_1 > 35, taus_b_tagged->at(1));
         }
       }
     }
+  }
+  if (writetree) {
+    outputtreefile->cd();
+    for (auto itertmp : outputtree)
+      itertmp.second->Write(itertmp.first, TObject::kWriteDelete);
   }
 }
 
