@@ -6,6 +6,41 @@
 #include <TCanvas.h>
 #include "fcnc_include.h"
 
+hadhadtree::hadhadtree() : nominal::nominal(){
+  weights = new vector<Int_t> ();
+  taus_id = new vector<Int_t> ();
+  taus_b_tagged = new vector<Int_t> ();
+  taus_decay_mode = new vector<UInt_t> ();
+  taus_matched_mother_pdgId = new vector<Int_t> ();
+  taus_matched_mother_status = new vector<Int_t> ();
+  taus_matched_p4 = new vector<TLorentzVector>();
+  taus_matched_pdgId = new vector<Int_t> ();
+  taus_matched_vis_p4 = new vector<TLorentzVector>();
+  taus_n_charged_tracks = new vector<UInt_t> ();
+  taus_p4 = new vector<TLorentzVector>();
+  taus_q = new vector<Float_t> ();
+  bjets_fjvt = new vector<Float_t> ();
+  bjets_is_Jvt_HS = new vector<Int_t> ();
+  bjets_jvt = new vector<Float_t> ();
+  bjets_origin = new vector<Int_t> ();
+  bjets_p4 = new vector<TLorentzVector>();
+  bjets_q = new vector<Float_t> ();
+  bjets_type = new vector<Int_t> ();
+  bjets_width = new vector<Float_t> ();
+  bjets_wztruth_p4 = new vector<TLorentzVector>();
+  bjets_wztruth_pdgid = new vector<Float_t> ();
+  jets_fjvt = new vector<Float_t> ();
+  jets_is_Jvt_HS = new vector<Int_t> ();
+  jets_jvt = new vector<Float_t> ();
+  jets_origin = new vector<Int_t> ();
+  jets_p4 = new vector<TLorentzVector>();
+  jets_q = new vector<Float_t> ();
+  jets_type = new vector<Int_t> ();
+  jets_width = new vector<Float_t> ();
+  jets_wztruth_p4 = new vector<TLorentzVector>();
+  jets_wztruth_pdgid = new vector<Float_t> ();
+}
+
 void hadhadtree::init_hist(){
   //init histSaver here:
   dohist = 1;

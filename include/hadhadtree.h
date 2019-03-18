@@ -15,6 +15,7 @@
 class hadhadtree : public nominal{
 public :
    // Declaration of leaf types
+   hadhadtree();
    void Loop(TTree*inputtree, TString samplename, float globalweight);
    virtual void     Init(TTree *tree);
    void init_sample(TString sample, TString sampletitle);
@@ -26,7 +27,6 @@ public :
    float tau_pt_0;
    float tau_pt_1;
    vector<Int_t>           *weights;
-
    vector<Int_t>           *taus_id;
    vector<Int_t>           *taus_b_tagged;
    vector<UInt_t>          *taus_decay_mode;
@@ -38,7 +38,6 @@ public :
    vector<UInt_t>          *taus_n_charged_tracks;
    vector<TLorentzVector>  *taus_p4;
    vector<Float_t>         *taus_q;
-
    vector<Float_t>         *bjets_fjvt;
    vector<Int_t>           *bjets_is_Jvt_HS;
    vector<Float_t>         *bjets_jvt;
@@ -49,7 +48,6 @@ public :
    vector<Float_t>         *bjets_width;
    vector<TLorentzVector>  *bjets_wztruth_p4;
    vector<Float_t>         *bjets_wztruth_pdgid;
-
    vector<Float_t>         *jets_fjvt;
    vector<Int_t>           *jets_is_Jvt_HS;
    vector<Float_t>         *jets_jvt;
