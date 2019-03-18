@@ -48,13 +48,13 @@ int main(int argc, char const *argv[])
 		fn.getline(inputline,500);
 		if(strlen(inputline)==0) continue;
 		if(inputline[0]=='#') continue;
-		char filename[100];
+		char filename[500];
 		int dsid;
 		sscanf(inputline,"%d %s",&dsid,filename);
 		printf("reading file: DSID: %d name %s\n", dsid, filename);
 		TFile inputfile(filename);
 		if(!inputfile.Get("h_metadata")) {
-			printf("h_metadata not found exit.\n");
+			printf("h_metadata not found, exit.\n");
 			exit(1);
 		}
 		analysis->Loop( (TTree*)inputfile.Get("NOMINAL"), inputconfig, xsecs[dsid]*luminosity/((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8));
