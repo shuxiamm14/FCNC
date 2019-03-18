@@ -6,6 +6,8 @@ public:
    virtual void     Init(TTree *tree);
    void Loop(TTree *inputtree, TString samplename);
    void dumpTruth(int ipart);
+   void init_sample(TString sample, TString sampletitle);
+   void init_hist();
    ULong64_t       eventNumber;
    UInt_t          runNumber;
    UInt_t          randomRunNumber;

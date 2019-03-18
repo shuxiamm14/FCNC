@@ -35,99 +35,7 @@ void nominal::readTFmeanstd(TString filename){
   m_applyTF.readmeanfile(filename);
 }
 
-void nominal::init_hist(){
-  //init histSaver here:
-  dohist = 1;
-  fcnc_plots = new histSaver();
-  fcnc_plots->set_weight(&weight);
-  fcnc_plots->debug = 0;
 
-  //fcnc_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-  fcnc_plots->add(10,25.,125.,"p_{T,SS#tau}","tauptss",&tau_pt_ss,true,"GeV");
-  fcnc_plots->add(10,25.,125.,"p_{T,OS#tau}","tauptos",&tau_pt_os,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m^{T}_{W}","mtw",&mtw,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{W}","wmass",&wmass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{t,FCNC}","t2mass",&t2mass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{#tau#tau,vis}","tautauvismass",&ttvismass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,true,"GeV");
-  fcnc_plots->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
-  fcnc_plots->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
-  fcnc_plots->add(100,0.,10.,"#DeltaR(l+b-jet,#tau+#tau)","drlbditau",&drlbditau,false,"");
-  fcnc_plots->add(100,0.,5.,"#eta_{#tau,max}","etamax",&etamax,false,"");
-  fcnc_plots->add(100,0.,5.,"#DeltaR(l,#tau)","drltau",&drltau,false,"");
-  fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
-  fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
-  fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
-  TString _fcnc_regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
-  fcnc_nregions = sizeof(_fcnc_regions)/sizeof(TString);
-  fcnc_regions = (TString**)malloc(fcnc_nregions*sizeof(TString*));
-
-  for (int i = 0; i < fcnc_nregions; ++i)
-  {
-    fcnc_regions[i] = new TString(_fcnc_regions[i]);
-  }
-
-  TString nprong[] = {"1prong","3prong"};
-  
-  for (int j = 0; j < 3; ++j){
-    for (int k = 0; k < 2; ++k)
-    {
-      for (int i = 0; i < 4; ++i)
-      {
-        if(doseppt)
-          for (int iptbin = 0; iptbin < 2; ++iptbin)
-          {
-            if(debug) printf("adding region: %s\n", (*fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-            fcnc_plots->add_region(*fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
-            fcnc_plots->add_region(*fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
-          }
-        fcnc_plots->add_region(*fcnc_regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
-        fcnc_plots->add_region(*fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-      }
-    }
-  }
-  fake_notau_plots = new histSaver();
-  fake_notau_plots->set_weight(&weight);
-  fake_notau_plots->debug = 0;
-  fake_plots = new histSaver();
-  fake_plots->set_weight(&weight);
-  fake_plots->debug = 0;
-  //fake_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-  fake_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
-  fake_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
-  fake_plots->add(20,20.,120.,"m_{#tau,light-jet}","taulmass",&taulmass,true,"GeV");
-  //fake_plots->add(100,0.,100.,"E_{miss}^{T}","met",&MET_RefFinal_et,true,"GeV");
-  fake_notau_plots->add(10,0.,200.,"p_{T,b}","bpt",&pt_b,true,"GeV");
-  fake_notau_plots->add(10,0.,200.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
-  
-  TString _fake_regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b"};
-
-  TString fake_regions_notau[] = {"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
-  
-  fake_nregions = sizeof(_fake_regions)/sizeof(TString);
-  int fake_nregionsnotau = sizeof(fake_regions_notau)/sizeof(TString);
-  fake_regions = (TString**)malloc((fake_nregions+fake_nregionsnotau)*sizeof(TString*));
-  
-  for (int j = 0; j < fake_nregions; ++j){
-    fake_regions[j] = new TString(_fake_regions[j]);
-    for (int k = 0; k < 2; ++k){
-      for (int i = 0; i < 4; i+=1){
-        if(debug) printf("adding region: %s\n", (*fake_regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-        fake_plots->add_region(*fake_regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-        fake_plots->add_region(*fake_regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
-      }
-    }
-  }
-  for (int j = 0; j < sizeof(fake_regions_notau)/sizeof(TString); ++j){
-    fake_notau_plots->add_region(fake_regions_notau[j]);
-    fake_regions[j+fake_nregions] = new TString(fake_regions_notau[j]);
-  }
-  fake_nregions+=fake_nregionsnotau;
-}
 nominal::~nominal(){
   deletepointer(fake_plots);
   deletepointer(fcnc_plots);
@@ -375,50 +283,50 @@ void nominal::init_sample(TString sample, TString sampletitle){
     map<TString, TTree*>::iterator iter;
     for (int i = 0; i < fcnc_nregions; ++i)
     {
-      if(debug) printf("init sample:: get region: %s\n", fcnc_regions[i]->Data());
-      if (outputtreefile->Get(*fcnc_regions[i])) {
-        outputtree[*fcnc_regions[i]] = (TTree*)(outputtreefile->Get(*fcnc_regions[i]));
-        Init(outputtree[*fcnc_regions[i]]);
+      if(debug) printf("init sample:: get region: %s\n",fcnc_regions[i].Data());
+      if (outputtreefile->Get(fcnc_regions[i])) {
+        outputtree[fcnc_regions[i]] = (TTree*)(outputtreefile->Get(fcnc_regions[i]));
+        Init(outputtree[fcnc_regions[i]]);
       }else{
-        outputtree[*fcnc_regions[i]] = new TTree(*fcnc_regions[i],*fcnc_regions[i]);
-        if(reduce<2 || !fcnc) definetree(outputtree[*fcnc_regions[i]]);
+        outputtree[fcnc_regions[i]] = new TTree(fcnc_regions[i],fcnc_regions[i]);
+        if(reduce<2 || !fcnc) definetree(outputtree[fcnc_regions[i]]);
       }
       if(reduce >= 1 || reduce == 0){
-        outputtree[*fcnc_regions[i]]->Branch("t1mass",&t1mass);
-        outputtree[*fcnc_regions[i]]->Branch("tautaumass",&tautaumass);
-        outputtree[*fcnc_regions[i]]->Branch("wmass",&wmass);
-        outputtree[*fcnc_regions[i]]->Branch("t2mass",&t2mass);
+        outputtree[fcnc_regions[i]]->Branch("t1mass",&t1mass);
+        outputtree[fcnc_regions[i]]->Branch("tautaumass",&tautaumass);
+        outputtree[fcnc_regions[i]]->Branch("wmass",&wmass);
+        outputtree[fcnc_regions[i]]->Branch("t2mass",&t2mass);
       }
       if(reduce==2 || reduce == 0){
-        //outputtree[*fcnc_regions[i]]->Branch("tau_truthType_0",&tau_truthType_0);
-        //outputtree[*fcnc_regions[i]]->Branch("tau_truthType_1",&tau_truthType_1);
-        //outputtree[*fcnc_regions[i]]->Branch("tau_charge_0",&tau_charge_0);
-        //outputtree[*fcnc_regions[i]]->Branch("tau_charge_1",&tau_charge_1);
-        //outputtree[*fcnc_regions[i]]->Branch("tau_JetBDTSigTight_0",&tau_JetBDTSigTight_0);
-        //outputtree[*fcnc_regions[i]]->Branch("tau_JetBDTSigTight_1",&tau_JetBDTSigTight_1);
-        //outputtree[*fcnc_regions[i]]->Branch("eventNumber", &eventNumber);
-        outputtree[*fcnc_regions[i]]->Branch("neutrino_pt" , &neutrino_pt );
-        outputtree[*fcnc_regions[i]]->Branch("neutrino_eta", &neutrino_eta);
-        outputtree[*fcnc_regions[i]]->Branch("neutrino_phi", &neutrino_phi);
-        outputtree[*fcnc_regions[i]]->Branch("neutrino_m"  , &neutrino_m  );
-        outputtree[*fcnc_regions[i]]->Branch("weight",&weight);
-        outputtree[*fcnc_regions[i]]->Branch("fakeSF",&fakeSF);
-        outputtree[*fcnc_regions[i]]->Branch("ljet_indice", &ljet_indice );
-        outputtree[*fcnc_regions[i]]->Branch("x1fit", &x1fit);
-        outputtree[*fcnc_regions[i]]->Branch("x2fit", &x2fit);
-        outputtree[*fcnc_regions[i]]->Branch("t1vismass",&t1vismass);
-        outputtree[*fcnc_regions[i]]->Branch("t2vismass",&t2vismass);
-        outputtree[*fcnc_regions[i]]->Branch("ttvismass",&ttvismass);
-        outputtree[*fcnc_regions[i]]->Branch("tautauvispt",&tautauvispt);
-        outputtree[*fcnc_regions[i]]->Branch("mtw",&mtw);
-        outputtree[*fcnc_regions[i]]->Branch("tau_pt_ss",&tau_pt_ss);
-        outputtree[*fcnc_regions[i]]->Branch("tau_pt_os",&tau_pt_os);
-        outputtree[*fcnc_regions[i]]->Branch("drlbditau", &drlbditau);
-        outputtree[*fcnc_regions[i]]->Branch("etamax", &etamax);
-        outputtree[*fcnc_regions[i]]->Branch("drltau",&drltau);
-        outputtree[*fcnc_regions[i]]->Branch("drtauj",&drtauj);
-        outputtree[*fcnc_regions[i]]->Branch("drtautau",&drtautau);
-        outputtree[*fcnc_regions[i]]->Branch("drtaujmin", &drtaujmin);
+        //outputtree[fcnc_regions[i]]->Branch("tau_truthType_0",&tau_truthType_0);
+        //outputtree[fcnc_regions[i]]->Branch("tau_truthType_1",&tau_truthType_1);
+        //outputtree[fcnc_regions[i]]->Branch("tau_charge_0",&tau_charge_0);
+        //outputtree[fcnc_regions[i]]->Branch("tau_charge_1",&tau_charge_1);
+        //outputtree[fcnc_regions[i]]->Branch("tau_JetBDTSigTight_0",&tau_JetBDTSigTight_0);
+        //outputtree[fcnc_regions[i]]->Branch("tau_JetBDTSigTight_1",&tau_JetBDTSigTight_1);
+        //outputtree[fcnc_regions[i]]->Branch("eventNumber", &eventNumber);
+        outputtree[fcnc_regions[i]]->Branch("neutrino_pt" , &neutrino_pt );
+        outputtree[fcnc_regions[i]]->Branch("neutrino_eta", &neutrino_eta);
+        outputtree[fcnc_regions[i]]->Branch("neutrino_phi", &neutrino_phi);
+        outputtree[fcnc_regions[i]]->Branch("neutrino_m"  , &neutrino_m  );
+        outputtree[fcnc_regions[i]]->Branch("weight",&weight);
+        outputtree[fcnc_regions[i]]->Branch("fakeSF",&fakeSF);
+        outputtree[fcnc_regions[i]]->Branch("ljet_indice", &ljet_indice );
+        outputtree[fcnc_regions[i]]->Branch("x1fit", &x1fit);
+        outputtree[fcnc_regions[i]]->Branch("x2fit", &x2fit);
+        outputtree[fcnc_regions[i]]->Branch("t1vismass",&t1vismass);
+        outputtree[fcnc_regions[i]]->Branch("t2vismass",&t2vismass);
+        outputtree[fcnc_regions[i]]->Branch("ttvismass",&ttvismass);
+        outputtree[fcnc_regions[i]]->Branch("tautauvispt",&tautauvispt);
+        outputtree[fcnc_regions[i]]->Branch("mtw",&mtw);
+        outputtree[fcnc_regions[i]]->Branch("tau_pt_ss",&tau_pt_ss);
+        outputtree[fcnc_regions[i]]->Branch("tau_pt_os",&tau_pt_os);
+        outputtree[fcnc_regions[i]]->Branch("drlbditau", &drlbditau);
+        outputtree[fcnc_regions[i]]->Branch("etamax", &etamax);
+        outputtree[fcnc_regions[i]]->Branch("drltau",&drltau);
+        outputtree[fcnc_regions[i]]->Branch("drtauj",&drtauj);
+        outputtree[fcnc_regions[i]]->Branch("drtautau",&drtautau);
+        outputtree[fcnc_regions[i]]->Branch("drtaujmin", &drtaujmin);
 
       }
     }

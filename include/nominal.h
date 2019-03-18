@@ -26,7 +26,7 @@ public :
    Double_t arglist[10];
    Int_t ierflg = 0;
    bool dumptruth = 0;
-   TString **fcnc_regions;
+   vector<TString> fcnc_regions;
    int fcnc_nregions;
    TString **fake_regions;
    int fake_nregions;
@@ -35,7 +35,6 @@ public :
    double leptonicw = 0;
    bool fcnc = 0;
    bool writetree = 1;
-   void init_hist();
    TString bwps[4] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
    TString ptbin[2] = {"below35","above35"};
    map<TString, bool> ifregions;
