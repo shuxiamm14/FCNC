@@ -25,7 +25,7 @@ int main(int argc, char const *argv[])
 		printf("Wrong config file name: %s\n", inputconfig.Data());
 		exit(0);
 	}
-	char inputline[100];
+	char inputline[500];
 
 	hadhadtree *analysis = new hadhadtree();
     analysis->dofcnc = 1;
@@ -33,10 +33,10 @@ int main(int argc, char const *argv[])
 	analysis->debug = 0;
 	analysis->init_hist();
 	analysis->init_sample(inputconfig,inputconfig);
-	ifstream xsecfile(prefix + "config/Xsecs.txt");
+	ifstream xsecfile(prefix + "/config/Xsecs.txt");
 	map<int, float> xsecs;
 	while(!xsecfile.eof()){
-		xsecfile.getline(inputline,200);
+		xsecfile.getline(inputline,500);
 		if(strlen(inputline)==0) continue;
 		if(inputline[0]=='#') continue;
 		int dsid;
@@ -45,7 +45,7 @@ int main(int argc, char const *argv[])
 		xsecs[dsid] = filtereff*xsec*kfactor;
 	}
 	while(!fn.eof()){
-		fn.getline(inputline,200);
+		fn.getline(inputline,500);
 		if(strlen(inputline)==0) continue;
 		if(inputline[0]=='#') continue;
 		char filename[100];
