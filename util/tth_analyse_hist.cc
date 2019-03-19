@@ -20,7 +20,7 @@ int main(int argc, char const *argv[])
 	fitter->setparam("sf_j", 1, 0.1, 0.,2.);
 	int plot_option = *argv[1] - '0';
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
-	histSaver *tau_plots = new histSaver();
+	histSaver *tau_plots = new histSaver("tth_ana_output");
 	tau_plots -> analysis = "Fake tau study";
 	if(mergeprong) tau_plots->muteregion("prong");
 	tau_plots->muteregion("ptbin");
@@ -190,8 +190,7 @@ int main(int argc, char const *argv[])
 		} // loop prong
 
 		if(doPlots) tau_plots->plot_stack("postfit");
-		TFile *output = new TFile("debug.root","recreate");
-		tau_plots->write(output);
+		tau_plots->write();
 	}
 	return 0;
 }

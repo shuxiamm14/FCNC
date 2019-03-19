@@ -19,7 +19,7 @@ public :
    void Loop(TTree*inputtree, TString samplename, float globalweight);
    virtual void     Init(TTree *tree);
    void init_sample(TString sample, TString sampletitle);
-   void init_hist();
+   void init_hist(TString histfilename);
    void definetaus();
    void definejets();
    void definetree(TTree * tree);

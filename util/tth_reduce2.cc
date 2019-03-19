@@ -31,31 +31,25 @@ int main(int argc, char const *argv[])
 	analysis->reduce = 2;
 	analysis->dumptruth = 0;
 	analysis->readTFmeanstd("meanstddevs.txt");
-	if(doplot) analysis->init_hist();
-	while(!fn.eof()){
-		fn.getline(inputline,200);
-		if(strlen(inputline)==0) continue;
-		if(inputline[0]=='#') continue;
-		char cate[100];
-		char title[100];
-		int version;
-		sscanf(inputline,"%d %s %s",&version,cate,title);
-		analysis->version = version;
-		analysis->init_sample(cate, title);
-		printf("reading Root file: %s\n", (prefix + "/data/reduce1/" + cate + "_tree.root").Data());
-		TFile inputfile(prefix + "/data/reduce1/" + cate + "_tree.root");
-		for (std::vector<TString>::iterator i = regions.begin(); i != regions.end(); ++i)
-		{
-			printf("region: %s\n", i->Data());
-			analysis->Loop( (TTree*)inputfile.Get(i->Data()), cate);
-			printf("finish loop on region: %s\n", i->Data());
-		}
-		inputfile.Close();
-		TFile *output = new TFile(CharAppend(cate,".root"),"update");
-		if(doplot) analysis->plot(output);
-		output->Close();
-		deletepointer(output);
-		analysis->finalise_sample();
+
+	fn.getline(inputline,200);
+	char cate[100];
+	char title[100];
+	int version;
+	sscanf(inputline,"%d %s %s",&version,cate,title);
+	if(doplot) analysis->init_hist(cate);
+	analysis->version = version;
+	analysis->init_sample(cate, title);
+	printf("reading Root file: %s\n", (prefix + "/data/reduce1/" + cate + "_tree.root").Data());
+	TFile inputfile(prefix + "/data/reduce1/" + cate + "_tree.root");
+	for (std::vector<TString>::iterator i = regions.begin(); i != regions.end(); ++i)
+	{
+		printf("region: %s\n", i->Data());
+		analysis->Loop( (TTree*)inputfile.Get(i->Data()), cate);
+		printf("finish loop on region: %s\n", i->Data());
 	}
+	inputfile.Close();
+	if(doplot) analysis->plot();
+	analysis->finalise_sample();
 	return 0;
 }

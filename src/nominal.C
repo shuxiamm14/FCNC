@@ -81,22 +81,20 @@ nominal::~nominal(){
   deletepointer(neutrino_m   );
 }
 
-void nominal::plot(TFile *outputfile){
+void nominal::plot(){
   if(fake_plots) {
-    if(debug) printf("fill fake_plots\n");
-    fake_plots->write(outputfile);
+    if(debug) printf("write fake_plots\n");
+    fake_plots->write();
     fake_plots->clearhist();
   }
   if(fcnc_plots) {
-    if(debug) printf("fill fcnc plots\n");
-    if(debug) fcnc_plots->show();
-    fcnc_plots->write(outputfile);
-    if(debug) printf("clear fcnc plots\n");
+    if(debug) printf("write fcnc plots\n");
+    fcnc_plots->write();
     fcnc_plots->clearhist();
   }
   if(fake_notau_plots) {
-    if(debug) printf("fill fake_notau_plots\n");
-    fake_notau_plots->write(outputfile);
+    if(debug) printf("write fake_notau_plots\n");
+    fake_notau_plots->write();
     fake_notau_plots->clearhist();
   }
 }
@@ -302,6 +300,9 @@ void nominal::fill_notau(TString region, TString sample){
   fake_notau_plots->fill_hist(sample, region);
 }
 void nominal::finalise_sample(){
+  if(dohist) {
+    plot();
+  }
   if(writetree) {
     outputtreefile->Close();
     deletepointer(outputtreefile);

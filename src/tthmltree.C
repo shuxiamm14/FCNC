@@ -6,10 +6,10 @@
 #include "stdio.h"
 #include "stdlib.h"
 
-void tthmltree::init_hist(){
+void tthmltree::init_hist(TString outputfilename){
   //init histSaver here:
   dohist = 1;
-  fcnc_plots = new histSaver();
+  fcnc_plots = new histSaver(outputfilename + "_fcnc");
   fcnc_plots->set_weight(&weight);
   fcnc_plots->debug = 0;
 
@@ -59,10 +59,10 @@ void tthmltree::init_hist(){
       }
     }
   }
-  fake_notau_plots = new histSaver();
+  fake_notau_plots = new histSaver(outputfilename + "_fake_notau");
   fake_notau_plots->set_weight(&weight);
   fake_notau_plots->debug = 0;
-  fake_plots = new histSaver();
+  fake_plots = new histSaver(outputfilename + "_fake");
   fake_plots->set_weight(&weight);
   fake_plots->debug = 0;
   //fake_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");

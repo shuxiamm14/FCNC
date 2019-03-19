@@ -7,7 +7,7 @@ int main(int argc, char const *argv[])
 
 	int plot_option = 2;
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
-	histSaver *tau_plots = new histSaver();
+	histSaver *tau_plots = new histSaver("tth_fcnc_ana");
 	tau_plots->debug = 0;
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
   	tau_plots->add("p_{T,#tau}","taupt","GeV",1);

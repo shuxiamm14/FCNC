@@ -7,6 +7,7 @@ int main(int argc, char const *argv[])
 		printf("Usage: xtfw_reduce_run dataconfigfile (mc16a_wjet.txt)\n");
 		exit(1);
 	}
+	bool debug = 0;
 	bool doplot = 1;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
@@ -30,14 +31,6 @@ int main(int argc, char const *argv[])
 		exit(0);
 	}
 	char inputline[500];
-	gErrorIgnoreLevel=kError;
-	hadhadtree *analysis = new hadhadtree();
-    analysis->dofcnc = 1;
-	analysis->reduce = 1;
-	analysis->debug = 1;
-	analysis->writetree = 1;
-	analysis->init_hist();
-	analysis->init_sample(inputconfig,inputconfig);
 	ifstream xsecfile(prefix + "/config/Xsecs.txt");
 	map<int, float> xsecs;
 	printf("reading cross section file: %s\n", (prefix + "/config/Xsecs.txt").Data());
@@ -50,6 +43,14 @@ int main(int argc, char const *argv[])
 		sscanf(inputline,"%d %f %f %f", &dsid, &filtereff, &xsec, &kfactor);
 		xsecs[dsid] = filtereff*xsec*kfactor;
 	}
+	if(!debug) gErrorIgnoreLevel=kError;
+	hadhadtree *analysis = new hadhadtree();
+    analysis->dofcnc = 1;
+	analysis->reduce = 1;
+	analysis->debug = debug;
+	analysis->writetree = 1;
+	if(doplot) analysis->init_hist(inputconfig);
+	analysis->init_sample(inputconfig,inputconfig);
 	while(!fn.eof()){
 		fn.getline(inputline,500);
 		if(strlen(inputline)==0) continue;
@@ -67,11 +68,5 @@ int main(int argc, char const *argv[])
 		inputfile.Close();
 	}
 	analysis->finalise_sample();
-	if(doplot) {
-		TFile *output = new TFile(CharAppend(inputconfig,".root"),"recreate");
-		analysis->plot(output);
-		output->Close();
-		deletepointer(output);
-	}
 	return 0;
 }

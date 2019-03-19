@@ -41,10 +41,10 @@ hadhadtree::hadhadtree() : nominal::nominal(){
   jets_wztruth_pdgid = new vector<Float_t> ();
 }
 
-void hadhadtree::init_hist(){
+void hadhadtree::init_hist(TString histfilename){
   //init histSaver here:
   dohist = 1;
-  fcnc_plots = new histSaver();
+  fcnc_plots = new histSaver(histfilename);
   fcnc_plots->set_weight(&weight);
   fcnc_plots->debug = debug;
 
@@ -133,6 +133,7 @@ void hadhadtree::init_sample(TString sample, TString sampletitle){
 
 void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
 {
+  if(debug) fcnc_plots->show();
   bool isData = samplename.Contains("data");
 
   bool doweightsys = ((TString)inputtree->GetName() == "NOMINAL")? 1 : 0;
@@ -228,7 +229,8 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       jet_NOMINAL_global_effSF_MV2c10*
       jet_NOMINAL_global_ineffSF_MV2c10;
     float weight_pileup = NOMINAL_pileup_combined_weight;
-    weight = weight_mc*weight_pileup*lepton_SF*trig_SF*jetSFs*globalweight;
+    //weight = weight_mc*weight_pileup*lepton_SF*trig_SF*jetSFs*globalweight;
+    weight = 1;
     weights->push_back(weight);
     //===============================pre-selections===============================
     cutflow[0]+=weight;

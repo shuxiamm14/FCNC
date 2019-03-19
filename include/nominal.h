@@ -70,7 +70,7 @@ public :
    Double_t _lum = 80.;
    nominal();
    virtual ~nominal();
-   void plot(TFile *outputfile);
+   void plot();
    map<TString, TTree*> outputtree;
    void readTFmeanstd(TString filename);
    void initgM();

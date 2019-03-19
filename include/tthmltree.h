@@ -7,7 +7,7 @@ public:
    void Loop(TTree *inputtree, TString samplename);
    void dumpTruth(int ipart);
    void init_sample(TString sample, TString sampletitle);
-   void init_hist();
+   void init_hist(TString outputhistfile);
    ULong64_t       eventNumber;
    UInt_t          runNumber;
    UInt_t          randomRunNumber;
