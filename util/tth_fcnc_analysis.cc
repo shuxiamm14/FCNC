@@ -7,29 +7,42 @@ int main(int argc, char const *argv[])
 
 	int plot_option = 2;
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
-	histSaver *tau_plots = new histSaver();
+	histSaver *tau_plots = new histSaver("b4fakeSFplot");
+	tau_plots->inputfilename = "b4fakeSF";
 	tau_plots->debug = 0;
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
-  	tau_plots->add("p_{T,#tau}","taupt","GeV",1);
-  	tau_plots->add("m_{t,SM}","t1mass","GeV",5);
-  	tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
-  	tau_plots->add("m_{W}","wmass","GeV",5);
-  	tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
-  	tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",5);
-  	tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",5);
+  	//tau_plots->add("p_{T,#tau}","taupt","GeV",1);
+  	//tau_plots->add("m_{t,SM}","t1mass","GeV",5);
+  	//tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
+  	//tau_plots->add("m_{W}","wmass","GeV",5);
+  	//tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
+  	//tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",5);
+  	//tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",5);
   	//tau_plots->add("E_{#nu,1}/E_{#tau,1}","x1fit","",5);
   	//tau_plots->add("E_{#nu,2}/E_{#tau,2}","x2fit","",5);
+  	tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",1);
+  	//tau_plots->add("p_{T,SS#tau}","tauptss","GeV",1);
+  	//tau_plots->add("p_{T,OS#tau}","tauptos","GeV",1);
+  	//tau_plots->add("m^{T}_{W}","mtw","GeV",1);
+  	//tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",1);
+  	//tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",1);
+  	//tau_plots->add("#eta_{#tau,max}","etamax","",1);
+  	//tau_plots->add("#DeltaR(l,#tau)","drltau","",1);
+  	//tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",1);
+  	//tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",1);
+  	//tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",1);
   	tau_plots->blinding = 30;
 	TString regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
 	TString nprong[] = {"1prong","3prong"};
 	for (int j = 0; j < 3; ++j)
 	  for (int k = 0; k < 2; ++k)
 	    for (int i = 1; i < 4; i+=2){
-	      printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-//	      tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-	      //tau_plots->add_region(regions[j] + "_" + nprong[k] + "_above35_veto" + bwps[i]);
-	      //tau_plots->add_region(regions[j] + "_" + nprong[k] + "_below35_veto" + bwps[i]);
-	      tau_plots->add_region(regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
+	    	TString addedregion = regions[j] + "_" + nprong[k] + "_veto" + bwps[i];
+	      	printf("adding region: %s\n", addedregion.Data());
+	      	tau_plots->add_region(addedregion);
+//	    	tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
+	    	//tau_plots->add_region(regions[j] + "_" + nprong[k] + "_above35_veto" + bwps[i]);
+	    	//tau_plots->add_region(regions[j] + "_" + nprong[k] + "_below35_veto" + bwps[i]);
 	    }
 	TString samples[] = {"Other", "Vjets", "diboson", "ttH", "ttV", "ttbar","fcnc_ch"};
 	double norm[] = {1,1,1,1,1,1,50};

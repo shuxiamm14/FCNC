@@ -1,20 +1,18 @@
 #!/bin/bash
-if [ -z ${CUR_DIR+x} ] ; then
-	if [ "$0" = "-bash" ]; then
-		export CUR_DIR=$(dirname "$(pwd)/"$(dirname "$BASH_SOURCE")"/$(basename "$BASH_SOURCE")")
-	else
-        if [ $? -eq 0 ]; then
-            CUR_FILE=$0
-    	else
-            CUR_FILE=$(pwd)/$0
-    	fi
-		export CUR_DIR=$(dirname "$CUR_FILE")
-	fi
-	export PATH+=:$CUR_DIR/bin:$CUR_DIR/scripts
+if [ -z ${ttH_fakes_DIR+x} ] ; then
+	SOURCE="${BASH_SOURCE[0]}"
+	while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+	  DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+	  SOURCE="$(readlink "$SOURCE")"
+	  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+	done
+	ttH_fakes_DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+	export PATH+=:$ttH_fakes_DIR/bin:$ttH_fakes_DIR/scripts
 	if [ $(uname) = "Darwin" ]; then
-		export DYLD_LIBRARY_PATH+=:$CUR_DIR/lib
+		export DYLD_LIBRARY_PATH+=:$ttH_fakes_DIR/lib
 	else
-		export LD_LIBRARY_PATH+=:$CUR_DIR/bin
+		export LD_LIBRARY_PATH+=:$ttH_fakes_DIR/bin
 	fi
-	alias fcncmake='cd $CUR_DIR; make; cd -'
+	alias tth='cd $ttH_fakes_DIR'
+	alias tthmake='cd $ttH_fakes_DIR/build; make; cd -'
 fi
