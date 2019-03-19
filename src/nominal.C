@@ -3,12 +3,9 @@
 void nominal::fill_fake(TString region, int nprong, TString sample, int iptbin, float taubtag){
   for (int i = 0; i < 4; ++i){
     if(taubtag>btagwpCut[i]) {
-      if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[i]).Data(), sample.Data());
-      if(doseppt) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
-      fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[i]);
+      fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
     }else{
-      if(doseppt) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
-      fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + "veto" + bwps[i]);
+      fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
     }
   }
 }
@@ -25,7 +22,6 @@ nominal::nominal(){
   reduce = 0;
   initdata = 0;
   initttbar = 0;
-  doseppt = 0;
   dohist = 0;
   version = 0;
   pt_b = 0;
@@ -199,36 +195,47 @@ vector<int> nominal::findcjetML(TString channel, vector<TLorentzVector> pool, TL
      modelname = "hadhad";
   }
   modelname = channel + char(nlightj + '0') + "j";
- 
+  if(debug) printf("lightjet:\n");
   for (int i = 0; i < nlightj; ++i)
   {
-     MLinput[nentryML].push_back(pool[i].Pt());
-     MLinput[nentryML].push_back(pool[i].Eta());
-     MLinput[nentryML].push_back(pool[i].Phi());
-     MLinput[nentryML].push_back(pool[i].E());
-     nentryML++;
+    if(debug) printv(pool[i]);
+    MLinput[nentryML].push_back(pool[i].Pt());
+    MLinput[nentryML].push_back(pool[i].Eta());
+    MLinput[nentryML].push_back(pool[i].Phi());
+    MLinput[nentryML].push_back(pool[i].E());
+    nentryML++;
   }
+  if(debug) printf("bjet:\n");
+  printv(bjet);
   MLinput[nentryML].push_back(bjet.Pt ());
   MLinput[nentryML].push_back(bjet.Eta());
   MLinput[nentryML].push_back(bjet.Phi());
   MLinput[nentryML].push_back(bjet.E  ());
   nentryML++;
+
+  if(debug) printf("taus:\n");
   for (int i = 0; i < taus.size(); ++i)
   {
-     MLinput[nentryML].push_back(taus[i].Pt());
-     MLinput[nentryML].push_back(taus[i].Eta());
-     MLinput[nentryML].push_back(taus[i].Phi());
-     MLinput[nentryML].push_back(taus[i].E());
-     nentryML++;
+    if(debug) printv(taus[i]);
+    MLinput[nentryML].push_back(taus[i].Pt());
+    MLinput[nentryML].push_back(taus[i].Eta());
+    MLinput[nentryML].push_back(taus[i].Phi());
+    MLinput[nentryML].push_back(taus[i].E());
+    nentryML++;
   }
   if(channel.Contains("lep")){
-     MLinput[nentryML].push_back(lep_v.Pt());
-     MLinput[nentryML].push_back(lep_v.Eta());
-     MLinput[nentryML].push_back(lep_v.Phi());
-     MLinput[nentryML].push_back(lep_v.E());
-     nentryML++;
+    if(debug) {
+      printf("lepton:\n");
+      printv(lep_v);
+    }
+    MLinput[nentryML].push_back(lep_v.Pt());
+    MLinput[nentryML].push_back(lep_v.Eta());
+    MLinput[nentryML].push_back(lep_v.Phi());
+    MLinput[nentryML].push_back(lep_v.E());
+    nentryML++;
   }
   modelname += trainpart ? "even" : "odd";
+  if(debug) printf("ML input: %s,%d, %d,%d\n", modelname.Data(),nentryML,4,nlightj);
   vector<vector<float>> predicted = m_applyTF.predictEvent(modelname,MLinput,nentryML,4,nlightj,2);
   float highest = 0;
   int cjettmp = 0;
@@ -280,12 +287,9 @@ vector<int> nominal::findwpair(vector<TLorentzVector> lightjets, int cjet){
 void nominal::fill_fcnc(TString region, int nprong, TString sample, int iptbin, float taubtag){
   for (int i = 0; i < 4; ++i){
     if(taubtag>btagwpCut[i]) {
-      if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[i]).Data(), sample.Data());
-      if(doseppt) fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
-      fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[i]);
+      fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
     }else{
-      if(doseppt) fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
-      fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + "veto" + bwps[i]);
+      fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
     }
   }
 }

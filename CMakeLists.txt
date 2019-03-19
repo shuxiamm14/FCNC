@@ -41,17 +41,20 @@ if (${ROOT_VERSION} VERSION_GREATER "6.0")
       DESTINATION ${CMAKE_SOURCE_DIR}/lib)
 endif (${ROOT_VERSION} VERSION_GREATER "6.0")
 
+add_library(dict SHARED dictionary.cxx)
+target_link_libraries(dict ${ROOT_LIBRARIES})
+
 add_library(applyTF SHARED ${PROJECT_SOURCE_DIR}/src/applyTF.cc)
 target_link_libraries(applyTF ${ROOT_LIBRARIES})
 
 add_library(nominal SHARED ${PROJECT_SOURCE_DIR}/src/nominal.C ${PROJECT_SOURCE_DIR}/include/nominal.h)
 target_link_libraries(nominal ${ROOT_LIBRARIES} applyTF ${PLOTTOOLLIB})
 
-add_library(hadhadtree SHARED ${PROJECT_SOURCE_DIR}/src/hadhadtree.C ${PROJECT_SOURCE_DIR}/include/hadhadtree.h dictionary.cxx)
-target_link_libraries(hadhadtree ${ROOT_LIBRARIES} nominal ${PLOTTOOLLIB})
+add_library(hadhadtree SHARED ${PROJECT_SOURCE_DIR}/src/hadhadtree.C ${PROJECT_SOURCE_DIR}/include/hadhadtree.h)
+target_link_libraries(hadhadtree ${ROOT_LIBRARIES} nominal ${PLOTTOOLLIB} dict)
 
 add_library(tthmltree SHARED ${PROJECT_SOURCE_DIR}/src/tthmltree.C ${PROJECT_SOURCE_DIR}/include/tthmltree.h)
-target_link_libraries(tthmltree ${ROOT_LIBRARIES} nominal ${PLOTTOOLLIB})
+target_link_libraries(tthmltree ${ROOT_LIBRARIES} nominal ${PLOTTOOLLIB} dict)
 
 file( GLOB APP_SOURCES RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/util/tth* )
 foreach( sourcefile ${APP_SOURCES} )

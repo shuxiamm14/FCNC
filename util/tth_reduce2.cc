@@ -25,12 +25,12 @@ int main(int argc, char const *argv[])
 	//regions.push_back("reg1l2b2j");
 
 	tthmltree *analysis = new tthmltree();
-	analysis->debug = 0;
+	analysis->debug = 1;
 	analysis->writetree = 1;
 	analysis->fcnc = 1;
 	analysis->reduce = 2;
 	analysis->dumptruth = 0;
-	analysis->readTFmeanstd("meanstddevs.txt");
+	//analysis->readTFmeanstd("meanstddevs.txt");
 
 	fn.getline(inputline,200);
 	char cate[100];

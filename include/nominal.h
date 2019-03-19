@@ -32,7 +32,6 @@ public :
    int reduce;
    bool initdata;
    bool initttbar;
-   bool doseppt;
    bool dohist;
    int version;
    float pt_b;

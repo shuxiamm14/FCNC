@@ -16,23 +16,23 @@ void tthmltree::init_hist(TString outputfilename){
   //fcnc_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
   fcnc_plots->add(10,25.,125.,"p_{T,SS#tau}","tauptss",&tau_pt_ss,true,"GeV");
   fcnc_plots->add(10,25.,125.,"p_{T,OS#tau}","tauptos",&tau_pt_os,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m^{T}_{W}","mtw",&mtw,true,"GeV");
+  fcnc_plots->add(100,100.,300.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
+  fcnc_plots->add(100,0.,50.,"m^{T}_{W}","mtw",&mtw,true,"GeV");
   fcnc_plots->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{W}","wmass",&wmass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{t,FCNC}","t2mass",&t2mass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{#tau#tau,vis}","tautauvismass",&ttvismass,true,"GeV");
-  fcnc_plots->add(100,50.,250.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,true,"GeV");
+  fcnc_plots->add(100,0.,250.,"m_{W}","wmass",&wmass,true,"GeV");
+  fcnc_plots->add(150,120.,270.,"m_{t,FCNC}","t2mass",&t2mass,true,"GeV");
+  fcnc_plots->add(100,0.,250.,"m_{#tau#tau,vis}","tautauvismass",&ttvismass,true,"GeV");
+  fcnc_plots->add(100,0.,200.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,true,"GeV");
   fcnc_plots->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,true,"GeV");
   fcnc_plots->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,true,"GeV");
   fcnc_plots->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
   fcnc_plots->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
-  fcnc_plots->add(100,0.,10.,"#DeltaR(l+b-jet,#tau+#tau)","drlbditau",&drlbditau,false,"");
-  fcnc_plots->add(100,0.,5.,"#eta_{#tau,max}","etamax",&etamax,false,"");
-  fcnc_plots->add(100,0.,5.,"#DeltaR(l,#tau)","drltau",&drltau,false,"");
-  fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
-  fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
-  fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
+  fcnc_plots->add(60,0.,6.,"#DeltaR(l+b-jet,#tau+#tau)","drlbditau",&drlbditau,false,"");
+  fcnc_plots->add(100,0.,2.5,"#eta_{#tau,max}","etamax",&etamax,false,"");
+  fcnc_plots->add(72,0.4,4.,"#DeltaR(l,#tau)","drltau",&drltau,false,"");
+  fcnc_plots->add(120,0.,6.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
+  fcnc_plots->add(92,0.4,5.,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
+  fcnc_plots->add(60,0.4,3.4,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
 
   fcnc_regions.push_back("reg1l2tau1bnj");
   fcnc_regions.push_back("reg1l1tau1b2j");
@@ -47,15 +47,12 @@ void tthmltree::init_hist(TString outputfilename){
     {
       for (int i = 0; i < 4; ++i)
       {
-        if(doseppt)
-          for (int iptbin = 0; iptbin < 2; ++iptbin)
-          {
-            if(debug) printf("adding region: %s\n", (fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-            fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
-            fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
-          }
-        fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
-        fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i]);
+        for (int iptbin = 0; iptbin < 2; ++iptbin)
+        {
+          if(debug) printf("adding region: %s\n", (fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
+          fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
+          fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+        }
       }
     }
   }
@@ -398,13 +395,15 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
             if (fabs(lep_ID_0) == 11) lep_v.SetPtEtaPhiE((*electron_pt)[0], (*electron_eta)[0], (*electron_phi)[0], (*electron_E)[0]);
             else lep_v.SetPtEtaPhiE((*muon_pt)[0], (*muon_eta)[0], (*muon_phi)[0], (*muon_E)[0]);
             if (nJets_OR_T != 2)
-              ljet_indice = findcjetML("lep2tau",ljets_v,bjet_v,lep_v,taus_v,EventNumber%2);
+              //ljet_indice = findcjetML("lep2tau",ljets_v,bjet_v,lep_v,taus_v,EventNumber%2);
+              ljet_indice = findcjet("lep2tau",ljets_v,bjet_v,lep_v,taus_v);
           } else {
             if (fabs(lep_ID_0) == 11) taus_v[0].SetPtEtaPhiE((*electron_pt)[0], (*electron_eta)[0], (*electron_phi)[0], (*electron_E)[0]);
             else taus_v[0].SetPtEtaPhiE((*muon_pt)[0], (*muon_eta)[0], (*muon_phi)[0], (*muon_E)[0]);
             taus_v[1].SetPtEtaPhiE((*m_tau_pt)[0], (*m_tau_eta)[0], (*m_tau_phi)[0], (*m_tau_E)[0]);
             lep_v.SetPtEtaPhiE(0, 0, 0, 0);
-            ljet_indice = findcjetML("lep2tau",ljets_v,bjet_v,lep_v,taus_v,EventNumber%2);
+            //ljet_indice = findcjetML("lep2tau",ljets_v,bjet_v,lep_v,taus_v,EventNumber%2);
+            ljet_indice = findcjet("lep2tau",ljets_v,bjet_v,lep_v,taus_v);
             if (debug) {
               printf("wmass: %f, t1mass: %f, cjet %d, wjet1 %d\n", wmass, t1mass, ljet_indice[0], ljet_indice[1]);
             }
@@ -492,6 +491,12 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
             mtw = mtw > 0 ? sqrt(mtw) : 0.;
             etamax = fabs(tau_eta_0) > fabs(tau_eta_1) ? fabs(tau_eta_0) : fabs(tau_eta_1);
             drltau = min(taus_v[0].DeltaR(lep_v), taus_v[1].DeltaR(lep_v));
+            if(drltau < 0.2) {
+              printf("WARINING: Delta(l,tau) is less than 0.2, please check: EventNumber = %llu\n",eventNumber);
+              printv(taus_v[0]);
+              printv(taus_v[1]);
+              printv(lep_v);
+            }
             tau_pt_ss = lep_ID_0*tau_charge_0 > 0 ? tau_pt_0 : tau_pt_1;
             tau_pt_os = lep_ID_0*tau_charge_0 < 0 ? tau_pt_0 : tau_pt_1;
           } else {
