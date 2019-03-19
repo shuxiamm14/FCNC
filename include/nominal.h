@@ -72,7 +72,7 @@ public :
    void plot();
    map<TString, TTree*> outputtree;
    void readTFmeanstd(TString filename);
-   void initgM();
+   TMinuit* initgM();
    void dumpTruth(int part);
    TLorentzVector vectorPtEtaPhiE(vector<float> vec);
    virtual void     Init(TTree *tree){};

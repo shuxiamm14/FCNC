@@ -151,7 +151,6 @@ void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t 
 
 
 vector<int> nominal::findcjet(TString channel, vector<TLorentzVector> ljet, TLorentzVector bjet, TLorentzVector lepton, vector<TLorentzVector> taus){
-  int j = 0;
   double m_w = 81000;
   vector<int> output;
   int nlightj = ljet.size();
@@ -159,23 +158,23 @@ vector<int> nominal::findcjet(TString channel, vector<TLorentzVector> ljet, TLor
   double smallDr = 999;
   int fcjet = 0;
 
-  for (int i = 0; i < nlightj; ++i){
-    double Dr = ljet[j].DeltaR(taus[0] + lepton);
+  for (int j = 0; j < nlightj; ++j){
+    double Dr = ljet[j].DeltaR(taus.size() == 2? taus[0] + taus[1] : taus[0] + lepton);
     if(smallDr>Dr){
        smallDr = Dr;
        fcjet = j;
     }
-    output.push_back(fcjet);
-    if (channel.Contains("had")){
-      if(nlightj <= 3){
-        for (int i = 0; i < nlightj; ++i){
-          if(i!=fcjet) output.push_back(i);
-        }
-      }else{
-        vector<int> wpair = findwpair(ljet, fcjet);
-        output.push_back(wpair[0]);
-        output.push_back(wpair[1]);
+  }
+  output.push_back(fcjet);
+  if (channel.Contains("had")){
+    if(nlightj <= 3){
+      for (int i = 0; i < nlightj; ++i){
+        if(i!=fcjet) output.push_back(i);
       }
+    }else{
+      vector<int> wpair = findwpair(ljet, fcjet);
+      output.push_back(wpair[0]);
+      output.push_back(wpair[1]);
     }
   }
   return output;
@@ -313,7 +312,7 @@ void nominal::finalise_sample(){
   }
 }
 
-void nominal::initgM(){
+TMinuit* nominal::initgM(){
 
   gM = new TMinuit(5);
   gM->SetFCN(fcn);
@@ -324,5 +323,5 @@ void nominal::initgM(){
   
   arglist[0] = 1;
   gM->mnexcm("SET ERR", arglist ,1,ierflg);
-
+  return gM;
 }

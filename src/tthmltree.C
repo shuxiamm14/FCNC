@@ -194,415 +194,439 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
 
 
 void tthmltree::Loop(TTree*inputtree, TString samplename) {
-    nonfcncmatched = 0;
-    fcncmatched = 0;
-    leptonicw = 0;
-    double cutflow[] = {
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    };
-    reduce -= 1;
-    Init(inputtree);
-    reduce += 1;
-    map < TString, bool > ::iterator iter;
-    printf("reduce scheme: %d\n", reduce);
-    if (reduce > 1) {
-      ifregions.clear();
-      ifregions[inputtree->GetName()] = 1;
-    }
-    if (inputtree == 0) return;
-    Long64_t nentries = inputtree->GetEntriesFast();
-    TString sample = samplename;
-    if (samplename.Contains("ttbar")) sample = "ttbar";
-    else if (!samplename.Contains("data") && reduce == 1) sample.Remove(sample.Sizeof() - 2);
-    initgM();
+  nonfcncmatched = 0;
+  fcncmatched = 0;
+  leptonicw = 0;
+  double cutflow[] = {
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  };
+  reduce -= 1;
+  Init(inputtree);
+  reduce += 1;
+  map < TString, bool > ::iterator iter;
+  printf("reduce scheme: %d\n", reduce);
+  if (reduce > 1) {
+    ifregions.clear();
+    ifregions[inputtree->GetName()] = 1;
+  }
+  if (inputtree == 0) return;
+  Long64_t nentries = inputtree->GetEntriesFast();
+  TString sample = samplename;
+  if (samplename.Contains("ttbar")) sample = "ttbar";
+  else if (!samplename.Contains("data") && reduce == 1) sample.Remove(sample.Sizeof() - 2);
+  gM = initgM();
 
-    if (dumptruth) {
-      if (TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) {
-        filetruth[0][0].open("lephad2jodd.txt", fstream:: in | fstream::out | fstream::app);
-        filetruth[0][1].open("lephad2jeven.txt", fstream:: in | fstream::out | fstream::app);
-      } else
-        for (int i = 0; i < 3; ++i) {
-          if (TString(inputtree->GetName()).Contains("reg1l1tau1b3j")) {
-            if (i != 0) {
-              filetruth[i][0].open(CharAppend("lephad", i + 2) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
-              filetruth[i][1].open(CharAppend("lephad", i + 2) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
-            }
-          } else {
-            filetruth[i][0].open(CharAppend("lep2tau", i + 1) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
-            filetruth[i][1].open(CharAppend("lep2tau", i + 1) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
+  if (dumptruth) {
+    if (TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) {
+      filetruth[0][0].open("lephad2jodd.txt", fstream:: in | fstream::out | fstream::app);
+      filetruth[0][1].open("lephad2jeven.txt", fstream:: in | fstream::out | fstream::app);
+    } else
+      for (int i = 0; i < 3; ++i) {
+        if (TString(inputtree->GetName()).Contains("reg1l1tau1b3j")) {
+          if (i != 0) {
+            filetruth[i][0].open(CharAppend("lephad", i + 2) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
+            filetruth[i][1].open(CharAppend("lephad", i + 2) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
           }
+        } else {
+          filetruth[i][0].open(CharAppend("lep2tau", i + 1) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
+          filetruth[i][1].open(CharAppend("lep2tau", i + 1) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
         }
+      }
+  }
+  int nloop = debug ? 1000 : nentries;
+  float ngluon = 0;
+  for (Long64_t jentry = 0; jentry < nloop; jentry++) {
+    inputtree->GetEntry(jentry);
+    if ((jentry % 100000 == 0))
+      std::cout << " I am here event " << jentry << " Event " << EventNumber << " Run " << RunNumber << " ismc " << mc_channel_number << std::endl;
+    //===============================pre-selections===============================
+    bool triggeredfcnc = 0;
+    if (selected_jets_T->size() == 0 && nJets_OR_T != 0) {
+      printf("error: read vector failed entry: %lld\n", jentry);
+      continue;
     }
-    int nloop = debug ? 1000 : nentries;
-    float ngluon = 0;
-    for (Long64_t jentry = 0; jentry < nloop; jentry++) {
-      inputtree->GetEntry(jentry);
-      if ((jentry % 100000 == 0))
-        std::cout << " I am here event " << jentry << " Event " << EventNumber << " Run " << RunNumber << " ismc " << mc_channel_number << std::endl;
-      //===============================pre-selections===============================
-      bool triggeredfcnc = 0;
-      if (selected_jets_T->size() == 0 && nJets_OR_T != 0) {
-        printf("error: read vector failed entry: %lld\n", jentry);
+    if (debug == 2) printf("reduce scheme during loop: %d\n", reduce);
+    if (reduce == 1) {
+      bool basic_selection = passEventCleaning;
+      if (debug == 2) printf("passEventCleaning: %d\n", passEventCleaning);
+      if (samplename.Contains("ttbargamma")) {
+        basic_selection &= m_hasMEphoton_DRgt02_nonhad;
+      }
+      if (samplename.Contains("ttbarnohad")) {
+        basic_selection &= !m_hasMEphoton_DRgt02_nonhad;
+      }
+
+      basic_selection &=
+        (RunYear == 2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose)) ||
+        (RunYear == 2015 && (HLT_2e12_lhloose_L12EM10VH || HLT_e17_lhloose_mu14 || HLT_mu18_mu8noL1)) ||
+        (RunYear >= 2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0)) ||
+        (RunYear >= 2016 && (HLT_2e17_lhvloose_nod0 || HLT_e17_lhloose_nod0_mu14 || HLT_mu22_mu8noL1));
+
+      if (debug == 2) {
+        printf("trigger: HLT_mu20_iloose_L1MU15 = %d\n", HLT_mu20_iloose_L1MU15);
+        printf("trigger: HLT_mu50 = %d\n", HLT_mu50);
+        printf("trigger: HLT_e24_lhmedium_L1EM20VH = %d\n", HLT_e24_lhmedium_L1EM20VH);
+        printf("trigger: HLT_e60_lhmedium = %d\n", HLT_e60_lhmedium);
+        printf("trigger: HLT_e120_lhloose = %d\n", HLT_e120_lhloose);
+        printf("trigger: HLT_2e12_lhloose_L12EM10VH = %d\n", HLT_2e12_lhloose_L12EM10VH);
+        printf("trigger: HLT_e17_lhloose_mu14 = %d\n", HLT_e17_lhloose_mu14);
+        printf("trigger: HLT_mu18_mu8noL1 = %d\n", HLT_mu18_mu8noL1);
+        printf("trigger: HLT_mu26_ivarmedium = %d\n", HLT_mu26_ivarmedium);
+        printf("trigger: HLT_mu50 = %d\n", HLT_mu50);
+        printf("trigger: HLT_e26_lhtight_nod0_ivarloose = %d\n", HLT_e26_lhtight_nod0_ivarloose);
+        printf("trigger: HLT_e60_lhmedium_nod0 = %d\n", HLT_e60_lhmedium_nod0);
+        printf("trigger: HLT_e140_lhloose_nod0 = %d\n", HLT_e140_lhloose_nod0);
+        printf("trigger: HLT_2e17_lhvloose_nod0 = %d\n", HLT_2e17_lhvloose_nod0);
+        printf("trigger: HLT_e17_lhloose_nod0_mu14 = %d\n", HLT_e17_lhloose_nod0_mu14);
+        printf("trigger: HLT_mu22_mu8noL1 = %d\n", HLT_mu22_mu8noL1);
+      }
+
+      if (nTaus_OR_Pt25 >= 1) basic_selection = basic_selection && (tau_numTrack_0 == 1 || tau_numTrack_0 == 3); // assuming triggers for 2017 is same for 2016 
+
+      if (!basic_selection) continue;
+      cutflow[0] += 1;
+
+      bool trig_match = (lep_isTrigMatch_0 || lep_isTrigMatch_1 || lep_isTrigMatch_2 || lep_isTrigMatch_3 || matchDLTll01 || matchDLTll02 || matchDLTll12 || matchDLTll03 || matchDLTll13 || matchDLTll23);
+      bool SLtrig_match =
+        ((RunYear == 2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose)) ||
+          (RunYear >= 2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0))) && lep_isTrigMatch_0;
+
+      //===============================define regions===============================
+
+      int ntaupassele;
+      if (nTaus_OR_Pt25 > 1) {
+        if (fabs(lep_ID_0) == 11) lep_v.SetPtEtaPhiE((*electron_pt)[0], (*electron_eta)[0], (*electron_phi)[0], (*electron_E)[0]);
+        else lep_v.SetPtEtaPhiE((*muon_pt)[0], (*muon_eta)[0], (*muon_phi)[0], (*muon_E)[0]);
+        TLorentzVector tmp;
+        for (int i = 0; i < nTaus_OR_Pt25; ++i)
+        {
+          tmp.SetPtEtaPhiE((*m_tau_pt)[i], (*m_tau_eta)[i], (*m_tau_phi)[i], (*m_tau_E)[i]);
+          if(tmp.DeltaR(lep_v) < 0.2) continue;
+          taus_v[ntaupassele].SetPtEtaPhiE((*m_tau_pt)[i], (*m_tau_eta)[i], (*m_tau_phi)[i], (*m_tau_E)[i]);
+          ntaupassele ++;
+          if(ntaupassele == 2) break;
+        }
+        nTaus_OR_Pt25 = ntaupassele;
+        if(nTaus_OR_Pt25 == 1){
+          taus_v[1] = taus_v[0];
+          taus_v[0] = lep_v;
+          lep_v.SetPtEtaPhiE(0, 0, 0, 0);
+        }
+      }
+
+      ifregions["reg1l1tau1b2j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T == 3 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+      ifregions["reg1l1tau1b3j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+      ifregions["reg1l2tau1bnj"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T >= 2 && nTaus_OR_Pt25 >= 2 && tau_charge_0*tau_charge_1 < 0;
+
+      if (trig_match && dilep_type && total_charge == 0 && lep_Pt_0 > 20e3 && lep_Pt_1 > 20e3 &&
+        ((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5)) && SelectTLepid(0) &&
+        ((abs(lep_ID_1) == 11 && lep_promptLeptonVeto_TagWeight_1 < -0.7) || (abs(lep_ID_1) == 13 && lep_promptLeptonVeto_TagWeight_1 < -0.5)) && SelectTLepid(1) &&
+        (nTaus_OR_Pt25 == 0 || (tau_passEleBDT_0 && tau_passMuonOLR_0)) &&
+        (dilep_type == 2 || ((dilep_type == 1 || dilep_type == 3) && (Mll01 / GeV < 80 || Mll01 / GeV > 100))) && total_charge == 0) { //met>30 GeV ? ttbar vs z+bb:
+        ifregions["reg1e1mu1tau2b"] = nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1;
+        ifregions["reg1e1mu2bnj"] = nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 == 0;
+        ifregions["reg1e1mu1tau1b"] = nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T == 1 && nTaus_OR_Pt25 == 1;
+        ifregions["reg1e1mu2b"] = nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 0;
+      } else {
+        ifregions["reg1e1mu1tau2b"] = 0;
+        ifregions["reg1e1mu2bnj"] = 0;
+        ifregions["reg1e1mu1tau1b"] = 0;
+        ifregions["reg1e1mu2b"] = 0;
+      }
+      ifregions["reg1l2b2j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 0;
+      ifregions["reg1l1tau2b1j_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 >= 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
+      bool reg1l1tau2b1j_ss = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 >= 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
+      ifregions["reg1l1tau2b1j_ss_ptbin1"] = reg1l1tau2b1j_ss && tau_pt_0 / GeV <= 35;
+      ifregions["reg1l1tau2b1j_ss_ptbin2"] = reg1l1tau2b1j_ss && tau_pt_0 / GeV > 35;
+
+      bool triggered = 0;
+
+      for (iter = ifregions.begin(); iter != ifregions.end(); iter++)
+        if (iter->second) {
+          triggered = 1;
+        }
+
+      if (!triggered) continue;
+    }
+    if (reduce <= 2) weight = mc_channel_number > 0 ? mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type || trilep_type)*lepSFObjTight + (onelep_type || quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25 > 0 ? tauSFTight : 1.0) : 1.0;
+    cutflow[1] += weight;
+    if (debug == 2) printf("event weight: %f\n", weight);
+    if (debug == 2) {
+      for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
+        if (iter->second)
+          printf("region: %s\n", iter->first.Data());
+      }
+    }
+    //===============================find leading b,non b jets===============================
+    if (ifregions["reg1l1tau1b2j"] || ifregions["reg1l1tau1b3j"] || ifregions["reg1l2tau1bnj"]) triggeredfcnc = 1;
+
+    if (reduce <= 2) {
+      leading_b = -1;
+      leading_ljet = -1;
+      pt_b = 0;
+      pt_ljet = 0;
+      bool reloop = 1;
+      drtaujmin = 10;
+      if (nJets_OR_T != selected_jets_T->size()) {
+        printf("ERROR: nJets_OR_T,%d != selected_jets_T->size(),%lu; Entry: %lld\n", nJets_OR_T, selected_jets_T->size(), jentry);
         continue;
       }
-      if (debug == 2) printf("reduce scheme during loop: %d\n", reduce);
-      if (reduce == 1) {
-        bool basic_selection = passEventCleaning;
-        if (debug == 2) printf("passEventCleaning: %d\n", passEventCleaning);
-        if (samplename.Contains("ttbargamma")) {
-          basic_selection &= m_hasMEphoton_DRgt02_nonhad;
-        }
-        if (samplename.Contains("ttbarnohad")) {
-          basic_selection &= !m_hasMEphoton_DRgt02_nonhad;
-        }
-
-        basic_selection &=
-          (RunYear == 2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose)) ||
-          (RunYear == 2015 && (HLT_2e12_lhloose_L12EM10VH || HLT_e17_lhloose_mu14 || HLT_mu18_mu8noL1)) ||
-          (RunYear >= 2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0)) ||
-          (RunYear >= 2016 && (HLT_2e17_lhvloose_nod0 || HLT_e17_lhloose_nod0_mu14 || HLT_mu22_mu8noL1));
-
-        if (debug == 2) {
-          printf("trigger: HLT_mu20_iloose_L1MU15 = %d\n", HLT_mu20_iloose_L1MU15);
-          printf("trigger: HLT_mu50 = %d\n", HLT_mu50);
-          printf("trigger: HLT_e24_lhmedium_L1EM20VH = %d\n", HLT_e24_lhmedium_L1EM20VH);
-          printf("trigger: HLT_e60_lhmedium = %d\n", HLT_e60_lhmedium);
-          printf("trigger: HLT_e120_lhloose = %d\n", HLT_e120_lhloose);
-          printf("trigger: HLT_2e12_lhloose_L12EM10VH = %d\n", HLT_2e12_lhloose_L12EM10VH);
-          printf("trigger: HLT_e17_lhloose_mu14 = %d\n", HLT_e17_lhloose_mu14);
-          printf("trigger: HLT_mu18_mu8noL1 = %d\n", HLT_mu18_mu8noL1);
-          printf("trigger: HLT_mu26_ivarmedium = %d\n", HLT_mu26_ivarmedium);
-          printf("trigger: HLT_mu50 = %d\n", HLT_mu50);
-          printf("trigger: HLT_e26_lhtight_nod0_ivarloose = %d\n", HLT_e26_lhtight_nod0_ivarloose);
-          printf("trigger: HLT_e60_lhmedium_nod0 = %d\n", HLT_e60_lhmedium_nod0);
-          printf("trigger: HLT_e140_lhloose_nod0 = %d\n", HLT_e140_lhloose_nod0);
-          printf("trigger: HLT_2e17_lhvloose_nod0 = %d\n", HLT_2e17_lhvloose_nod0);
-          printf("trigger: HLT_e17_lhloose_nod0_mu14 = %d\n", HLT_e17_lhloose_nod0_mu14);
-          printf("trigger: HLT_mu22_mu8noL1 = %d\n", HLT_mu22_mu8noL1);
-        }
-
-        if (nTaus_OR_Pt25 >= 1) basic_selection = basic_selection && (tau_numTrack_0 == 1 || tau_numTrack_0 == 3); // assuming triggers for 2017 is same for 2016 
-
-        if (!basic_selection) continue;
-        cutflow[0] += 1;
-
-        bool trig_match = (lep_isTrigMatch_0 || lep_isTrigMatch_1 || lep_isTrigMatch_2 || lep_isTrigMatch_3 || matchDLTll01 || matchDLTll02 || matchDLTll12 || matchDLTll03 || matchDLTll13 || matchDLTll23);
-        bool SLtrig_match =
-          ((RunYear == 2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose)) ||
-            (RunYear >= 2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0))) && lep_isTrigMatch_0;
-
-        //===============================define regions===============================
-
-        ifregions["reg1l1tau1b2j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T == 3 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-        ifregions["reg1l1tau1b3j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-        ifregions["reg1l2tau1bnj"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T >= 2 && nTaus_OR_Pt25 >= 2 && tau_charge_0*tau_charge_1 < 0;
-
-        if (trig_match && dilep_type && total_charge == 0 && lep_Pt_0 > 20e3 && lep_Pt_1 > 20e3 &&
-          ((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5)) && SelectTLepid(0) &&
-          ((abs(lep_ID_1) == 11 && lep_promptLeptonVeto_TagWeight_1 < -0.7) || (abs(lep_ID_1) == 13 && lep_promptLeptonVeto_TagWeight_1 < -0.5)) && SelectTLepid(1) &&
-          (nTaus_OR_Pt25 == 0 || (tau_passEleBDT_0 && tau_passMuonOLR_0)) &&
-          (dilep_type == 2 || ((dilep_type == 1 || dilep_type == 3) && (Mll01 / GeV < 80 || Mll01 / GeV > 100))) && total_charge == 0) { //met>30 GeV ? ttbar vs z+bb:
-          ifregions["reg1e1mu1tau2b"] = nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1;
-          ifregions["reg1e1mu2bnj"] = nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 == 0;
-          ifregions["reg1e1mu1tau1b"] = nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T == 1 && nTaus_OR_Pt25 == 1;
-          ifregions["reg1e1mu2b"] = nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 0;
-        } else {
-          ifregions["reg1e1mu1tau2b"] = 0;
-          ifregions["reg1e1mu2bnj"] = 0;
-          ifregions["reg1e1mu1tau1b"] = 0;
-          ifregions["reg1e1mu2b"] = 0;
-        }
-        ifregions["reg1l2b2j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 0;
-        ifregions["reg1l1tau2b1j_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 >= 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
-        bool reg1l1tau2b1j_ss = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 >= 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
-        ifregions["reg1l1tau2b1j_ss_ptbin1"] = reg1l1tau2b1j_ss && tau_pt_0 / GeV <= 35;
-        ifregions["reg1l1tau2b1j_ss_ptbin2"] = reg1l1tau2b1j_ss && tau_pt_0 / GeV > 35;
-
-        bool triggered = 0;
-
-        for (iter = ifregions.begin(); iter != ifregions.end(); iter++)
-          if (iter->second) {
-            triggered = 1;
-          }
-
-        if (!triggered) continue;
-      }
-      if (reduce <= 2) weight = mc_channel_number > 0 ? mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type || trilep_type)*lepSFObjTight + (onelep_type || quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25 > 0 ? tauSFTight : 1.0) : 1.0;
-      cutflow[1] += weight;
-      if (debug == 2) printf("event weight: %f\n", weight);
-      if (debug == 2) {
-        for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
-          if (iter->second)
-            printf("region: %s\n", iter->first.Data());
-        }
-      }
-      //===============================find leading b,non b jets===============================
-      if (ifregions["reg1l1tau1b2j"] || ifregions["reg1l1tau1b3j"] || ifregions["reg1l2tau1bnj"]) triggeredfcnc = 1;
-
-      if (reduce <= 2) {
-        leading_b = -1;
-        leading_ljet = -1;
-        pt_b = 0;
-        pt_ljet = 0;
-        bool reloop = 1;
-        drtaujmin = 10;
-        if (nJets_OR_T != selected_jets_T->size()) {
-          printf("ERROR: nJets_OR_T,%d != selected_jets_T->size(),%lu; Entry: %lld\n", nJets_OR_T, selected_jets_T->size(), jentry);
-          continue;
-        }
-        taus_v[0].SetPtEtaPhiE((*m_tau_pt)[0], (*m_tau_eta)[0], (*m_tau_phi)[0], (*m_tau_E)[0]);
-        if (nTaus_OR_Pt25 > 1) taus_v[1].SetPtEtaPhiE((*m_tau_pt)[1], (*m_tau_eta)[1], (*m_tau_phi)[1], (*m_tau_E)[1]);
-        for (int i = 0; i < nJets_OR_T; ++i) {
-          if (ifregions["reg1e1mu2bnj"] && m_jet_flavor_truth_label_ghost->at(selected_jets_T->at(i)) == 21) ngluon += weight;
-          if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > btag70wt && leading_b == -1) {
-            leading_b = selected_jets_T->at(i);
-            pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
-            bjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b], (*m_jet_eta)[leading_b], (*m_jet_phi)[leading_b], (*m_jet_E)[leading_b]);
-          } else if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < btag70wt) {
-            TLorentzVector tmpljet_v;
-            tmpljet_v.SetPtEtaPhiE((*m_jet_pt)[selected_jets_T->at(i)], (*m_jet_eta)[selected_jets_T->at(i)], (*m_jet_phi)[selected_jets_T->at(i)], (*m_jet_E)[selected_jets_T->at(i)]);
-            ljets_v.push_back(tmpljet_v);
-            if (triggeredfcnc) {
-              double tmpdr = min(taus_v[0].DeltaR(tmpljet_v), taus_v[1].DeltaR(tmpljet_v));
-              if (drtaujmin > tmpdr) drtaujmin = tmpdr;
-            } else if (reloop) {
-              pt_ljet = (*m_jet_pt)[selected_jets_T->at(i)];
-              reloop = 0;
-            }
+        
+      for (int i = 0; i < nJets_OR_T; ++i) {
+        if (ifregions["reg1e1mu2bnj"] && m_jet_flavor_truth_label_ghost->at(selected_jets_T->at(i)) == 21) ngluon += weight;
+        if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > btag70wt && leading_b == -1) {
+          leading_b = selected_jets_T->at(i);
+          pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
+          bjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b], (*m_jet_eta)[leading_b], (*m_jet_phi)[leading_b], (*m_jet_E)[leading_b]);
+        } else if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < btag70wt) {
+          TLorentzVector tmpljet_v;
+          tmpljet_v.SetPtEtaPhiE((*m_jet_pt)[selected_jets_T->at(i)], (*m_jet_eta)[selected_jets_T->at(i)], (*m_jet_phi)[selected_jets_T->at(i)], (*m_jet_E)[selected_jets_T->at(i)]);
+          ljets_v.push_back(tmpljet_v);
+          if (triggeredfcnc) {
+            double tmpdr = min(taus_v[0].DeltaR(tmpljet_v), taus_v[1].DeltaR(tmpljet_v));
+            if (drtaujmin > tmpdr) drtaujmin = tmpdr;
+          } else if (reloop) {
+            pt_ljet = (*m_jet_pt)[selected_jets_T->at(i)];
+            reloop = 0;
           }
         }
-        if (leading_b == -1) {
-          printf("ERROR: bjet not found\n");
-          continue;
-        }
-        if (triggeredfcnc) {
-          if (tau_MV2c10_0 > btagwpCut[1]) continue;
-          if (nTaus_OR_Pt25 == 2 && tau_MV2c10_1 > btagwpCut[1]) continue;
-          if (ifregions["reg1l2tau1bnj"]) {
-            if (fabs(lep_ID_0) == 11) lep_v.SetPtEtaPhiE((*electron_pt)[0], (*electron_eta)[0], (*electron_phi)[0], (*electron_E)[0]);
-            else lep_v.SetPtEtaPhiE((*muon_pt)[0], (*muon_eta)[0], (*muon_phi)[0], (*muon_E)[0]);
-            if (nJets_OR_T != 2)
-              //ljet_indice = findcjetML("lep2tau",ljets_v,bjet_v,lep_v,taus_v,EventNumber%2);
-              ljet_indice = findcjet("lep2tau",ljets_v,bjet_v,lep_v,taus_v);
-          } else {
-            if (fabs(lep_ID_0) == 11) taus_v[0].SetPtEtaPhiE((*electron_pt)[0], (*electron_eta)[0], (*electron_phi)[0], (*electron_E)[0]);
-            else taus_v[0].SetPtEtaPhiE((*muon_pt)[0], (*muon_eta)[0], (*muon_phi)[0], (*muon_E)[0]);
-            taus_v[1].SetPtEtaPhiE((*m_tau_pt)[0], (*m_tau_eta)[0], (*m_tau_phi)[0], (*m_tau_E)[0]);
-            lep_v.SetPtEtaPhiE(0, 0, 0, 0);
+      }
+      if (leading_b == -1) {
+        printf("ERROR: bjet not found\n");
+        continue;
+      }
+      if (triggeredfcnc) {
+        if (tau_MV2c10_0 > btagwpCut[1]) continue;
+        if (nTaus_OR_Pt25 == 2 && tau_MV2c10_1 > btagwpCut[1]) continue;
+        if (ifregions["reg1l2tau1bnj"]) {
+          if (nJets_OR_T != 2)
             //ljet_indice = findcjetML("lep2tau",ljets_v,bjet_v,lep_v,taus_v,EventNumber%2);
             ljet_indice = findcjet("lep2tau",ljets_v,bjet_v,lep_v,taus_v);
-            if (debug) {
-              printf("wmass: %f, t1mass: %f, cjet %d, wjet1 %d\n", wmass, t1mass, ljet_indice[0], ljet_indice[1]);
-            }
-            cjet_v.SetPtEtaPhiE((*m_jet_pt)[ljet_indice[0]], (*m_jet_eta)[ljet_indice[0]], (*m_jet_phi)[ljet_indice[0]], (*m_jet_E)[ljet_indice[0]]);
+        } else {
+          if (fabs(lep_ID_0) == 11) taus_v[0].SetPtEtaPhiE((*electron_pt)[0], (*electron_eta)[0], (*electron_phi)[0], (*electron_E)[0]);
+          else taus_v[0].SetPtEtaPhiE((*muon_pt)[0], (*muon_eta)[0], (*muon_phi)[0], (*muon_E)[0]);
+          taus_v[1].SetPtEtaPhiE((*m_tau_pt)[0], (*m_tau_eta)[0], (*m_tau_phi)[0], (*m_tau_E)[0]);
+          //ljet_indice = findcjetML("lep2tau",ljets_v,bjet_v,lep_v,taus_v,EventNumber%2);
+          ljet_indice = findcjet("lep2tau",ljets_v,bjet_v,lep_v,taus_v);
+          if (debug) {
+            printf("wmass: %f, t1mass: %f, cjet %d, wjet1 %d\n", wmass, t1mass, ljet_indice[0], ljet_indice[1]);
           }
-          mets.SetXYZ(met_met*cos(met_phi), met_met*sin(met_phi), MET_RefFinal_sumet);
-          //==  =============================fit neutrino===============================
-          gM->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
-          gM->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
-
-          if (nTaus_OR_Pt25 >= 2) {
-            gM->mnparm(2, "pt3", 10000, 10000, 0., 1000000., ierflg);
-            gM->mnparm(3, "eta3", 0, 0.1, -5, 5, ierflg);
-            gM->mnparm(4, "phi3", 0, 0.1, -PI, PI, ierflg);
-            arglist[0] = 5;
-          } else {
-            gM->mnparm(2, "v1mass", 1000, 1, 0., 1776, ierflg);
-            arglist[0] = 3;
-          }
-          gM->SetObjectFit( & forFit);
-
-          arglist[1] = 60.;
-          Double_t val[5] = {
-            0,
-            0,
-            0,
-            0,
-            0
-          };
-          Double_t err[5] = {
-            0,
-            0,
-            0,
-            0,
-            0
-          };
-
-          gM->mnexcm("SCAN", arglist, 2, ierflg);
-          for (int i = 0; i < 5; ++i) gM->GetParameter(i, val[i], err[i]);
-          gM->mnparm(0, "rpt1", val[0], 0.01, 0., 2., ierflg);
-          gM->mnparm(1, "rpt2", val[1], 0.01, 0., 2., ierflg);
-          if (nTaus_OR_Pt25 >= 2) {
-            gM->mnparm(2, "pt3", val[2], 10, 0., 1000., ierflg);
-            gM->mnparm(3, "eta3", val[3], 0.1, -5, 5, ierflg);
-            gM->mnparm(4, "phi3", val[4], 0.1, -PI, PI, ierflg);
-          } else {
-            gM->mnparm(2, "v1mass", val[2], 1, 0., 1776, ierflg);
-          }
-
-          arglist[0] = 1000;
-          arglist[1] = 0;
-
-          gM->mnexcm("MIGRADE", arglist, 2, ierflg);
-          for (int i = 0; i < (nTaus_OR_Pt25 >= 2 ? 5 : 3); ++i) gM->GetParameter(i, val[i], err[i]);
-
-          Double_t fmin, fedm, errdef;
-          Int_t npari, nparx, istat;
-          gM->mnstat(fmin, fedm, errdef, npari, nparx, istat);
-          TLorentzVector tauv1_v;
-          tauv1_v.SetPtEtaPhiM(val[0]*(*m_tau_pt)[0], (*m_tau_eta)[0], (*m_tau_phi)[0], nJets_OR_T >= 2 ? 0 : val[2]);
-          TLorentzVector tauv2_v;
-          tauv2_v.SetPtEtaPhiM(val[1]*(*m_tau_pt)[1], (*m_tau_eta)[1], (*m_tau_phi)[1], 0);
-          x1fit = val[0] / (1 + val[0]);
-          x2fit = val[1] / (1 + val[1]);
-          neutrino_pt->push_back(tauv1_v.Pt());
-          neutrino_pt->push_back(tauv2_v.Pt());
-          neutrino_eta->push_back(tauv1_v.Eta());
-          neutrino_eta->push_back(tauv2_v.Eta());
-          neutrino_phi->push_back(tauv1_v.Phi());
-          neutrino_phi->push_back(tauv2_v.Phi());
-          neutrino_m->push_back(tauv1_v.M());
-          neutrino_m->push_back(tauv2_v.M());
-          if (nTaus_OR_Pt25 >= 2) {
-            TLorentzVector wv_v;
-            wv_v.SetPtEtaPhiM(val[2], val[3], val[4], 0);
-            neutrino_pt->push_back(wv_v.Pt());
-            neutrino_eta->push_back(wv_v.Eta());
-            neutrino_phi->push_back(wv_v.Phi());
-            neutrino_m->push_back(wv_v.M());
-            t1mass = (lep_v + wv_v + bjet_v).M();
-            drlbditau = (lep_v + bjet_v).DeltaR(taus_v[0] + taus_v[1]);
-            t1vismass = (lep_v + bjet_v).M();
-            wmass = (lep_v + wv_v).M();
-            mtw = 2*lep_Pt_0 / GeV*MET_RefFinal_et / GeV*(1 - cos(MET_RefFinal_phi - lep_Phi_0));
-            mtw = mtw > 0 ? sqrt(mtw) : 0.;
-            etamax = fabs(tau_eta_0) > fabs(tau_eta_1) ? fabs(tau_eta_0) : fabs(tau_eta_1);
-            drltau = min(taus_v[0].DeltaR(lep_v), taus_v[1].DeltaR(lep_v));
-            if(drltau < 0.2) {
-              printf("WARINING: Delta(l,tau) is less than 0.2, please check: EventNumber = %llu\n",eventNumber);
-              printv(taus_v[0]);
-              printv(taus_v[1]);
-              printv(lep_v);
-            }
-            tau_pt_ss = lep_ID_0*tau_charge_0 > 0 ? tau_pt_0 : tau_pt_1;
-            tau_pt_os = lep_ID_0*tau_charge_0 < 0 ? tau_pt_0 : tau_pt_1;
-          } else {
-            t1vismass = t1mass;
-            drlbditau = 0;
-            mtw = 0;
-            etamax = 0;
-            tau_pt_ss = 0;
-            tau_pt_os = 0;
-            drltau = 0;
-          }
-          tau_leadpt = taus_v[0].Pt();
-          tau_subpt = taus_v[1].Pt();
-          t2mass = (tauv2_v + taus_v[0] + tauv1_v + taus_v[1] + cjet_v).M();
-          tautaumass = (tauv2_v + taus_v[0] + tauv1_v + taus_v[1]).M();
-          ttvismass = (taus_v[0] + taus_v[1]).M();
-          tautauvispt = (taus_v[0] + taus_v[1]).Pt();
-          t2vismass = (taus_v[0] + taus_v[1] + cjet_v).M();
-          drtautau = taus_v[0].DeltaR(taus_v[1]);
-          drtauj = (taus_v[0] + taus_v[1]).DeltaR(cjet_v);
-        } else if (nJets_OR_T - nJets_OR_T_MV2c10_70) {
-          if (ifregions["reg1l1tau2b1j_os"] || ifregions["reg1l1tau2b1j_ss_ptbin2"] || ifregions["reg1l1tau2b1j_ss_ptbin1"]) {
-            taulmass = (taus_v[0] + ljets_v[0]).M();
-          } else taulmass = 0;
-        }
-
-        //===============================fill histograms, fill tree===============================
-        TString tauorigin;
-        int SFbin = (tau_pt_0 / GeV > 35) + (tau_numTrack_0) - 1;
-        fakeSF = 1;
-        if (sample.Contains("data")) {
-          tauorigin = "data";
-          sample = "data";
-        } else if (nTaus_OR_Pt25 >= 1) {
-          if (tau_truthType_0 == 10) tauorigin = sample + "_real";
-          else if (tau_truthJetFlavour_0 < 0 && (tau_truthType_0 == 2 || tau_truthType_0 == 6)) tauorigin = sample + "_lep";
-          else
-            switch (tau_truthJetFlavour_0) {
-            case 5:
-              tauorigin = sample + "_b";
-              fakeSF = fakeSFs[SFbin][0];
-              break;
-            case 4:
-              tauorigin = sample + "_c";
-              fakeSF = fakeSFs[SFbin][1];
-              break;
-            case 21:
-              tauorigin = sample + "_g";
-              fakeSF = fakeSFs[SFbin][2];
-              break;
-            default:
-              tauorigin = sample + "_j";
-              fakeSF = fakeSFs[SFbin][3];
-            }
-        }
-
-        if (dumptruth) dumpTruth(EventNumber % 2);
-
-        for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
-          if (iter->second == 1) {
-            if (writetree) outputtree[iter->first]->Fill();
-            if (dohist) {
-              //weight *= fakeSF;
-              if (iter->first.Contains("tau")) {
-                if (triggeredfcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_btag70_0);
-                else if (!sample.Contains("fcnc")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_btag70_0);
-              } else fill_notau(iter->first, sample);
-            }
-            //      outputtree[iter->first]->AutoSave();
+          if(ljets_v.size()==2){
+            wmass = 0;
+            t1mass = 0;
+          }else{
+            wmass = (ljets_v[1] + ljets_v[2]).M();
+            t1mass = (ljets_v[1] + ljets_v[2] + bjet_v).M();
           }
         }
-        neutrino_pt->clear();
-        neutrino_eta->clear();
-        neutrino_phi->clear();
-        neutrino_m->clear();
-        ljets_v.clear();
+        cjet_v = ljets_v[ljet_indice[0]];
+        mets.SetXYZ(met_met*cos(met_phi), met_met*sin(met_phi), MET_RefFinal_sumet);
+        //==  =============================fit neutrino===============================
+        gM->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
+        gM->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
+
+        if (nTaus_OR_Pt25 >= 2) {
+          gM->mnparm(2, "pt3", 10000, 10000, 0., 1000000., ierflg);
+          gM->mnparm(3, "eta3", 0, 0.1, -5, 5, ierflg);
+          gM->mnparm(4, "phi3", 0, 0.1, -PI, PI, ierflg);
+          arglist[0] = 5;
+        } else {
+          gM->mnparm(2, "v1mass", 1000, 1, 0., 1776, ierflg);
+          arglist[0] = 3;
+        }
+        gM->SetObjectFit( & forFit);
+
+        arglist[1] = 60.;
+        Double_t val[5] = {
+          0,
+          0,
+          0,
+          0,
+          0
+        };
+        Double_t err[5] = {
+          0,
+          0,
+          0,
+          0,
+          0
+        };
+
+        if(debug) printf("start kinematic fit\n");
+        gM->mnexcm("SCAN", arglist, 2, ierflg);
+        for (int i = 0; i < 5; ++i) gM->GetParameter(i, val[i], err[i]);
+        gM->mnparm(0, "rpt1", val[0], 0.01, 0., 2., ierflg);
+        gM->mnparm(1, "rpt2", val[1], 0.01, 0., 2., ierflg);
+        if (nTaus_OR_Pt25 >= 2) {
+          gM->mnparm(2, "pt3", val[2], 10, 0., 1000., ierflg);
+          gM->mnparm(3, "eta3", val[3], 0.1, -5, 5, ierflg);
+          gM->mnparm(4, "phi3", val[4], 0.1, -PI, PI, ierflg);
+        } else {
+          gM->mnparm(2, "v1mass", val[2], 1, 0., 1776, ierflg);
+        }
+
+        arglist[0] = 1000;
+        arglist[1] = 0;
+
+        gM->mnexcm("MIGRADE", arglist, 2, ierflg);
+        for (int i = 0; i < (nTaus_OR_Pt25 >= 2 ? 5 : 3); ++i) gM->GetParameter(i, val[i], err[i]);
+        if(debug) printf("finish kinematic fit\n");
+        Double_t fmin, fedm, errdef;
+        Int_t npari, nparx, istat;
+        gM->mnstat(fmin, fedm, errdef, npari, nparx, istat);
+        TLorentzVector tauv1_v;
+        tauv1_v.SetPtEtaPhiM(val[0]*(*m_tau_pt)[0], (*m_tau_eta)[0], (*m_tau_phi)[0], nJets_OR_T >= 2 ? 0 : val[2]);
+        TLorentzVector tauv2_v;
+        tauv2_v.SetPtEtaPhiM(val[1]*(*m_tau_pt)[1], (*m_tau_eta)[1], (*m_tau_phi)[1], 0);
+        x1fit = val[0] / (1 + val[0]);
+        x2fit = val[1] / (1 + val[1]);
+        neutrino_pt->push_back(tauv1_v.Pt());
+        neutrino_pt->push_back(tauv2_v.Pt());
+        neutrino_eta->push_back(tauv1_v.Eta());
+        neutrino_eta->push_back(tauv2_v.Eta());
+        neutrino_phi->push_back(tauv1_v.Phi());
+        neutrino_phi->push_back(tauv2_v.Phi());
+        neutrino_m->push_back(tauv1_v.M());
+        neutrino_m->push_back(tauv2_v.M());
+        if (nTaus_OR_Pt25 >= 2) {
+          TLorentzVector wv_v;
+          wv_v.SetPtEtaPhiM(val[2], val[3], val[4], 0);
+          neutrino_pt->push_back(wv_v.Pt());
+          neutrino_eta->push_back(wv_v.Eta());
+          neutrino_phi->push_back(wv_v.Phi());
+          neutrino_m->push_back(wv_v.M());
+          t1mass = (lep_v + wv_v + bjet_v).M();
+          drlbditau = (lep_v + bjet_v).DeltaR(taus_v[0] + taus_v[1]);
+          t1vismass = (lep_v + bjet_v).M();
+          wmass = (lep_v + wv_v).M();
+          mtw = 2*lep_Pt_0 / GeV*MET_RefFinal_et / GeV*(1 - cos(MET_RefFinal_phi - lep_Phi_0));
+          mtw = mtw > 0 ? sqrt(mtw) : 0.;
+          etamax = fabs(tau_eta_0) > fabs(tau_eta_1) ? fabs(tau_eta_0) : fabs(tau_eta_1);
+          drltau = min(taus_v[0].DeltaR(lep_v), taus_v[1].DeltaR(lep_v));
+          if(drltau < 0.2) {
+            printf("WARINING: Delta(l,tau) is less than 0.2, please check: EventNumber = %llu\n",eventNumber);
+            printv(taus_v[0]);
+            printv(taus_v[1]);
+            printv(lep_v);
+          }
+          tau_pt_ss = lep_ID_0*tau_charge_0 > 0 ? tau_pt_0 : tau_pt_1;
+          tau_pt_os = lep_ID_0*tau_charge_0 < 0 ? tau_pt_0 : tau_pt_1;
+        } else {
+          t1vismass = t1mass;
+          drlbditau = 0;
+          mtw = 0;
+          etamax = 0;
+          tau_pt_ss = 0;
+          tau_pt_os = 0;
+          drltau = 0;
+        }
+        tau_leadpt = taus_v[0].Pt();
+        tau_subpt = taus_v[1].Pt();
+        t2mass = (tauv2_v + taus_v[0] + tauv1_v + taus_v[1] + cjet_v).M();
+        tautaumass = (tauv2_v + taus_v[0] + tauv1_v + taus_v[1]).M();
+        ttvismass = (taus_v[0] + taus_v[1]).M();
+        tautauvispt = (taus_v[0] + taus_v[1]).Pt();
+        t2vismass = (taus_v[0] + taus_v[1] + cjet_v).M();
+        drtautau = taus_v[0].DeltaR(taus_v[1]);
+        drtauj = (taus_v[0] + taus_v[1]).DeltaR(cjet_v);
+      } else if (nJets_OR_T - nJets_OR_T_MV2c10_70) {
+        if (ifregions["reg1l1tau2b1j_os"] || ifregions["reg1l1tau2b1j_ss_ptbin2"] || ifregions["reg1l1tau2b1j_ss_ptbin1"]) {
+          taulmass = (taus_v[0] + ljets_v[0]).M();
+        } else taulmass = 0;
       }
-      printf("nonmatched: %f matched: %f, leptonic w: %f, total number: %f\n", nonfcncmatched, fcncmatched, leptonicw, cutflow[1]);
-      printf("cutflow:\n%f, %f\n", cutflow[0], cutflow[1]);
-      if (dumptruth) {
-        if (TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) {
-          filetruth[0][0].close();
-          filetruth[0][1].close();
-        } else
-          for (int i = 0; i < 6; ++i) {
-            if (TString(inputtree->GetName()).Contains("reg1l1tau1b3j")) {
-              if (i != 0) {
-                filetruth[i][0].close();
-                filetruth[i][1].close();
-              }
-            } else {
-              filetruth[i][0].close();
-              filetruth[i][1].close();
-            }
+
+      //===============================fill histograms, fill tree===============================
+      TString tauorigin;
+      int SFbin = (tau_pt_0 / GeV > 35) + (tau_numTrack_0) - 1;
+      fakeSF = 1;
+      if (sample.Contains("data")) {
+        tauorigin = "data";
+        sample = "data";
+      } else if (nTaus_OR_Pt25 >= 1) {
+        if (tau_truthType_0 == 10) tauorigin = sample + "_real";
+        else if (tau_truthJetFlavour_0 < 0 && (tau_truthType_0 == 2 || tau_truthType_0 == 6)) tauorigin = sample + "_lep";
+        else
+          switch (tau_truthJetFlavour_0) {
+          case 5:
+            tauorigin = sample + "_b";
+            fakeSF = fakeSFs[SFbin][0];
+            break;
+          case 4:
+            tauorigin = sample + "_c";
+            fakeSF = fakeSFs[SFbin][1];
+            break;
+          case 21:
+            tauorigin = sample + "_g";
+            fakeSF = fakeSFs[SFbin][2];
+            break;
+          default:
+            tauorigin = sample + "_j";
+            fakeSF = fakeSFs[SFbin][3];
           }
       }
-      printf("ngluons: %f\n", ngluon);
-      if (writetree) {
-        outputtreefile->cd();
-        map < TString, TTree*> ::iterator iter;
-        for (iter = outputtree.begin(); iter != outputtree.end(); ++iter)
-          iter->second->Write(iter->first, TObject::kWriteDelete);
+
+      if (dumptruth) dumpTruth(EventNumber % 2);
+
+      for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
+        if (iter->second == 1) {
+          if (writetree) outputtree[iter->first]->Fill();
+          if (dohist) {
+            //weight *= fakeSF;
+            if (iter->first.Contains("tau")) {
+              if (triggeredfcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_btag70_0);
+              else if (!sample.Contains("fcnc")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_btag70_0);
+            } else fill_notau(iter->first, sample);
+          }
+          //      outputtree[iter->first]->AutoSave();
+        }
       }
+      neutrino_pt->clear();
+      neutrino_eta->clear();
+      neutrino_phi->clear();
+      neutrino_m->clear();
+      ljets_v.clear();
     }
   }
-
+  printf("nonmatched: %f matched: %f, leptonic w: %f, total number: %f\n", nonfcncmatched, fcncmatched, leptonicw, cutflow[1]);
+  printf("cutflow:\n%f, %f\n", cutflow[0], cutflow[1]);
+  if (dumptruth) {
+    if (TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) {
+      filetruth[0][0].close();
+      filetruth[0][1].close();
+    } else
+      for (int i = 0; i < 6; ++i) {
+        if (TString(inputtree->GetName()).Contains("reg1l1tau1b3j")) {
+          if (i != 0) {
+            filetruth[i][0].close();
+            filetruth[i][1].close();
+          }
+        } else {
+          filetruth[i][0].close();
+          filetruth[i][1].close();
+        }
+      }
+  }
+  printf("ngluons: %f\n", ngluon);
+  if (writetree) {
+    outputtreefile->cd();
+    map < TString, TTree*> ::iterator iter;
+    for (iter = outputtree.begin(); iter != outputtree.end(); ++iter)
+      iter->second->Write(iter->first, TObject::kWriteDelete);
+  }
+}
 void tthmltree::dumpTruth(int ipart) {
   TLorentzVector wchild[2], fcncjet, wboson;
   stringstream outstream;
