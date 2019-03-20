@@ -82,9 +82,11 @@ void tthmltree::init_hist(TString outputfilename){
     fake_regions[j] = new TString(_fake_regions[j]);
     for (int k = 0; k < 2; ++k){
       for (int i = 0; i < 4; i+=1){
-        if(debug) printf("adding region: %s\n", (*fake_regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-        fake_plots->add_region(*fake_regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-        fake_plots->add_region(*fake_regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
+        for (int iptbin = 0; iptbin < 2; ++iptbin)
+        {
+          fake_plots->add_region(*fake_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
+          fake_plots->add_region(*fake_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+        }
       }
     }
   }
@@ -315,7 +317,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         {
           tmp.SetPtEtaPhiE((*m_tau_pt)[i], (*m_tau_eta)[i], (*m_tau_phi)[i], (*m_tau_E)[i]);
           if(tmp.DeltaR(lep_v) < 0.2) continue;
-          taus_v[ntaupassele].SetPtEtaPhiE((*m_tau_pt)[i], (*m_tau_eta)[i], (*m_tau_phi)[i], (*m_tau_E)[i]);
+          taus_v[ntaupassele] = tmp;
           ntaupassele ++;
           if(ntaupassele == 2) break;
         }
