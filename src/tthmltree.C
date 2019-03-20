@@ -316,7 +316,52 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         for (int i = 0; i < nTaus_OR_Pt25; ++i)
         {
           tmp.SetPtEtaPhiE((*m_tau_pt)[i], (*m_tau_eta)[i], (*m_tau_phi)[i], (*m_tau_E)[i]);
-          if(tmp.DeltaR(lep_v) < 0.2) continue;
+          if(tmp.DeltaR(lep_v) < 0.2) {
+            m_tau_pt -> erase(m_tau_pt->begin() + i);
+            m_tau_eta -> erase(m_tau_eta->begin() + i);
+            m_tau_phi -> erase(m_tau_phi->begin() + i);
+            m_tau_E -> erase(m_tau_E->begin() + i);
+            m_tau_charge -> erase(m_tau_charge->begin() + i);
+            m_tau_numTrack -> erase(m_tau_numTrack->begin() + i);
+            m_tau_BDTJetScore -> erase(m_tau_BDTJetScore->begin() + i);
+            m_tau_JetBDTSigLoose -> erase(m_tau_JetBDTSigLoose->begin() + i);
+            m_tau_JetBDTSigMedium -> erase(m_tau_JetBDTSigMedium->begin() + i);
+            m_tau_JetBDTSigTight -> erase(m_tau_JetBDTSigTight->begin() + i);
+            m_tau_MVATESQuality -> erase(m_tau_MVATESQuality->begin() + i);
+            m_tau_passOR -> erase(m_tau_passOR->begin() + i);
+            m_tau_passEleOLR -> erase(m_tau_passEleOLR->begin() + i);
+            m_tau_passEleBDT -> erase(m_tau_passEleBDT->begin() + i);
+            m_tau_passMuonOLR -> erase(m_tau_passMuonOLR->begin() + i);
+            m_tau_isHadronicTau -> erase(m_tau_isHadronicTau->begin() + i);
+            m_tau_MV2c10 -> erase(m_tau_MV2c10->begin() + i);
+            m_tau_tagWeightBin -> erase(m_tau_tagWeightBin->begin() + i);
+            m_tau_passJVT -> erase(m_tau_passJVT->begin() + i);
+            m_tau_fromPV -> erase(m_tau_fromPV->begin() + i);
+            m_tau_BDTEleScoreSigTrans -> erase(m_tau_BDTEleScoreSigTrans->begin() + i);
+            m_tau_BDTJetScoreSigTrans -> erase(m_tau_BDTJetScoreSigTrans->begin() + i);
+            m_tau_ptTauEtaCalib -> erase(m_tau_ptTauEtaCalib->begin() + i);
+            m_tau_etaTauEtaCalib -> erase(m_tau_etaTauEtaCalib->begin() + i);
+            m_tau_phiTauEtaCalib -> erase(m_tau_phiTauEtaCalib->begin() + i);
+            m_tau_mTauEtaCalib -> erase(m_tau_mTauEtaCalib->begin() + i);
+            m_tau_isTruthMatched -> erase(m_tau_isTruthMatched->begin() + i);
+            m_tau_truthOrigin -> erase(m_tau_truthOrigin->begin() + i);
+            m_tau_truthType -> erase(m_tau_truthType->begin() + i);
+            m_tau_truthJetFlavour -> erase(m_tau_truthJetFlavour->begin() + i);
+            m_tau_ele_match_lhscore -> erase(m_tau_ele_match_lhscore->begin() + i);
+            m_tau_PromptTauInput_TrackJetNTrack -> erase(m_tau_PromptTauInput_TrackJetNTrack->begin() + i);
+            m_tau_PromptTauInput_DRlj -> erase(m_tau_PromptTauInput_DRlj->begin() + i);
+            m_tau_PromptTauInput_JetF -> erase(m_tau_PromptTauInput_JetF->begin() + i);
+            m_tau_PromptTauInput_LepJetPtFrac -> erase(m_tau_PromptTauInput_LepJetPtFrac->begin() + i);
+            m_tau_PromptTauInput_MV2c10rnn -> erase(m_tau_PromptTauInput_MV2c10rnn->begin() + i);
+            m_tau_PromptTauInput_SV1 -> erase(m_tau_PromptTauInput_SV1->begin() + i);
+            m_tau_PromptTauInput_ip2 -> erase(m_tau_PromptTauInput_ip2->begin() + i);
+            m_tau_PromptTauInput_ip3 -> erase(m_tau_PromptTauInput_ip3->begin() + i);
+            m_tau_PromptTauInput_rnnip -> erase(m_tau_PromptTauInput_rnnip->begin() + i);
+            m_tau_PromptTauInput_MV2c10 -> erase(m_tau_PromptTauInput_MV2c10->begin() + i);
+            m_tau_PromptTauVeto -> erase(m_tau_PromptTauVeto->begin() + i);
+            m_tau_PromptTauIso -> erase(m_tau_PromptTauIso->begin() + i);
+            continue;
+          }
           taus_v[ntaupassele] = tmp;
           ntaupassele ++;
           if(ntaupassele == 2) break;
@@ -490,9 +535,9 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         Int_t npari, nparx, istat;
         gM->mnstat(fmin, fedm, errdef, npari, nparx, istat);
         TLorentzVector tauv1_v;
-        tauv1_v.SetPtEtaPhiM(val[0]*(*m_tau_pt)[0], (*m_tau_eta)[0], (*m_tau_phi)[0], nJets_OR_T >= 2 ? 0 : val[2]);
+        tauv1_v.SetPtEtaPhiM(val[0]*taus_v[0].Pt(), taus_v[0].Eta(), taus_v[0].Phi(), nJets_OR_T >= 2 ? 0 : val[2]);
         TLorentzVector tauv2_v;
-        tauv2_v.SetPtEtaPhiM(val[1]*(*m_tau_pt)[1], (*m_tau_eta)[1], (*m_tau_phi)[1], 0);
+        tauv2_v.SetPtEtaPhiM(val[1]*taus_v[1].Pt(), taus_v[1].Eta(), taus_v[1].Phi(), 0);
         x1fit = val[0] / (1 + val[0]);
         x2fit = val[1] / (1 + val[1]);
         neutrino_pt->push_back(tauv1_v.Pt());
