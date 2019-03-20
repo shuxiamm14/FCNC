@@ -308,7 +308,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
 
       //===============================define regions===============================
 
-      int ntaupassele;
+      int ntaupassele = 0;
       if (nTaus_OR_Pt25 > 1) {
         if (fabs(lep_ID_0) == 11) lep_v.SetPtEtaPhiE((*electron_pt)[0], (*electron_eta)[0], (*electron_phi)[0], (*electron_E)[0]);
         else lep_v.SetPtEtaPhiE((*muon_pt)[0], (*muon_eta)[0], (*muon_phi)[0], (*muon_E)[0]);
