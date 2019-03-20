@@ -26,7 +26,7 @@ int main(int argc, char const *argv[])
 	prefix1 ="/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimV";
 	prefix1 += char('0'+ version);
 	prefix1 += "/MytthAnaSkim_";
-	printf("reading list: %s as %s with name %s\n", (prefix + "/datafiles/" + filename + ".txt").Data(), cate, title);
+	printf("reading list: %s as %s with name %s\n", (prefix + "/datafiles/tthML/" + filename + ".txt").Data(), cate, title);
 	ifstream list(prefix + "/datafiles/" + filename + ".txt");
 	analysis->version = version;
 	analysis->init_hist(cate);
