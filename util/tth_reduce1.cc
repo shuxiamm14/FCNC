@@ -27,7 +27,7 @@ int main(int argc, char const *argv[])
 	prefix1 += char('0'+ version);
 	prefix1 += "/MytthAnaSkim_";
 	printf("reading list: %s as %s with name %s\n", (prefix + "/datafiles/tthML/" + filename + ".txt").Data(), cate, title);
-	ifstream list(prefix + "/datafiles/" + filename + ".txt");
+	ifstream list(prefix + "/datafiles/tthML/" + filename + ".txt");
 	analysis->version = version;
 	analysis->init_hist(cate);
 	analysis->init_sample(cate, title);
