@@ -8,7 +8,7 @@ int main(int argc, char const *argv[])
 	  fprintf(stderr,"Error: can't open file: %s\n",argv[1]);
 	  return 1;
 	}
-	bool doplot = 0;
+	bool doplot = 1;
 	char inputline[100];
 	vector<TString> regions;
 	regions.push_back("reg1l2tau1bnj");
@@ -25,8 +25,8 @@ int main(int argc, char const *argv[])
 	//regions.push_back("reg1l2b2j");
 
 	tthmltree *analysis = new tthmltree();
-	analysis->debug = 0;
-	analysis->writetree = 0;
+	analysis->debug = 1;
+	analysis->writetree = 1;
 	analysis->fcnc = 1;
 	analysis->reduce = 2;
 	analysis->dumptruth = 1;
