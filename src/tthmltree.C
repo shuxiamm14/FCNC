@@ -309,14 +309,21 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
       //===============================define regions===============================
 
       int ntaupassele = 0;
+      if(nTaus_OR_Pt25 == 0) continue;
       if (nTaus_OR_Pt25 > 1) {
         if (fabs(lep_ID_0) == 11) lep_v.SetPtEtaPhiE((*electron_pt)[0], (*electron_eta)[0], (*electron_phi)[0], (*electron_E)[0]);
         else lep_v.SetPtEtaPhiE((*muon_pt)[0], (*muon_eta)[0], (*muon_phi)[0], (*muon_E)[0]);
         TLorentzVector tmp;
-        for (int i = 0; i < nTaus_OR_Pt25; ++i)
+        int tausvsize = m_tau_pt->size();
+        for (int i = 0; i < tausvsize; ++i)
         {
           tmp.SetPtEtaPhiE((*m_tau_pt)[i], (*m_tau_eta)[i], (*m_tau_phi)[i], (*m_tau_E)[i]);
           if(tmp.DeltaR(lep_v) < 0.2) {
+            if(debug){
+              printf("tau is too close too the lepton, drop it : EventNumber : %lld real tau? %d!\n",eventNumber,m_tau_isHadronicTau->at(ntaupassele));
+              printv(tmp);
+              printv(lep_v);
+            }
             m_tau_pt -> erase(m_tau_pt->begin() + ntaupassele);
             m_tau_eta -> erase(m_tau_eta->begin() + ntaupassele);
             m_tau_phi -> erase(m_tau_phi->begin() + ntaupassele);
@@ -366,7 +373,9 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
           ntaupassele ++;
           if(ntaupassele == 2) break;
         }
-        nTaus_OR_Pt25 = ntaupassele;
+        if(nTaus_OR_Pt25>m_tau_pt->size()){
+          nTaus_OR_Pt25 = m_tau_pt->size();
+        }
         if(nTaus_OR_Pt25 == 1){
           taus_v[1] = taus_v[0];
           taus_v[0] = lep_v;
