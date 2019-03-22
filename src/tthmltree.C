@@ -421,6 +421,21 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
     if (ifregions["reg1l1tau1b2j"] || ifregions["reg1l1tau1b3j"] || ifregions["reg1l2tau1bnj"]) triggeredfcnc = 1;
 
     if (reduce <= 2) {
+      if (reduce != 1){
+        if (nTaus_OR_Pt25 > 1) {
+          if (fabs(lep_ID_0) == 11) lep_v.SetPtEtaPhiE((*electron_pt)[0], (*electron_eta)[0], (*electron_phi)[0], (*electron_E)[0]);
+          else lep_v.SetPtEtaPhiE((*muon_pt)[0], (*muon_eta)[0], (*muon_phi)[0], (*muon_E)[0]);
+          for (int i = 0; i < nTaus_OR_Pt25; ++i)
+          {
+            taus_v[i].SetPtEtaPhiE((*m_tau_pt)[i], (*m_tau_eta)[i], (*m_tau_phi)[i], (*m_tau_E)[i]);
+          }
+        }else if(nTaus_OR_Pt25 == 1){
+          taus_v[1] = taus_v[0];
+          taus_v[0] = lep_v;
+          lep_v.SetPtEtaPhiE(0, 0, 0, 0);
+        }
+      }
+
       leading_b = -1;
       leading_ljet = -1;
       pt_b = 0;
@@ -431,7 +446,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         printf("ERROR: nJets_OR_T,%d != selected_jets_T->size(),%lu; Entry: %lld\n", nJets_OR_T, selected_jets_T->size(), jentry);
         continue;
       }
-        
+      if (debug == 2) printf("Loop jets\n");
       for (int i = 0; i < nJets_OR_T; ++i) {
         if (ifregions["reg1e1mu2bnj"] && m_jet_flavor_truth_label_ghost->at(selected_jets_T->at(i)) == 21) ngluon += weight;
         if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > btag70wt && leading_b == -1) {
@@ -455,6 +470,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         printf("ERROR: bjet not found\n");
         continue;
       }
+      if (debug == 2) printf("kine fcnc\n");
       if (triggeredfcnc) {
         if (tau_MV2c10_0 > btagwpCut[1]) continue;
         if (nTaus_OR_Pt25 == 2 && tau_MV2c10_1 > btagwpCut[1]) continue;
@@ -462,10 +478,8 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
           if (nJets_OR_T != 2)
             //ljet_indice = findcjetML("lep2tau",ljets_v,bjet_v,lep_v,taus_v,EventNumber%2);
             ljet_indice = findcjet("lep2tau",ljets_v,bjet_v,lep_v,taus_v);
+          else ljet_indice.push_back(0);
         } else {
-          if (fabs(lep_ID_0) == 11) taus_v[0].SetPtEtaPhiE((*electron_pt)[0], (*electron_eta)[0], (*electron_phi)[0], (*electron_E)[0]);
-          else taus_v[0].SetPtEtaPhiE((*muon_pt)[0], (*muon_eta)[0], (*muon_phi)[0], (*muon_E)[0]);
-          taus_v[1].SetPtEtaPhiE((*m_tau_pt)[0], (*m_tau_eta)[0], (*m_tau_phi)[0], (*m_tau_E)[0]);
           //ljet_indice = findcjetML("lep2tau",ljets_v,bjet_v,lep_v,taus_v,EventNumber%2);
           ljet_indice = findcjet("lep2tau",ljets_v,bjet_v,lep_v,taus_v);
           if (debug) {
@@ -743,49 +757,26 @@ void tthmltree::dumpTruth(int ipart) {
     }
   }
   int loopmax = min(nJets_OR_T, (nTaus_OR_Pt25 == 1 ? 3 : 2) + 2) - 1;
-  int cjet_inv = -1;
   int ijet = 0;
-  for (int i = 0; i < loopmax; ++i) {
-    if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] < btag70wt) {
-      TLorentzVector tmpv;
-      tmpv.SetPtEtaPhiE((*m_jet_pt)[selected_jets_T->at(i)], (*m_jet_eta)[selected_jets_T->at(i)], (*m_jet_phi)[selected_jets_T->at(i)], (*m_jet_E)[selected_jets_T->at(i)]);
-      outstream << "pool: " << tmpv.Pt() << " " << tmpv.Eta() << " " << tmpv.Phi() << " " << tmpv.E();
-      if (selected_jets_T->at(i) == ljet_indice[0]) cjet_inv = ijet;
-      ijet += 1;
-      bool wmatched = 0;
-      if (tmpv.DeltaR(fcncjet) < 0.4) {
-        outstream << " 1 0 0\n";
-        iffcncmatched = 1;
-        continue;
-      } else if (nTaus_OR_Pt25 == 1) {
-        for (int ichild = 0; ichild < 2; ++ichild) {
-          if (tmpv.DeltaR(wchild[ichild]) < 0.4) {
-            outstream << " 0 1 0\n";
-            wmatched = 1;
-            break;
-          }
+  for (auto jetv : ljets_v) {
+    outstream << "pool: " << jetv.Pt() << " " << jetv.Eta() << " " << jetv.Phi() << " " << jetv.E();
+    bool wmatched = 0;
+    if (jetv.DeltaR(fcncjet) < 0.4) {
+      outstream << " 1 0 0\n";
+      iffcncmatched = 1;
+      continue;
+    } else if (nTaus_OR_Pt25 == 1) {
+      for (int ichild = 0; ichild < 2; ++ichild) {
+        if (jetv.DeltaR(wchild[ichild]) < 0.4) {
+          outstream << " 0 1 0\n";
+          wmatched = 1;
+          break;
         }
       }
-      if (!wmatched) outstream << " 0 0 1\n";
-    } else {
-      loopmax++;
     }
+    if (!wmatched) outstream << " 0 0 1\n";
   }
-  for (int i = 0; i < nJets_OR_T; ++i) {
-    if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > btag70wt) {
-      outstream << "bjet: " << (*m_jet_pt)[selected_jets_T->at(i)] << " " << (*m_jet_eta)[selected_jets_T->at(i)] << " " << (*m_jet_phi)[selected_jets_T->at(i)] << " " << (*m_jet_E)[selected_jets_T->at(i)] << "\n";
-    }
-  }
-  if (nTaus_OR_Pt25 >= 2) {
-    for (int i = 0; i < 2; ++i) taus_v[i].SetPtEtaPhiE((*m_tau_pt)[i], (*m_tau_eta)[i], (*m_tau_phi)[i], (*m_tau_E)[i]);
-    if (fabs(lep_ID_0) == 11) lep_v.SetPtEtaPhiE((*electron_pt)[0], (*electron_eta)[0], (*electron_phi)[0], (*electron_E)[0]);
-    else lep_v.SetPtEtaPhiE((*muon_pt)[0], (*muon_eta)[0], (*muon_phi)[0], (*muon_E)[0]);
-    bjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b], (*m_jet_eta)[leading_b], (*m_jet_phi)[leading_b], (*m_jet_E)[leading_b]);
-  } else {
-    if (fabs(lep_ID_0) == 11) taus_v[0].SetPtEtaPhiE((*electron_pt)[0], (*electron_eta)[0], (*electron_phi)[0], (*electron_E)[0]);
-    else taus_v[0].SetPtEtaPhiE((*muon_pt)[0], (*muon_eta)[0], (*muon_phi)[0], (*muon_E)[0]);
-    taus_v[1].SetPtEtaPhiE((*m_tau_pt)[0], (*m_tau_eta)[0], (*m_tau_phi)[0], (*m_tau_E)[0]);
-  }
+  outstream << "bjet: " << bjet_v.Pt() << " " << bjet_v.Eta() << " " << bjet_v.Phi() << " " << bjet_v.E() << "\n";
   for (int i = 0; i < 2; ++i) {
     outstream << "taus: " << taus_v[i].Pt() << " " << taus_v[i].Eta() << " " << taus_v[i].Phi() << " " << taus_v[i].E() << "\n";
   }
@@ -793,7 +784,7 @@ void tthmltree::dumpTruth(int ipart) {
     outstream << "leptons: " << lep_v.Pt() << " " << lep_v.Eta() << " " << lep_v.Phi() << " " << lep_v.E() << "\n";
   }
   if (iffcncmatched) {
-    (*truthfile) << outstream.rdbuf() << "eventweight: " << weight << " cjet_inv_mass_method: " << cjet_inv << endl;
+    (*truthfile) << outstream.rdbuf() << "eventweight: " << weight << " cjet_inv_mass_method: " << ljet_indice[0] << endl;
     fcncmatched += weight;
   } else {
     nonmatchedfile << outstream.rdbuf() << nonfcncmatched << endl;
