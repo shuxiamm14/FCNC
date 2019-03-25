@@ -321,7 +321,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
       if(nTaus_OR_Pt25 == 0) continue;
       if(nTaus_OR_Pt25 == 0) continue;
 
-      if (nTaus_OR_Pt25 > 1) {
+      if (nTaus_OR_Pt25 > 1 && (onelep_type || dilep_type)) {
         if (fabs(lep_ID_0) == 11) lep_v.SetPtEtaPhiE((*electron_pt)[0], (*electron_eta)[0], (*electron_phi)[0], (*electron_E)[0]);
         else lep_v.SetPtEtaPhiE((*muon_pt)[0], (*muon_eta)[0], (*muon_phi)[0], (*muon_E)[0]);
         TLorentzVector tmp;
@@ -378,6 +378,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
             m_tau_PromptTauInput_MV2c10 -> erase(m_tau_PromptTauInput_MV2c10->begin() + ntaupassele);
             m_tau_PromptTauVeto -> erase(m_tau_PromptTauVeto->begin() + ntaupassele);
             m_tau_PromptTauIso -> erase(m_tau_PromptTauIso->begin() + ntaupassele);
+            if (fabs(lep_ID_0) != 11) nTaus_OR_Pt25 -= 1;
             continue;
           }
           if(ntaupassele < 2) taus_v[ntaupassele] = tmp;
@@ -386,7 +387,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         if(nTaus_OR_Pt25!=m_tau_pt->size()){
           printf("WARNING: EventNumber : %lld ntau(%d)!= mtausize(%d)!\n",eventNumber,nTaus_OR_Pt25,m_tau_pt->size());
           nTaus_OR_Pt25 = m_tau_pt->size();
-          exit(1);
+          continue;
         }
         if(nTaus_OR_Pt25 == 1){
           taus_v[1] = taus_v[0];
