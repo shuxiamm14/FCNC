@@ -379,6 +379,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
             m_tau_PromptTauVeto -> erase(m_tau_PromptTauVeto->begin() + ntaupassele);
             m_tau_PromptTauIso -> erase(m_tau_PromptTauIso->begin() + ntaupassele);
             continue;
+            if(!m_tau_passEleOLR->at(ntaupassele) || !m_tau_passMuonOLR->at(ntaupassele)) nTaus_OR_Pt25 -= 1;
           }
           if(ntaupassele < 2) taus_v[ntaupassele] = tmp;
           ntaupassele ++;
