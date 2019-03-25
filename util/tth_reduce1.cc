@@ -17,7 +17,7 @@ int main(int argc, char const *argv[])
         analysis->dofcnc = 1;
 	analysis->reduce = 1;
 	analysis->debug = 0;
-        analysis->dumptruth = 1;
+        analysis->dumptruth = 0;
 	fn.getline(inputline,200);
 	char filename[100];
 	char cate[100];
