@@ -317,83 +317,17 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
 
       //===============================define regions===============================
 
-      int ntaupassele = 0;
-      if(nTaus_OR_Pt25 == 0) continue;
       if(nTaus_OR_Pt25 == 0) continue;
 
-      if (nTaus_OR_Pt25 > 1 && (onelep_type || dilep_type)) {
-        if (fabs(lep_ID_0) == 11) lep_v.SetPtEtaPhiE((*electron_pt)[0], (*electron_eta)[0], (*electron_phi)[0], (*electron_E)[0]);
-        else lep_v.SetPtEtaPhiE((*muon_pt)[0], (*muon_eta)[0], (*muon_phi)[0], (*muon_E)[0]);
-        TLorentzVector tmp;
-        int tausvsize = m_tau_pt->size();
-        for (int i = 0; i < tausvsize; ++i)
-        {
-          tmp.SetPtEtaPhiE((*m_tau_pt)[i], (*m_tau_eta)[i], (*m_tau_phi)[i], (*m_tau_E)[i]);
-          if(!m_tau_passEleBDT->at(ntaupassele) || !m_tau_passEleOLR->at(ntaupassele) || !m_tau_passMuonOLR->at(ntaupassele) || !m_tau_JetBDTSigMedium->at(ntaupassele)) {
-            if(debug){
-              printf("tau is not olr or id EventNumber : %lld real tau? %d!\n",eventNumber,m_tau_isHadronicTau->at(ntaupassele));
-              printv(tmp);
-              printv(lep_v);
-            }
-            if(!m_tau_passEleOLR->at(ntaupassele) || !m_tau_passMuonOLR->at(ntaupassele)) nTaus_OR_Pt25 -= 1;
-            m_tau_pt -> erase(m_tau_pt->begin() + ntaupassele);
-            m_tau_eta -> erase(m_tau_eta->begin() + ntaupassele);
-            m_tau_phi -> erase(m_tau_phi->begin() + ntaupassele);
-            m_tau_E -> erase(m_tau_E->begin() + ntaupassele);
-            m_tau_charge -> erase(m_tau_charge->begin() + ntaupassele);
-            m_tau_numTrack -> erase(m_tau_numTrack->begin() + ntaupassele);
-            m_tau_BDTJetScore -> erase(m_tau_BDTJetScore->begin() + ntaupassele);
-            m_tau_JetBDTSigLoose -> erase(m_tau_JetBDTSigLoose->begin() + ntaupassele);
-            m_tau_JetBDTSigMedium -> erase(m_tau_JetBDTSigMedium->begin() + ntaupassele);
-            m_tau_JetBDTSigTight -> erase(m_tau_JetBDTSigTight->begin() + ntaupassele);
-            m_tau_MVATESQuality -> erase(m_tau_MVATESQuality->begin() + ntaupassele);
-            m_tau_passOR -> erase(m_tau_passOR->begin() + ntaupassele);
-            m_tau_passEleOLR -> erase(m_tau_passEleOLR->begin() + ntaupassele);
-            m_tau_passEleBDT -> erase(m_tau_passEleBDT->begin() + ntaupassele);
-            m_tau_passMuonOLR -> erase(m_tau_passMuonOLR->begin() + ntaupassele);
-            m_tau_isHadronicTau -> erase(m_tau_isHadronicTau->begin() + ntaupassele);
-            m_tau_MV2c10 -> erase(m_tau_MV2c10->begin() + ntaupassele);
-            m_tau_tagWeightBin -> erase(m_tau_tagWeightBin->begin() + ntaupassele);
-            m_tau_passJVT -> erase(m_tau_passJVT->begin() + ntaupassele);
-            m_tau_fromPV -> erase(m_tau_fromPV->begin() + ntaupassele);
-            m_tau_BDTEleScoreSigTrans -> erase(m_tau_BDTEleScoreSigTrans->begin() + ntaupassele);
-            m_tau_BDTJetScoreSigTrans -> erase(m_tau_BDTJetScoreSigTrans->begin() + ntaupassele);
-            m_tau_ptTauEtaCalib -> erase(m_tau_ptTauEtaCalib->begin() + ntaupassele);
-            m_tau_etaTauEtaCalib -> erase(m_tau_etaTauEtaCalib->begin() + ntaupassele);
-            m_tau_phiTauEtaCalib -> erase(m_tau_phiTauEtaCalib->begin() + ntaupassele);
-            m_tau_mTauEtaCalib -> erase(m_tau_mTauEtaCalib->begin() + ntaupassele);
-            m_tau_isTruthMatched -> erase(m_tau_isTruthMatched->begin() + ntaupassele);
-            m_tau_truthOrigin -> erase(m_tau_truthOrigin->begin() + ntaupassele);
-            m_tau_truthType -> erase(m_tau_truthType->begin() + ntaupassele);
-            m_tau_truthJetFlavour -> erase(m_tau_truthJetFlavour->begin() + ntaupassele);
-            m_tau_ele_match_lhscore -> erase(m_tau_ele_match_lhscore->begin() + ntaupassele);
-            m_tau_PromptTauInput_TrackJetNTrack -> erase(m_tau_PromptTauInput_TrackJetNTrack->begin() + ntaupassele);
-            m_tau_PromptTauInput_DRlj -> erase(m_tau_PromptTauInput_DRlj->begin() + ntaupassele);
-            m_tau_PromptTauInput_JetF -> erase(m_tau_PromptTauInput_JetF->begin() + ntaupassele);
-            m_tau_PromptTauInput_LepJetPtFrac -> erase(m_tau_PromptTauInput_LepJetPtFrac->begin() + ntaupassele);
-            m_tau_PromptTauInput_MV2c10rnn -> erase(m_tau_PromptTauInput_MV2c10rnn->begin() + ntaupassele);
-            m_tau_PromptTauInput_SV1 -> erase(m_tau_PromptTauInput_SV1->begin() + ntaupassele);
-            m_tau_PromptTauInput_ip2 -> erase(m_tau_PromptTauInput_ip2->begin() + ntaupassele);
-            m_tau_PromptTauInput_ip3 -> erase(m_tau_PromptTauInput_ip3->begin() + ntaupassele);
-            m_tau_PromptTauInput_rnnip -> erase(m_tau_PromptTauInput_rnnip->begin() + ntaupassele);
-            m_tau_PromptTauInput_MV2c10 -> erase(m_tau_PromptTauInput_MV2c10->begin() + ntaupassele);
-            m_tau_PromptTauVeto -> erase(m_tau_PromptTauVeto->begin() + ntaupassele);
-            m_tau_PromptTauIso -> erase(m_tau_PromptTauIso->begin() + ntaupassele);
-            continue;
-          }
-          if(ntaupassele < 2) taus_v[ntaupassele] = tmp;
-          ntaupassele ++;
-        }
-        if(nTaus_OR_Pt25!=m_tau_pt->size()){
-          printf("WARNING: EventNumber : %lld ntau(%d)!= mtausize(%d)!\n",eventNumber,nTaus_OR_Pt25,m_tau_pt->size());
-          nTaus_OR_Pt25 = m_tau_pt->size();
-          continue;
-        }
-        if(nTaus_OR_Pt25 == 1){
-          taus_v[1] = taus_v[0];
-          taus_v[0] = lep_v;
-          lep_v.SetPtEtaPhiE(0, 0, 0, 0);
-        }
+      if (onelep_type || dilep_type) {
+        lep_v.SetPtEtaPhiE(lep_Pt_0, lep_Eta_0, lep_Phi_0, lep_E_0);
+      }
+      taus_v[0].SetPtEtaPhiE(tau_pt_0,tau_eta_0,tau_phi_0,tau_E_0);
+      taus_v[1].SetPtEtaPhiE(tau_pt_1,tau_eta_1,tau_phi_1,tau_E_1);
+      if(nTaus_OR_Pt25 == 1){
+        taus_v[1] = taus_v[0];
+        taus_v[0] = lep_v;
+        lep_v.SetPtEtaPhiE(0, 0, 0, 0);
       }
 
       ifregions["reg1l1tau1b2j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T == 3 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
@@ -444,14 +378,12 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
 
     if (reduce <= 2) {
       if (reduce != 1){
-        if (nTaus_OR_Pt25 > 1) {
-          if (fabs(lep_ID_0) == 11) lep_v.SetPtEtaPhiE((*electron_pt)[0], (*electron_eta)[0], (*electron_phi)[0], (*electron_E)[0]);
-          else lep_v.SetPtEtaPhiE((*muon_pt)[0], (*muon_eta)[0], (*muon_phi)[0], (*muon_E)[0]);
-          for (int i = 0; i < nTaus_OR_Pt25; ++i)
-          {
-            taus_v[i].SetPtEtaPhiE((*m_tau_pt)[i], (*m_tau_eta)[i], (*m_tau_phi)[i], (*m_tau_E)[i]);
-          }
-        }else if(nTaus_OR_Pt25 == 1){
+        if (onelep_type || dilep_type) {
+          lep_v.SetPtEtaPhiE(lep_Pt_0, lep_Eta_0, lep_Phi_0, lep_E_0);
+        }
+        taus_v[0].SetPtEtaPhiE(tau_pt_0,tau_eta_0,tau_phi_0,tau_E_0);
+        taus_v[1].SetPtEtaPhiE(tau_pt_1,tau_eta_1,tau_phi_1,tau_E_1);
+        if(nTaus_OR_Pt25 == 1){
           taus_v[1] = taus_v[0];
           taus_v[0] = lep_v;
           lep_v.SetPtEtaPhiE(0, 0, 0, 0);
@@ -1078,7 +1010,6 @@ void tthmltree::Init(TTree*tree) {
   m_jet_flavor_weight_MV2c10 = 0;
   m_jet_numTrk = 0;
   m_jet_tagWeightBin = 0;
-  m_tau_BDTJetScoreSigTrans = 0;
   m_jet_passOR = 0;
   m_jet_passTauOR = 0;
   m_jet_flavor_weight_MV2c00 = 0;
@@ -1087,49 +1018,6 @@ void tthmltree::Init(TTree*tree) {
   m_jet_emfrac = 0;
   m_jet_flavor_truth_label = 0;
   m_jet_flavor_truth_label_ghost = 0;
-  m_tau_pt = 0;
-  m_tau_eta = 0;
-  m_tau_phi = 0;
-  m_tau_E = 0;
-  m_tau_charge = 0;
-  m_tau_numTrack = 0;
-  m_tau_BDTJetScore = 0;
-  m_tau_JetBDTSigLoose = 0;
-  m_tau_JetBDTSigMedium = 0;
-  m_tau_JetBDTSigTight = 0;
-  m_tau_MVATESQuality = 0;
-  m_tau_passOR = 0;
-  m_tau_passEleOLR = 0;
-  m_tau_passEleBDT = 0;
-  m_tau_passMuonOLR = 0;
-  m_tau_isHadronicTau = 0;
-  m_tau_MV2c10 = 0;
-  m_tau_tagWeightBin = 0;
-  m_tau_passJVT = 0;
-  m_tau_fromPV = 0;
-  m_tau_BDTEleScoreSigTrans = 0;
-  m_tau_BDTJetScoreSigTrans = 0;
-  m_tau_ptTauEtaCalib = 0;
-  m_tau_etaTauEtaCalib = 0;
-  m_tau_phiTauEtaCalib = 0;
-  m_tau_mTauEtaCalib = 0;
-  m_tau_isTruthMatched = 0;
-  m_tau_truthOrigin = 0;
-  m_tau_truthType = 0;
-  m_tau_truthJetFlavour = 0;
-  m_tau_ele_match_lhscore = 0;
-  m_tau_PromptTauInput_TrackJetNTrack = 0;
-  m_tau_PromptTauInput_DRlj = 0;
-  m_tau_PromptTauInput_JetF = 0;
-  m_tau_PromptTauInput_LepJetPtFrac = 0;
-  m_tau_PromptTauInput_MV2c10rnn = 0;
-  m_tau_PromptTauInput_SV1 = 0;
-  m_tau_PromptTauInput_ip2 = 0;
-  m_tau_PromptTauInput_ip3 = 0;
-  m_tau_PromptTauInput_rnnip = 0;
-  m_tau_PromptTauInput_MV2c10 = 0;
-  m_tau_PromptTauVeto = 0;
-  m_tau_PromptTauIso = 0;
   selected_jets = 0;
   selected_jets_T = 0;
   selected_jets_mv2c10_Ordrd = 0;
@@ -2163,49 +2051,6 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("m_jet_emfrac", & m_jet_emfrac);
   tree->SetBranchAddress("m_jet_flavor_truth_label", & m_jet_flavor_truth_label);
   tree->SetBranchAddress("m_jet_flavor_truth_label_ghost", & m_jet_flavor_truth_label_ghost);
-  tree->SetBranchAddress("m_tau_pt", & m_tau_pt);
-  tree->SetBranchAddress("m_tau_eta", & m_tau_eta);
-  tree->SetBranchAddress("m_tau_phi", & m_tau_phi);
-  tree->SetBranchAddress("m_tau_E", & m_tau_E);
-  tree->SetBranchAddress("m_tau_charge", & m_tau_charge);
-  tree->SetBranchAddress("m_tau_numTrack", & m_tau_numTrack);
-  tree->SetBranchAddress("m_tau_BDTJetScore", & m_tau_BDTJetScore);
-  tree->SetBranchAddress("m_tau_BDTJetScoreSigTrans", & m_tau_BDTJetScoreSigTrans);
-  tree->SetBranchAddress("m_tau_JetBDTSigLoose", & m_tau_JetBDTSigLoose);
-  tree->SetBranchAddress("m_tau_JetBDTSigMedium", & m_tau_JetBDTSigMedium);
-  tree->SetBranchAddress("m_tau_JetBDTSigTight", & m_tau_JetBDTSigTight);
-  tree->SetBranchAddress("m_tau_MVATESQuality", & m_tau_MVATESQuality);
-  tree->SetBranchAddress("m_tau_passOR", & m_tau_passOR);
-  tree->SetBranchAddress("m_tau_passEleOLR", & m_tau_passEleOLR);
-  tree->SetBranchAddress("m_tau_passEleBDT", & m_tau_passEleBDT);
-  tree->SetBranchAddress("m_tau_passMuonOLR", & m_tau_passMuonOLR);
-  tree->SetBranchAddress("m_tau_isHadronicTau", & m_tau_isHadronicTau);
-  tree->SetBranchAddress("m_tau_MV2c10", & m_tau_MV2c10);
-  tree->SetBranchAddress("m_tau_tagWeightBin", & m_tau_tagWeightBin);
-  tree->SetBranchAddress("m_tau_passJVT", & m_tau_passJVT);
-  tree->SetBranchAddress("m_tau_fromPV", & m_tau_fromPV);
-  tree->SetBranchAddress("m_tau_BDTEleScoreSigTrans", & m_tau_BDTEleScoreSigTrans);
-  tree->SetBranchAddress("m_tau_ptTauEtaCalib", & m_tau_ptTauEtaCalib);
-  tree->SetBranchAddress("m_tau_etaTauEtaCalib", & m_tau_etaTauEtaCalib);
-  tree->SetBranchAddress("m_tau_phiTauEtaCalib", & m_tau_phiTauEtaCalib);
-  tree->SetBranchAddress("m_tau_mTauEtaCalib", & m_tau_mTauEtaCalib);
-  tree->SetBranchAddress("m_tau_isTruthMatched", & m_tau_isTruthMatched);
-  tree->SetBranchAddress("m_tau_truthOrigin", & m_tau_truthOrigin);
-  tree->SetBranchAddress("m_tau_truthType", & m_tau_truthType);
-  tree->SetBranchAddress("m_tau_truthJetFlavour", & m_tau_truthJetFlavour);
-  tree->SetBranchAddress("m_tau_ele_match_lhscore", & m_tau_ele_match_lhscore);
-  tree->SetBranchAddress("m_tau_PromptTauInput_TrackJetNTrack", & m_tau_PromptTauInput_TrackJetNTrack);
-  tree->SetBranchAddress("m_tau_PromptTauInput_DRlj", & m_tau_PromptTauInput_DRlj);
-  tree->SetBranchAddress("m_tau_PromptTauInput_JetF", & m_tau_PromptTauInput_JetF);
-  tree->SetBranchAddress("m_tau_PromptTauInput_LepJetPtFrac", & m_tau_PromptTauInput_LepJetPtFrac);
-  tree->SetBranchAddress("m_tau_PromptTauInput_MV2c10rnn", & m_tau_PromptTauInput_MV2c10rnn);
-  tree->SetBranchAddress("m_tau_PromptTauInput_SV1", & m_tau_PromptTauInput_SV1);
-  tree->SetBranchAddress("m_tau_PromptTauInput_ip2", & m_tau_PromptTauInput_ip2);
-  tree->SetBranchAddress("m_tau_PromptTauInput_ip3", & m_tau_PromptTauInput_ip3);
-  tree->SetBranchAddress("m_tau_PromptTauInput_rnnip", & m_tau_PromptTauInput_rnnip);
-  tree->SetBranchAddress("m_tau_PromptTauInput_MV2c10", & m_tau_PromptTauInput_MV2c10);
-  tree->SetBranchAddress("m_tau_PromptTauVeto", & m_tau_PromptTauVeto);
-  tree->SetBranchAddress("m_tau_PromptTauIso", & m_tau_PromptTauIso);
   tree->SetBranchAddress("lep_ID_0", & lep_ID_0);
   tree->SetBranchAddress("lep_Index_0", & lep_Index_0);
   tree->SetBranchAddress("lep_Pt_0", & lep_Pt_0);
@@ -3939,49 +3784,6 @@ void tthmltree::definetree(TTree*tree) {
   tree->Branch("m_jet_flavor_weight_MV2c20", & m_jet_flavor_weight_MV2c20);
   tree->Branch("m_jet_sumPtTrk", & m_jet_sumPtTrk);
   tree->Branch("m_jet_emfrac", & m_jet_emfrac);
-  tree->Branch("m_tau_pt", & m_tau_pt);
-  tree->Branch("m_tau_eta", & m_tau_eta);
-  tree->Branch("m_tau_phi", & m_tau_phi);
-  tree->Branch("m_tau_E", & m_tau_E);
-  tree->Branch("m_tau_charge", & m_tau_charge);
-  tree->Branch("m_tau_numTrack", & m_tau_numTrack);
-  tree->Branch("m_tau_BDTJetScore", & m_tau_BDTJetScore);
-  tree->Branch("m_tau_JetBDTSigLoose", & m_tau_JetBDTSigLoose);
-  tree->Branch("m_tau_JetBDTSigMedium", & m_tau_JetBDTSigMedium);
-  tree->Branch("m_tau_JetBDTSigTight", & m_tau_JetBDTSigTight);
-  tree->Branch("m_tau_MVATESQuality", & m_tau_MVATESQuality);
-  tree->Branch("m_tau_passOR", & m_tau_passOR);
-  tree->Branch("m_tau_passEleOLR", & m_tau_passEleOLR);
-  tree->Branch("m_tau_passEleBDT", & m_tau_passEleBDT);
-  tree->Branch("m_tau_passMuonOLR", & m_tau_passMuonOLR);
-  tree->Branch("m_tau_isHadronicTau", & m_tau_isHadronicTau);
-  tree->Branch("m_tau_MV2c10", & m_tau_MV2c10);
-  tree->Branch("m_tau_tagWeightBin", & m_tau_tagWeightBin);
-  tree->Branch("m_tau_passJVT", & m_tau_passJVT);
-  tree->Branch("m_tau_fromPV", & m_tau_fromPV);
-  tree->Branch("m_tau_BDTEleScoreSigTrans", & m_tau_BDTEleScoreSigTrans);
-  tree->Branch("m_tau_BDTJetScoreSigTrans", & m_tau_BDTJetScoreSigTrans);
-  tree->Branch("m_tau_ptTauEtaCalib", & m_tau_ptTauEtaCalib);
-  tree->Branch("m_tau_etaTauEtaCalib", & m_tau_etaTauEtaCalib);
-  tree->Branch("m_tau_phiTauEtaCalib", & m_tau_phiTauEtaCalib);
-  tree->Branch("m_tau_mTauEtaCalib", & m_tau_mTauEtaCalib);
-  tree->Branch("m_tau_isTruthMatched", & m_tau_isTruthMatched);
-  tree->Branch("m_tau_truthOrigin", & m_tau_truthOrigin);
-  tree->Branch("m_tau_truthType", & m_tau_truthType);
-  tree->Branch("m_tau_truthJetFlavour", & m_tau_truthJetFlavour);
-  tree->Branch("m_tau_ele_match_lhscore", & m_tau_ele_match_lhscore);
-  tree->Branch("m_tau_PromptTauInput_TrackJetNTrack", & m_tau_PromptTauInput_TrackJetNTrack);
-  tree->Branch("m_tau_PromptTauInput_DRlj", & m_tau_PromptTauInput_DRlj);
-  tree->Branch("m_tau_PromptTauInput_JetF", & m_tau_PromptTauInput_JetF);
-  tree->Branch("m_tau_PromptTauInput_LepJetPtFrac", & m_tau_PromptTauInput_LepJetPtFrac);
-  tree->Branch("m_tau_PromptTauInput_MV2c10rnn", & m_tau_PromptTauInput_MV2c10rnn);
-  tree->Branch("m_tau_PromptTauInput_SV1", & m_tau_PromptTauInput_SV1);
-  tree->Branch("m_tau_PromptTauInput_ip2", & m_tau_PromptTauInput_ip2);
-  tree->Branch("m_tau_PromptTauInput_ip3", & m_tau_PromptTauInput_ip3);
-  tree->Branch("m_tau_PromptTauInput_rnnip", & m_tau_PromptTauInput_rnnip);
-  tree->Branch("m_tau_PromptTauInput_MV2c10", & m_tau_PromptTauInput_MV2c10);
-  tree->Branch("m_tau_PromptTauVeto", & m_tau_PromptTauVeto);
-  tree->Branch("m_tau_PromptTauIso", & m_tau_PromptTauIso);
   tree->Branch("triggers", & triggers, "triggers/I");
   tree->Branch("loose", & loose, "loose/I");
   tree->Branch("lep_ID_0", & lep_ID_0, "lep_ID_0/F");
