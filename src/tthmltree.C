@@ -232,21 +232,30 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
   gM = initgM();
 
   if (dumptruth) {
-    if (TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) {
-      filetruth[0][0].open("lephad2jodd.txt", fstream:: in | fstream::out | fstream::app);
-      filetruth[0][1].open("lephad2jeven.txt", fstream:: in | fstream::out | fstream::app);
-    } else
-      for (int i = 0; i < 3; ++i) {
-        if (TString(inputtree->GetName()).Contains("reg1l1tau1b3j")) {
-          if (i != 0) {
-            filetruth[i][0].open(CharAppend("lephad", i + 2) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
-            filetruth[i][1].open(CharAppend("lephad", i + 2) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
+    if(reduce > 1){
+      if (TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) {
+        filetruth[0][0].open("lephad2jodd.txt", fstream:: in | fstream::out | fstream::app);
+        filetruth[0][1].open("lephad2jeven.txt", fstream:: in | fstream::out | fstream::app);
+      } else
+        for (int i = 0; i < 3; ++i) {
+          if (TString(inputtree->GetName()).Contains("reg1l1tau1b3j")) {
+            if (i != 0) {
+              filetruth[i][0].open(CharAppend("lephad", i + 2) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
+              filetruth[i][1].open(CharAppend("lephad", i + 2) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
+            }
+          } else {
+            filetruth[i][0].open(CharAppend("lep2tau", i + 1) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
+            filetruth[i][1].open(CharAppend("lep2tau", i + 1) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
           }
-        } else {
-          filetruth[i][0].open(CharAppend("lep2tau", i + 1) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
-          filetruth[i][1].open(CharAppend("lep2tau", i + 1) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
         }
+    }else{
+      for (int i = 0; i < 3; ++i) {
+        filetruth[i][0].open(CharAppend("lephad", i + 2) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
+        filetruth[i][1].open(CharAppend("lephad", i + 2) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
+        filetruth[i][0].open(CharAppend("lep2tau", i + 1) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
+        filetruth[i][1].open(CharAppend("lep2tau", i + 1) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
       }
+    }
   }
   int nloop = debug ? 1000 : nentries;
   float ngluon = 0;
