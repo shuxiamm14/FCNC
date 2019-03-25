@@ -329,7 +329,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         for (int i = 0; i < tausvsize; ++i)
         {
           tmp.SetPtEtaPhiE((*m_tau_pt)[i], (*m_tau_eta)[i], (*m_tau_phi)[i], (*m_tau_E)[i]);
-          if(tmp.DeltaR(lep_v) < 0.2 || m_tau_JetBDTSigMedium->at(ntaupassele)) {
+          if(tmp.DeltaR(lep_v) < 0.2 || !m_tau_JetBDTSigMedium->at(ntaupassele)) {
             if(debug){
               printf("tau is not medium or too close too the lepton or, drop it : EventNumber : %lld real tau? %d!\n",eventNumber,m_tau_isHadronicTau->at(ntaupassele));
               printv(tmp);
