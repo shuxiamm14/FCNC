@@ -382,7 +382,8 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
           ntaupassele ++;
           if(ntaupassele == 2) break;
         }
-        if(nTaus_OR_Pt25>m_tau_pt->size()){
+        if(nTaus_OR_Pt25!=m_tau_pt->size()){
+          printf("WARNING: EventNumber : %lld ntau != mtausize!\n",eventNumber);
           nTaus_OR_Pt25 = m_tau_pt->size();
         }
         if(nTaus_OR_Pt25 == 1){
