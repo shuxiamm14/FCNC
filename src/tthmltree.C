@@ -329,9 +329,9 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         for (int i = 0; i < tausvsize; ++i)
         {
           tmp.SetPtEtaPhiE((*m_tau_pt)[i], (*m_tau_eta)[i], (*m_tau_phi)[i], (*m_tau_E)[i]);
-          if(tmp.DeltaR(lep_v) < 0.2 || !m_tau_JetBDTSigMedium->at(ntaupassele)) {
+          if(!m_tau_passEleBDT->at(ntaupassele) || !m_tau_passEleOLR->at(ntaupassele) || !m_tau_passMuonOLR->at(ntaupassele) || !m_tau_JetBDTSigMedium->at(ntaupassele)) {
             if(debug){
-              printf("tau is not medium or too close too the lepton or, drop it : EventNumber : %lld real tau? %d!\n",eventNumber,m_tau_isHadronicTau->at(ntaupassele));
+              printf("tau is not olr or id EventNumber : %lld real tau? %d!\n",eventNumber,m_tau_isHadronicTau->at(ntaupassele));
               printv(tmp);
               printv(lep_v);
             }
@@ -378,7 +378,6 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
             m_tau_PromptTauInput_MV2c10 -> erase(m_tau_PromptTauInput_MV2c10->begin() + ntaupassele);
             m_tau_PromptTauVeto -> erase(m_tau_PromptTauVeto->begin() + ntaupassele);
             m_tau_PromptTauIso -> erase(m_tau_PromptTauIso->begin() + ntaupassele);
-            if (fabs(lep_ID_0) != 11) nTaus_OR_Pt25 -= 1;
             continue;
           }
           if(ntaupassele < 2) taus_v[ntaupassele] = tmp;
