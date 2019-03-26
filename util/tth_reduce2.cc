@@ -25,7 +25,7 @@ int main(int argc, char const *argv[])
 	//regions.push_back("reg1l2b2j");
 
 	tthmltree *analysis = new tthmltree();
-	analysis->debug = 0;
+	analysis->debug = 1;
 	analysis->writetree = 1;
 	analysis->fcnc = 1;
 	analysis->reduce = 2;
@@ -40,8 +40,8 @@ int main(int argc, char const *argv[])
 	if(doplot) analysis->init_hist(cate);
 	analysis->version = version;
 	analysis->init_sample(cate, title);
-	printf("reading Root file: %s\n", (prefix + "/data/reduce1/" + cate + "_tree.root").Data());
-	TFile inputfile(prefix + "/data/reduce1/" + cate + "_tree.root");
+	printf("reading Root file: %s\n", (prefix + "/data/reduce1/" + cate + ".root").Data());
+	TFile inputfile(prefix + "/data/reduce1/" + cate + ".root");
 	for (std::vector<TString>::iterator i = regions.begin(); i != regions.end(); ++i)
 	{
 		printf("region: %s\n", i->Data());
