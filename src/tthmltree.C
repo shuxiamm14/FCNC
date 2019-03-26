@@ -330,9 +330,9 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         lep_v.SetPtEtaPhiE(0, 0, 0, 0);
       }
 
-      ifregions["reg1l1tau1b2j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T == 3 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-      ifregions["reg1l1tau1b3j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-      ifregions["reg1l2tau1bnj"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T >= 2 && nTaus_OR_Pt25 >= 2 && tau_charge_0*tau_charge_1 < 0;
+      ifregions["reg1l1tau1b2j"] = SLtrig_match && onelep_type && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T == 3 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+      ifregions["reg1l1tau1b3j"] = SLtrig_match && onelep_type && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+      ifregions["reg1l2tau1bnj"] = SLtrig_match && onelep_type && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T >= 2 && nTaus_OR_Pt25 >= 2 && tau_charge_0*tau_charge_1 < 0;
 
       if (trig_match && dilep_type && total_charge == 0 && lep_Pt_0 > 20e3 && lep_Pt_1 > 20e3 &&
         ((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5)) && SelectTLepid(0) &&
@@ -365,7 +365,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
       if (!triggered) continue;
     }
     if (reduce <= 2) weight = mc_channel_number > 0 ? mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type || trilep_type)*lepSFObjTight + (onelep_type || quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25 > 0 ? tauSFTight : 1.0) : 1.0;
-    cutflow[1] += weight;
+    cutflow[1] += 1;
     if (debug == 2) printf("event weight: %f\n", weight);
     if (debug == 2) {
       for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
@@ -653,6 +653,7 @@ void tthmltree::dumpTruth(int ipart) {
   int foundw = 0;
   bool iffcncmatched = 0;
   bool foundhiggs = 0;
+  if (debug) printf("find truth: mc channel: %d\n", mc_channel_number);
   for (int itruth = 0; itruth < m_truth_pdgId->size(); ++itruth) {
     if (debug) printf("pdg: %d,\tbarcode: %d,\tparent: %d\n", m_truth_pdgId->at(itruth), m_truth_barcode->at(itruth), m_truth_parents->at(itruth).size() ? m_truth_parents->at(itruth)[0] : 0);
     if (nTaus_OR_Pt25 == 1 && abs(m_truth_pdgId->at(itruth)) == 24 && m_truth_m->at(itruth) / GeV > 70 && m_truth_m->at(itruth) / GeV < 90) {
@@ -667,7 +668,7 @@ void tthmltree::dumpTruth(int ipart) {
           }
         }
         if (debug) printf("child pdg: %d\n", m_truth_pdgId->at(childid));
-        if (abs(m_truth_pdgId->at(childid)) > 10 && abs(m_truth_pdgId->at(childid)) < 17) {
+        if (!(mc_channel_number == 411170 || mc_channel_number == 411171 || mc_channel_number == 411174 || mc_channel_number == 411175)) {
           leptonicw += weight;
           return;
         }
