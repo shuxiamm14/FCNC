@@ -338,6 +338,10 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         ifregions["reg1l2tau1bnj"] = nJets_OR_T >= 2 && nTaus_OR_Pt25 >= 2 && tau_charge_0*tau_charge_1 < 0;
         if (ifregions["reg1l1tau1b2j"] || ifregions["reg1l1tau1b3j"] || ifregions["reg1l2tau1bnj"])
           triggeredfcnc = 1;
+      }else{
+        ifregions["reg1l1tau1b2j"] = 0;
+        ifregions["reg1l1tau1b3j"] = 0;
+        ifregions["reg1l2tau1bnj"] = 0;
       }
 
       if (trig_match && dilep_type && total_charge == 0 && lep_Pt_0 > 20e3 && lep_Pt_1 > 20e3 &&
