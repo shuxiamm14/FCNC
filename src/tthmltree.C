@@ -438,7 +438,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
       if (leading_b == -1) {
         printf("ERROR: bjet not found\n");
         for (iter = ifregions.begin(); iter != ifregions.end(); iter++)
-          if(iter.second) printf("region: %s\n", iter->first.Data());
+          if(iter->second) printf("region: %s\n", iter->first.Data());
       }
       if (debug == 2) printf("kine fcnc\n");
       if (triggeredfcnc) {
