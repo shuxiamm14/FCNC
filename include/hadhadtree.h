@@ -1907,6 +1907,7 @@ public :
    TBranch        *b_theory_weights_alphaS_up;   //!
    TBranch        *b_truth_passedVBFFilter;   //!
    TBranch        *b_weight_total;   //!
+   TBranch        *b_weight_mc;   //!
 
 };
 #endif // #ifdef hadhadtree_cxx
