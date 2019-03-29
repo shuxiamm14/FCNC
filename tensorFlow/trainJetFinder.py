@@ -284,7 +284,7 @@ testoutput = [[x[4],x[5]+x[6]] if len(x)==7 else [0,0] for x in datatest]
 testoutput = list(np.array([np.array(testoutput[x:x+pool]) for x in range(0, len(testoutput), nobj)]).transpose((1,0,2)))
 
 history = model.fit(traininput,trainoutput,class_weight=trainweightlib, validation_data = (testinput,testoutput,testweightlib), epochs=5000, batch_size = 64,
-			callbacks=[EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=10, verbose=0, mode='auto', baseline=None)])
+			callbacks=[EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=30, verbose=0, mode='auto', baseline=None)])
 
 #=========================================save model=========================================
 model.save(modelname+'.h5', include_optimizer=False)

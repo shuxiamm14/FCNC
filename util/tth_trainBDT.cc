@@ -53,7 +53,7 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
    TChain* signal = new TChain(region);
    TChain* background = new TChain(region);
    TString inputsignames[] = {"fcnc_ch","fcnc_uh"};
-   TString inputbkgnames[] = {"Vjets","diboson","ttV","ttbarnohad","other","ttH","ttbargamma"};
+   TString inputbkgnames[] = {"Vjets","diboson","ttV","ttbarnohad","other","ttH","ttbargamma","sherpattbar"};
    TString prefix = PACKAGE_DIR;
    prefix += "/data/reduce3/";
    for (int i = 0; i < 2; ++i)
@@ -62,6 +62,7 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
 //      background->Add(prefix + inputbkgnames[i]+"_tree.root");
    background->Add(prefix + inputbkgnames[3]+"_tree.root");
    background->Add(prefix + inputbkgnames[6]+"_tree.root");
+   background->Add(prefix + inputbkgnames[7]+"_tree.root");
    background->Add(prefix + "data_tree.root");
    TCut mycuts = "tau_truthType_0 == 10 && tau_truthType_1 == 10 && (tau_charge_0 * tau_charge_1<0) && weight >0";
    TCut mycutb = "(tau_charge_0 * tau_charge_1<0) && (weight==1?(tau_charge_0*tau_charge_1>0):weight>0)";

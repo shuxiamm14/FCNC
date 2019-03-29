@@ -119,13 +119,13 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         outputtree[fcnc_regions[i]]->Branch("t2mass",&t2mass);
       }
       if(reduce==2 || reduce == 0){
-        //outputtree[fcnc_regions[i]]->Branch("tau_truthType_0",&tau_truthType_0);
-        //outputtree[fcnc_regions[i]]->Branch("tau_truthType_1",&tau_truthType_1);
-        //outputtree[fcnc_regions[i]]->Branch("tau_charge_0",&tau_charge_0);
-        //outputtree[fcnc_regions[i]]->Branch("tau_charge_1",&tau_charge_1);
-        //outputtree[fcnc_regions[i]]->Branch("tau_JetBDTSigTight_0",&tau_JetBDTSigTight_0);
-        //outputtree[fcnc_regions[i]]->Branch("tau_JetBDTSigTight_1",&tau_JetBDTSigTight_1);
-        //outputtree[fcnc_regions[i]]->Branch("eventNumber", &eventNumber);
+        outputtree[fcnc_regions[i]]->Branch("tau_truthType_0",&tau_truthType_0);
+        outputtree[fcnc_regions[i]]->Branch("tau_truthType_1",&tau_truthType_1);
+        outputtree[fcnc_regions[i]]->Branch("tau_charge_0",&tau_charge_0);
+        outputtree[fcnc_regions[i]]->Branch("tau_charge_1",&tau_charge_1);
+        outputtree[fcnc_regions[i]]->Branch("tau_JetBDTSigTight_0",&tau_JetBDTSigTight_0);
+        outputtree[fcnc_regions[i]]->Branch("tau_JetBDTSigTight_1",&tau_JetBDTSigTight_1);
+        outputtree[fcnc_regions[i]]->Branch("eventNumber", &eventNumber);
         outputtree[fcnc_regions[i]]->Branch("neutrino_pt" , &neutrino_pt );
         outputtree[fcnc_regions[i]]->Branch("neutrino_eta", &neutrino_eta);
         outputtree[fcnc_regions[i]]->Branch("neutrino_phi", &neutrino_phi);
@@ -330,9 +330,15 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         lep_v.SetPtEtaPhiE(0, 0, 0, 0);
       }
 
-      ifregions["reg1l1tau1b2j"] = SLtrig_match && onelep_type && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T == 3 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
-      ifregions["reg1l1tau1b3j"] = SLtrig_match && onelep_type && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
-      ifregions["reg1l2tau1bnj"] = SLtrig_match && onelep_type && nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T >= 2 && nTaus_OR_Pt25 >= 2 && tau_charge_0*tau_charge_1 < 0;
+      if(SLtrig_match && onelep_type && SelectTLepid(0) && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25){
+
+        bool ptcut = RunYear==2015?((abs(lep_ID_0)==11&&lep_Pt_0/GeV>25)||(abs(lep_ID_0)==13&&lep_Pt_0/GeV>21)):lep_Pt_0/GeV>27;
+        ifregions["reg1l1tau1b2j"] = nJets_OR_T == 3 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l1tau1b3j"] = nJets_OR_T >= 4 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l2tau1bnj"] = nJets_OR_T >= 2 && nTaus_OR_Pt25 >= 2 && tau_charge_0*tau_charge_1 < 0;
+        if (ifregions["reg1l1tau1b2j"] || ifregions["reg1l1tau1b3j"] || ifregions["reg1l2tau1bnj"])
+          triggeredfcnc = 1;
+      }
 
       if (trig_match && dilep_type && total_charge == 0 && lep_Pt_0 > 20e3 && lep_Pt_1 > 20e3 &&
         ((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5)) && SelectTLepid(0) &&
@@ -364,7 +370,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
 
       if (!triggered) continue;
     }
-    if (reduce <= 2) weight = mc_channel_number > 0 ? mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*((dilep_type || trilep_type)*lepSFObjTight + (onelep_type || quadlep_type)*lepSFObjTight)*(nTaus_OR_Pt25 > 0 ? tauSFTight : 1.0) : 1.0;
+    if (reduce <= 2) weight = mc_channel_number > 0 ? mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight : 1.0;
     cutflow[1] += 1;
     if (debug == 2) printf("event weight: %f\n", weight);
     if (debug == 2) {
@@ -374,8 +380,11 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
       }
     }
     //===============================find leading b,non b jets===============================
-    if (ifregions["reg1l1tau1b2j"] || ifregions["reg1l1tau1b3j"] || ifregions["reg1l2tau1bnj"]) triggeredfcnc = 1;
-
+    if (triggeredfcnc) {
+      weight*=lepSFObjLoose*(nTaus_OR_Pt25 > 0 ? tauSFTight : 1.0);
+    }else {
+      weight*=lepSFObjTight*(nTaus_OR_Pt25 > 0 ? tauSFLoose : 1.0);
+    }
     if (reduce <= 2) {
       if (reduce != 1){
         if (onelep_type || dilep_type) {
@@ -593,7 +602,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
           }
       }
 
-      if (dumptruth) dumpTruth(EventNumber % 2);
+      if (dumptruth && triggeredfcnc && sample.Contains("fcnc")) dumpTruth(EventNumber % 2);
 
       for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
         if (iter->second == 1) {
@@ -711,9 +720,11 @@ void tthmltree::dumpTruth(int ipart) {
       if (debug) outstream << "wjet:\t" << wchild[1].Pt() << " " << wchild[1].Eta() << " " << wchild[1].Phi() << " " << wchild[1].E() << endl;
     }
   }
-  int loopmax = min(nJets_OR_T, (nTaus_OR_Pt25 == 1 ? 3 : 2) + 2) - 1;
+  int loopmax = min(nJets_OR_T, (nTaus_OR_Pt25 == 1 ? 3 : 2) + 2);
   int ijet = 0;
   for (auto jetv : ljets_v) {
+    ijet += 1;
+    if(ijet >= loopmax) break;
     outstream << "pool: " << jetv.Pt() << " " << jetv.Eta() << " " << jetv.Phi() << " " << jetv.E();
     bool wmatched = 0;
     if (jetv.DeltaR(fcncjet) < 0.4) {
