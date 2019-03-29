@@ -330,9 +330,8 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         lep_v.SetPtEtaPhiE(0, 0, 0, 0);
       }
 
-      if(SLtrig_match && onelep_type && SelectTLepid(0) && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25){
-
-        bool ptcut = RunYear==2015?((abs(lep_ID_0)==11&&lep_Pt_0/GeV>25)||(abs(lep_ID_0)==13&&lep_Pt_0/GeV>21)):lep_Pt_0/GeV>27;
+      if(SLtrig_match && onelep_type && SelectTLepid(0) && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 &&
+        RunYear==2015?((abs(lep_ID_0)==11&&lep_Pt_0/GeV>25)||(abs(lep_ID_0)==13&&lep_Pt_0/GeV>21)):lep_Pt_0/GeV>27){
         ifregions["reg1l1tau1b2j"] = nJets_OR_T == 3 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
         ifregions["reg1l1tau1b3j"] = nJets_OR_T >= 4 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
         ifregions["reg1l2tau1bnj"] = nJets_OR_T >= 2 && nTaus_OR_Pt25 >= 2 && tau_charge_0*tau_charge_1 < 0;
@@ -374,7 +373,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
 
       if (!triggered) continue;
     }
-    if (reduce <= 2) weight = mc_channel_number > 0 ? mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight : 1.0;
+    if (reduce <= 2) weight = mc_channel_number > 0 ? mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*lepSFObjTight : 1.0;
     cutflow[1] += 1;
     if (debug == 2) printf("event weight: %f\n", weight);
     if (debug == 2) {
@@ -384,11 +383,9 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
       }
     }
     //===============================find leading b,non b jets===============================
-    if (triggeredfcnc) {
-      weight*=lepSFObjLoose*(nTaus_OR_Pt25 > 0 ? tauSFTight : 1.0);
-    }else {
-      weight*=lepSFObjTight*(nTaus_OR_Pt25 > 0 ? tauSFLoose : 1.0);
-    }
+    weight*=lepSFObjLoose;
+    if(nTaus_OR_Pt25) weight*=triggeredfcnc?tauSFTight:tauSFLoose;
+    
     if (reduce <= 2) {
       if (reduce != 1){
         if (onelep_type || dilep_type) {
