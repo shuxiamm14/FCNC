@@ -337,10 +337,20 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         ifregions["reg1l2tau1bnj"] = nJets_OR_T >= 2 && nTaus_OR_Pt25 >= 2 && tau_charge_0*tau_charge_1 < 0;
         if (ifregions["reg1l1tau1b2j"] || ifregions["reg1l1tau1b3j"] || ifregions["reg1l2tau1bnj"])
           triggeredfcnc = 1;
+        ifregions["reg1l2b2j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 0;
+        ifregions["reg1l1tau2b1j_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 >= 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
+        bool reg1l1tau2b1j_ss = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 >= 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
+        ifregions["reg1l1tau2b1j_ss_ptbin1"] = reg1l1tau2b1j_ss && tau_pt_0 / GeV <= 35;
+        ifregions["reg1l1tau2b1j_ss_ptbin2"] = reg1l1tau2b1j_ss && tau_pt_0 / GeV > 35;
       }else{
         ifregions["reg1l1tau1b2j"] = 0;
         ifregions["reg1l1tau1b3j"] = 0;
         ifregions["reg1l2tau1bnj"] = 0;
+        ifregions["reg1l2b2j"] = 0;
+        ifregions["reg1l1tau2b1j_os"] = 0;
+        ifregions["reg1l1tau2b1j_ss_ptbin1"] = 0;
+        ifregions["reg1l1tau2b1j_ss_ptbin2"] = 0;
+
       }
 
       if (trig_match && dilep_type && total_charge == 0 && lep_Pt_0 > 20e3 && lep_Pt_1 > 20e3 &&
@@ -358,11 +368,6 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         ifregions["reg1e1mu1tau1b"] = 0;
         ifregions["reg1e1mu2b"] = 0;
       }
-      ifregions["reg1l2b2j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 0;
-      ifregions["reg1l1tau2b1j_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 >= 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
-      bool reg1l1tau2b1j_ss = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 >= 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
-      ifregions["reg1l1tau2b1j_ss_ptbin1"] = reg1l1tau2b1j_ss && tau_pt_0 / GeV <= 35;
-      ifregions["reg1l1tau2b1j_ss_ptbin2"] = reg1l1tau2b1j_ss && tau_pt_0 / GeV > 35;
 
       bool triggered = 0;
 
