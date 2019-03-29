@@ -350,7 +350,6 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         ifregions["reg1l1tau2b1j_os"] = 0;
         ifregions["reg1l1tau2b1j_ss_ptbin1"] = 0;
         ifregions["reg1l1tau2b1j_ss_ptbin2"] = 0;
-
       }
 
       if (trig_match && dilep_type && total_charge == 0 && lep_Pt_0 > 20e3 && lep_Pt_1 > 20e3 &&
@@ -374,6 +373,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
       for (iter = ifregions.begin(); iter != ifregions.end(); iter++)
         if (iter->second) {
           triggered = 1;
+          break;
         }
 
       if (!triggered) continue;
@@ -437,7 +437,8 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
       }
       if (leading_b == -1) {
         printf("ERROR: bjet not found\n");
-        continue;
+        for (iter = ifregions.begin(); iter != ifregions.end(); iter++)
+          if(iter.second) printf("region: %s\n", iter->first.Data());
       }
       if (debug == 2) printf("kine fcnc\n");
       if (triggeredfcnc) {
