@@ -41,11 +41,11 @@ int main(int argc, char const *argv[])
 		int dsid;
 		float filtereff, xsec, kfactor;
 		sscanf(inputline,"%d %f %f %f", &dsid, &filtereff, &xsec, &kfactor);
-		xsecs[dsid] = filtereff*xsec*kfactor;
+		xsecs[dsid] = filtereff*xsec*1000000*kfactor;
 	}
 	if(!debug) gErrorIgnoreLevel=kError;
 	hadhadtree *analysis = new hadhadtree();
-    analysis->dofcnc = 1;
+	analysis->dofcnc = 1;
 	analysis->reduce = 1;
 	analysis->debug = debug;
 	analysis->writetree = 1;
@@ -65,6 +65,7 @@ int main(int argc, char const *argv[])
 			exit(1);
 		}
 		analysis->Loop( (TTree*)inputfile.Get("NOMINAL"), inputconfig, xsecs[dsid]*luminosity/((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8));
+		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8));
 		inputfile.Close();
 	}
 	analysis->finalise_sample();

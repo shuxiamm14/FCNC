@@ -7,7 +7,7 @@
 #include "fcnc_include.h"
 
 hadhadtree::hadhadtree() : nominal::nominal(){
-  weights = new vector<Int_t> ();
+  weights = new vector<Float_t> ();
   taus_id = new vector<Int_t> ();
   taus_b_tagged = new vector<Int_t> ();
   taus_decay_mode = new vector<UInt_t> ();
@@ -179,8 +179,9 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     if ((jentry % 100000 == 0))
       std::cout << " I am here event " << jentry << " Event " << event_number << " Run " << run_number << " ismc " << mc_channel_number << std::endl;
     cutflow[0]+=1;
-
+    weights->clear();
 //===============================SFs and weights===============================
+    if((tau_1_n_charged_tracks!=1 && tau_1_n_charged_tracks!=3) || (tau_0_n_charged_tracks!=1 && tau_0_n_charged_tracks!=3)) continue;
     Float_t trig_SF = 1;
     Float_t lepton_SF = 
       tau_0_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
@@ -228,9 +229,16 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       jet_NOMINAL_global_effSF_MV2c10*
       jet_NOMINAL_global_ineffSF_MV2c10;
     float weight_pileup = NOMINAL_pileup_combined_weight;
-    //weight = weight_mc*weight_pileup*lepton_SF*trig_SF*jetSFs*globalweight;
-    weight = 1;
-    weights->push_back(weight);
+    weight = weight_mc*weight_pileup*lepton_SF*trig_SF*jetSFs*globalweight;
+    if(debug){
+      printf("weight_mc: %fi\n",weight_mc);
+      printf("weight_pileup: %fi\n",weight_pileup);
+      printf("lepton_SF: %fi\n",lepton_SF);
+      printf("trig_SF: %fi\n",trig_SF);
+      printf("jetSFs: %fi\n",jetSFs);
+      printf("globalweight: %fi\n",globalweight);
+    }
+    weights->push_back(isData?1:weight);
     //===============================pre-selections===============================
     cutflow[0]+=weight;
 
