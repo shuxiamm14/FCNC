@@ -22,26 +22,30 @@ int main(int argc, char const *argv[])
 	}
 	TString inputconfig = argv[1];
 	inputconfig.Remove(inputconfig.Sizeof()-5,4); //remove ".txt"
-	float luminosity;
-	if(inputconfig.Contains("mc16a")) luminosity = 4.21*0.921 + 38.5*0.924;
+	float luminosity = 0;
+	bool isData = 0;
+	if(inputconfig.Contains("data")) isData = 1;
+	else if(inputconfig.Contains("mc16a")) luminosity = 4.21*0.921 + 38.5*0.924;
 	else if(inputconfig.Contains("mc16d")) luminosity = 46.9;
 	else if(inputconfig.Contains("mc16e")) luminosity = 62.2;
 	else {
-		printf("Wrong config file name: %s\n", inputconfig.Data());
+		printf("Wrong config file name, cannot recognise mc campaign: %s\n", inputconfig.Data());
 		exit(0);
 	}
 	char inputline[500];
-	ifstream xsecfile(prefix + "/config/Xsecs.txt");
 	map<int, float> xsecs;
-	printf("reading cross section file: %s\n", (prefix + "/config/Xsecs.txt").Data());
-	while(!xsecfile.eof()){
-		xsecfile.getline(inputline,500);
-		if(strlen(inputline)==0) continue;
-		if(inputline[0]=='#') continue;
-		int dsid;
-		float filtereff, xsec, kfactor;
-		sscanf(inputline,"%d %f %f %f", &dsid, &filtereff, &xsec, &kfactor);
-		xsecs[dsid] = filtereff*xsec*1000000*kfactor;
+	if(!isData){
+		ifstream xsecfile(prefix + "/config/Xsecs.txt");
+		printf("reading cross section file: %s\n", (prefix + "/config/Xsecs.txt").Data());
+		while(!xsecfile.eof()){
+			xsecfile.getline(inputline,500);
+			if(strlen(inputline)==0) continue;
+			if(inputline[0]=='#') continue;
+			int dsid;
+			float filtereff, xsec, kfactor;
+			sscanf(inputline,"%d %f %f %f", &dsid, &filtereff, &xsec, &kfactor);
+			xsecs[dsid] = filtereff*xsec*1000000*kfactor;
+		}
 	}
 	if(!debug) gErrorIgnoreLevel=kError;
 	hadhadtree *analysis = new hadhadtree();
@@ -57,14 +61,15 @@ int main(int argc, char const *argv[])
 		if(inputline[0]=='#') continue;
 		char filename[500];
 		int dsid;
-		sscanf(inputline,"%d %s",&dsid,filename);
-		printf("reading file: DSID: %d name %s\n", dsid, filename);
+		if(!isData) sscanf(inputline,"%d %s",&dsid,filename);
+		else sscanf(inputline,"%s",filename);
+		printf("reading file: DSID: %d name %s\n", isData? 0 : dsid, filename);
 		TFile inputfile(filename);
 		if(!inputfile.Get("h_metadata")) {
 			printf("h_metadata not found, exit.\n");
 			exit(1);
 		}
-		analysis->Loop( (TTree*)inputfile.Get("NOMINAL"), inputconfig, xsecs[dsid]*luminosity/((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8));
+		analysis->Loop( (TTree*)inputfile.Get("NOMINAL"), inputconfig, isData ? 1 : xsecs[dsid]*luminosity/((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8));
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8));
 		inputfile.Close();
 	}

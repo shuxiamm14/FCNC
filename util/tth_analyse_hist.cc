@@ -38,19 +38,22 @@ int main(int argc, char const *argv[])
 	tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 	//notau_plots->add("p_{T,b}","bpt","GeV");
 	//notau_plots->add("p_{T,light-jet}","ljetpt","GeV");
-	TString regions1[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
-	TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
+	TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
 
 	TString nprong[] = {"1prong_","3prong_",""};
-	for (int j = 0; j < 7; ++j)
-	  if(j>3) continue;//notau_plots->add_region(regions1[j]);
-	  else for (int i = 1; i < 4; i+=2)
+	TString abvorbl[] = {"above35_","below35_"};
+	for (int j = 0; j < 3; ++j)
+	  //notau_plots->add_region(regions[j]);
+	  for (int i = 1; i < 4; i+=2)
 	  	for (int k = 0; k < 2; ++k){
-			tau_plots->add_region(regions1[j] + "_" + nprong[k] + bwps[i]);
-			tau_plots->add_region(regions1[j] + "_" + nprong[k] + "veto" + bwps[i]);
+	  		for (int iabvorbl = 0; iabvorbl < 2; ++iabvorbl)
+	  		{
+				tau_plots->add_region(regions[j] + "_" + nprong[k] + abvorbl[iabvorbl] + bwps[i]);
+				tau_plots->add_region(regions[j] + "_" + nprong[k] + abvorbl[iabvorbl] + "veto" + bwps[i]);
+	  		}
 	    }
 
-	TString samples[] = {"other", "Vjets", "diboson", "ttH", "ttV", "ttbar"};
+	TString samples[] = {"Other", "Vjets", "diboson", "ttH", "ttV", "ttbar"};
 	TString sampletitle[] = {"Other", "V+jets", "Diboson", "#bar{t}tH", "#bar{t}tV", "#bar{t}t"};
 
 	TString origin[] = {"b", "c", "g", "j", "lep", "nomatch", "real", "data"};
@@ -87,17 +90,15 @@ int main(int argc, char const *argv[])
 				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i], sampletitle[j], (enum EColor)colors[j],1);
 			}
 	if(mergeprong){
-		for (int j = 0; j < 4; ++j)
+		for (int j = 0; j < 3; ++j)
 		  for (int i = 1; i < 4; i+=2){
-		  	tau_plots->merge_regions(regions1[j] + "_" + nprong[0] + bwps[i], regions1[j] + "_" + nprong[1] + bwps[i],  regions1[j] + "_" + bwps[i]);
-		  	tau_plots->merge_regions(regions1[j] + "_" + nprong[0] + "veto" + bwps[i], regions1[j] + "_" + nprong[1] + "veto" + bwps[i],  regions1[j] + "_veto" + bwps[i]);
+		  	for (int ptbin = 0; ptbin < 2; ++ptbin)
+		  	{
+		  		tau_plots->merge_regions(regions[j] + "_" + nprong[0] + abvorbl[ptbin] + bwps[i], regions[j] + "_" + nprong[1] + abvorbl[ptbin] + bwps[i],  regions[j] + "_" + abvorbl[ptbin] + bwps[i]);
+		  		tau_plots->merge_regions(regions[j] + "_" + nprong[0] + abvorbl[ptbin] + "veto" + bwps[i], regions[j] + "_" + nprong[1] + abvorbl[ptbin] + "veto" + bwps[i],  regions[j] + abvorbl[ptbin] + "_veto" + bwps[i]);
+		  	}
 		  }
 	}
-	for (int i = 1; i < 4; i+=2)
-	  	for (int k = 0; k < (mergeprong?3:2); ++k){
-			tau_plots->merge_regions(regions1[1] + "_" + nprong[k] + bwps[i],regions1[2] + "_" + nprong[k] + bwps[i],regions[1] + "_" + nprong[k] + bwps[i]);
-			tau_plots->merge_regions(regions1[1] + "_" + nprong[k] + "veto" + bwps[i],regions1[2] + "_" + nprong[k] + "veto" + bwps[i],regions[1] + "_" + nprong[k] + "veto" + bwps[i]);
-	    }
 	if(doPlots){
 		//for (int i = 0; i < 6; ++i)
 		//{
@@ -116,15 +117,16 @@ int main(int argc, char const *argv[])
 				for (int iorigin = 0; iorigin < 8; ++iorigin)
 				{
 					TH1D *target[] = {
-						tau_plots->grabhist(origin[iorigin],regions[0] + "_" + nprong[iprong] + bwps[1],0),
-						tau_plots->grabhist(origin[iorigin],regions[1] + "_" + nprong[iprong] + bwps[1],0),
-						tau_plots->grabhist(origin[iorigin],regions[4] + "_" + nprong[iprong] + bwps[1],0),
-						tau_plots->grabhist(origin[iorigin],regions[0] + "_" + nprong[iprong] + "veto" + bwps[1],0),
-						tau_plots->grabhist(origin[iorigin],regions[1] + "_" + nprong[iprong] + "veto" + bwps[1],0),
-						tau_plots->grabhist(origin[iorigin],regions[4] + "_" + nprong[iprong] + "veto" + bwps[1],0),
-						tau_plots->grabhist(origin[iorigin],regions[1] + "_" + nprong[iprong] + bwps[3],0),
-						tau_plots->grabhist(origin[iorigin],regions[2+ptbin] + "_" + nprong[iprong] + "veto" + bwps[1],1),
-						tau_plots->grabhist(origin[iorigin],regions[2+ptbin] + "_" + nprong[iprong] + bwps[1],1)
+						tau_plots->grabhist(origin[iorigin],regions[0] + "_" + nprong[iprong] + abvorbl[ptbin] + bwps[1],0),
+						tau_plots->grabhist(origin[iorigin],regions[1] + "_" + nprong[iprong] + abvorbl[ptbin] + bwps[1],0),
+						tau_plots->grabhist(origin[iorigin],regions[2] + "_" + nprong[iprong] + abvorbl[ptbin] + bwps[1],0),
+						tau_plots->grabhist(origin[iorigin],regions[0] + "_" + nprong[iprong] + abvorbl[ptbin] + "veto" + bwps[1],0),
+						tau_plots->grabhist(origin[iorigin],regions[1] + "_" + nprong[iprong] + abvorbl[ptbin] + "veto" + bwps[1],0),
+						tau_plots->grabhist(origin[iorigin],regions[2] + "_" + nprong[iprong] + abvorbl[ptbin] + "veto" + bwps[1],0),
+						tau_plots->grabhist(origin[iorigin],regions[1] + "_" + nprong[iprong] + abvorbl[ptbin] + bwps[3],0),
+
+						tau_plots->grabhist(origin[iorigin],regions[1] + "_" + nprong[iprong] + abvorbl[ptbin] + "veto" + bwps[1],1),
+						tau_plots->grabhist(origin[iorigin],regions[1] + "_" + nprong[iprong] + abvorbl[ptbin] + bwps[1],1)
 					};
 					//TH1D *fithist[4];
 					//for (int i = 0; i < 4; ++i)
@@ -134,13 +136,7 @@ int main(int argc, char const *argv[])
 					//}
 
 					for (int i = 0; i < 7; ++i)
-						if(ptbin == 0)
-							fitter->addfithist(origin[iorigin],target[i],1,1);
-							//fitter->addfithist(origin[iorigin],fithist[i],1,1);
-						else{
-							fitter->addfithist(origin[iorigin],target[i],2,target[i]->GetNbinsX());
-							//fitter->addfithist(origin[iorigin],fithist[i],2,target[i]->GetNbinsX());
-						}
+						fitter->addfithist(origin[iorigin],target[i],1,target[i]->GetNbinsX());
 
 					fitter->addfithist(origin[iorigin],target[7],9,13);
 
@@ -159,33 +155,20 @@ int main(int argc, char const *argv[])
 				{
 					for (int ifveto = 0; ifveto < 2; ++ifveto){		
 						for (int ibtag = 0; ibtag < 2; ++ibtag){
-							for (int i = 0; i < 5; ++i){
-								if(i==2||i==3) {
-									if(i == ptbin+2) 
-										for (int ivar = 0; ivar < 5; ++ivar)
-											tau_plots->grabhist(origin[iorigin],regions[i] + "_" + nprong[iprong] + (ifveto?"veto":"") + bwps[ibtag*2+1],ivar)->Scale(val[iorigin]);
-								}else{
-									target = tau_plots->grabhist(origin[iorigin],regions[i] + "_" + nprong[iprong] + (ifveto?"veto":"") + bwps[ibtag*2+1],0);
-									if (ptbin<binning-1){
-										target->SetBinContent(ptbin+1, val[iorigin]*target->GetBinContent(ptbin+1));
-										target->SetBinError(ptbin+1, val[iorigin]*target->GetBinError(ptbin+1));
-									}else{
-										for (int ib = 2; ib < target->GetNbinsX()+1; ++ib){
-											target->SetBinContent(ib, val[iorigin]*target->GetBinContent(ib));
-											target->SetBinError(ib, val[iorigin]*target->GetBinError(ib));
-										}
-									}
-								}
+							for (int i = 0; i < 3; ++i){
+								target = tau_plots->grabhist(origin[iorigin],regions[i] + "_" + nprong[iprong] + abvorbl[ptbin] + (ifveto?"veto":"") + bwps[ibtag*2+1],0);
+								target->Scale(val[iorigin]);
 							} // loop region
 						} // loop btag wp
 					} //loop veto or tag
 				} // loop origin
 			} // loop ptbin		
-
-			// merge ptbin
 			for (int i = 1; i < 4; i+=2) {
-				tau_plots->merge_regions(regions1[1] + "_" + nprong[iprong] + bwps[i],regions1[2] + "_" + nprong[iprong] + bwps[i],regions[1] + "_" + nprong[iprong] + bwps[i]);
-				tau_plots->merge_regions(regions1[1] + "_" + nprong[iprong] + "veto" + bwps[i],regions1[2] + "_" + nprong[iprong] + "veto" + bwps[i],regions[1] + "_" + nprong[iprong] + "veto" + bwps[i]);
+				for (int j = 0; j < 3; ++j)
+				{
+					tau_plots->merge_regions(regions[j] + "_" + nprong[iprong] + abvorbl[0] + bwps[i],regions[j] + "_" + nprong[iprong] + abvorbl[1] + bwps[i],regions[j] + "_" + nprong[iprong] + bwps[i]);
+					tau_plots->merge_regions(regions[j] + "_" + nprong[iprong] + abvorbl[0] + "veto" + bwps[i],regions[j] + "_" + nprong[iprong] + abvorbl[1]  + "veto" + bwps[i],regions[j] + "_" + nprong[iprong] + "veto" + bwps[i]);
+				}
 			}
 		} // loop prong
 

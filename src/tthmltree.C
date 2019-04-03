@@ -13,7 +13,7 @@ void tthmltree::init_hist(TString outputfilename){
   fcnc_plots->set_weight(&weight);
   fcnc_plots->debug = 0;
 
-  //fcnc_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+  fcnc_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
   fcnc_plots->add(10,25.,125.,"p_{T,SS#tau}","tauptss",&tau_pt_ss,true,"GeV");
   fcnc_plots->add(10,25.,125.,"p_{T,OS#tau}","tauptos",&tau_pt_os,true,"GeV");
   fcnc_plots->add(100,100.,300.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
@@ -33,6 +33,7 @@ void tthmltree::init_hist(TString outputfilename){
   fcnc_plots->add(120,0.,6.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
   fcnc_plots->add(92,0.4,5.,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
   fcnc_plots->add(60,0.4,3.4,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
+  fcnc_plots->add(100,50.,250.,"M(#tau#tau#light-jet,min)","mtaujmin",&mtaujmin,true,"");
 
   fcnc_regions.push_back("reg1l2tau1bnj");
   fcnc_regions.push_back("reg1l1tau1b2j");
@@ -42,7 +43,7 @@ void tthmltree::init_hist(TString outputfilename){
 
   TString nprong[] = {"1prong","3prong"};
   
-  for (int j = 0; j < 3; ++j){
+  for (int j = 0; j < fcnc_nregions; ++j){
     for (int k = 0; k < 2; ++k)
     {
       for (int i = 0; i < 4; ++i)
@@ -62,15 +63,15 @@ void tthmltree::init_hist(TString outputfilename){
   fake_plots = new histSaver(outputfilename + "_fake");
   fake_plots->set_weight(&weight);
   fake_plots->debug = 0;
-  //fake_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+  fake_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
   fake_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   fake_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
   fake_plots->add(20,20.,120.,"m_{#tau,light-jet}","taulmass",&taulmass,true,"GeV");
-  //fake_plots->add(100,0.,100.,"E_{miss}^{T}","met",&MET_RefFinal_et,true,"GeV");
+  fake_plots->add(100,0.,100.,"E_{miss}^{T}","met",&MET_RefFinal_et,true,"GeV");
   fake_notau_plots->add(10,0.,200.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   fake_notau_plots->add(10,0.,200.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
   
-  TString _fake_regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss_ptbin1","reg1l1tau2b1j_ss_ptbin2","reg1e1mu1tau1b"};
+  TString _fake_regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss","reg1e1mu1tau1b"};
 
   TString fake_regions_notau[] = {"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
   
@@ -148,6 +149,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         outputtree[fcnc_regions[i]]->Branch("drtauj",&drtauj);
         outputtree[fcnc_regions[i]]->Branch("drtautau",&drtautau);
         outputtree[fcnc_regions[i]]->Branch("drtaujmin", &drtaujmin);
+        outputtree[fcnc_regions[i]]->Branch("mtaujmin", &mtaujmin);
 
       }
     }
@@ -258,13 +260,14 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
     }
   }
   int nloop = debug ? 1000 : nentries;
+  bool triggeredfcnc = 0;
+  if(reduce > 1) triggeredfcnc = ((TString)inputtree->GetName()).Contains("reg1l1tau1b2j")|| ((TString)inputtree->GetName()).Contains("reg1l1tau1b3j") || ((TString)inputtree->GetName()).Contains("reg1l2tau1bnj");
   float ngluon = 0;
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     inputtree->GetEntry(jentry);
     if ((jentry % 100000 == 0))
       std::cout << " I am here event " << jentry << " Event " << EventNumber << " Run " << RunNumber << " ismc " << mc_channel_number << std::endl;
     //===============================pre-selections===============================
-    bool triggeredfcnc = 0;
     if (selected_jets_T->size() == 0 && nJets_OR_T != 0) {
       printf("error: read vector failed entry: %lld\n", jentry);
       continue;
@@ -329,7 +332,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         taus_v[0] = lep_v;
         lep_v.SetPtEtaPhiE(0, 0, 0, 0);
       }
-
+      triggeredfcnc = 0;
       if(SLtrig_match && onelep_type && SelectTLepid(0) && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 &&
         (RunYear==2015?((abs(lep_ID_0)==11&&lep_Pt_0/GeV>25)||(abs(lep_ID_0)==13&&lep_Pt_0/GeV>21)):lep_Pt_0/GeV>27)){
         ifregions["reg1l1tau1b2j"] = nJets_OR_T == 3 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
@@ -378,7 +381,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
 
       if (!triggered) continue;
     }
-    if (reduce <= 2) weight = mc_channel_number > 0 ? mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight*lepSFObjTight : 1.0;
+    if (reduce <= 2) weight = mc_channel_number > 0 ? mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight: 1.0;
     cutflow[1] += 1;
     if (debug == 2) printf("event weight: %f\n", weight);
     if (debug == 2) {
@@ -388,9 +391,9 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
       }
     }
     //===============================find leading b,non b jets===============================
-    weight*=lepSFObjLoose;
-    if(nTaus_OR_Pt25) weight*=triggeredfcnc?tauSFTight:tauSFLoose;
-    
+    if( mc_channel_number > 0) weight*=lepSFObjLoose;
+    if(reduce <= 2 && nTaus_OR_Pt25 &&  mc_channel_number > 0 ) weight*=triggeredfcnc?tauSFTight:tauSFLoose;
+    if(  mc_channel_number <= 0 ) weight = 1;
     if (reduce <= 2) {
       if (reduce != 1){
         if (onelep_type || dilep_type) {
@@ -411,6 +414,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
       pt_ljet = 0;
       bool reloop = 1;
       drtaujmin = 10;
+      mtaujmin = 0;
       if (nJets_OR_T != selected_jets_T->size()) {
         printf("ERROR: nJets_OR_T,%d != selected_jets_T->size(),%lu; Entry: %lld\n", nJets_OR_T, selected_jets_T->size(), jentry);
         continue;
@@ -428,7 +432,10 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
           ljets_v.push_back(tmpljet_v);
           if (triggeredfcnc) {
             double tmpdr = min(taus_v[0].DeltaR(tmpljet_v), taus_v[1].DeltaR(tmpljet_v));
-            if (drtaujmin > tmpdr) drtaujmin = tmpdr;
+            if (drtaujmin > tmpdr) {
+              drtaujmin = tmpdr;
+              mtaujmin = (tmpljet_v + taus_v[1] + taus_v[0]).M();
+            }
           } else if (reloop) {
             pt_ljet = (*m_jet_pt)[selected_jets_T->at(i)];
             reloop = 0;
@@ -543,7 +550,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
           drlbditau = (lep_v + bjet_v).DeltaR(taus_v[0] + taus_v[1]);
           t1vismass = (lep_v + bjet_v).M();
           wmass = (lep_v + wv_v).M();
-          mtw = 2*lep_Pt_0 / GeV*MET_RefFinal_et / GeV*(1 - cos(MET_RefFinal_phi - lep_Phi_0));
+          mtw = 2*lep_Pt_0*MET_RefFinal_et*(1 - cos(MET_RefFinal_phi - lep_Phi_0));
           mtw = mtw > 0 ? sqrt(mtw) : 0.;
           etamax = fabs(tau_eta_0) > fabs(tau_eta_1) ? fabs(tau_eta_0) : fabs(tau_eta_1);
           drltau = min(taus_v[0].DeltaR(lep_v), taus_v[1].DeltaR(lep_v));
@@ -617,8 +624,8 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
           if (dohist) {
             //weight *= fakeSF;
             if (iter->first.Contains("tau")) {
-              if (triggeredfcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_btag70_0);
-              else if (!sample.Contains("fcnc")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_btag70_0);
+              if (triggeredfcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
+              else if (!sample.Contains("fcnc")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
             } else fill_notau(iter->first, sample);
           }
           //      outputtree[iter->first]->AutoSave();
@@ -1083,6 +1090,8 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("tau_JetBDTSigTight_1", & tau_JetBDTSigTight_1);
     tree->SetBranchAddress("eventNumber", & eventNumber);
     tree->SetBranchAddress("drtaujmin", & drtaujmin);
+    tree->SetBranchAddress("mtaujmin", & mtaujmin);
+
     return;
   }
 

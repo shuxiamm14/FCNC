@@ -161,8 +161,8 @@ vector<int> nominal::findcjet(TString channel, vector<TLorentzVector> ljet, TLor
   for (int j = 0; j < nlightj; ++j){
     double Dr = ljet[j].DeltaR(taus.size() == 2? taus[0] + taus[1] : taus[0] + lepton);
     if(smallDr>Dr){
-       smallDr = Dr;
-       fcjet = j;
+      smallDr = Dr;
+      fcjet = j;
     }
   }
   output.push_back(fcjet);
@@ -180,33 +180,33 @@ vector<int> nominal::findcjet(TString channel, vector<TLorentzVector> ljet, TLor
   return output;
 }
 vector<int> nominal::findcjetML(TString channel, vector<TLorentzVector> pool, TLorentzVector bjet, TLorentzVector lepton, vector<TLorentzVector> taus, int trainpart){
-  int nlightj = pool.size();
+  int nlightj = taus.size()>=2?(pool.size()>3?3:pool.size()):(pool.size()>4?4:pool.size());
   vector<int>  output;
   vector<float> MLinput[10];
   int nentryML = 0;
   TString modelname;
   if(channel == "lephad"){
-     modelname = "lephad";
+    modelname = "lephad";
   }
   else if(channel == "lep2tau"){
-     modelname = "lep2tau";
+    modelname = "lep2tau";
   }else if(channel == "hadhad"){
-     modelname = "hadhad";
+    modelname = "hadhad";
   }
   modelname = channel + char(nlightj + '0') + "j";
   if(debug) printf("lightjet:\n");
   for (int i = 0; i < nlightj; ++i)
   {
     if(debug) printv(pool[i]);
-    MLinput[nentryML].push_back(pool[i].Pt());
+    //MLinput[nentryML].push_back(pool[i].Pt());
     MLinput[nentryML].push_back(pool[i].Eta());
     MLinput[nentryML].push_back(pool[i].Phi());
     MLinput[nentryML].push_back(pool[i].E());
     nentryML++;
   }
   if(debug) printf("bjet:\n");
-  printv(bjet);
-  MLinput[nentryML].push_back(bjet.Pt ());
+  //printv(bjet);
+  //MLinput[nentryML].push_back(bjet.Pt ());
   MLinput[nentryML].push_back(bjet.Eta());
   MLinput[nentryML].push_back(bjet.Phi());
   MLinput[nentryML].push_back(bjet.E  ());
@@ -216,7 +216,7 @@ vector<int> nominal::findcjetML(TString channel, vector<TLorentzVector> pool, TL
   for (int i = 0; i < taus.size(); ++i)
   {
     if(debug) printv(taus[i]);
-    MLinput[nentryML].push_back(taus[i].Pt());
+    //MLinput[nentryML].push_back(taus[i].Pt());
     MLinput[nentryML].push_back(taus[i].Eta());
     MLinput[nentryML].push_back(taus[i].Phi());
     MLinput[nentryML].push_back(taus[i].E());
@@ -227,24 +227,38 @@ vector<int> nominal::findcjetML(TString channel, vector<TLorentzVector> pool, TL
       printf("lepton:\n");
       printv(lep_v);
     }
-    MLinput[nentryML].push_back(lep_v.Pt());
+    //MLinput[nentryML].push_back(lep_v.Pt());
     MLinput[nentryML].push_back(lep_v.Eta());
     MLinput[nentryML].push_back(lep_v.Phi());
     MLinput[nentryML].push_back(lep_v.E());
     nentryML++;
   }
   modelname += trainpart ? "even" : "odd";
-  if(debug) printf("ML input: %s,%d, %d,%d\n", modelname.Data(),nentryML,4,nlightj);
-  vector<vector<float>> predicted = m_applyTF.predictEvent(modelname,MLinput,nentryML,4,nlightj,2);
+  if(debug) printf("ML input: %s,%d, %lu,%d\n", modelname.Data(),nentryML,MLinput[0].size(),nlightj);
+  vector<vector<float>> predicted = m_applyTF.predictEvent(modelname,MLinput,nentryML,(int)MLinput[0].size(),nlightj,2);
   float highest = 0;
-  int cjettmp = 0;
-  for (int i = 0; i < nlightj; ++i)
-  {
-     if(highest < predicted[i][0]) {
+  ljets_score.clear();
+
+  double smallDr = 999;
+  int cjettmp = -1;
+
+  for (int j = 0; j < nlightj; ++j){
+    ljets_score.push_back(predicted[j][0]);
+    if(predicted[j][0]<0.1) continue;
+    double Dr = pool[j].DeltaR(taus.size() == 2? taus[0] + taus[1] : taus[0] + lepton);
+    if(smallDr>Dr){
+      smallDr = Dr;
+      cjettmp = j;
+    }
+  }
+  if(cjettmp<0)
+    for (int i = 0; i < nlightj; ++i)
+    {
+      if(highest < predicted[i][0]) {
         highest = predicted[i][0];
         cjettmp = i;
-     }
-  }
+      }
+    }
   output.push_back(cjettmp);
   if (channel.Contains("had")){
     if(nlightj <= 3){

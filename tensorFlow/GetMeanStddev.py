@@ -78,18 +78,13 @@ datatrain = [rawdatatrain[x] for x in range(0,len(rawdatatrain)) if (x+1)%(nobj+
 datatest = [rawdatatest[x] for x in range(0,len(rawdatatest)) if (x+1)%(nobj+1) > 0]
 rawdata = datatrain + datatest
 
-pt = [x[0] for x in rawdata]
-eta = [x[1] for x in rawdata]
-phi = [x[2] for x in rawdata]
-e  = [x[3] for x in rawdata]
-ptmean = mean(pt )
-etamean = mean(eta)
-phimean = mean(phi)
-emean = mean(e  )
-ptstddev  = stddev(pt )
-etastddev = stddev(eta)
-phistddev = stddev(phi)
-estddev  = stddev(e)
+inputdata = []
+datamean = []
+datastddev = []
+for idim in range(0,unitDim):
+    inputdata.append([x[idim+1] for x in rawdata])
+    datamean.append(mean(inputdata[idim]))
+    datastddev.append(stddev(inputdata[idim]))
 
-print(modelname,"mean",ptmean,etamean,phimean,emean)
-print(modelname,"stdd",ptstddev,etastddev,phistddev,estddev)
+print(modelname,"mean",datamean)
+print(modelname,"stdd",datastddev)

@@ -1,4 +1,5 @@
 // main.cpp
+#include <regex> 
 #include <fdeep/fdeep.hpp>
 #include "applyTF.h"
 #include "fcnc_include.h"
@@ -20,7 +21,7 @@ vector<vector<float>> applyTF::predictEvent(TString modelname, vector<float> dat
     vector<fdeep::tensor5> particles;
     for (int i = 0; i < nparticle; ++i)
     {
-        vector<float> standardizeddata = standardize(data[i],modelname);
+        vector<float> standardizeddata = standardize(data[i],modelname,ndim);
     	const fdeep::shared_float_vec sv(fplus::make_shared_ref<fdeep::float_vec>(standardizeddata));
     	particles.push_back(fdeep::tensor5(fdeep::shape5(1, 1, 1, 1,ndim), sv));
     }
@@ -39,9 +40,13 @@ vector<vector<float>> applyTF::predictEvent(TString modelname, vector<float> dat
     return output;
 }
 
-vector<float> applyTF::standardize(vector<float> data, TString modelname){
+vector<float> applyTF::standardize(vector<float> data, TString modelname, int ndim){
+    if(ndim!=means[modelname].size()){
+        printf("applyTF::standardize() ERROR: data dimention is not consistent with means provided\n");
+        exit(1);
+    }
     vector<float> standardizeddata;
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < ndim; ++i)
     {
         standardizeddata.push_back((data[i]-means[modelname][i])/stddevs[modelname][i]);
     }
@@ -53,23 +58,27 @@ void applyTF::readmeanfile(TString filename){
     char inputline[100];
     char modelname[20];
     char meanorstddev[10];
-    float pt,eta,phi,e;
+    char numbers[100];
     TString smeanorstddev;
+    string snumbers;
     while(!fn.eof()){
         fn.getline(inputline,200);
         if(strlen(inputline)==0) continue;
-        sscanf(inputline,"%s %s %f %f %f %f",modelname,meanorstddev,&pt,&eta,&phi,&e);
+        sscanf(inputline,"%s %s",modelname,meanorstddev);
         smeanorstddev = meanorstddev;
+        regex r("\\[.*\\]");
+        smatch m;
+        string sinputline = inputline;
+        regex_search(sinputline, m, r);
+        snumbers = m.str();
+        snumbers.erase(remove(snumbers.begin(), snumbers.end(), ','), snumbers.end());
+        snumbers.erase(remove(snumbers.begin(), snumbers.end(), '['), snumbers.end());
+        snumbers.erase(remove(snumbers.begin(), snumbers.end(), ']'), snumbers.end());
+        istringstream iss(snumbers);
         if(smeanorstddev.Contains("mean")){
-            means[modelname].push_back(pt);
-            means[modelname].push_back(eta);
-            means[modelname].push_back(phi);
-            means[modelname].push_back(e);
+            copy(istream_iterator<float>(iss),istream_iterator<float>(),back_inserter(means[modelname]));
         }else{
-            stddevs[modelname].push_back(pt);
-            stddevs[modelname].push_back(eta);
-            stddevs[modelname].push_back(phi);
-            stddevs[modelname].push_back(e);
+            copy(istream_iterator<float>(iss),istream_iterator<float>(),back_inserter(stddevs[modelname]));
         }
     }
 }

@@ -25,7 +25,7 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
    std::cout << std::endl;
    std::cout << "==> Start TMVARegression" << std::endl;
    TString myMethodList = "BDTG";
-   TFile* outputFile = TFile::Open( region+"_out.root", "RECREATE" );
+   TFile* outputFile = TFile::Open( region + weightfile+"_out.root", "RECREATE" );
    TMVA::Factory *factory = new TMVA::Factory( region + weightfile, outputFile,
                                                "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
    TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
@@ -33,7 +33,9 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
    if(region != "reg1l1tau1b2j") {
       //dataloader->AddVariable("t1mass",'F');
       //dataloader->AddVariable("wmass",'F');
-      dataloader->AddVariable("t1vismass-ttvismass",'F');
+
+      dataloader->AddVariable("t1vismass",'F');
+      dataloader->AddVariable("mtaujmin-ttvismass",'F');
       dataloader->AddVariable("tau_pt_ss",'F');
       dataloader->AddVariable("tau_pt_os",'F');
       dataloader->AddVariable("drltau",'F');
@@ -45,11 +47,12 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
       dataloader->AddVariable("tautauvispt",'F');
    }
    //dataloader->AddVariable("tautaumass",'F');
-   dataloader->AddVariable("ttvismass",'F');
    //dataloader->AddVariable("t2mass",'F');
    //dataloader->AddVariable("x1fit", 'F');
    //dataloader->AddVariable("x2fit", 'F');
-   dataloader->AddVariable("t2vismass",'F');
+   //dataloader->AddVariable("t2vismass",'F');
+
+   dataloader->AddVariable("ttvismass",'F');
    TChain* signal = new TChain(region);
    TChain* background = new TChain(region);
    TString inputsignames[] = {"fcnc_ch","fcnc_uh"};
@@ -63,9 +66,9 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
    background->Add(prefix + inputbkgnames[3]+"_tree.root");
    background->Add(prefix + inputbkgnames[6]+"_tree.root");
    background->Add(prefix + inputbkgnames[7]+"_tree.root");
-   background->Add(prefix + "data_tree.root");
+   //background->Add(prefix + "data_tree.root");
    TCut mycuts = "tau_truthType_0 == 10 && tau_truthType_1 == 10 && (tau_charge_0 * tau_charge_1<0) && weight >0";
-   TCut mycutb = "(tau_charge_0 * tau_charge_1<0) && (weight==1?(tau_charge_0*tau_charge_1>0):weight>0)";
+   TCut mycutb = "(tau_charge_0 * tau_charge_1<0) && weight>0";
    printf(" >>>> Training signal events: %d\n",(Int_t)signal->GetEntries((const char*)(mycuts && cut)));
    printf(" >>>> Training background events: %d\n",(Int_t)background->GetEntries((const char*)(mycutb && cut)));
    dataloader->AddTree(signal, "Signal", 1.0, mycuts && cut, Types::kTraining);
@@ -95,7 +98,7 @@ int main(int argc, char const *argv[])
     printf("please give the setting: region\nand mva splitting: 2 or 5\nnumber of cuts\nnumber of trees\n");
     return 0;
    }
-   bool testonly = 1;
+   bool testonly = 0;
    TString catname=argv[1];
    int classnb(*argv[2]-'0');
    TString cutnb = "(eventNumber%";

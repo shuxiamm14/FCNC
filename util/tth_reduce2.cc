@@ -26,11 +26,11 @@ int main(int argc, char const *argv[])
 
 	tthmltree *analysis = new tthmltree();
 	analysis->debug = 0;
-	analysis->writetree = 1;
+	analysis->writetree = 0;
 	analysis->fcnc = 1;
 	analysis->reduce = 2;
-	analysis->dumptruth = 0;
-	//analysis->readTFmeanstd("meanstddevs.txt");
+	analysis->dumptruth = 1;
+	analysis->readTFmeanstd("meanstddevs.txt");
 
 	fn.getline(inputline,200);
 	char cate[100];
@@ -48,8 +48,7 @@ int main(int argc, char const *argv[])
 		analysis->Loop( (TTree*)inputfile.Get(i->Data()), cate);
 		printf("finish loop on region: %s\n", i->Data());
 	}
-	inputfile.Close();
-	if(doplot) analysis->plot();
 	analysis->finalise_sample();
+	inputfile.Close();
 	return 0;
 }
