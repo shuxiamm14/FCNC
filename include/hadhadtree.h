@@ -26,6 +26,7 @@ public :
    void fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag);
    float tau_pt_0;
    float tau_pt_1;
+   bool isData = 0;
    vector<Float_t>           *weights;
    vector<Int_t>           *taus_id;
    vector<Int_t>           *taus_b_tagged;
