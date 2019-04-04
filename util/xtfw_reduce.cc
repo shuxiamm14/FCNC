@@ -55,6 +55,7 @@ int main(int argc, char const *argv[])
 	analysis->writetree = 1;
 	if(doplot) analysis->init_hist(inputconfig);
 	analysis->init_sample(inputconfig,inputconfig);
+	TH1D *cutflow = 0;
 	while(!fn.eof()){
 		fn.getline(inputline,500);
 		if(strlen(inputline)==0) continue;
@@ -69,10 +70,17 @@ int main(int argc, char const *argv[])
 			printf("h_metadata not found, exit.\n");
 			exit(1);
 		}
+		if(xsecs.find(dsid) == xsecs.end()) printf("xsec for DSID %d not found, please update your Xsec file\n", dsid);
+		if(!cutflow) cutflow = (TH1D*)inputfile.Get("cutflow_HSM_common")->Clone();
+		else cutflow->Add((TH1D*)inputfile.Get("cutflow_HSM_common"));
 		analysis->Loop( (TTree*)inputfile.Get("NOMINAL"), inputconfig, isData ? 1 : xsecs[dsid]*luminosity/((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8));
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8));
 		inputfile.Close();
 	}
+	TFile cutflowfile(inputconfig + "_cutflow.root","recreate");
+	cutflowfile.cd();
+	cutflow->Write();
+	cutflowfile.Close();
 	analysis->finalise_sample();
 	return 0;
 }

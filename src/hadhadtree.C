@@ -44,12 +44,12 @@ void hadhadtree::init_hist(TString histfilename){
   //init histSaver here:
   dohist = 1;
   fcnc_plots = new histSaver(histfilename);
+  fcnc_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV,  fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
   fcnc_plots->set_weight(&weight);
   fcnc_plots->debug = debug;
 
-  //fcnc_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-  fcnc_plots->add(10,25.,125.,"p_{T,lead-#tau}","tau_0_pt",&tau_pt_0,false,"GeV");
-  fcnc_plots->add(10,25.,125.,"p_{T,sublead-#tau}","tau_1_pt",&tau_pt_1,false,"GeV");
+  fcnc_plots->add(100,25.,125.,"p_{T,lead-#tau}","tau_0_pt",&tau_pt_0,false,"GeV");
+  fcnc_plots->add(100,25.,125.,"p_{T,sublead-#tau}","tau_1_pt",&tau_pt_1,false,"GeV");
   //fcnc_plots->add(100,50.,250.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
   //fcnc_plots->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
   //fcnc_plots->add(100,50.,250.,"m_{W}","wmass",&wmass,true,"GeV");
