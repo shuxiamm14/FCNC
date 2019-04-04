@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
 	analysis->dofcnc = 1;
 	analysis->reduce = 1;
 	analysis->debug = debug;
-	analysis->writetree = 1;
+	analysis->writetree = 0;
 	if(doplot) analysis->init_hist(inputconfig);
 	analysis->init_sample(inputconfig,inputconfig);
 	TH1D *cutflow = 0;
