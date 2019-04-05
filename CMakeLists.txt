@@ -43,6 +43,7 @@ endif (${ROOT_VERSION} VERSION_GREATER "6.0")
 
 add_library(dict SHARED dictionary.cxx)
 target_link_libraries(dict ${ROOT_LIBRARIES})
+set_target_properties(dict PROPERTIES OUTPUT_NAME dictionary)
 
 add_library(applyTF SHARED ${PROJECT_SOURCE_DIR}/src/applyTF.cc)
 target_link_libraries(applyTF ${ROOT_LIBRARIES})

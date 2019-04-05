@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
 # create_model.py
 import numpy as np
+
 import configparser
 import tensorflow as tf
 import sys
@@ -14,48 +15,48 @@ from tensorflow.keras.utils import plot_model
 from tensorflow.keras.callbacks import ReduceLROnPlateau
 
 def isfloat(value):
-  try:
-    float(value)
-    return True
-  except ValueError:
-    return False
+	try:
+		float(value)
+		return True
+	except ValueError:
+		return False
 
 def mean(data):
-    """Return the sample arithmetic mean of data."""
-    n = len(data)
-    if n < 1:
-        raise ValueError('mean requires at least one data point')
-    return sum(data)/float(n) # in Python 2 use sum(data)/float(n)
+	"""Return the sample arithmetic mean of data."""
+	n = len(data)
+	if n < 1:
+		raise ValueError('mean requires at least one data point')
+	return sum(data)/float(n) # in Python 2 use sum(data)/float(n)
 
 
 def _ss(data):
-    """Return sum of square deviations of sequence data."""
-    c = mean(data)
-    ss = sum((x-c)**2 for x in data)
-    return ss
+	"""Return sum of square deviations of sequence data."""
+	c = mean(data)
+	ss = sum((x-c)**2 for x in data)
+	return ss
 
 
 def stddev(data, ddof=0):
-    """Calculates the population standard deviation
-    by default; specify ddof=1 to compute the sample
-    standard deviation."""
-    n = len(data)
-    if n < 2:
-        raise ValueError('variance requires at least two data points')
-    ss = _ss(data)
-    pvar = ss/(n-ddof)
-    return pvar**0.5
+	"""Calculates the population standard deviation
+	by default; specify ddof=1 to compute the sample
+	standard deviation."""
+	n = len(data)
+	if n < 2:
+		raise ValueError('variance requires at least two data points')
+	ss = _ss(data)
+	pvar = ss/(n-ddof)
+	return pvar**0.5
 
 
 def readfiles(filename):
-    with open(filename) as f:
-        return [ [num for num in [float(s) for s in line.split(" ")[1:] if s.strip() and isfloat(s)]] for line in f]
+	with open(filename) as f:
+		return [ [num for num in [float(s) for s in line.split(" ")[1:] if s.strip() and isfloat(s)]] for line in f]
 
 
 config = configparser.ConfigParser()
 if len(sys.argv) != 2:
-    print("please feed the config file")
-    exit
+	print("please feed the config file")
+	exit
 config.read(sys.argv[1])
 maxCombUnitpool = int(config['DEFAULT']['maxCombUnitpool'])
 maxCombUnitwatcher = int(config['DEFAULT']['maxCombUnitwatcher'])
@@ -80,34 +81,29 @@ datatrain = [rawdatatrain[x] for x in range(0,len(rawdatatrain)) if (x+1)%(nobj+
 datatest = [rawdatatest[x] for x in range(0,len(rawdatatest)) if (x+1)%(nobj+1) > 0]
 rawdata = datatrain + datatest
 
-pt = [x[0] for x in rawdata]
-eta = [x[1] for x in rawdata]
-phi = [x[2] for x in rawdata]
-e  = [x[3] for x in rawdata]
-ptmean = mean(pt )
-etamean = mean(eta)
-phimean = mean(phi)
-emean = mean(e  )
-ptstddev  = stddev(pt )
-etastddev = stddev(eta)
-phistddev = stddev(phi)
-estddev  = stddev(e)
+inputdata = []
+datamean = []
+datastddev = []
+for idim in range(0,unitDim):
+	inputdata.append([x[idim+1] for x in rawdata])
+	datamean.append(mean(inputdata[idim]))
+	datastddev.append(stddev(inputdata[idim]))
 
 trainweight = [rawdatatrain[x][0] for x in range(0,len(rawdatatrain)) if (x+1)%(nobj+1) == 0]
 trainweightlib = {i: trainweight[i] for i in range(0, len(trainweight))}
 
-traindatastd = [[(x[0]-ptmean)/ptstddev,(x[1]-etamean)/etastddev,(x[2]-phimean)/phistddev,(x[3]-emean)/estddev] for x in datatrain]
+traindatastd = [[(x[idim+1]-datamean[idim])/datastddev[idim] for idim in range(0,unitDim)] for x in datatrain]
 traininput = list(np.array([np.array(traindatastd[x:x+nobj]) for x in range(0, len(traindatastd), nobj)]).transpose((1,0,2)))
 trainoutput = [[x[4],x[5]+x[6]] if len(x)==7 else [0,0] for x in datatrain]
 trainoutput = list(np.array([np.array(trainoutput[x:x+pool]) for x in range(0, len(trainoutput), nobj)]).transpose((1,0,2)))
 
 testweight = [rawdatatest[x][0] for x in range(0,len(rawdatatest)) if (x+1)%(nobj+1) == 0]
-invmassrec = [int(rawdatatest[x][1]) for x in range(0,len(rawdatatest)) if (x+1)%(nobj+1) == 0]
 testweightlib = {i: testweight[i] for i in range(0, len(testweight))}
-testdatastd = [[(x[0]-ptmean)/ptstddev,(x[1]-etamean)/etastddev,(x[2]-phimean)/phistddev,(x[3]-emean)/estddev] for x in datatest]
+testdatastd = [[(x[idim+1]-datamean[idim])/datastddev[idim] for idim in range(0,unitDim)] for x in datatest]
 testinput = list(np.array([np.array(testdatastd[x:x+nobj]) for x in range(0, len(testdatastd), nobj)]).transpose((1,0,2)))
 testoutput = [[x[4],x[5]+x[6]] if len(x)==7 else [0,0] for x in datatest]
 testoutput = list(np.array([np.array(testoutput[x:x+pool]) for x in range(0, len(testoutput), nobj)]).transpose((1,0,2)))
+invmassrec = [int(rawdatatest[x][1]) for x in range(0,len(rawdatatest)) if (x+1)%(nobj+1) == 0]
 
 predicted = np.array(model.predict(testinput)).transpose((1,0,2))
 truth = np.array(testoutput).transpose((1,0,2))
@@ -117,6 +113,8 @@ tot = 0;
 for i in range(0,len(truth)):
 	fcncjet = -1
 	matched = 1
+	if invmassrec[i]>=len(truth[i]):
+		continue
 	for j in range(0,len(truth[i])):
 		print(truth[i][j],predicted[i][j])
 		if truth[i][j][0] == 1 :
@@ -129,8 +127,8 @@ for i in range(0,len(truth)):
 		matchedtot += testweight[i]
 	if fcncjet==invmassrec[i]:
 		invmassmatchedtot += testweight[i]
-	print(matched)
+	print(matched,fcncjet==invmassrec[i],invmassrec[i])
 print("matching rate ML: ", float(matchedtot)/tot)
 print("matching rate kine: ", float(invmassmatchedtot)/tot)
-print("mean:",ptmean,etamean,phimean,emean)
-print("stdd:",ptstddev,etastddev,phistddev,estddev)
+print("mean:",datamean)
+print("stdd:",datastddev)

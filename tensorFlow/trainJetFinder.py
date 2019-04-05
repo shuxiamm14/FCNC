@@ -255,30 +255,25 @@ datatrain = [rawdatatrain[x] for x in range(0,len(rawdatatrain)) if (x+1)%(nobj+
 datatest = [rawdatatest[x] for x in range(0,len(rawdatatest)) if (x+1)%(nobj+1) > 0]
 rawdata = datatrain + datatest
 
-pt = [x[0] for x in rawdata]
-eta = [x[1] for x in rawdata]
-phi = [x[2] for x in rawdata]
-e  = [x[3] for x in rawdata]
-ptmean = mean(pt )
-etamean = mean(eta)
-phimean = mean(phi)
-emean = mean(e  )
-ptstddev = stddev(pt )
-etastddev = stddev(eta)
-phistddev = stddev(phi)
-estddev = stddev(e)
+inputdata = []
+datamean = []
+datastddev = []
+for idim in range(0,unitDim):
+	inputdata.append([x[idim+1] for x in rawdata])
+	datamean.append(mean(inputdata[idim]))
+	datastddev.append(stddev(inputdata[idim]))
 
 trainweight = [rawdatatrain[x][0] for x in range(0,len(rawdatatrain)) if (x+1)%(nobj+1) == 0]
 trainweightlib = {i: trainweight[i] for i in range(0, len(trainweight))}
 
-traindatastd = [[(x[0]-ptmean)/ptstddev,(x[1]-etamean)/etastddev,(x[2]-phimean)/phistddev,(x[3]-emean)/estddev] for x in datatrain]
+traindatastd = [[(x[idim+1]-datamean[idim])/datastddev[idim] for idim in range(0,unitDim)] for x in datatrain]
 traininput = list(np.array([np.array(traindatastd[x:x+nobj]) for x in range(0, len(traindatastd), nobj)]).transpose((1,0,2)))
 trainoutput = [[x[4],x[5]+x[6]] if len(x)==7 else [0,0] for x in datatrain]
 trainoutput = list(np.array([np.array(trainoutput[x:x+pool]) for x in range(0, len(trainoutput), nobj)]).transpose((1,0,2)))
 
 testweight = [rawdatatest[x][0] for x in range(0,len(rawdatatest)) if (x+1)%(nobj+1) == 0]
 testweightlib = {i: testweight[i] for i in range(0, len(testweight))}
-testdatastd = [[(x[0]-ptmean)/ptstddev,(x[1]-etamean)/etastddev,(x[2]-phimean)/phistddev,(x[3]-emean)/estddev] for x in datatest]
+testdatastd = [[(x[idim+1]-datamean[idim])/datastddev[idim] for idim in range(0,unitDim)] for x in datatest]
 testinput = list(np.array([np.array(testdatastd[x:x+nobj]) for x in range(0, len(testdatastd), nobj)]).transpose((1,0,2)))
 testoutput = [[x[4],x[5]+x[6]] if len(x)==7 else [0,0] for x in datatest]
 testoutput = list(np.array([np.array(testoutput[x:x+pool]) for x in range(0, len(testoutput), nobj)]).transpose((1,0,2)))
@@ -290,8 +285,8 @@ history = model.fit(traininput,trainoutput,class_weight=trainweightlib, validati
 model.save(modelname+'.h5', include_optimizer=False)
 convert_model.convert(modelname+'.h5',modelname+'.json')
 
-print("stddev: ", ptstddev,etastddev,phistddev,estddev)
-print("mean: ", ptmean,etamean,phimean,emean)
+print("stddev: ", datastddev)
+print("mean: ", datamean)
 
 #=========================================plot history for loss=========================================
 plt.plot(history.history['loss'])

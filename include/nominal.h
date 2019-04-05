@@ -19,7 +19,6 @@ public :
       {1.157861, 0.792569, 1.349050, 1.426554},   //3prong <35
       {0.818782, 0.614790, 5.756198, 0.489836}    //3prong >35
    };
-
    bool dofcnc;
    Int_t ierflg;
    bool dumptruth;
@@ -56,6 +55,7 @@ public :
 
    applyTF m_applyTF;
    vector < TLorentzVector > ljets_v;
+   vector < float > ljets_score;
    fstream filetruth[6][2];
    Double_t arglist[10];
    vector<TString> fcnc_regions;
@@ -115,4 +115,5 @@ public :
    Double_t        x1fit;
    Double_t        x2fit;
    Double_t        drtaujmin;
+   Double_t        mtaujmin;
 };

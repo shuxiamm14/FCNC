@@ -5,3 +5,4 @@ update.sh
 .DS_store
 data
 build
+config/tensorflow/*backup
