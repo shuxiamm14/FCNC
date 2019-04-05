@@ -56,6 +56,28 @@ int main(int argc, char const *argv[])
 	if(doplot) analysis->init_hist(inputconfig);
 	analysis->init_sample(inputconfig,inputconfig);
 	TFile cutflowfile(inputconfig + "_cutflow.root","recreate");
+	map<int,double> totgen;
+	if(!isData){
+		printf("Reading bin 8\n");
+		while(!fn.eof()){
+			fn.getline(inputline,500);
+			if(strlen(inputline)==0) continue;
+			if(inputline[0]=='#') continue;
+			char filename[500];
+			int dsid;
+			if(!isData) sscanf(inputline,"%d %s",&dsid,filename);
+			else sscanf(inputline,"%s",filename);
+			printf("reading file: DSID: %d name %s\n", dsid, filename);
+			TFile inputfile(filename);
+			if(!inputfile.Get("h_metadata")) {
+				printf("h_metadata not found, exit.\n");
+				exit(1);
+			}
+			if(totgen.find(dsid) == totgen.end()) totgen[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
+			else totgen[dsid] += ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
+			inputfile.Close();
+		}
+	}
 	TH1D *cutflow = 0;
 	while(!fn.eof()){
 		fn.getline(inputline,500);
@@ -67,16 +89,12 @@ int main(int argc, char const *argv[])
 		else sscanf(inputline,"%s",filename);
 		printf("reading file: DSID: %d name %s\n", isData? 0 : dsid, filename);
 		TFile inputfile(filename);
-		if(!inputfile.Get("h_metadata")) {
-			printf("h_metadata not found, exit.\n");
-			exit(1);
-		}
 		if(xsecs.find(dsid) == xsecs.end()) printf("xsec for DSID %d not found, please update your Xsec file\n", dsid);
 		cutflowfile.cd();
 		if(!cutflow) cutflow = (TH1D*)inputfile.Get("cutflow_HSM_common")->Clone();
 		else cutflow->Add((TH1D*)inputfile.Get("cutflow_HSM_common"));
-		analysis->Loop( (TTree*)inputfile.Get("NOMINAL"), inputconfig, isData ? 1 : xsecs[dsid]*luminosity/((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8));
-		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8));
+		analysis->Loop( (TTree*)inputfile.Get("NOMINAL"), inputconfig, isData ? 1 : xsecs[dsid]*luminosity/totgen[dsid]);
+		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgen[dsid]);
 		inputfile.Close();
 	}
 	cutflow->Write();
