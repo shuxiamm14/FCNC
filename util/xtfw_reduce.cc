@@ -78,6 +78,8 @@ int main(int argc, char const *argv[])
 			inputfile.Close();
 		}
 	}
+	fn.clear();
+	fn.seekg(0, fn.beg);
 	TH1D *cutflow = 0;
 	while(!fn.eof()){
 		fn.getline(inputline,500);
