@@ -342,17 +342,14 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
           triggeredfcnc = 1;
         ifregions["reg1l2b2j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 0;
         ifregions["reg1l1tau2b1j_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 >= 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
-        bool reg1l1tau2b1j_ss = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 >= 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
-        ifregions["reg1l1tau2b1j_ss_ptbin1"] = reg1l1tau2b1j_ss && tau_pt_0 / GeV <= 35;
-        ifregions["reg1l1tau2b1j_ss_ptbin2"] = reg1l1tau2b1j_ss && tau_pt_0 / GeV > 35;
+        ifregions["reg1l1tau2b1j_ss"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 >= 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
       }else{
         ifregions["reg1l1tau1b2j"] = 0;
         ifregions["reg1l1tau1b3j"] = 0;
         ifregions["reg1l2tau1bnj"] = 0;
         ifregions["reg1l2b2j"] = 0;
         ifregions["reg1l1tau2b1j_os"] = 0;
-        ifregions["reg1l1tau2b1j_ss_ptbin1"] = 0;
-        ifregions["reg1l1tau2b1j_ss_ptbin2"] = 0;
+        ifregions["reg1l1tau2b1j_ss"] = 0;
       }
 
       if (trig_match && dilep_type && total_charge == 0 && lep_Pt_0 > 20e3 && lep_Pt_1 > 20e3 &&
@@ -581,7 +578,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         drtautau = taus_v[0].DeltaR(taus_v[1]);
         drtauj = (taus_v[0] + taus_v[1]).DeltaR(cjet_v);
       } else if (nJets_OR_T - nJets_OR_T_MV2c10_70) {
-        if (ifregions["reg1l1tau2b1j_os"] || ifregions["reg1l1tau2b1j_ss_ptbin2"] || ifregions["reg1l1tau2b1j_ss_ptbin1"]) {
+        if (ifregions["reg1l1tau2b1j_os"] || ifregions["reg1l1tau2b1j_ss"]) {
           taulmass = (taus_v[0] + ljets_v[0]).M();
         } else taulmass = 0;
       }

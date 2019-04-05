@@ -14,15 +14,14 @@ int main(int argc, char const *argv[])
 	regions.push_back("reg1l2tau1bnj");
 	regions.push_back("reg1l1tau1b2j");
 	regions.push_back("reg1l1tau1b3j");
-
-	//regions.push_back("reg1e1mu1tau1b");
-	//regions.push_back("reg1e1mu1tau2b");
-	//regions.push_back("reg1e1mu2b");
-	//regions.push_back("reg1e1mu2bnj");
-	//regions.push_back("reg1l1tau2b1j_os");
-	//regions.push_back("reg1l1tau2b1j_ss_ptbin1");
-	//regions.push_back("reg1l1tau2b1j_ss_ptbin2");
-	//regions.push_back("reg1l2b2j");
+	regions.push_back("reg1e1mu1tau1b");
+	regions.push_back("reg1e1mu1tau2b");
+	regions.push_back("reg1e1mu2b");
+	regions.push_back("reg1e1mu2bnj");
+	regions.push_back("reg1l1tau2b1j_os");
+	regions.push_back("reg1l1tau2b1j_ss_ptbin1");
+	regions.push_back("reg1l1tau2b1j_ss_ptbin2");
+	regions.push_back("reg1l2b2j");
 
 	tthmltree *analysis = new tthmltree();
 	analysis->debug = 0;
