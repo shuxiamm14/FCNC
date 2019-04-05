@@ -229,7 +229,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       jet_NOMINAL_global_effSF_MV2c10*
       jet_NOMINAL_global_ineffSF_MV2c10;
     float weight_pileup = NOMINAL_pileup_combined_weight;
-    weight = weight_mc*weight_pileup*lepton_SF*trig_SF*jetSFs*globalweight;
+    weight = isData?1:weight_mc*weight_pileup*lepton_SF*trig_SF*jetSFs*globalweight;
       printf("event: %llu\n",event_number);
       printf("weight_mc: %f\n",weight_mc);
       printf("weight_pileup: %f\n",weight_pileup);
@@ -237,7 +237,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       printf("trig_SF: %f\n",trig_SF);
       printf("jetSFs: %f\n",jetSFs);
       printf("globalweight: %f\n",globalweight);
-    weights->push_back(isData?1:weight);
+    weights->push_back(weight);
     //===============================pre-selections===============================
     cutflow[0]+=weight;
 

@@ -24,8 +24,8 @@ do
 		done
 	done
 done
-for files in `find $1/data/*/*`
-do
-	echo $files >> $ttH_fakes_DIR/datafiles/xTFW/run/data.txt
-done
+#for files in `find $1/data/*/*`
+#do
+#	echo $files >> $ttH_fakes_DIR/datafiles/xTFW/run/data.txt
+#done
 fi
