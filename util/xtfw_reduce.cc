@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
 	analysis->dofcnc = 1;
 	analysis->reduce = 1;
 	analysis->debug = debug;
-	analysis->writetree = 0;
+	analysis->writetree = 1;
 	if(doplot) analysis->init_hist(inputconfig);
 	analysis->init_sample(inputconfig,inputconfig);
 	TFile cutflowfile(inputconfig + "_cutflow.root","recreate");
