@@ -422,6 +422,11 @@ void hadhadtree::definejets(){
   if(jets_width->size()) jets_width->clear();
   if(!isData) if(jets_wztruth_p4->size()) jets_wztruth_p4->clear();
   if(!isData) if(jets_wztruth_pdgid->size()) jets_wztruth_pdgid->clear();
+  if(bjets_fjvt->size()) bjets_fjvt->clear();
+  if(bjets_is_Jvt_HS->size()) bjets_is_Jvt_HS->clear();
+  if(bjets_jvt->size()) bjets_jvt->clear();
+  if(bjets_p4->size()) bjets_p4->clear();
+  if(bjets_width->size()) bjets_width->clear();
   if(jet_0_b_tagged){
     bjets_fjvt->push_back(jet_0_fjvt);
     bjets_is_Jvt_HS->push_back(jet_0_is_Jvt_HS);
