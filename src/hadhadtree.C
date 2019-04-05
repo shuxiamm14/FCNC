@@ -230,14 +230,13 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       jet_NOMINAL_global_ineffSF_MV2c10;
     float weight_pileup = NOMINAL_pileup_combined_weight;
     weight = weight_mc*weight_pileup*lepton_SF*trig_SF*jetSFs*globalweight;
-    if(debug){
-      printf("weight_mc: %fi\n",weight_mc);
-      printf("weight_pileup: %fi\n",weight_pileup);
-      printf("lepton_SF: %fi\n",lepton_SF);
-      printf("trig_SF: %fi\n",trig_SF);
-      printf("jetSFs: %fi\n",jetSFs);
-      printf("globalweight: %fi\n",globalweight);
-    }
+      printf("event: %llu\n",event_number);
+      printf("weight_mc: %f\n",weight_mc);
+      printf("weight_pileup: %f\n",weight_pileup);
+      printf("lepton_SF: %f\n",lepton_SF);
+      printf("trig_SF: %f\n",trig_SF);
+      printf("jetSFs: %f\n",jetSFs);
+      printf("globalweight: %f\n",globalweight);
     weights->push_back(isData?1:weight);
     //===============================pre-selections===============================
     cutflow[0]+=weight;
@@ -277,7 +276,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           }
         }
         if (dohist) {
-          fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_pt_1 > 35, taus_b_tagged->at(1));
+          fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_pt_0 > 35, taus_b_tagged->at(1));
         }
       }
     }
