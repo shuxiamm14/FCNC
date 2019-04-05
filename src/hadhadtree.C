@@ -13,30 +13,30 @@ hadhadtree::hadhadtree() : nominal::nominal(){
   taus_decay_mode = new vector<UInt_t> ();
   taus_matched_mother_pdgId = new vector<Int_t> ();
   taus_matched_mother_status = new vector<Int_t> ();
-  taus_matched_p4 = new vector<TLorentzVector>();
+  taus_matched_p4 = new vector<TLorentzVector*>();
   taus_matched_pdgId = new vector<Int_t> ();
-  taus_matched_vis_p4 = new vector<TLorentzVector>();
+  taus_matched_vis_p4 = new vector<TLorentzVector*>();
   taus_n_charged_tracks = new vector<UInt_t> ();
-  taus_p4 = new vector<TLorentzVector>();
+  taus_p4 = new vector<TLorentzVector*>();
   taus_q = new vector<Float_t> ();
   bjets_fjvt = new vector<Float_t> ();
   bjets_is_Jvt_HS = new vector<Int_t> ();
   bjets_jvt = new vector<Float_t> ();
   bjets_origin = new vector<Int_t> ();
-  bjets_p4 = new vector<TLorentzVector>;
+  bjets_p4 = new vector<TLorentzVector*>;
   bjets_type = new vector<Int_t> ();
   bjets_width = new vector<Float_t> ();
-  bjets_wztruth_p4 = new vector<TLorentzVector>();
+  bjets_wztruth_p4 = new vector<TLorentzVector*>();
   bjets_wztruth_pdgid = new vector<Float_t> ();
   jets_fjvt = new vector<Float_t> ();
   jets_is_Jvt_HS = new vector<Int_t> ();
   jets_jvt = new vector<Float_t> ();
   jets_origin = new vector<Int_t> ();
-  jets_p4 = new vector<TLorentzVector>();
+  jets_p4 = new vector<TLorentzVector*>();
   jets_q = new vector<Float_t> ();
   jets_type = new vector<Int_t> ();
   jets_width = new vector<Float_t> ();
-  jets_wztruth_p4 = new vector<TLorentzVector>();
+  jets_wztruth_p4 = new vector<TLorentzVector*>();
   jets_wztruth_pdgid = new vector<Float_t> ();
 }
 
@@ -242,8 +242,8 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     //===============================pre-selections===============================
     cutflow[0]+=weight;
 
-    tau_pt_0 = taus_p4->at(0).Pt();
-    tau_pt_1 = taus_p4->at(1).Pt();
+    tau_pt_0 = taus_p4->at(0)->Pt();
+    tau_pt_1 = taus_p4->at(1)->Pt();
 
     TString tauorigin;
 
@@ -364,11 +364,11 @@ void hadhadtree::definetaus(){
     taus_decay_mode->push_back(tau_0_decay_mode);
     if(!isData) taus_matched_mother_pdgId->push_back(tau_0_matched_mother_pdgId);
     if(!isData) taus_matched_mother_status->push_back(tau_0_matched_mother_status);
-    if(!isData) taus_matched_p4->push_back(*tau_0_matched_p4);
+    if(!isData) taus_matched_p4->push_back(tau_0_matched_p4);
     if(!isData) taus_matched_pdgId->push_back(tau_0_matched_pdgId);
-    if(!isData) taus_matched_vis_p4->push_back(*tau_0_matched_vis_p4);
+    if(!isData) taus_matched_vis_p4->push_back(tau_0_matched_vis_p4);
     taus_n_charged_tracks->push_back(tau_0_n_charged_tracks);
-    taus_p4->push_back(*tau_0_p4);
+    taus_p4->push_back(tau_0_p4);
     taus_q->push_back(tau_0_q);
 
     taus_id->push_back(tau1id);
@@ -376,11 +376,11 @@ void hadhadtree::definetaus(){
     taus_decay_mode->push_back(tau_1_decay_mode);
     if(!isData) taus_matched_mother_pdgId->push_back(tau_1_matched_mother_pdgId);
     if(!isData) taus_matched_mother_status->push_back(tau_1_matched_mother_status);
-    if(!isData) taus_matched_p4->push_back(*tau_1_matched_p4);
+    if(!isData) taus_matched_p4->push_back(tau_1_matched_p4);
     if(!isData) taus_matched_pdgId->push_back(tau_1_matched_pdgId);
-    if(!isData) taus_matched_vis_p4->push_back(*tau_1_matched_vis_p4);
+    if(!isData) taus_matched_vis_p4->push_back(tau_1_matched_vis_p4);
     taus_n_charged_tracks->push_back(tau_1_n_charged_tracks);
-    taus_p4->push_back(*tau_1_p4);
+    taus_p4->push_back(tau_1_p4);
     taus_q->push_back(tau_1_q);
 
   }else{
@@ -390,11 +390,11 @@ void hadhadtree::definetaus(){
     taus_decay_mode->push_back(tau_1_decay_mode);
     if(!isData) taus_matched_mother_pdgId->push_back(tau_1_matched_mother_pdgId);
     if(!isData) taus_matched_mother_status->push_back(tau_1_matched_mother_status);
-    if(!isData) taus_matched_p4->push_back(*tau_1_matched_p4);
+    if(!isData) taus_matched_p4->push_back(tau_1_matched_p4);
     if(!isData) taus_matched_pdgId->push_back(tau_1_matched_pdgId);
-    if(!isData) taus_matched_vis_p4->push_back(*tau_1_matched_vis_p4);
+    if(!isData) taus_matched_vis_p4->push_back(tau_1_matched_vis_p4);
     taus_n_charged_tracks->push_back(tau_1_n_charged_tracks);
-    taus_p4->push_back(*tau_1_p4);
+    taus_p4->push_back(tau_1_p4);
     taus_q->push_back(tau_1_q);
 
     taus_id->push_back(tau0id);
@@ -402,11 +402,11 @@ void hadhadtree::definetaus(){
     taus_decay_mode->push_back(tau_0_decay_mode);
     if(!isData) taus_matched_mother_pdgId->push_back(tau_0_matched_mother_pdgId);
     if(!isData) taus_matched_mother_status->push_back(tau_0_matched_mother_status);
-    if(!isData) taus_matched_p4->push_back(*tau_0_matched_p4);
+    if(!isData) taus_matched_p4->push_back(tau_0_matched_p4);
     if(!isData) taus_matched_pdgId->push_back(tau_0_matched_pdgId);
-    if(!isData) taus_matched_vis_p4->push_back(*tau_0_matched_vis_p4);
+    if(!isData) taus_matched_vis_p4->push_back(tau_0_matched_vis_p4);
     taus_n_charged_tracks->push_back(tau_0_n_charged_tracks);
-    taus_p4->push_back(*tau_0_p4);
+    taus_p4->push_back(tau_0_p4);
     taus_q->push_back(tau_0_q);
 
   }
@@ -427,54 +427,54 @@ void hadhadtree::definejets(){
     bjets_fjvt->push_back(jet_0_fjvt);
     bjets_is_Jvt_HS->push_back(jet_0_is_Jvt_HS);
     bjets_jvt->push_back(jet_0_jvt);
-    bjets_p4->push_back(*jet_0_p4);
+    bjets_p4->push_back(jet_0_p4);
     bjets_width->push_back(jet_0_width);
-    if(!isData) bjets_wztruth_p4->push_back(*jet_0_wztruth_p4);
+    if(!isData) bjets_wztruth_p4->push_back(jet_0_wztruth_p4);
     if(!isData) bjets_wztruth_pdgid->push_back(jet_0_wztruth_pdgid);
   }
   else{
     jets_fjvt->push_back(jet_0_fjvt);
     jets_is_Jvt_HS->push_back(jet_0_is_Jvt_HS);
     jets_jvt->push_back(jet_0_jvt);
-    jets_p4->push_back(*jet_0_p4);
+    jets_p4->push_back(jet_0_p4);
     jets_width->push_back(jet_0_width);
-    if(!isData) jets_wztruth_p4->push_back(*jet_0_wztruth_p4);
+    if(!isData) jets_wztruth_p4->push_back(jet_0_wztruth_p4);
     if(!isData) jets_wztruth_pdgid->push_back(jet_0_wztruth_pdgid);
   }
   if(jet_1_b_tagged){
     bjets_fjvt->push_back(jet_1_fjvt);
     bjets_is_Jvt_HS->push_back(jet_1_is_Jvt_HS);
     bjets_jvt->push_back(jet_1_jvt);
-    bjets_p4->push_back(*jet_1_p4);
+    bjets_p4->push_back(jet_1_p4);
     bjets_width->push_back(jet_1_width);
-    if(!isData) bjets_wztruth_p4->push_back(*jet_1_wztruth_p4);
+    if(!isData) bjets_wztruth_p4->push_back(jet_1_wztruth_p4);
     if(!isData) bjets_wztruth_pdgid->push_back(jet_1_wztruth_pdgid);
   }
   else{
     jets_fjvt->push_back(jet_1_fjvt);
     jets_is_Jvt_HS->push_back(jet_1_is_Jvt_HS);
     jets_jvt->push_back(jet_1_jvt);
-    jets_p4->push_back(*jet_1_p4);
+    jets_p4->push_back(jet_1_p4);
     jets_width->push_back(jet_1_width);
-    if(!isData) jets_wztruth_p4->push_back(*jet_1_wztruth_p4);
+    if(!isData) jets_wztruth_p4->push_back(jet_1_wztruth_p4);
     if(!isData) jets_wztruth_pdgid->push_back(jet_1_wztruth_pdgid);
   }
   if(jet_2_b_tagged){
     bjets_fjvt->push_back(jet_2_fjvt);
     bjets_is_Jvt_HS->push_back(jet_2_is_Jvt_HS);
     bjets_jvt->push_back(jet_2_jvt);
-    bjets_p4->push_back(*jet_2_p4);
+    bjets_p4->push_back(jet_2_p4);
     bjets_width->push_back(jet_2_width);
-    if(!isData) bjets_wztruth_p4->push_back(*jet_2_wztruth_p4);
+    if(!isData) bjets_wztruth_p4->push_back(jet_2_wztruth_p4);
     if(!isData) bjets_wztruth_pdgid->push_back(jet_2_wztruth_pdgid);
   }
   else{
     jets_fjvt->push_back(jet_2_fjvt);
     jets_is_Jvt_HS->push_back(jet_2_is_Jvt_HS);
     jets_jvt->push_back(jet_2_jvt);
-    jets_p4->push_back(*jet_2_p4);
+    jets_p4->push_back(jet_2_p4);
     jets_width->push_back(jet_2_width);
-    if(!isData) jets_wztruth_p4->push_back(*jet_2_wztruth_p4);
+    if(!isData) jets_wztruth_p4->push_back(jet_2_wztruth_p4);
     if(!isData) jets_wztruth_pdgid->push_back(jet_2_wztruth_pdgid);
   }
   if (jet_3)
@@ -483,18 +483,18 @@ void hadhadtree::definejets(){
       bjets_fjvt->push_back(jet_3_fjvt);
       bjets_is_Jvt_HS->push_back(jet_3_is_Jvt_HS);
       bjets_jvt->push_back(jet_3_jvt);
-      bjets_p4->push_back(*jet_3_p4);
+      bjets_p4->push_back(jet_3_p4);
       bjets_width->push_back(jet_3_width);
-      if(!isData) bjets_wztruth_p4->push_back(*jet_3_wztruth_p4);
+      if(!isData) bjets_wztruth_p4->push_back(jet_3_wztruth_p4);
       if(!isData) bjets_wztruth_pdgid->push_back(jet_3_wztruth_pdgid);
     }
     else{
       jets_fjvt->push_back(jet_3_fjvt);
       jets_is_Jvt_HS->push_back(jet_3_is_Jvt_HS);
       jets_jvt->push_back(jet_3_jvt);
-      jets_p4->push_back(*jet_3_p4);
+      jets_p4->push_back(jet_3_p4);
       jets_width->push_back(jet_3_width);
-      if(!isData) jets_wztruth_p4->push_back(*jet_3_wztruth_p4);
+      if(!isData) jets_wztruth_p4->push_back(jet_3_wztruth_p4);
       if(!isData) jets_wztruth_pdgid->push_back(jet_3_wztruth_pdgid);
     }
   }
@@ -504,18 +504,18 @@ void hadhadtree::definejets(){
       bjets_fjvt->push_back(jet_4_fjvt);
       bjets_is_Jvt_HS->push_back(jet_4_is_Jvt_HS);
       bjets_jvt->push_back(jet_4_jvt);
-      bjets_p4->push_back(*jet_4_p4);
+      bjets_p4->push_back(jet_4_p4);
       bjets_width->push_back(jet_4_width);
-      if(!isData) bjets_wztruth_p4->push_back(*jet_4_wztruth_p4);
+      if(!isData) bjets_wztruth_p4->push_back(jet_4_wztruth_p4);
       if(!isData) bjets_wztruth_pdgid->push_back(jet_4_wztruth_pdgid);
     }
     else{
       jets_fjvt->push_back(jet_4_fjvt);
       jets_is_Jvt_HS->push_back(jet_4_is_Jvt_HS);
       jets_jvt->push_back(jet_4_jvt);
-      jets_p4->push_back(*jet_4_p4);
+      jets_p4->push_back(jet_4_p4);
       jets_width->push_back(jet_4_width);
-      if(!isData) jets_wztruth_p4->push_back(*jet_4_wztruth_p4);
+      if(!isData) jets_wztruth_p4->push_back(jet_4_wztruth_p4);
       if(!isData) jets_wztruth_pdgid->push_back(jet_4_wztruth_pdgid);
     }
   }
@@ -525,18 +525,18 @@ void hadhadtree::definejets(){
       bjets_fjvt->push_back(jet_5_fjvt);
       bjets_is_Jvt_HS->push_back(jet_5_is_Jvt_HS);
       bjets_jvt->push_back(jet_5_jvt);
-      bjets_p4->push_back(*jet_5_p4);
+      bjets_p4->push_back(jet_5_p4);
       bjets_width->push_back(jet_5_width);
-      if(!isData) bjets_wztruth_p4->push_back(*jet_5_wztruth_p4);
+      if(!isData) bjets_wztruth_p4->push_back(jet_5_wztruth_p4);
       if(!isData) bjets_wztruth_pdgid->push_back(jet_5_wztruth_pdgid);
     }
     else{
       jets_fjvt->push_back(jet_5_fjvt);
       jets_is_Jvt_HS->push_back(jet_5_is_Jvt_HS);
       jets_jvt->push_back(jet_5_jvt);
-      jets_p4->push_back(*jet_5_p4);
+      jets_p4->push_back(jet_5_p4);
       jets_width->push_back(jet_5_width);
-      if(!isData) jets_wztruth_p4->push_back(*jet_5_wztruth_p4);
+      if(!isData) jets_wztruth_p4->push_back(jet_5_wztruth_p4);
       if(!isData) jets_wztruth_pdgid->push_back(jet_5_wztruth_pdgid);
     }
   }
@@ -546,18 +546,18 @@ void hadhadtree::definejets(){
       bjets_fjvt->push_back(jet_6_fjvt);
       bjets_is_Jvt_HS->push_back(jet_6_is_Jvt_HS);
       bjets_jvt->push_back(jet_6_jvt);
-      bjets_p4->push_back(*jet_6_p4);
+      bjets_p4->push_back(jet_6_p4);
       bjets_width->push_back(jet_6_width);
-      if(!isData) bjets_wztruth_p4->push_back(*jet_6_wztruth_p4);
+      if(!isData) bjets_wztruth_p4->push_back(jet_6_wztruth_p4);
       if(!isData) bjets_wztruth_pdgid->push_back(jet_6_wztruth_pdgid);
     }
     else{
       jets_fjvt->push_back(jet_6_fjvt);
       jets_is_Jvt_HS->push_back(jet_6_is_Jvt_HS);
       jets_jvt->push_back(jet_6_jvt);
-      jets_p4->push_back(*jet_6_p4);
+      jets_p4->push_back(jet_6_p4);
       jets_width->push_back(jet_6_width);
-      if(!isData) jets_wztruth_p4->push_back(*jet_6_wztruth_p4);
+      if(!isData) jets_wztruth_p4->push_back(jet_6_wztruth_p4);
       if(!isData) jets_wztruth_pdgid->push_back(jet_6_wztruth_pdgid);
     }
   }
