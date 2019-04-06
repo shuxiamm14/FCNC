@@ -187,7 +187,6 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     if ((jentry % 100000 == 0))
       std::cout << " I am here event " << jentry << " Event " << event_number << " Run " << run_number << " ismc " << mc_channel_number << std::endl;
     cutflow[0]+=1;
-    weights->clear();
 //===============================SFs and weights===============================
     if((tau_1_n_charged_tracks!=1 && tau_1_n_charged_tracks!=3) || (tau_0_n_charged_tracks!=1 && tau_0_n_charged_tracks!=3)) continue;
     Float_t trig_SF = 1;
@@ -232,6 +231,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       jet_NOMINAL_global_ineffSF_MV2c10;
     float weight_pileup = NOMINAL_pileup_combined_weight;
     weight = isData?1:weight_mc*weight_pileup*jetSFs*globalweight;
+    if(debug){
       printf("event: %llu\n",event_number);
       printf("weight_mc: %f\n",weight_mc);
       printf("weight_pileup: %f\n",weight_pileup);
@@ -239,7 +239,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       printf("trig_SF: %f\n",trig_SF);
       printf("jetSFs: %f\n",jetSFs);
       printf("globalweight: %f\n",globalweight);
-    weights->push_back(weight);
+    }
     //===============================pre-selections===============================
     cutflow[0]+=weight;
 
@@ -266,6 +266,42 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
 
     for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
       if (iter->second == 1) {
+        weights->clear();
+        float savewt = weight;
+        if(!iter->first.Contains("ttau")){
+          if(tau_0_jet_bdt_medium){
+            lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTmedium;
+            trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
+          }else{
+            lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTloose;
+            trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
+          }
+          if(tau_1_jet_bdt_medium){
+            lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTmedium;
+            trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
+          }else{
+            lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTloose;
+            trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
+          }
+        }else{
+          if(tau_0_jet_bdt_tight){
+            lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTtight;
+            trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
+          }else{
+            lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTmedium;
+            trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
+          }
+          if(tau_1_jet_bdt_tight){
+            lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTtight;
+            trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
+          }else{
+            lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTmedium;
+            trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
+          }
+        }
+        weight *= lepton_SF*trig_SF;
+        weights->push_back(weight);
+
         if (writetree){
           if(outputtree.find(iter->first) != outputtree.end())
             outputtree[iter->first]->Fill();
@@ -278,43 +314,9 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           }
         }
         if (dohist) {
-          float savewt = weight;
-
-          if(!iter->first.Contains("ttau")){
-            if(tau_0_jet_bdt_medium){
-              lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTmedium;
-              trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-            }else{
-              lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTloose;
-              trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-            }
-            if(tau_1_jet_bdt_medium){
-              lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTmedium;
-              trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-            }else{
-              lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTloose;
-              trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-            }
-          }else{
-            if(tau_0_jet_bdt_tight){
-              lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTtight;
-              trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-            }else{
-              lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTmedium;
-              trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-            }
-            if(tau_1_jet_bdt_tight){
-              lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTtight;
-              trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-            }else{
-              lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTmedium;
-              trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-            }
-          }
-          weight *= lepton_SF*trig_SF;
           fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_1_p4->Pt() > 35, taus_b_tagged->at(1));
-          weight = savewt;
         }
+        weight = savewt;
       }
     }
   }
