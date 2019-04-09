@@ -71,7 +71,7 @@ void tthmltree::init_hist(TString outputfilename){
   fake_notau_plots->add(10,0.,200.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   fake_notau_plots->add(10,0.,200.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
   
-  TString _fake_regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss","reg1e1mu1tau1b"};
+  TString _fake_regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss","reg1l1tau2b_os","reg1l1tau2b_ss","reg1e1mu1tau1b"};
 
   TString fake_regions_notau[] = {"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
   
@@ -201,6 +201,8 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
   nonfcncmatched = 0;
   fcncmatched = 0;
   leptonicw = 0;
+  bool tightLep = 0;
+  bool tightTau = 0;
   double cutflow[] = {
     0,
     0,
@@ -284,9 +286,9 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
       }
 
       basic_selection &=
-        (RunYear == 2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose)) ||
+        (RunYear == 2015 && (( lep_Pt_0/GeV>21 && HLT_mu20_iloose_L1MU15 ) || ( lep_Pt_0/GeV>51 && HLT_mu50 ) || ( lep_Pt_0/GeV>25 && HLT_e24_lhmedium_L1EM20VH )|| (lep_Pt_0/GeV>61 &&HLT_e60_lhmedium) || ( lep_Pt_0/GeV>121 && HLT_e120_lhloose))) ||
         (RunYear == 2015 && (HLT_2e12_lhloose_L12EM10VH || HLT_e17_lhloose_mu14 || HLT_mu18_mu8noL1)) ||
-        (RunYear >= 2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0)) ||
+        (RunYear >= 2016 && (( lep_Pt_0/GeV>27 && HLT_mu26_ivarmedium ) || ( lep_Pt_0/GeV>51 && HLT_mu50 ) || ( lep_Pt_0/GeV>27 && HLT_e26_lhtight_nod0_ivarloose ) || ( lep_Pt_0/GeV>61 && HLT_e60_lhmedium_nod0) || ( lep_Pt_0/GeV>141 && HLT_e140_lhloose_nod0))) ||
         (RunYear >= 2016 && (HLT_2e17_lhvloose_nod0 || HLT_e17_lhloose_nod0_mu14 || HLT_mu22_mu8noL1));
 
       if (debug == 2) {
@@ -333,8 +335,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         lep_v.SetPtEtaPhiE(0, 0, 0, 0);
       }
       triggeredfcnc = 0;
-      if(SLtrig_match && onelep_type && SelectTLepid(0) && nTaus_OR_Pt25 &&
-        (RunYear==2015?((abs(lep_ID_0)==11&&lep_Pt_0/GeV>25)||(abs(lep_ID_0)==13&&lep_Pt_0/GeV>21)):lep_Pt_0/GeV>27)){
+      if(SLtrig_match && onelep_type && (!tightLep || SelectTLepid(0)) && nTaus_OR_Pt25){
         ifregions["reg1l1tau1b2j"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
         ifregions["reg1l1tau1b3j"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
         ifregions["reg1l2tau1bnj"] = nJets_OR_T >= 2 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 >= 2 && tau_charge_0*tau_charge_1 < 0;
@@ -343,6 +344,8 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         ifregions["reg1l2b2j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 0;
         ifregions["reg1l1tau2b1j_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 >= 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
         ifregions["reg1l1tau2b1j_ss"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 >= 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
+        ifregions["reg1l1tau2b_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
+        ifregions["reg1l1tau2b_ss"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
       }else{
         ifregions["reg1l1tau1b2j"] = 0;
         ifregions["reg1l1tau1b3j"] = 0;
@@ -350,11 +353,13 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         ifregions["reg1l2b2j"] = 0;
         ifregions["reg1l1tau2b1j_os"] = 0;
         ifregions["reg1l1tau2b1j_ss"] = 0;
+        ifregions["reg1l1tau2b_os"] = 0;
+        ifregions["reg1l1tau2b_ss"] = 0;
       }
 
       if (trig_match && dilep_type && total_charge == 0 && lep_Pt_0 > 20e3 && lep_Pt_1 > 20e3 &&
-        ((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5)) && SelectTLepid(0) &&
-        ((abs(lep_ID_1) == 11 && lep_promptLeptonVeto_TagWeight_1 < -0.7) || (abs(lep_ID_1) == 13 && lep_promptLeptonVeto_TagWeight_1 < -0.5)) && SelectTLepid(1) &&
+        ((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5)) && (!tightLep || SelectTLepid(0)) &&
+        ((abs(lep_ID_1) == 11 && lep_promptLeptonVeto_TagWeight_1 < -0.7) || (abs(lep_ID_1) == 13 && lep_promptLeptonVeto_TagWeight_1 < -0.5)) && (!tightLep || SelectTLepid(1)) &&
         (nTaus_OR_Pt25 == 0 || (tau_passEleBDT_0 && tau_passMuonOLR_0)) &&
         (dilep_type == 2 || ((dilep_type == 1 || dilep_type == 3) && (Mll01 / GeV < 80 || Mll01 / GeV > 100))) && total_charge == 0) { //met>30 GeV ? ttbar vs z+bb:
         ifregions["reg1e1mu1tau2b"] = nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1;
@@ -369,7 +374,6 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
       }
 
       bool triggered = 0;
-
       for (iter = ifregions.begin(); iter != ifregions.end(); iter++)
         if (iter->second) {
           triggered = 1;
@@ -377,6 +381,15 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         }
 
       if (!triggered) continue;
+    }else if(tightTau) {
+      bool passtight = 1;
+      for(auto & iter : ifregions){
+        if(iter.second == 1) {
+          if((iter.first.Contains("tau") && tau_JetBDTSigTight_0 == 0) || (iter.first.Contains("2tau") && tau_JetBDTSigTight_1 == 0))
+            passtight = 0;
+        }
+      }
+      if(!passtight) continue;
     }
     if (reduce <= 2) weight = mc_channel_number > 0 ? mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight: 1.0;
     cutflow[1] += 1;
@@ -388,8 +401,8 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
       }
     }
     //===============================find leading b,non b jets===============================
-    if( mc_channel_number > 0) weight*=lepSFObjLoose;
-    if(reduce <= 2 && nTaus_OR_Pt25 &&  mc_channel_number > 0 ) weight*=triggeredfcnc?tauSFTight:tauSFLoose;
+    if( mc_channel_number > 0) weight*=tightLep?lepSFObjLoose:lepSFIDLoose*lepSFTrigLoose;
+    if(reduce <= 2 && nTaus_OR_Pt25 &&  mc_channel_number > 0 ) weight*=tightTau?tauSFTight:tauSFLoose;
     if(  mc_channel_number <= 0 ) weight = 1;
     if (reduce <= 2) {
       if (reduce != 1){

@@ -77,6 +77,14 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_regions.push_back("reg2mtau1b3jos");
   fcnc_regions.push_back("reg1mtau1ltau1b3jos");
   fcnc_regions.push_back("reg2ltau1b3jos");
+  fcnc_regions.push_back("reg2ttau1b2jss");
+  fcnc_regions.push_back("reg1ttau1mtau1b2jss");
+  fcnc_regions.push_back("reg2ttau1b3jss");
+  fcnc_regions.push_back("reg1ttau1mtau1b3jss");
+  fcnc_regions.push_back("reg2ttau1b2jos");
+  fcnc_regions.push_back("reg1ttau1mtau1b2jos");
+  fcnc_regions.push_back("reg2ttau1b3jos");
+  fcnc_regions.push_back("reg1ttau1mtau1b3jos");
 
   TString nprong[] = {"1prong","3prong"};
   
@@ -179,7 +187,6 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     if ((jentry % 100000 == 0))
       std::cout << " I am here event " << jentry << " Event " << event_number << " Run " << run_number << " ismc " << mc_channel_number << std::endl;
     cutflow[0]+=1;
-    weights->clear();
 //===============================SFs and weights===============================
     if((tau_1_n_charged_tracks!=1 && tau_1_n_charged_tracks!=3) || (tau_0_n_charged_tracks!=1 && tau_0_n_charged_tracks!=3)) continue;
     Float_t trig_SF = 1;
@@ -197,30 +204,24 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     ifregions["reg2mtau1b2jss"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
     ifregions["reg1mtau1ltau1b2jss"] = tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 &&  n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
     ifregions["reg2ltau1b2jss"] =      !tau_0_jet_bdt_medium && !tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
+    ifregions["reg2ttau1b2jss"] =      tau_0_jet_bdt_tight && tau_1_jet_bdt_tight && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
+    ifregions["reg1ttau1mtau1b2jss"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
     ifregions["reg2mtau1b3jss"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
     ifregions["reg1mtau1ltau1b3jss"] = tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 &&  n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
     ifregions["reg2ltau1b3jss"] =      !tau_0_jet_bdt_medium && !tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
+    ifregions["reg2ttau1b3jss"] =      tau_0_jet_bdt_tight && tau_1_jet_bdt_tight && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
+    ifregions["reg1ttau1mtau1b3jss"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
     ifregions["reg2mtau1b2jos"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
     ifregions["reg1mtau1ltau1b2jos"] = tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 &&  n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
     ifregions["reg2ltau1b2jos"] =      !tau_0_jet_bdt_medium && !tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
     ifregions["reg2mtau1b3jos"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
     ifregions["reg1mtau1ltau1b3jos"] = tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 &&  n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
     ifregions["reg2ltau1b3jos"] =      !tau_0_jet_bdt_medium && !tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
+    ifregions["reg2ttau1b2jos"] =      tau_0_jet_bdt_tight && tau_1_jet_bdt_tight && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
+    ifregions["reg1ttau1mtau1b2jos"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
+    ifregions["reg2ttau1b3jos"] =      tau_0_jet_bdt_tight && tau_1_jet_bdt_tight && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
+    ifregions["reg1ttau1mtau1b3jos"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
 
-    if(tau_0_jet_bdt_medium){
-      lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTmedium;
-      trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-    }else{
-      lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTloose;
-      trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-    }
-    if(tau_1_jet_bdt_medium){
-      lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTmedium;
-      trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-    }else{
-      lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTloose;
-      trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-    }
     float jetSFs = 
       jet_NOMINAL_central_jets_global_effSF_JVT*
       jet_NOMINAL_central_jets_global_ineffSF_JVT*
@@ -229,7 +230,8 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       jet_NOMINAL_global_effSF_MV2c10*
       jet_NOMINAL_global_ineffSF_MV2c10;
     float weight_pileup = NOMINAL_pileup_combined_weight;
-    weight = isData?1:weight_mc*weight_pileup*lepton_SF*trig_SF*jetSFs*globalweight;
+    weight = isData?1:weight_mc*weight_pileup*jetSFs*globalweight;
+    if(debug){
       printf("event: %llu\n",event_number);
       printf("weight_mc: %f\n",weight_mc);
       printf("weight_pileup: %f\n",weight_pileup);
@@ -237,12 +239,12 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       printf("trig_SF: %f\n",trig_SF);
       printf("jetSFs: %f\n",jetSFs);
       printf("globalweight: %f\n",globalweight);
-    weights->push_back(weight);
+    }
     //===============================pre-selections===============================
     cutflow[0]+=weight;
 
-    tau_pt_0 = taus_p4->at(0)->Pt();
-    tau_pt_1 = taus_p4->at(1)->Pt();
+    tau_pt_0 = tau_0_p4->Pt();
+    tau_pt_1 = tau_1_p4->Pt();
 
     TString tauorigin;
 
@@ -264,6 +266,44 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
 
     for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
       if (iter->second == 1) {
+        float savewt = 1;
+        weights->clear();
+        if(!isData){
+          savewt = weight;
+          if(!iter->first.Contains("ttau")){
+            if(tau_0_jet_bdt_medium){
+              lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTmedium;
+              trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
+            }else{
+              lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTloose;
+              trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
+            }
+            if(tau_1_jet_bdt_medium){
+              lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTmedium;
+              trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
+            }else{
+              lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTloose;
+              trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
+            }
+          }else{
+            if(tau_0_jet_bdt_tight){
+              lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTtight;
+              trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
+            }else{
+              lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTmedium;
+              trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
+            }
+            if(tau_1_jet_bdt_tight){
+              lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTtight;
+              trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
+            }else{
+              lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTmedium;
+              trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
+            }
+          }
+          weight *= lepton_SF*trig_SF;
+        }
+        weights->push_back(weight);
         if (writetree){
           if(outputtree.find(iter->first) != outputtree.end())
             outputtree[iter->first]->Fill();
@@ -276,8 +316,9 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           }
         }
         if (dohist) {
-          fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_pt_0 > 35, taus_b_tagged->at(1));
+          fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_1_p4->Pt() > 35, taus_b_tagged->at(1));
         }
+        if(!isData) weight = savewt;
       }
     }
   }
@@ -356,59 +397,29 @@ void hadhadtree::definetaus(){
   int tau0id = tau_0_jet_bdt_tight?3:(tau_0_jet_bdt_medium?2:1);
   int tau1id = tau_1_jet_bdt_tight?3:(tau_1_jet_bdt_medium?2:1);
 
-  if(tau0id >= tau1id){
+  taus_id->push_back(tau0id);
+  taus_b_tagged->push_back(tau_0_b_tagged);
+  taus_decay_mode->push_back(tau_0_decay_mode);
+  if(!isData) taus_matched_mother_pdgId->push_back(tau_0_matched_mother_pdgId);
+  if(!isData) taus_matched_mother_status->push_back(tau_0_matched_mother_status);
+  if(!isData) taus_matched_p4->push_back(tau_0_matched_p4);
+  if(!isData) taus_matched_pdgId->push_back(tau_0_matched_pdgId);
+  if(!isData) taus_matched_vis_p4->push_back(tau_0_matched_vis_p4);
+  taus_n_charged_tracks->push_back(tau_0_n_charged_tracks);
+  taus_p4->push_back(tau_0_p4);
+  taus_q->push_back(tau_0_q);
 
-    taus_id->push_back(tau0id);
-    taus_b_tagged->push_back(tau_0_b_tagged);
-    taus_decay_mode->push_back(tau_0_decay_mode);
-    if(!isData) taus_matched_mother_pdgId->push_back(tau_0_matched_mother_pdgId);
-    if(!isData) taus_matched_mother_status->push_back(tau_0_matched_mother_status);
-    if(!isData) taus_matched_p4->push_back(tau_0_matched_p4);
-    if(!isData) taus_matched_pdgId->push_back(tau_0_matched_pdgId);
-    if(!isData) taus_matched_vis_p4->push_back(tau_0_matched_vis_p4);
-    taus_n_charged_tracks->push_back(tau_0_n_charged_tracks);
-    taus_p4->push_back(tau_0_p4);
-    taus_q->push_back(tau_0_q);
-
-    taus_id->push_back(tau1id);
-    taus_b_tagged->push_back(tau_1_b_tagged);
-    taus_decay_mode->push_back(tau_1_decay_mode);
-    if(!isData) taus_matched_mother_pdgId->push_back(tau_1_matched_mother_pdgId);
-    if(!isData) taus_matched_mother_status->push_back(tau_1_matched_mother_status);
-    if(!isData) taus_matched_p4->push_back(tau_1_matched_p4);
-    if(!isData) taus_matched_pdgId->push_back(tau_1_matched_pdgId);
-    if(!isData) taus_matched_vis_p4->push_back(tau_1_matched_vis_p4);
-    taus_n_charged_tracks->push_back(tau_1_n_charged_tracks);
-    taus_p4->push_back(tau_1_p4);
-    taus_q->push_back(tau_1_q);
-
-  }else{
-
-    taus_id->push_back(tau1id);
-    taus_b_tagged->push_back(tau_1_b_tagged);
-    taus_decay_mode->push_back(tau_1_decay_mode);
-    if(!isData) taus_matched_mother_pdgId->push_back(tau_1_matched_mother_pdgId);
-    if(!isData) taus_matched_mother_status->push_back(tau_1_matched_mother_status);
-    if(!isData) taus_matched_p4->push_back(tau_1_matched_p4);
-    if(!isData) taus_matched_pdgId->push_back(tau_1_matched_pdgId);
-    if(!isData) taus_matched_vis_p4->push_back(tau_1_matched_vis_p4);
-    taus_n_charged_tracks->push_back(tau_1_n_charged_tracks);
-    taus_p4->push_back(tau_1_p4);
-    taus_q->push_back(tau_1_q);
-
-    taus_id->push_back(tau0id);
-    taus_b_tagged->push_back(tau_0_b_tagged);
-    taus_decay_mode->push_back(tau_0_decay_mode);
-    if(!isData) taus_matched_mother_pdgId->push_back(tau_0_matched_mother_pdgId);
-    if(!isData) taus_matched_mother_status->push_back(tau_0_matched_mother_status);
-    if(!isData) taus_matched_p4->push_back(tau_0_matched_p4);
-    if(!isData) taus_matched_pdgId->push_back(tau_0_matched_pdgId);
-    if(!isData) taus_matched_vis_p4->push_back(tau_0_matched_vis_p4);
-    taus_n_charged_tracks->push_back(tau_0_n_charged_tracks);
-    taus_p4->push_back(tau_0_p4);
-    taus_q->push_back(tau_0_q);
-
-  }
+  taus_id->push_back(tau1id);
+  taus_b_tagged->push_back(tau_1_b_tagged);
+  taus_decay_mode->push_back(tau_1_decay_mode);
+  if(!isData) taus_matched_mother_pdgId->push_back(tau_1_matched_mother_pdgId);
+  if(!isData) taus_matched_mother_status->push_back(tau_1_matched_mother_status);
+  if(!isData) taus_matched_p4->push_back(tau_1_matched_p4);
+  if(!isData) taus_matched_pdgId->push_back(tau_1_matched_pdgId);
+  if(!isData) taus_matched_vis_p4->push_back(tau_1_matched_vis_p4);
+  taus_n_charged_tracks->push_back(tau_1_n_charged_tracks);
+  taus_p4->push_back(tau_1_p4);
+  taus_q->push_back(tau_1_q);
 }
 
 void hadhadtree::definejets(){

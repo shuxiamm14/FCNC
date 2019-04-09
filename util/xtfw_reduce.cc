@@ -91,7 +91,7 @@ int main(int argc, char const *argv[])
 		else sscanf(inputline,"%s",filename);
 		printf("reading file: DSID: %d name %s\n", isData? 0 : dsid, filename);
 		TFile inputfile(filename);
-		if(xsecs.find(dsid) == xsecs.end()) printf("xsec for DSID %d not found, please update your Xsec file\n", dsid);
+		if(!isData && xsecs.find(dsid) == xsecs.end()) printf("xsec for DSID %d not found, please update your Xsec file\n", dsid);
 		cutflowfile.cd();
 		if(!cutflow) cutflow = (TH1D*)inputfile.Get("cutflow_HSM_common")->Clone();
 		else cutflow->Add((TH1D*)inputfile.Get("cutflow_HSM_common"));
