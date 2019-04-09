@@ -11,17 +11,16 @@ int main(int argc, char const *argv[])
 	bool doplot = 1;
 	char inputline[100];
 	vector<TString> regions;
-	regions.push_back("reg1l2tau1bnj");
-	regions.push_back("reg1l1tau1b2j");
-	regions.push_back("reg1l1tau1b3j");
-	regions.push_back("reg1e1mu1tau1b");
-	regions.push_back("reg1e1mu1tau2b");
-	regions.push_back("reg1e1mu2b");
-	regions.push_back("reg1e1mu2bnj");
-	regions.push_back("reg1l1tau2b1j_os");
-	regions.push_back("reg1l1tau2b1j_ss_ptbin1");
-	regions.push_back("reg1l1tau2b1j_ss_ptbin2");
-	regions.push_back("reg1l2b2j");
+	//regions.push_back("reg1l2tau1bnj");
+	//regions.push_back("reg1l1tau1b2j");
+	//regions.push_back("reg1l1tau1b3j");
+	//regions.push_back("reg1e1mu1tau1b");
+	//regions.push_back("reg1e1mu1tau2b");
+	//regions.push_back("reg1e1mu2b");
+	//regions.push_back("reg1e1mu2bnj");
+	regions.push_back("reg1l1tau2b_os");
+	regions.push_back("reg1l1tau2b_ss");
+	//regions.push_back("reg1l2b2j");
 
 	tthmltree *analysis = new tthmltree();
 	analysis->debug = 0;
@@ -39,8 +38,8 @@ int main(int argc, char const *argv[])
 	if(doplot) analysis->init_hist(cate);
 	analysis->version = version;
 	analysis->init_sample(cate, title);
-	printf("reading Root file: %s\n", (prefix + "/data/reduce1/" + cate + ".root").Data());
-	TFile inputfile(prefix + "/data/reduce1/" + cate + ".root");
+	printf("reading Root file: %s\n", (prefix + "/data/reduce1/" + cate + "_tree.root").Data());
+	TFile inputfile(prefix + "/data/reduce1/" + cate + "_tree.root");
 	for (std::vector<TString>::iterator i = regions.begin(); i != regions.end(); ++i)
 	{
 		printf("region: %s\n", i->Data());
