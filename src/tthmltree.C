@@ -374,14 +374,6 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
       }
 
       bool triggered = 0;
-      if(tightTau) {
-        for(auto & iter : ifregions){
-          if(iter.second == 1) {
-            if((iter.first.Contains("tau") && tau_JetBDTSigTight_0 == 0) || (iter.first.Contains("2tau") && tau_JetBDTSigTight_1 == 0))
-              iter.second = 0;
-          }
-        }
-      }
       for (iter = ifregions.begin(); iter != ifregions.end(); iter++)
         if (iter->second) {
           triggered = 1;
