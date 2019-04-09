@@ -353,18 +353,53 @@ void hadhadtree::definetree(TTree * tree) {
   tree->Branch("bjets_p4",bjets_p4);
   tree->Branch("bjets_type",bjets_type);
   tree->Branch("bjets_width",bjets_width);
-  if(!isData) tree->Branch("bjets_wztruth_p4",bjets_wztruth_p4);
-  if(!isData) tree->Branch("bjets_wztruth_pdgid",bjets_wztruth_pdgid);
-
-
+  tree->Branch("ditau_coll_approx", &ditau_coll_approx);
+  tree->Branch("ditau_coll_approx_m", &ditau_coll_approx_m);
+  tree->Branch("ditau_coll_approx_x0", &ditau_coll_approx_x0);
+  tree->Branch("ditau_coll_approx_x1", &ditau_coll_approx_x1);
+  tree->Branch("ditau_cosalpha", &ditau_cosalpha);
+  tree->Branch("ditau_deta", &ditau_deta);
+  tree->Branch("ditau_dphi", &ditau_dphi);
+  tree->Branch("ditau_dr", &ditau_dr);
+  tree->Branch("ditau_higgspt", &ditau_higgspt);
+  tree->Branch("ditau_met_centrality", &ditau_met_centrality);
+  tree->Branch("ditau_met_lep0_cos_dphi", &ditau_met_lep0_cos_dphi);
+  tree->Branch("ditau_met_lep1_cos_dphi", &ditau_met_lep1_cos_dphi);
+  tree->Branch("ditau_met_min_dphi", &ditau_met_min_dphi);
+  tree->Branch("ditau_met_sum_cos_dphi", &ditau_met_sum_cos_dphi);
+  tree->Branch("ditau_mmc_maxw_eta", &ditau_mmc_maxw_eta);
+  tree->Branch("ditau_mmc_maxw_fit_status", &ditau_mmc_maxw_fit_status);
+  tree->Branch("ditau_mmc_maxw_m", &ditau_mmc_maxw_m);
+  tree->Branch("ditau_mmc_maxw_met_et", &ditau_mmc_maxw_met_et);
+  tree->Branch("ditau_mmc_maxw_met_phi", &ditau_mmc_maxw_met_phi);
+  tree->Branch("ditau_mmc_maxw_phi", &ditau_mmc_maxw_phi);
+  tree->Branch("ditau_mmc_maxw_pt", &ditau_mmc_maxw_pt);
+  tree->Branch("ditau_mmc_maxw_x0", &ditau_mmc_maxw_x0);
+  tree->Branch("ditau_mmc_maxw_x1", &ditau_mmc_maxw_x1);
+  tree->Branch("ditau_mmc_mlm_fit_status", &ditau_mmc_mlm_fit_status);
+  tree->Branch("ditau_mmc_mlm_m", &ditau_mmc_mlm_m);
+  tree->Branch("ditau_mt_lep0_met", &ditau_mt_lep0_met);
+  tree->Branch("ditau_mt_lep1_met", &ditau_mt_lep1_met);
+  tree->Branch("met_p4", &met_p4);
+  tree->Branch("met_sumet", &met_sumet);
   tree->Branch("taus_id",taus_id);
   tree->Branch("taus_b_tagged",taus_b_tagged);
   tree->Branch("taus_decay_mode",taus_decay_mode);
-  if(!isData) tree->Branch("taus_matched_mother_pdgId",taus_matched_mother_pdgId);
-  if(!isData) tree->Branch("taus_matched_mother_status",taus_matched_mother_status);
-  if(!isData) tree->Branch("taus_matched_p4",taus_matched_p4);
-  if(!isData) tree->Branch("taus_matched_pdgId",taus_matched_pdgId);
-  if(!isData) tree->Branch("taus_matched_vis_p4",taus_matched_vis_p4);
+
+  if(!isData) {
+    tree->Branch("bjets_wztruth_p4",bjets_wztruth_p4);
+    tree->Branch("bjets_wztruth_pdgid",bjets_wztruth_pdgid);
+    tree->Branch("met_truth_p4", &met_truth_p4);
+    tree->Branch("met_truth_sumet", &met_truth_sumet);
+    tree->Branch("taus_matched_mother_pdgId",taus_matched_mother_pdgId);
+    tree->Branch("taus_matched_mother_status",taus_matched_mother_status);
+    tree->Branch("taus_matched_p4",taus_matched_p4);
+    tree->Branch("taus_matched_pdgId",taus_matched_pdgId);
+    tree->Branch("taus_matched_vis_p4",taus_matched_vis_p4);
+    tree->Branch("jets_wztruth_p4",jets_wztruth_p4);
+    tree->Branch("jets_wztruth_pdgid",jets_wztruth_pdgid);
+  }
+
   tree->Branch("taus_n_charged_tracks",taus_n_charged_tracks);
   tree->Branch("taus_p4",taus_p4);
   tree->Branch("taus_q",taus_q);
@@ -376,8 +411,6 @@ void hadhadtree::definetree(TTree * tree) {
   tree->Branch("jets_q",jets_q);
   tree->Branch("jets_type",jets_type);
   tree->Branch("jets_width",jets_width);
-  if(!isData) tree->Branch("jets_wztruth_p4",jets_wztruth_p4);
-  if(!isData) tree->Branch("jets_wztruth_pdgid",jets_wztruth_pdgid);
 
 }
 void hadhadtree::definetaus(){
