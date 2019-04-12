@@ -7,6 +7,10 @@
 #include "fcnc_include.h"
 
 hadhadtree::hadhadtree() : nominal::nominal(){
+}
+
+void hadhadtree::init_reduce1(){
+  reduce = 1;
   weights = new vector<Float_t> ();
   taus_id = new vector<Int_t> ();
   taus_b_tagged = new vector<Int_t> ();
@@ -48,8 +52,9 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots->set_weight(&weight);
   fcnc_plots->debug = debug;
 
-  fcnc_plots->add(100,25.,125.,"p_{T,lead-#tau}","tau_0_pt",&tau_pt_0,false,"GeV");
-  fcnc_plots->add(100,25.,125.,"p_{T,sublead-#tau}","tau_1_pt",&tau_pt_1,false,"GeV");
+  fcnc_plots->add(100,40.,140.,"p_{T,lead-#tau}","tau_0_pt",&tau_pt_0,false,"GeV");
+  fcnc_plots->add(100,30.,130.,"p_{T,sublead-#tau}","tau_1_pt",&tau_pt_1,false,"GeV");
+  fcnc_plots->add(100,0.,200.,"E^{T}_{miss}","etmiss",&etmiss,false,"GeV");
   //fcnc_plots->add(100,50.,250.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
   //fcnc_plots->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
   //fcnc_plots->add(100,50.,250.,"m_{W}","wmass",&wmass,true,"GeV");
@@ -125,7 +130,7 @@ void hadhadtree::init_sample(TString sample, TString sampletitle){
       fcnc_plots->init_sample("data","data","data",kBlack);
       initdata = 1;
     }else{
-      if(reduce == 1) sample.Remove(0,6);
+      sample.Remove(0,6);
       fcnc_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
       fcnc_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
       fcnc_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
@@ -144,6 +149,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   isData = samplename.Contains("data");
 
   bool doweightsys = ((TString)inputtree->GetName() == "NOMINAL")? 1 : 0;
+  if(reduce > 1) ifregions[inputtree->GetName()] = 1;
   double cutflow[] = {
     0,
     0,
@@ -164,7 +170,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   Init(inputtree);
   reduce += 1;
   map < TString, bool > ::iterator iter;
-  printf("reduce scheme: %d\n", reduce);
+  if(debug) printf("reduce scheme: %d\n", reduce);
   if (reduce > 1) {
     ifregions.clear();
     ifregions[inputtree->GetName()] = 1;
@@ -184,126 +190,132 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   float ngluon = 0;
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     inputtree->GetEntry(jentry);
-    if ((jentry % 100000 == 0))
+    if (jentry >= 100000 && (jentry % 100000 == 0))
       std::cout << " I am here event " << jentry << " Event " << event_number << " Run " << run_number << " ismc " << mc_channel_number << std::endl;
     cutflow[0]+=1;
 //===============================SFs and weights===============================
-    if((tau_1_n_charged_tracks!=1 && tau_1_n_charged_tracks!=3) || (tau_0_n_charged_tracks!=1 && tau_0_n_charged_tracks!=3)) continue;
-    Float_t trig_SF = 1;
-    Float_t lepton_SF = 
-      tau_0_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
-      tau_1_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
-      tau_0_NOMINAL_TauEffSF_reco*
-      tau_1_NOMINAL_TauEffSF_reco*
-      tau_0_NOMINAL_TauEffSF_selection*
-      tau_1_NOMINAL_TauEffSF_selection;
+    if(!tau_0_trig_trigger_matched || !tau_1_trig_trigger_matched) continue;
+    Float_t lepton_SF = 0;
+    if(reduce == 1){
+      if((tau_1_n_charged_tracks!=1 && tau_1_n_charged_tracks!=3) || (tau_0_n_charged_tracks!=1 && tau_0_n_charged_tracks!=3)) continue;
+      lepton_SF = 
+        tau_0_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
+        tau_1_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
+        tau_0_NOMINAL_TauEffSF_reco*
+        tau_1_NOMINAL_TauEffSF_reco*
+        tau_0_NOMINAL_TauEffSF_selection*
+        tau_1_NOMINAL_TauEffSF_selection;
+      definetaus();
+      definejets();
+      ifregions["reg2mtau1b2jss"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
+      ifregions["reg1mtau1ltau1b2jss"] = tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 &&  n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
+      ifregions["reg2ltau1b2jss"] =      !tau_0_jet_bdt_medium && !tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
+      ifregions["reg2ttau1b2jss"] =      tau_0_jet_bdt_tight && tau_1_jet_bdt_tight && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
+      ifregions["reg1ttau1mtau1b2jss"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
+      ifregions["reg2mtau1b3jss"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
+      ifregions["reg1mtau1ltau1b3jss"] = tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 &&  n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
+      ifregions["reg2ltau1b3jss"] =      !tau_0_jet_bdt_medium && !tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
+      ifregions["reg2ttau1b3jss"] =      tau_0_jet_bdt_tight && tau_1_jet_bdt_tight && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
+      ifregions["reg1ttau1mtau1b3jss"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
+      ifregions["reg2mtau1b2jos"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
+      ifregions["reg1mtau1ltau1b2jos"] = tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 &&  n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
+      ifregions["reg2ltau1b2jos"] =      !tau_0_jet_bdt_medium && !tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
+      ifregions["reg2mtau1b3jos"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
+      ifregions["reg1mtau1ltau1b3jos"] = tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 &&  n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
+      ifregions["reg2ltau1b3jos"] =      !tau_0_jet_bdt_medium && !tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
+      ifregions["reg2ttau1b2jos"] =      tau_0_jet_bdt_tight && tau_1_jet_bdt_tight && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
+      ifregions["reg1ttau1mtau1b2jos"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
+      ifregions["reg2ttau1b3jos"] =      tau_0_jet_bdt_tight && tau_1_jet_bdt_tight && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
+      ifregions["reg1ttau1mtau1b3jos"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
 
-    definetaus();
-    definejets();
-
-    ifregions["reg2mtau1b2jss"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
-    ifregions["reg1mtau1ltau1b2jss"] = tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 &&  n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
-    ifregions["reg2ltau1b2jss"] =      !tau_0_jet_bdt_medium && !tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
-    ifregions["reg2ttau1b2jss"] =      tau_0_jet_bdt_tight && tau_1_jet_bdt_tight && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
-    ifregions["reg1ttau1mtau1b2jss"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
-    ifregions["reg2mtau1b3jss"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
-    ifregions["reg1mtau1ltau1b3jss"] = tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 &&  n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
-    ifregions["reg2ltau1b3jss"] =      !tau_0_jet_bdt_medium && !tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
-    ifregions["reg2ttau1b3jss"] =      tau_0_jet_bdt_tight && tau_1_jet_bdt_tight && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
-    ifregions["reg1ttau1mtau1b3jss"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
-    ifregions["reg2mtau1b2jos"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
-    ifregions["reg1mtau1ltau1b2jos"] = tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 &&  n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
-    ifregions["reg2ltau1b2jos"] =      !tau_0_jet_bdt_medium && !tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
-    ifregions["reg2mtau1b3jos"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
-    ifregions["reg1mtau1ltau1b3jos"] = tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 &&  n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
-    ifregions["reg2ltau1b3jos"] =      !tau_0_jet_bdt_medium && !tau_1_jet_bdt_medium && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
-    ifregions["reg2ttau1b2jos"] =      tau_0_jet_bdt_tight && tau_1_jet_bdt_tight && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
-    ifregions["reg1ttau1mtau1b2jos"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
-    ifregions["reg2ttau1b3jos"] =      tau_0_jet_bdt_tight && tau_1_jet_bdt_tight && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
-    ifregions["reg1ttau1mtau1b3jos"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
-
-    float jetSFs = 
-      jet_NOMINAL_central_jets_global_effSF_JVT*
-      jet_NOMINAL_central_jets_global_ineffSF_JVT*
-      jet_NOMINAL_forward_jets_global_effSF_JVT*
-      jet_NOMINAL_forward_jets_global_ineffSF_JVT*
-      jet_NOMINAL_global_effSF_MV2c10*
-      jet_NOMINAL_global_ineffSF_MV2c10;
-    float weight_pileup = NOMINAL_pileup_combined_weight;
-    weight = isData?1:weight_mc*weight_pileup*jetSFs*globalweight;
-    if(debug){
-      printf("event: %llu\n",event_number);
-      printf("weight_mc: %f\n",weight_mc);
-      printf("weight_pileup: %f\n",weight_pileup);
-      printf("lepton_SF: %f\n",lepton_SF);
-      printf("trig_SF: %f\n",trig_SF);
-      printf("jetSFs: %f\n",jetSFs);
-      printf("globalweight: %f\n",globalweight);
+      float jetSFs = 
+        jet_NOMINAL_central_jets_global_effSF_JVT*
+        jet_NOMINAL_central_jets_global_ineffSF_JVT*
+        jet_NOMINAL_forward_jets_global_effSF_JVT*
+        jet_NOMINAL_forward_jets_global_ineffSF_JVT*
+        jet_NOMINAL_global_effSF_MV2c10*
+        jet_NOMINAL_global_ineffSF_MV2c10;
+      float weight_pileup = NOMINAL_pileup_combined_weight;
+      weight = isData?1:weight_mc*weight_pileup*jetSFs*globalweight;
+      if(debug){
+        printf("event: %llu\n",event_number);
+        printf("weight_mc: %f\n",weight_mc);
+        printf("weight_pileup: %f\n",weight_pileup);
+        printf("lepton_SF: %f\n",lepton_SF);
+        printf("jetSFs: %f\n",jetSFs);
+        printf("globalweight: %f\n",globalweight);
+      }
+    }else{
+      weight = weights->at(0);
     }
     //===============================pre-selections===============================
     cutflow[0]+=weight;
 
-    tau_pt_0 = tau_0_p4->Pt();
-    tau_pt_1 = tau_1_p4->Pt();
-
+    tau_pt_0 = taus_p4->at(0)->Pt();
+    tau_pt_1 = taus_p4->at(1)->Pt();
+    etmiss = met_p4->Pt();
     TString tauorigin;
 
     if (sample.Contains("data")) {
       tauorigin = "data";
       sample = "data";
     } else {
-      if (tau_1_matched_isTau) tauorigin = sample + "_real";
-      else if (tau_1_matched_isEle || tau_1_matched_isMuon) tauorigin = sample + "_lep";
-      else if (tau_1_matched_isJet){
-        if(abs(taus_matched_pdgId->at(1)) == 5) tauorigin = sample + "_b";
-        else if(abs(taus_matched_pdgId->at(1)) == 4) tauorigin = sample + "_c";
-        else if(taus_matched_pdgId->at(1) == 21) tauorigin = sample + "_g";
-        else tauorigin = sample + "_j";
-      }else{
-        tauorigin = sample + "_nomatch";
-      }
+      int tauabspdg = (abs(taus_matched_pdgId->at(0)) == 15 && abs(taus_matched_pdgId->at(1)) == 15) ? 15 :
+                      (
+                        abs(taus_matched_pdgId->at(0)) == 15 ? abs(taus_matched_pdgId->at(1)) : abs(taus_matched_pdgId->at(0))
+                      );
+      if (tauabspdg == 15) tauorigin = sample + "_real";
+      else if (tauabspdg == 13 || tauabspdg == 11) tauorigin = sample + "_lep";
+      else if (tauabspdg == 5) tauorigin = sample + "_b";
+      else if (tauabspdg == 4) tauorigin = sample + "_c";
+      else if (tauabspdg ==21) tauorigin = sample + "_g";
+      else if (tauabspdg <= 3 && tauabspdg >=1) tauorigin = sample + "_j";
+      else tauorigin = sample + "_nomatch";
     }
 
     for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
       if (iter->second == 1) {
         float savewt = 1;
-        weights->clear();
-        if(!isData){
-          savewt = weight;
-          if(!iter->first.Contains("ttau")){
-            if(tau_0_jet_bdt_medium){
-              lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTmedium;
-              trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
+        if(reduce == 1){
+          weights->clear();
+          if(!isData){
+            savewt = weight;
+            Float_t trig_SF = 1;
+            if(!iter->first.Contains("ttau")){
+              if(tau_0_jet_bdt_medium){
+                lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTmedium;
+                trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
+              }else{
+                lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTloose;
+                trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
+              }
+              if(tau_1_jet_bdt_medium){
+                lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTmedium;
+                trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
+              }else{
+                lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTloose;
+                trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
+              }
             }else{
-              lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTloose;
-              trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
+              if(tau_0_jet_bdt_tight){
+                lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTtight;
+                trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
+              }else{
+                lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTmedium;
+                trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
+              }
+              if(tau_1_jet_bdt_tight){
+                lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTtight;
+                trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
+              }else{
+                lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTmedium;
+                trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
+              }
             }
-            if(tau_1_jet_bdt_medium){
-              lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTmedium;
-              trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-            }else{
-              lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTloose;
-              trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-            }
-          }else{
-            if(tau_0_jet_bdt_tight){
-              lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTtight;
-              trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-            }else{
-              lepton_SF *= tau_0_NOMINAL_TauEffSF_JetBDTmedium;
-              trig_SF *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-            }
-            if(tau_1_jet_bdt_tight){
-              lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTtight;
-              trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-            }else{
-              lepton_SF *= tau_1_NOMINAL_TauEffSF_JetBDTmedium;
-              trig_SF *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-            }
+            weight *= lepton_SF*trig_SF;
           }
-          weight *= lepton_SF*trig_SF;
+          weights->push_back(weight);
         }
-        weights->push_back(weight);
         if (writetree){
           if(outputtree.find(iter->first) != outputtree.end())
             outputtree[iter->first]->Fill();
@@ -316,9 +328,9 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           }
         }
         if (dohist) {
-          fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_1_p4->Pt() > 35, taus_b_tagged->at(1));
+          fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, taus_p4->at(1)->Pt() > 35, taus_b_tagged->at(1));
         }
-        if(!isData) weight = savewt;
+        if(reduce == 1 && !isData) weight = savewt;
       }
     }
   }
@@ -385,6 +397,17 @@ void hadhadtree::definetree(TTree * tree) {
   tree->Branch("taus_id",taus_id);
   tree->Branch("taus_b_tagged",taus_b_tagged);
   tree->Branch("taus_decay_mode",taus_decay_mode);
+  tree->Branch("taus_n_charged_tracks",taus_n_charged_tracks);
+  tree->Branch("taus_p4",taus_p4);
+  tree->Branch("taus_q",taus_q);
+  tree->Branch("jets_fjvt",jets_fjvt);
+  tree->Branch("jets_is_Jvt_HS",jets_is_Jvt_HS);
+  tree->Branch("jets_jvt",jets_jvt);
+  tree->Branch("jets_origin",jets_origin);
+  tree->Branch("jets_p4",jets_p4);
+  tree->Branch("jets_q",jets_q);
+  tree->Branch("jets_type",jets_type);
+  tree->Branch("jets_width",jets_width);
 
   if(!isData) {
     tree->Branch("bjets_wztruth_p4",bjets_wztruth_p4);
@@ -400,17 +423,6 @@ void hadhadtree::definetree(TTree * tree) {
     tree->Branch("jets_wztruth_pdgid",jets_wztruth_pdgid);
   }
 
-  tree->Branch("taus_n_charged_tracks",taus_n_charged_tracks);
-  tree->Branch("taus_p4",taus_p4);
-  tree->Branch("taus_q",taus_q);
-  tree->Branch("jets_fjvt",jets_fjvt);
-  tree->Branch("jets_is_Jvt_HS",jets_is_Jvt_HS);
-  tree->Branch("jets_jvt",jets_jvt);
-  tree->Branch("jets_origin",jets_origin);
-  tree->Branch("jets_p4",jets_p4);
-  tree->Branch("jets_q",jets_q);
-  tree->Branch("jets_type",jets_type);
-  tree->Branch("jets_width",jets_width);
 
 }
 void hadhadtree::definetaus(){
@@ -624,6 +636,110 @@ void hadhadtree::Init(TTree *tree)
   // (once per file to be processed).
 
   // Set object pointer
+
+  if(reduce == 1) {
+    weights = 0;
+    bjets_fjvt = 0;
+    bjets_is_Jvt_HS = 0;
+    bjets_jvt = 0;
+    bjets_origin = 0;
+    bjets_p4 = 0;
+    bjets_type = 0;
+    bjets_width = 0;
+    met_p4 = 0;
+    taus_id = 0;
+    taus_b_tagged = 0;
+    taus_decay_mode = 0;
+    bjets_wztruth_p4 = 0;
+    bjets_wztruth_pdgid = 0;
+    met_truth_p4 = 0;
+    taus_matched_mother_pdgId = 0;
+    taus_matched_mother_status = 0;
+    taus_matched_p4 = 0;
+    taus_matched_pdgId = 0;
+    taus_matched_vis_p4 = 0;
+    jets_wztruth_p4 = 0;
+    jets_wztruth_pdgid = 0;
+    taus_n_charged_tracks = 0;
+    taus_p4 = 0;
+    taus_q = 0;
+    jets_fjvt = 0;
+    jets_is_Jvt_HS = 0;
+    jets_jvt = 0;
+    jets_origin = 0;
+    jets_p4 = 0;
+    jets_q = 0;
+    jets_type = 0;
+    jets_width = 0;
+    tree->SetBranchAddress("eventNumber", &event_number);
+    tree->SetBranchAddress("runNumber", &run_number);
+    tree->SetBranchAddress("weights", &weights);
+    tree->SetBranchAddress("tau_pt_0", &tau_pt_0);
+    tree->SetBranchAddress("tau_pt_1", &tau_pt_1);
+    tree->SetBranchAddress("bjets_fjvt", &bjets_fjvt);
+    tree->SetBranchAddress("bjets_is_Jvt_HS", &bjets_is_Jvt_HS);
+    tree->SetBranchAddress("bjets_jvt", &bjets_jvt);
+    tree->SetBranchAddress("bjets_origin", &bjets_origin);
+    tree->SetBranchAddress("bjets_p4", &bjets_p4);
+    tree->SetBranchAddress("bjets_type", &bjets_type);
+    tree->SetBranchAddress("bjets_width", &bjets_width);
+    tree->SetBranchAddress("ditau_coll_approx", &ditau_coll_approx);
+    tree->SetBranchAddress("ditau_coll_approx_m", &ditau_coll_approx_m);
+    tree->SetBranchAddress("ditau_coll_approx_x0", &ditau_coll_approx_x0);
+    tree->SetBranchAddress("ditau_coll_approx_x1", &ditau_coll_approx_x1);
+    tree->SetBranchAddress("ditau_cosalpha", &ditau_cosalpha);
+    tree->SetBranchAddress("ditau_deta", &ditau_deta);
+    tree->SetBranchAddress("ditau_dphi", &ditau_dphi);
+    tree->SetBranchAddress("ditau_dr", &ditau_dr);
+    tree->SetBranchAddress("ditau_higgspt", &ditau_higgspt);
+    tree->SetBranchAddress("ditau_met_centrality", &ditau_met_centrality);
+    tree->SetBranchAddress("ditau_met_lep0_cos_dphi", &ditau_met_lep0_cos_dphi);
+    tree->SetBranchAddress("ditau_met_lep1_cos_dphi", &ditau_met_lep1_cos_dphi);
+    tree->SetBranchAddress("ditau_met_min_dphi", &ditau_met_min_dphi);
+    tree->SetBranchAddress("ditau_met_sum_cos_dphi", &ditau_met_sum_cos_dphi);
+    tree->SetBranchAddress("ditau_mmc_maxw_eta", &ditau_mmc_maxw_eta);
+    tree->SetBranchAddress("ditau_mmc_maxw_fit_status", &ditau_mmc_maxw_fit_status);
+    tree->SetBranchAddress("ditau_mmc_maxw_m", &ditau_mmc_maxw_m);
+    tree->SetBranchAddress("ditau_mmc_maxw_met_et", &ditau_mmc_maxw_met_et);
+    tree->SetBranchAddress("ditau_mmc_maxw_met_phi", &ditau_mmc_maxw_met_phi);
+    tree->SetBranchAddress("ditau_mmc_maxw_phi", &ditau_mmc_maxw_phi);
+    tree->SetBranchAddress("ditau_mmc_maxw_pt", &ditau_mmc_maxw_pt);
+    tree->SetBranchAddress("ditau_mmc_maxw_x0", &ditau_mmc_maxw_x0);
+    tree->SetBranchAddress("ditau_mmc_maxw_x1", &ditau_mmc_maxw_x1);
+    tree->SetBranchAddress("ditau_mmc_mlm_fit_status", &ditau_mmc_mlm_fit_status);
+    tree->SetBranchAddress("ditau_mmc_mlm_m", &ditau_mmc_mlm_m);
+    tree->SetBranchAddress("ditau_mt_lep0_met", &ditau_mt_lep0_met);
+    tree->SetBranchAddress("ditau_mt_lep1_met", &ditau_mt_lep1_met);
+    tree->SetBranchAddress("met_p4", &met_p4);
+    tree->SetBranchAddress("met_sumet", &met_sumet);
+    tree->SetBranchAddress("taus_id", &taus_id);
+    tree->SetBranchAddress("taus_b_tagged", &taus_b_tagged);
+    tree->SetBranchAddress("taus_decay_mode", &taus_decay_mode);
+    tree->SetBranchAddress("bjets_wztruth_p4", &bjets_wztruth_p4);
+    tree->SetBranchAddress("bjets_wztruth_pdgid", &bjets_wztruth_pdgid);
+    tree->SetBranchAddress("met_truth_p4", &met_truth_p4);
+    tree->SetBranchAddress("met_truth_sumet", &met_truth_sumet);
+    tree->SetBranchAddress("taus_matched_mother_pdgId", &taus_matched_mother_pdgId);
+    tree->SetBranchAddress("taus_matched_mother_status", &taus_matched_mother_status);
+    tree->SetBranchAddress("taus_matched_p4", &taus_matched_p4);
+    tree->SetBranchAddress("taus_matched_pdgId", &taus_matched_pdgId);
+    tree->SetBranchAddress("taus_matched_vis_p4", &taus_matched_vis_p4);
+    tree->SetBranchAddress("jets_wztruth_p4", &jets_wztruth_p4);
+    tree->SetBranchAddress("jets_wztruth_pdgid", &jets_wztruth_pdgid);
+    tree->SetBranchAddress("taus_n_charged_tracks", &taus_n_charged_tracks);
+    tree->SetBranchAddress("taus_p4", &taus_p4);
+    tree->SetBranchAddress("taus_q", &taus_q);
+    tree->SetBranchAddress("jets_fjvt", &jets_fjvt);
+    tree->SetBranchAddress("jets_is_Jvt_HS", &jets_is_Jvt_HS);
+    tree->SetBranchAddress("jets_jvt", &jets_jvt);
+    tree->SetBranchAddress("jets_origin", &jets_origin);
+    tree->SetBranchAddress("jets_p4", &jets_p4);
+    tree->SetBranchAddress("jets_q", &jets_q);
+    tree->SetBranchAddress("jets_type", &jets_type);
+    tree->SetBranchAddress("jets_width", &jets_width);
+    return;
+  }
+
   boson_0_truth_p4 = 0;
   ditau_matched_p4 = 0;
   ditau_p4 = 0;

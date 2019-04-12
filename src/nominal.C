@@ -81,17 +81,17 @@ void nominal::plot(){
   if(fake_plots) {
     if(debug) printf("write fake_plots\n");
     fake_plots->write();
-    fake_plots->clearhist();
+    deletepointer(fake_plots);
   }
   if(fcnc_plots) {
     if(debug) printf("write fcnc plots\n");
     fcnc_plots->write();
-    fcnc_plots->clearhist();
+    deletepointer(fcnc_plots);
   }
   if(fake_notau_plots) {
     if(debug) printf("write fake_notau_plots\n");
     fake_notau_plots->write();
-    fake_notau_plots->clearhist();
+    deletepointer(fake_notau_plots);
   }
 }
 

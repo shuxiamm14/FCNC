@@ -49,6 +49,7 @@ int main(int argc, char const *argv[])
 	}
 	if(!debug) gErrorIgnoreLevel=kError;
 	hadhadtree *analysis = new hadhadtree();
+	analysis->init_reduce1();
 	analysis->dofcnc = 1;
 	analysis->reduce = 1;
 	analysis->debug = debug;
