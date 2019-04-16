@@ -6,6 +6,19 @@
 #include <TCanvas.h>
 #include "fcnc_include.h"
 
+Double_t phi_centrality(Double_t aPhi, Double_t bPhi, Double_t cPhi) {
+//     Calculate the phi centrality score for an object to be between two other objects in phi
+//     Returns sqrt(2) if in dead center
+//     Returns smaller than 1 if an object is not between
+//     a and b are the bounds, c is the vector to be tested
+
+  Double_t A = sin(cPhi - aPhi)/sin(bPhi - aPhi);
+  Double_t B = sin(bPhi - cPhi)/sin(bPhi - aPhi);
+
+  return (A+B)/sqrt(A*A + B*B);
+}
+
+
 hadhadtree::hadhadtree() : nominal::nominal(){
 }
 
@@ -53,13 +66,17 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots->debug = debug;
 
   fcnc_plots->add(100,40.,140.,"p_{T,lead-#tau}","tau_0_pt",&tau_pt_0,false,"GeV");
-  fcnc_plots->add(100,30.,130.,"p_{T,sublead-#tau}","tau_1_pt",&tau_pt_1,false,"GeV");
-  fcnc_plots->add(100,0.,200.,"E^{T}_{miss}","etmiss",&etmiss,false,"GeV");
+  fcnc_plots->add(100,30.,80.,"p_{T,sublead-#tau}","tau_1_pt",&tau_pt_1,false,"GeV");
+  fcnc_plots->add(100,15.,115.,"E^{T}_{miss}","etmiss",&etmiss,false,"GeV");
+  fcnc_plots->add(60,0.,3.,"#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss",&dphitauetmiss,false);
+  fcnc_plots->add(80,50.,130.,"m_{#tau#tau,vis}","ttvismass",&ttvismass,false,"GeV");
+  fcnc_plots->add(100,0.4,3.4,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
+  fcnc_plots->add(100,0.2,5.2,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
+  fcnc_plots->add(60,-1.5,1.5,"E^{T}_{miss} centrality","phicent",&phicent,false,"");
   //fcnc_plots->add(100,50.,250.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
   //fcnc_plots->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
   //fcnc_plots->add(100,50.,250.,"m_{W}","wmass",&wmass,true,"GeV");
   //fcnc_plots->add(100,50.,250.,"m_{t,FCNC}","t2mass",&t2mass,true,"GeV");
-  //fcnc_plots->add(100,50.,250.,"m_{#tau#tau,vis}","ttvismass",&ttvismass,true,"GeV");
   //fcnc_plots->add(100,50.,250.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,true,"GeV");
   //fcnc_plots->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,true,"GeV");
   //fcnc_plots->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,true,"GeV");
@@ -67,8 +84,6 @@ void hadhadtree::init_hist(TString histfilename){
   //fcnc_plots->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
   //fcnc_plots->add(100,0.,5.,"#eta_{#tau,max}","etamax",&etamax,false,"");
   //fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
-  //fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
-  //fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
 
   fcnc_regions.push_back("reg2mtau1b2jss");
   fcnc_regions.push_back("reg1mtau1ltau1b2jss");
@@ -147,7 +162,12 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
 {
   if(debug) fcnc_plots->show();
   isData = samplename.Contains("data");
-
+  int campaign = 0;
+  if(isData) {
+    campaign = samplename.Contains("1516") ? 1: (samplename.Contains("17")? 2:3);
+  }else{
+    campaign = samplename.Contains("mc16a") ? 1: (samplename.Contains("mc16d")? 2:3);
+  }
   bool doweightsys = ((TString)inputtree->GetName() == "NOMINAL")? 1 : 0;
   if(reduce > 1) ifregions[inputtree->GetName()] = 1;
   double cutflow[] = {
@@ -194,9 +214,9 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       std::cout << " I am here event " << jentry << " Event " << event_number << " Run " << run_number << " ismc " << mc_channel_number << std::endl;
     cutflow[0]+=1;
 //===============================SFs and weights===============================
-    if(!tau_0_trig_trigger_matched || !tau_1_trig_trigger_matched) continue;
     Float_t lepton_SF = 0;
     if(reduce == 1){
+      if(!tau_0_trig_trigger_matched || !tau_1_trig_trigger_matched) continue;
       if((tau_1_n_charged_tracks!=1 && tau_1_n_charged_tracks!=3) || (tau_0_n_charged_tracks!=1 && tau_0_n_charged_tracks!=3)) continue;
       lepton_SF = 
         tau_0_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
@@ -249,11 +269,34 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       weight = weights->at(0);
     }
     //===============================pre-selections===============================
-    cutflow[0]+=weight;
-
+    cutflow[1]+=weight;
+    if(campaign !=1 && jets_p4->at(0)->Pt() < 50 && bjets_p4->at(0)->Pt() < 50) continue;
+    cutflow[2]+=weight;
+    bool passbjetcut = 0;
+    for(auto bjet : *bjets_p4){
+      if(bjet->Pt() > 30 && abs(bjet->Eta()) < 2.5) passbjetcut = 1;
+    }
+    if(!passbjetcut) continue;
+    cutflow[3]+=weight;
     tau_pt_0 = taus_p4->at(0)->Pt();
     tau_pt_1 = taus_p4->at(1)->Pt();
     etmiss = met_p4->Pt();
+    ttvismass = (*(taus_p4->at(0)) + *(taus_p4->at(1))).M();
+    dphitauetmiss = fabs(met_p4->DeltaPhi(*(taus_p4->at(0)) + *(taus_p4->at(1))));
+    drtautau = taus_p4->at(0)->DeltaR(*(taus_p4->at(1)));
+    drtaujmin = 999;
+    for(auto jetp4 : *jets_p4){
+      if(drtaujmin > (*(taus_p4->at(0)) + *(taus_p4->at(1))).DeltaR(*jetp4))
+        drtaujmin = (*(taus_p4->at(0)) + *(taus_p4->at(1))).DeltaR(*jetp4);
+    }
+    if(ttvismass < 50) continue;
+    if(ttvismass > 130) continue;
+    if(drtautau > 3.4) continue;
+
+    phicent = phi_centrality(taus_p4->at(0)->Phi(),taus_p4->at(1)->Phi(),met_p4->Phi());
+
+
+
     TString tauorigin;
 
     if (sample.Contains("data")) {
@@ -339,6 +382,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     for (auto itertmp : outputtree)
       itertmp.second->Write(itertmp.first, TObject::kWriteDelete);
   }
+  printf("cutflow: %f, %f, %f, %f\n", cutflow[0],cutflow[1],cutflow[2],cutflow[3]);
 }
 
 void hadhadtree::fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag){
@@ -350,6 +394,44 @@ void hadhadtree::fill_fcnc(TString region, int nprong, TString sample, int iptbi
   }
 }
 
+// input parameter _p in GeV (>25 GeV)
+Float_t void hadhadtree::getHadTauProb(Float_t _dR, Float_t _p) {
+  if(_dR>=_dR_.getMax()) return 0;
+  if(_p<25) _p = 25;
+  Float_t m1 = 4.56088e+00/(_p+2.30554e-02*_p*_p)+2.00545e-02;
+  Float_t w1 = 2.56901e+01/(_p*_p)+9.63415e-03;
+  Float_t m2 = 5.70742e+00/(_p+2.07263e-02*_p*_p)+4.32004e-02;
+  Float_t w2 = 4.34997e+00/pow(_p,1.5)+7.31908e-03;
+  _m1_.setVal(m1);
+  _w1_.setVal(w1);
+  _m2_.setVal(m2);
+  _w2_.setVal(w2);
+  _dR_.setVal(_dR);
+  return _pdf_.getVal(_dR_);
+}
+
+void hadhadtree::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag) {
+  _mis1_.SetPtEtaPhiM(par[0],par[1],par[2],par[3]);
+  _mis2_.SetPtEtaPhiM(par[4],par[5],par[6],par[7]);
+  Float_t prob1(0), prob2(0);
+
+  prob1 = getHadTauProb(_vis1_.DeltaR(_mis1_),(_vis1_+_mis1_).P());
+  prob2 = getHadTauProb(_vis2_.DeltaR(_mis2_),(_vis2_+_mis2_).P());
+
+  Float_t mass1 = (_vis1_+_mis1_).M();
+  Float_t mass2 = (_vis2_+_mis2_).M();
+  Float_t mass = (_vis1_+_mis1_+_vis2_+_mis2_).M();
+  Float_t pxMiss = _mis1_.Px()+_mis2_.Px();
+  Float_t pyMiss = _mis1_.Py()+_mis2_.Py();
+  
+  Double_t chisq = 1e10;
+  if(prob1>0 && prob2>0) {
+    Float_t met_resol = 13.1+0.50*sqrt(_MET_sumet);
+    chisq = -2*log(prob1) -2*log(prob2) + pow((mass1-1.777)/1.777,2) + pow((mass2-1.777)/1.777,2) + pow((mass-125)/20,2) + pow((pxMiss-_MET_etx)/met_resol,2) + pow((pyMiss-_MET_ety)/met_resol,2);
+  }
+  
+  f = chisq;
+}
 
 void hadhadtree::definetree(TTree * tree) {
 

@@ -29,6 +29,18 @@ public :
    float tau_pt_1;
    bool isData = 0;
    float etmiss = 0;
+   float dphitauetmiss = 0;
+   float phicent = 0;
+   
+   RooRealVar _dR_("_dR_","",0,0.8);
+   RooRealVar _m1_("_m1_","",0.06);
+   RooRealVar _w1_("_w1_","",0.03);
+   RooGaussian _gaus_("_gaus_","",_dR_,_m1_,_w1_);
+   RooRealVar _m2_("_m2_","",0.1);
+   RooRealVar _w2_("_w2_","",0.1);
+   RooLandau _land_("_land_","",_dR_,_m2_,_w2_);
+   RooRealVar _fr1_("_fr1_","",0.56);
+   RooAddPdf _pdf_("_pdf_","",_gaus_,_land_,_fr1_);
 
    vector<Float_t>           *weights;
    vector<Int_t>           *taus_id;
