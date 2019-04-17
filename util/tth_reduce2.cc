@@ -25,6 +25,7 @@ int main(int argc, char const *argv[])
 
 	tthmltree *analysis = new tthmltree();
 	analysis->debug = 1;
+
 	analysis->writetree = 0;
 	analysis->fcnc = 1;
 	analysis->reduce = 2;

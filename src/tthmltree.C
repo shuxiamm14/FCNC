@@ -87,7 +87,7 @@ void tthmltree::init_hist(TString outputfilename){
   dohist = 1;
   fcnc_plots = new histSaver(outputfilename + "_fcnc");
   fcnc_plots->set_weight(&weight);
-  fcnc_plots->debug = 0;
+  fcnc_plots->debug = !!debug;
 
   fcnc_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
   fcnc_plots->add(10,25.,125.,"p_{T,SS#tau}","tauptss",&tau_pt_ss,true,"GeV");
@@ -135,10 +135,10 @@ void tthmltree::init_hist(TString outputfilename){
   }
   fake_notau_plots = new histSaver(outputfilename + "_fake_notau");
   fake_notau_plots->set_weight(&weight);
-  fake_notau_plots->debug = 0;
+  fake_notau_plots->debug = !!debug;
   fake_plots = new histSaver(outputfilename + "_fake");
   fake_plots->set_weight(&weight);
-  fake_plots->debug = 1;
+  fake_plots->debug = !!debug;
   fake_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
   fake_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   fake_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
@@ -277,7 +277,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
   nonfcncmatched = 0;
   fcncmatched = 0;
   leptonicw = 0;
-  bool tightLep = 0;
+  bool tightLep = 1;
   bool tightTau = 0;
   double cutflow[] = {
     0,
@@ -367,25 +367,6 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         (RunYear >= 2016 && (( lep_Pt_0/GeV>27 && HLT_mu26_ivarmedium ) || ( lep_Pt_0/GeV>51 && HLT_mu50 ) || ( lep_Pt_0/GeV>27 && HLT_e26_lhtight_nod0_ivarloose ) || ( lep_Pt_0/GeV>61 && HLT_e60_lhmedium_nod0) || ( lep_Pt_0/GeV>141 && HLT_e140_lhloose_nod0))) ||
         (RunYear >= 2016 && (HLT_2e17_lhvloose_nod0 || HLT_e17_lhloose_nod0_mu14 || HLT_mu22_mu8noL1));
 
-      if (debug == 2) {
-        printf("trigger: HLT_mu20_iloose_L1MU15 = %d\n", HLT_mu20_iloose_L1MU15);
-        printf("trigger: HLT_mu50 = %d\n", HLT_mu50);
-        printf("trigger: HLT_e24_lhmedium_L1EM20VH = %d\n", HLT_e24_lhmedium_L1EM20VH);
-        printf("trigger: HLT_e60_lhmedium = %d\n", HLT_e60_lhmedium);
-        printf("trigger: HLT_e120_lhloose = %d\n", HLT_e120_lhloose);
-        printf("trigger: HLT_2e12_lhloose_L12EM10VH = %d\n", HLT_2e12_lhloose_L12EM10VH);
-        printf("trigger: HLT_e17_lhloose_mu14 = %d\n", HLT_e17_lhloose_mu14);
-        printf("trigger: HLT_mu18_mu8noL1 = %d\n", HLT_mu18_mu8noL1);
-        printf("trigger: HLT_mu26_ivarmedium = %d\n", HLT_mu26_ivarmedium);
-        printf("trigger: HLT_mu50 = %d\n", HLT_mu50);
-        printf("trigger: HLT_e26_lhtight_nod0_ivarloose = %d\n", HLT_e26_lhtight_nod0_ivarloose);
-        printf("trigger: HLT_e60_lhmedium_nod0 = %d\n", HLT_e60_lhmedium_nod0);
-        printf("trigger: HLT_e140_lhloose_nod0 = %d\n", HLT_e140_lhloose_nod0);
-        printf("trigger: HLT_2e17_lhvloose_nod0 = %d\n", HLT_2e17_lhvloose_nod0);
-        printf("trigger: HLT_e17_lhloose_nod0_mu14 = %d\n", HLT_e17_lhloose_nod0_mu14);
-        printf("trigger: HLT_mu22_mu8noL1 = %d\n", HLT_mu22_mu8noL1);
-      }
-
       if (nTaus_OR_Pt25 >= 1) basic_selection = basic_selection && (tau_numTrack_0 == 1 || tau_numTrack_0 == 3); // assuming triggers for 2017 is same for 2016 
 
       if (!basic_selection) continue;
@@ -398,8 +379,6 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
 
       //===============================define regions===============================
 
-      if(nTaus_OR_Pt25 == 0) continue;
-
       if (onelep_type || dilep_type) {
         lep_v.SetPtEtaPhiE(lep_Pt_0, lep_Eta_0, lep_Phi_0, lep_E_0);
       }
@@ -411,6 +390,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         lep_v.SetPtEtaPhiE(0, 0, 0, 0);
       }
       triggeredfcnc = 0;
+      bool triggered = 0;
       if(SLtrig_match && onelep_type && (!tightLep || SelectTLepid(0)) && nTaus_OR_Pt25){
         ifregions["reg1l1tau1b2j"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
         ifregions["reg1l1tau1b3j"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
@@ -418,8 +398,8 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         if (ifregions["reg1l1tau1b2j"] || ifregions["reg1l1tau1b3j"] || ifregions["reg1l2tau1bnj"])
           triggeredfcnc = 1;
         ifregions["reg1l2b2j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 0;
-        ifregions["reg1l1tau2b1j_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 >= 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
-        ifregions["reg1l1tau2b1j_ss"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 >= 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
+        ifregions["reg1l1tau2b1j_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
+        ifregions["reg1l1tau2b1j_ss"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
         ifregions["reg1l1tau2b_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
         ifregions["reg1l1tau2b_ss"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
       }else{
@@ -438,6 +418,9 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         ((abs(lep_ID_1) == 11 && lep_promptLeptonVeto_TagWeight_1 < -0.7) || (abs(lep_ID_1) == 13 && lep_promptLeptonVeto_TagWeight_1 < -0.5)) && (!tightLep || SelectTLepid(1)) &&
         (nTaus_OR_Pt25 == 0 || (tau_passEleBDT_0 && tau_passMuonOLR_0)) &&
         (dilep_type == 2 || ((dilep_type == 1 || dilep_type == 3) && (Mll01 / GeV < 80 || Mll01 / GeV > 100))) && total_charge == 0) { //met>30 GeV ? ttbar vs z+bb:
+      if(debug == 2){
+        printf("ntaus: %d, nleptons: %d, njets: %d, nbjets: %d, charge prod: %f\n",nTaus_OR_Pt25,onelep_type?1:(dilep_type?2:0),nJets_OR_T,nJets_OR_T_MV2c10_70, -tau_charge_0*lep_ID_0/fabs(lep_ID_0));
+      }
         ifregions["reg1e1mu1tau2b"] = nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1;
         ifregions["reg1e1mu2bnj"] = nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 == 0;
         ifregions["reg1e1mu1tau1b"] = nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T == 1 && nTaus_OR_Pt25 == 1;
@@ -448,13 +431,14 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         ifregions["reg1e1mu1tau1b"] = 0;
         ifregions["reg1e1mu2b"] = 0;
       }
-
-      bool triggered = 0;
-      for (iter = ifregions.begin(); iter != ifregions.end(); iter++)
+      for (iter = ifregions.begin(); iter != ifregions.end(); iter++){
+	if(debug == 2) 
+          printf("region: %s, %d\n", iter->first.Data(), iter->second);
         if (iter->second) {
           triggered = 1;
-          break;
+          if(debug !=2) break;
         }
+      }
 
       if (!triggered) continue;
     }else if(tightTau) {
