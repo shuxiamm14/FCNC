@@ -42,6 +42,5 @@ int main(int argc, char const *argv[])
 		inputfile.Close();
 	}
 	analysis->finalise_sample();
-	if(doplot) analysis->plot();
 	return 0;
 }

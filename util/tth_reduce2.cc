@@ -23,7 +23,7 @@ int main(int argc, char const *argv[])
 	//regions.push_back("reg1l2b2j");
 
 	tthmltree *analysis = new tthmltree();
-	analysis->debug = 0;
+	analysis->debug = 2;
 	analysis->writetree = 0;
 	analysis->fcnc = 1;
 	analysis->reduce = 2;
