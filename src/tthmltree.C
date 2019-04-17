@@ -271,7 +271,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
       std::cout << " I am here event " << jentry << " Event " << EventNumber << " Run " << RunNumber << " ismc " << mc_channel_number << std::endl;
     //===============================pre-selections===============================
     if (selected_jets_T->size() == 0 && nJets_OR_T != 0) {
-      printf("error: read vector failed entry: %lld\n", jentry);
+      printf("error: read jet vector failed entry: %lld\n", jentry);
       continue;
     }
     if (debug == 2) printf("reduce scheme during loop: %d\n", reduce);
