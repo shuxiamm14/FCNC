@@ -6,6 +6,11 @@
 #include <TChain.h>
 #include <TFile.h>
 
+#include "RooRealVar.h"
+#include "RooGaussian.h"
+#include "RooLandau.h"
+#include "RooAddPdf.h"
+
 // Header file for the classes stored in the TTree if any.
 #include "TLorentzVector.h"
 #include "TVector3.h"
@@ -24,7 +29,11 @@ public :
    void definejets();
    void definetree(TTree * tree);
    void fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag);
+   static  void     fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
+   TMinuit* initgM();
    void init_reduce1();
+   static Float_t getHadTauProb(Float_t _dR, Float_t _p);
+
    float tau_pt_0;
    float tau_pt_1;
    bool isData = 0;
@@ -32,15 +41,15 @@ public :
    float dphitauetmiss = 0;
    float phicent = 0;
    
-   RooRealVar _dR_("_dR_","",0,0.8);
-   RooRealVar _m1_("_m1_","",0.06);
-   RooRealVar _w1_("_w1_","",0.03);
-   RooGaussian _gaus_("_gaus_","",_dR_,_m1_,_w1_);
-   RooRealVar _m2_("_m2_","",0.1);
-   RooRealVar _w2_("_w2_","",0.1);
-   RooLandau _land_("_land_","",_dR_,_m2_,_w2_);
-   RooRealVar _fr1_("_fr1_","",0.56);
-   RooAddPdf _pdf_("_pdf_","",_gaus_,_land_,_fr1_);
+   static RooRealVar  _dR_;
+   static RooRealVar  _m1_;
+   static RooRealVar  _w1_;
+   static RooGaussian _gaus_;
+   static RooRealVar  _m2_;
+   static RooRealVar  _w2_;
+   static RooLandau   _land_;
+   static RooRealVar  _fr1_;
+   static RooAddPdf   _pdf_;
 
    vector<Float_t>           *weights;
    vector<Int_t>           *taus_id;

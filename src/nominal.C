@@ -1,5 +1,7 @@
 #include "nominal.h"
 
+int nominal::GeV = 0;
+
 void nominal::fill_fake(TString region, int nprong, TString sample, int iptbin, float taubtag){
   for (int i = 0; i < 4; ++i){
     if(taubtag>btagwpCut[i]) {
@@ -9,6 +11,7 @@ void nominal::fill_fake(TString region, int nprong, TString sample, int iptbin, 
     }
   }
 }
+
 nominal::nominal(){
   dofcnc = 0;
   ierflg = 0;
@@ -60,6 +63,10 @@ nominal::nominal(){
   neutrino_m   = new vector<float>();
 }
 
+void nominal::defGeV(int _GeV){
+  GeV = _GeV;
+}
+
 void nominal::readTFmeanstd(TString filename){
   m_applyTF.configfolder = "/Users/Liby/work/tau_analysis/FCNC/ttH_fakes/run/MLmodels";
   m_applyTF.readmeanfile(filename);
@@ -96,62 +103,66 @@ void nominal::plot(){
 }
 
 void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag) {
-    TList *listforfit = (TList*) gM->GetObjectFit();
-    if (!listforfit)
+  if(!GeV) {
+    printf("Error: nominal::GeV not initialised\n");
+    exit(0);
+  }
+  TList *listforfit = (TList*) gM->GetObjectFit();
+  if (!listforfit)
+  {
+    printf("list isnt found\n");
+    exit(1);
+  }
+  enum lorentzv{tau1,tau2,bj,cj,lep};
+  
+  TLorentzVector vectors[5];
+  TLorentzVector neutrino[3];
+  for( int i = 0; i<5 ; ++i) {
+    if (listforfit->At(i))
     {
-      printf("list isnt found\n");
+      vectors[i] = *((TLorentzVector*)listforfit->At(i));
+    }else{
+      printf("i-th parameter is not found\n");
       exit(1);
     }
-    enum lorentzv{tau1,tau2,bj,cj,lep};
-  
-    TLorentzVector vectors[5];
-    TLorentzVector neutrino[3];
-    for( int i = 0; i<5 ; ++i) {
-      if (listforfit->At(i))
-      {
-        vectors[i] = *((TLorentzVector*)listforfit->At(i));
-      }else{
-        printf("i-th parameter is not found\n");
-        exit(1);
-      }
-    }
-    double met[3];
-    if (listforfit->At(5)) {
-      met[0] = ((TVector3*)listforfit->At(5))->x();
-      met[1] = ((TVector3*)listforfit->At(5))->y();
-      met[2] = ((TVector3*)listforfit->At(5))->z();
-    }
-    else { printf("met parameter is not found\n"); exit(1); }
+  }
+  double met[3];
+  if (listforfit->At(5)) {
+    met[0] = ((TVector3*)listforfit->At(5))->x();
+    met[1] = ((TVector3*)listforfit->At(5))->y();
+    met[2] = ((TVector3*)listforfit->At(5))->z();
+  }
+  else { printf("met parameter is not found\n"); exit(1); }
 
-    neutrino[0].SetPtEtaPhiM(par[0]*vectors[tau1].Pt(),vectors[tau1].Eta(),vectors[tau1].Phi(),vectors[lep].Pt()==0?par[2]:0);
-    neutrino[1].SetPtEtaPhiM(par[1]*vectors[tau2].Pt(),vectors[tau2].Eta(),vectors[tau2].Phi(),0);
-    Float_t Hmass = (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]).M();
-    Float_t met_resol = 13100+0.50*sqrt(met[2]*1000);
-    Double_t chisq = 1e10;
+  neutrino[0].SetPtEtaPhiM(par[0]*vectors[tau1].Pt(),vectors[tau1].Eta(),vectors[tau1].Phi(),vectors[lep].Pt()==0?par[2]:0);
+  neutrino[1].SetPtEtaPhiM(par[1]*vectors[tau2].Pt(),vectors[tau2].Eta(),vectors[tau2].Phi(),0);
+  Float_t Hmass = (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]).M();
+  Float_t met_resol = 13.1*GeV+0.50*sqrt(met[2]*GeV);
+  Double_t chisq = 1e10;
 
-    if(vectors[lep].Pt()!=0){
-      neutrino[2].SetPtEtaPhiM(par[2],par[3],par[4],0);
+  if(vectors[lep].Pt()!=0){
+    neutrino[2].SetPtEtaPhiM(par[2],par[3],par[4],0);
   
-      TLorentzVector t1 = neutrino[2]+vectors[lep]+vectors[bj];
+    TLorentzVector t1 = neutrino[2]+vectors[lep]+vectors[bj];
   
-      Float_t t2mass= (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]+vectors[cj]).M();
-      Float_t wmass = (vectors[lep] + neutrino[2]).M();
-      Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px()+neutrino[2].Px();
-      Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py()+neutrino[2].Py();
-      Float_t pConstrain = (vectors[bj].Dot(vectors[lep])/100) + (vectors[bj].Dot(neutrino[2])/100);
-      chisq =  pow((wmass-81000)/10000,2) + pow((t1.M()-172500)/25000,2) +pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2) + pow((Hmass-125000)/10000,2);// + pow((t2mass-172.5)/30,2);// + pow((pConstrain-110)/20,2);
-    }else{
-      Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px();
-      Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py();
-      chisq = pow((Hmass-125000)/10000,2) + pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2);
-    }
-    f = chisq;
+    Float_t t2mass= (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]+vectors[cj]).M();
+    Float_t wmass = (vectors[lep] + neutrino[2]).M();
+    Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px()+neutrino[2].Px();
+    Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py()+neutrino[2].Py();
+    Float_t pConstrain = (vectors[bj].Dot(vectors[lep])/100) + (vectors[bj].Dot(neutrino[2])/100);
+    chisq =  pow((wmass-81*GeV)/10*GeV,2) + pow((t1.M()-172500)/25*GeV,2) +pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2) + pow((Hmass-125*GeV)/10*GeV,2);// + pow((t2mass-172.5)/30,2);// + pow((pConstrain-110)/20,2);
+  }else{
+    Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px();
+    Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py();
+    chisq = pow((Hmass-125*GeV)/10*GeV,2) + pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2);
+  }
+  f = chisq;
 }
 
 
 
 vector<int> nominal::findcjet(TString channel, vector<TLorentzVector> ljet, TLorentzVector bjet, TLorentzVector lepton, vector<TLorentzVector> taus){
-  double m_w = 81000;
+  double m_w = 81*GeV;
   vector<int> output;
   int nlightj = ljet.size();
   if(debug) printf("nlightj: %d\n", nlightj); 
@@ -275,8 +286,12 @@ vector<int> nominal::findcjetML(TString channel, vector<TLorentzVector> pool, TL
 }
 
 vector<int> nominal::findwpair(vector<TLorentzVector> lightjets, int cjet){
+  if(!GeV) {
+    printf("Error: nominal::GeV not initialised\n");
+    exit(0);
+  }
   float mindeltam = -1;
-  float m_w = 81000;
+  float m_w = 81*GeV;
   vector<int> output;
   int wjet1,wjet2;
   for (int i = 0; i < lightjets.size(); ++i)

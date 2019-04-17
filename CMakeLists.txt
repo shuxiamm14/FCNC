@@ -7,7 +7,7 @@ add_compile_options(-g)
 
 project(ttH_fake)
 
-find_package(ROOT 6 REQUIRED COMPONENTS TMVA TMVAGui Minuit)
+find_package(ROOT 6 REQUIRED COMPONENTS TMVA TMVAGui Minuit RooFitCore RooFit)
 include(${ROOT_USE_FILE})
 
 # Set the output folder where your program will be created

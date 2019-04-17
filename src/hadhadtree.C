@@ -20,6 +20,7 @@ Double_t phi_centrality(Double_t aPhi, Double_t bPhi, Double_t cPhi) {
 
 
 hadhadtree::hadhadtree() : nominal::nominal(){
+  defGeV(1);
 }
 
 void hadhadtree::init_reduce1(){
@@ -73,15 +74,15 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots->add(100,0.4,3.4,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
   fcnc_plots->add(100,0.2,5.2,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
   fcnc_plots->add(60,-1.5,1.5,"E^{T}_{miss} centrality","phicent",&phicent,false,"");
-  //fcnc_plots->add(100,50.,250.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
-  //fcnc_plots->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
-  //fcnc_plots->add(100,50.,250.,"m_{W}","wmass",&wmass,true,"GeV");
-  //fcnc_plots->add(100,50.,250.,"m_{t,FCNC}","t2mass",&t2mass,true,"GeV");
-  //fcnc_plots->add(100,50.,250.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,true,"GeV");
-  //fcnc_plots->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,true,"GeV");
-  //fcnc_plots->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,true,"GeV");
-  //fcnc_plots->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
-  //fcnc_plots->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
+  fcnc_plots->add(100,50.,250.,"m_{t,SM}","t1mass",&t1mass,false,"GeV");
+  fcnc_plots->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,false,"GeV");
+  fcnc_plots->add(100,50.,250.,"m_{W}","wmass",&wmass,false,"GeV");
+  fcnc_plots->add(100,50.,250.,"m_{t,FCNC}","t2mass",&t2mass,false,"GeV");
+  //fcnc_plots->add(100,50.,250.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,false,"GeV");
+  //fcnc_plots->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,false,"GeV");
+  //fcnc_plots->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,false,"GeV");
+  fcnc_plots->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
+  fcnc_plots->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
   //fcnc_plots->add(100,0.,5.,"#eta_{#tau,max}","etamax",&etamax,false,"");
   //fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
 
@@ -157,9 +158,15 @@ void hadhadtree::init_sample(TString sample, TString sampletitle){
   }
 }
 
+vector<TLorentzVector> convertv(vector<TLorentzVector*> vv){
+  vector<TLorentzVector> output;
+  for(auto v: vv)
+    output.push_back(*v);
+  return output;
+}
 
 void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
-{
+{  
   if(debug) fcnc_plots->show();
   isData = samplename.Contains("data");
   int campaign = 0;
@@ -208,6 +215,8 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   }
   int nloop = debug ? 1000 : nentries;
   float ngluon = 0;
+  gM = initgM();
+
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     inputtree->GetEntry(jentry);
     if (jentry >= 100000 && (jentry % 100000 == 0))
@@ -295,7 +304,41 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
 
     phicent = phi_centrality(taus_p4->at(0)->Phi(),taus_p4->at(1)->Phi(),met_p4->Phi());
 
+    ljet_indice = findcjet("hadhad",convertv(*jets_p4),*bjets_p4->at(0),lep_v,convertv(*taus_p4));
 
+    gM->mnparm(0, "v1pt",  tau_pt_0, 0.01, 0., 1000, ierflg);
+    gM->mnparm(1, "v1eta", taus_p4->at(0)->Eta(), 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
+    gM->mnparm(2, "v1phi", taus_p4->at(0)->Phi(), 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
+    gM->mnparm(3, "v2pt",  tau_pt_1, 0.01, 0., 1000, ierflg);
+    gM->mnparm(4, "v2eta", taus_p4->at(1)->Eta(), 0.01, taus_p4->at(1)->Eta()-0.25, taus_p4->at(1)->Eta()+0.25, ierflg);
+    gM->mnparm(5, "v2phi", taus_p4->at(1)->Phi(), 0.01, taus_p4->at(1)->Phi()-0.25, taus_p4->at(1)->Phi()+0.25, ierflg);
+
+    taus_v[0] = *taus_p4->at(0);
+    taus_v[1] = *taus_p4->at(1);
+
+    gM->SetObjectFit( & forFit);
+
+    arglist[0] = 1000;
+    arglist[1] = 0;
+    double val[6],err[6];
+    gM->mnexcm("MIGRADE", arglist, 2, ierflg);
+    for (int i = 0; i < 6; ++i) gM->GetParameter(i, val[i], err[i]);
+
+    TLorentzVector tauv1_v,tauv2_v;
+    tauv1_v.SetPtEtaPhiM(val[0], val[1], val[2], 0);
+    tauv2_v.SetPtEtaPhiM(val[3], val[4], val[5], 0);
+    if(jets_p4->size()>=3){
+      t1mass = (*(jets_p4->at(ljet_indice[1])) + *(jets_p4->at(ljet_indice[2])) + *(bjets_p4->at(0))).M();
+      wmass = (*(jets_p4->at(ljet_indice[1])) + *(jets_p4->at(ljet_indice[2]))).M();
+    }else{
+      t1mass = 0;
+      wmass = 0;
+    }
+    t2mass = (*(jets_p4->at(ljet_indice[0])) + *(taus_p4->at(0)) + *(taus_p4->at(1)) + tauv1_v + tauv2_v).M();
+    tautaumass = (*(taus_p4->at(0)) + *(taus_p4->at(1)) + tauv1_v + tauv2_v).M();
+
+    x1fit = tauv1_v.E() / (*(taus_p4->at(0)) + tauv1_v).E();
+    x2fit = tauv2_v.E() / (*(taus_p4->at(1)) + tauv2_v).E();
 
     TString tauorigin;
 
@@ -394,8 +437,18 @@ void hadhadtree::fill_fcnc(TString region, int nprong, TString sample, int iptbi
   }
 }
 
+RooRealVar  hadhadtree::_dR_("_dR_","",0,0.8);
+RooRealVar  hadhadtree::_m1_("_m1_","",0.06);
+RooRealVar  hadhadtree::_w1_("_w1_","",0.03);
+RooGaussian hadhadtree::_gaus_("_gaus_","",_dR_,_m1_,_w1_);
+RooRealVar  hadhadtree::_m2_("_m2_","",0.1);
+RooRealVar  hadhadtree::_w2_("_w2_","",0.1);
+RooLandau   hadhadtree::_land_("_land_","",_dR_,_m2_,_w2_);
+RooRealVar  hadhadtree::_fr1_("_fr1_","",0.56);
+RooAddPdf   hadhadtree::_pdf_("_pdf_","",_gaus_,_land_,_fr1_);
+
 // input parameter _p in GeV (>25 GeV)
-Float_t void hadhadtree::getHadTauProb(Float_t _dR, Float_t _p) {
+Float_t hadhadtree::getHadTauProb(Float_t _dR, Float_t _p) {
   if(_dR>=_dR_.getMax()) return 0;
   if(_p<25) _p = 25;
   Float_t m1 = 4.56088e+00/(_p+2.30554e-02*_p*_p)+2.00545e-02;
@@ -411,26 +464,67 @@ Float_t void hadhadtree::getHadTauProb(Float_t _dR, Float_t _p) {
 }
 
 void hadhadtree::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag) {
-  _mis1_.SetPtEtaPhiM(par[0],par[1],par[2],par[3]);
-  _mis2_.SetPtEtaPhiM(par[4],par[5],par[6],par[7]);
+
+  TList *listforfit = (TList*) gM->GetObjectFit();
+  if (!listforfit)
+  {
+    printf("list isnt found\n");
+    exit(1);
+  }
+  enum lorentzv{tau1,tau2};
+  
+  TLorentzVector vectors[2];
+  TLorentzVector neutrino[2];
+  for( int i = 0; i<2 ; ++i) {
+    if (listforfit->At(i))
+    {
+      vectors[i] = *((TLorentzVector*)listforfit->At(i));
+    }else{
+      printf("i-th parameter is not found\n");
+      exit(1);
+    }
+  }
+  double met[3];
+  if (listforfit->At(2)) {
+    met[0] = ((TVector3*)listforfit->At(5))->x();
+    met[1] = ((TVector3*)listforfit->At(5))->y();
+    met[2] = ((TVector3*)listforfit->At(5))->z();
+  }
+  else { printf("met parameter is not found\n"); exit(1); }
+
+  neutrino[0].SetPtEtaPhiM(par[0],par[1],par[2],0);
+  neutrino[1].SetPtEtaPhiM(par[3],par[4],par[5],0);
   Float_t prob1(0), prob2(0);
 
-  prob1 = getHadTauProb(_vis1_.DeltaR(_mis1_),(_vis1_+_mis1_).P());
-  prob2 = getHadTauProb(_vis2_.DeltaR(_mis2_),(_vis2_+_mis2_).P());
+  prob1 = getHadTauProb(vectors[tau1].DeltaR(neutrino[0]),(vectors[tau1]+neutrino[0]).P());
+  prob2 = getHadTauProb(vectors[tau2].DeltaR(neutrino[1]),(vectors[tau2]+neutrino[1]).P());
 
-  Float_t mass1 = (_vis1_+_mis1_).M();
-  Float_t mass2 = (_vis2_+_mis2_).M();
-  Float_t mass = (_vis1_+_mis1_+_vis2_+_mis2_).M();
-  Float_t pxMiss = _mis1_.Px()+_mis2_.Px();
-  Float_t pyMiss = _mis1_.Py()+_mis2_.Py();
+  Float_t mass1 = (vectors[tau1]+neutrino[0]).M();
+  Float_t mass2 = (vectors[tau2]+neutrino[1]).M();
+  Float_t mass = (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]).M();
+  Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px();
+  Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py();
   
   Double_t chisq = 1e10;
   if(prob1>0 && prob2>0) {
-    Float_t met_resol = 13.1+0.50*sqrt(_MET_sumet);
-    chisq = -2*log(prob1) -2*log(prob2) + pow((mass1-1.777)/1.777,2) + pow((mass2-1.777)/1.777,2) + pow((mass-125)/20,2) + pow((pxMiss-_MET_etx)/met_resol,2) + pow((pyMiss-_MET_ety)/met_resol,2);
+    Float_t met_resol = 13.1+0.50*sqrt(met[2]);
+    chisq = -2*log(prob1) -2*log(prob2) + pow((mass1-1.777)/1.777,2) + pow((mass2-1.777)/1.777,2) + pow((mass-125)/20,2) + pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2);
   }
   
   f = chisq;
+}
+TMinuit* hadhadtree::initgM(){
+
+  gM = new TMinuit(5);
+  gM->SetFCN(fcn);
+  gM->SetPrintLevel(-1);
+  
+  Double_t arglist[10];
+  Int_t ierflg = 0;
+  
+  arglist[0] = 1;
+  gM->mnexcm("SET ERR", arglist ,1,ierflg);
+  return gM;
 }
 
 void hadhadtree::definetree(TTree * tree) {

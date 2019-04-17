@@ -1,0 +1,10 @@
+trainJetFinder.py $ttH_fakes_DIR/tensorflow/config_lep2tau2jeven > lep2tau2jeven_log &
+trainJetFinder.py $ttH_fakes_DIR/tensorflow/config_lep2tau3jeven > lep2tau3jeven_log &
+trainJetFinder.py $ttH_fakes_DIR/tensorflow/config_lephad2jeven > lephad2jeven_log &
+trainJetFinder.py $ttH_fakes_DIR/tensorflow/config_lephad3jeven > lephad3jeven_log &
+trainJetFinder.py $ttH_fakes_DIR/tensorflow/config_lephad4jeven > lephad4jeven_log &
+trainJetFinder.py $ttH_fakes_DIR/tensorflow/config_lep2tau2jodd > lep2tau2jodd_log &
+trainJetFinder.py $ttH_fakes_DIR/tensorflow/config_lep2tau3jodd > lep2tau3jodd_log &
+trainJetFinder.py $ttH_fakes_DIR/tensorflow/config_lephad2jodd > lephad2jodd_log &
+trainJetFinder.py $ttH_fakes_DIR/tensorflow/config_lephad3jodd > lephad3jodd_log &
+trainJetFinder.py $ttH_fakes_DIR/tensorflow/config_lephad4jodd > lephad4jodd_log &

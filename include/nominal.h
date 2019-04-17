@@ -19,6 +19,7 @@ public :
       {1.157861, 0.792569, 1.349050, 1.426554},   //3prong <35
       {0.818782, 0.614790, 5.756198, 0.489836}    //3prong >35
    };
+   static int GeV;
    bool dofcnc;
    Int_t ierflg;
    bool dumptruth;
@@ -87,6 +88,7 @@ public :
    void fill_fcnc(TString region, int nprong, TString sample, int ptbin, float taubtag);
    void fill_notau(TString region, TString sample);
    bool SelectTLepid(int id);
+   void defGeV(int _GeV);
    static void printv(TLorentzVector v);
    int leading_b = -1 ;
    int leading_ljet = -1 ;

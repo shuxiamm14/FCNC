@@ -6,6 +6,82 @@
 #include "stdio.h"
 #include "stdlib.h"
 
+tthmltree::tthmltree():nominal::nominal(){
+  defGeV(1000);
+}
+
+TMinuit* tthmltree::initgM(){
+
+  gM = new TMinuit(5);
+  gM->SetFCN(fcn);
+  gM->SetPrintLevel(-1);
+  
+  Double_t arglist[10];
+  Int_t ierflg = 0;
+  
+  arglist[0] = 1;
+  gM->mnexcm("SET ERR", arglist ,1,ierflg);
+  return gM;
+}
+
+void tthmltree::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag) {
+  if(!GeV) {
+    printf("Error: nominal::GeV not initialised\n");
+    exit(0);
+  }
+  TList *listforfit = (TList*) gM->GetObjectFit();
+  if (!listforfit)
+  {
+    printf("list isnt found\n");
+    exit(1);
+  }
+  enum lorentzv{tau1,tau2,bj,cj,lep};
+  
+  TLorentzVector vectors[5];
+  TLorentzVector neutrino[3];
+  for( int i = 0; i<5 ; ++i) {
+    if (listforfit->At(i))
+    {
+      vectors[i] = *((TLorentzVector*)listforfit->At(i));
+    }else{
+      printf("i-th parameter is not found\n");
+      exit(1);
+    }
+  }
+  double met[3];
+  if (listforfit->At(5)) {
+    met[0] = ((TVector3*)listforfit->At(5))->x();
+    met[1] = ((TVector3*)listforfit->At(5))->y();
+    met[2] = ((TVector3*)listforfit->At(5))->z();
+  }
+  else { printf("met parameter is not found\n"); exit(1); }
+
+  neutrino[0].SetPtEtaPhiM(par[0]*vectors[tau1].Pt(),vectors[tau1].Eta(),vectors[tau1].Phi(),vectors[lep].Pt()==0?par[2]:0);
+  neutrino[1].SetPtEtaPhiM(par[1]*vectors[tau2].Pt(),vectors[tau2].Eta(),vectors[tau2].Phi(),0);
+  Float_t Hmass = (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]).M();
+  Float_t met_resol = 13.1*GeV+0.50*sqrt(met[2]*GeV);
+  Double_t chisq = 1e10;
+
+  if(vectors[lep].Pt()!=0){
+    neutrino[2].SetPtEtaPhiM(par[2],par[3],par[4],0);
+  
+    TLorentzVector t1 = neutrino[2]+vectors[lep]+vectors[bj];
+  
+    Float_t t2mass= (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]+vectors[cj]).M();
+    Float_t wmass = (vectors[lep] + neutrino[2]).M();
+    Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px()+neutrino[2].Px();
+    Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py()+neutrino[2].Py();
+    Float_t pConstrain = (vectors[bj].Dot(vectors[lep])/100) + (vectors[bj].Dot(neutrino[2])/100);
+    chisq =  pow((wmass-81*GeV)/10*GeV,2) + pow((t1.M()-172500)/25*GeV,2) +pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2) + pow((Hmass-125*GeV)/10*GeV,2);// + pow((t2mass-172.5)/30,2);// + pow((pConstrain-110)/20,2);
+  }else{
+    Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px();
+    Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py();
+    chisq = pow((Hmass-125*GeV)/10*GeV,2) + pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2);
+  }
+  f = chisq;
+}
+
+
 void tthmltree::init_hist(TString outputfilename){
   //init histSaver here:
   dohist = 1;
@@ -62,7 +138,7 @@ void tthmltree::init_hist(TString outputfilename){
   fake_notau_plots->debug = 0;
   fake_plots = new histSaver(outputfilename + "_fake");
   fake_plots->set_weight(&weight);
-  fake_plots->debug = 0;
+  fake_plots->debug = 1;
   fake_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
   fake_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   fake_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");

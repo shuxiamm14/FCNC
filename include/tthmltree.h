@@ -1,12 +1,15 @@
 #include "nominal.h"
 class tthmltree : public nominal{
 public:
+   tthmltree();
    bool SelectTLepid(int id);
    void definetree(TTree *tree);
    virtual void     Init(TTree *tree);
    void Loop(TTree *inputtree, TString samplename);
    void dumpTruth(int ipart);
    void init_sample(TString sample, TString sampletitle);
+   static  void     fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
+   TMinuit* initgM();
    void init_hist(TString outputhistfile);
    ULong64_t       eventNumber;
    UInt_t          runNumber;
