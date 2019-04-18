@@ -252,7 +252,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
       initdata = 1;
     }else{
       if(sample.Contains("ttbar")) sample = "ttbar";
-      else if(reduce == 1) sample.Remove(sample.Sizeof()-2);
+      else sample.Remove(sample.Sizeof()-2);
       fake_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
       fcnc_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
       fake_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
@@ -308,7 +308,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
   Long64_t nentries = inputtree->GetEntriesFast();
   TString sample = samplename;
   if (samplename.Contains("ttbar")) sample = "ttbar";
-  else if (!samplename.Contains("data") && reduce == 1) sample.Remove(sample.Sizeof() - 2);
+  else if (!samplename.Contains("data")) sample.Remove(sample.Sizeof() - 2);
   gM = initgM();
 
   if (dumptruth) {
@@ -398,8 +398,8 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         if (ifregions["reg1l1tau1b2j"] || ifregions["reg1l1tau1b3j"] || ifregions["reg1l2tau1bnj"])
           triggeredfcnc = 1;
         ifregions["reg1l2b2j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 0;
-        ifregions["reg1l1tau2b1j_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
-        ifregions["reg1l1tau2b1j_ss"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
+        ifregions["reg1l1tau2b1j_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 3 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
+        ifregions["reg1l1tau2b1j_ss"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 3 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
         ifregions["reg1l1tau2b_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
         ifregions["reg1l1tau2b_ss"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
       }else{
@@ -652,7 +652,8 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
         drtauj = (taus_v[0] + taus_v[1]).DeltaR(cjet_v);
       } else if (nJets_OR_T - nJets_OR_T_MV2c10_70) {
         if (ifregions["reg1l1tau2b1j_os"] || ifregions["reg1l1tau2b1j_ss"]) {
-          taulmass = (taus_v[0] + ljets_v[0]).M();
+          if(nJets_OR_T != 3) continue;
+          taulmass = (taus_v[1] + ljets_v[0]).M();
         } else taulmass = 0;
       }
 

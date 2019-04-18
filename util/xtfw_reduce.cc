@@ -25,9 +25,9 @@ int main(int argc, char const *argv[])
 	float luminosity = 0;
 	bool isData = 0;
 	if(inputconfig.Contains("data")) isData = 1;
-	else if(inputconfig.Contains("mc16a")) luminosity = 4.21*0.921 + 38.5*0.924;
-	else if(inputconfig.Contains("mc16d")) luminosity = 46.9;
-	else if(inputconfig.Contains("mc16e")) luminosity = 62.2;
+	else if(inputconfig.Contains("mc16a")) luminosity = 3.219555072 + 32.988125184;
+	else if(inputconfig.Contains("mc16d")) luminosity = 44.30739456;
+	else if(inputconfig.Contains("mc16e")) luminosity = 59.93723904;
 	else {
 		printf("Wrong config file name, cannot recognise mc campaign: %s\n", inputconfig.Data());
 		exit(0);

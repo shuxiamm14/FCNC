@@ -39,7 +39,7 @@ int main(int argc, char const *argv[])
 	analysis->dofcnc = 1;
 	analysis->reduce = 2;
 	analysis->debug = debug;
-	analysis->writetree = 0;
+	analysis->writetree = 1;
 	char inputline[500];
 	while(!fn.eof()){
 		fn.getline(inputline,500);

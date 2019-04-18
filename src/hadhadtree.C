@@ -74,15 +74,15 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots->add(100,0.4,3.4,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
   fcnc_plots->add(100,0.2,5.2,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
   fcnc_plots->add(60,-1.5,1.5,"E^{T}_{miss} centrality","phicent",&phicent,false,"");
-  fcnc_plots->add(100,50.,250.,"m_{t,SM}","t1mass",&t1mass,false,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,false,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{W}","wmass",&wmass,false,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{t,FCNC}","t2mass",&t2mass,false,"GeV");
+  fcnc_plots->add(900,100.,1000.,"m_{t,SM}","t1mass",&t1mass,false,"GeV");
+  fcnc_plots->add(100,50.,150.,"m_{#tau,#tau}","tautaumass",&tautaumass,false,"GeV");
+  fcnc_plots->add(100,30.,530.,"m_{W}","wmass",&wmass,false,"GeV");
+  fcnc_plots->add(900,100.,1000.,"m_{t,FCNC}","t2mass",&t2mass,false,"GeV");
   //fcnc_plots->add(100,50.,250.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,false,"GeV");
   //fcnc_plots->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,false,"GeV");
   //fcnc_plots->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,false,"GeV");
-  fcnc_plots->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
-  fcnc_plots->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
+  fcnc_plots->add(100,0.,1.,"E_{vis-#tau,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
+  fcnc_plots->add(100,0.,1.,"E_{vis-#tau,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
   //fcnc_plots->add(100,0.,5.,"#eta_{#tau,max}","etamax",&etamax,false,"");
   //fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
 
@@ -315,7 +315,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
 
     taus_v[0] = *taus_p4->at(0);
     taus_v[1] = *taus_p4->at(1);
-
+    mets.SetXYZ(met_p4->Px(), met_p4->Py(), met_sumet);
     gM->SetObjectFit( & forFit);
 
     arglist[0] = 1000;
@@ -337,8 +337,8 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     t2mass = (*(jets_p4->at(ljet_indice[0])) + *(taus_p4->at(0)) + *(taus_p4->at(1)) + tauv1_v + tauv2_v).M();
     tautaumass = (*(taus_p4->at(0)) + *(taus_p4->at(1)) + tauv1_v + tauv2_v).M();
 
-    x1fit = tauv1_v.E() / (*(taus_p4->at(0)) + tauv1_v).E();
-    x2fit = tauv2_v.E() / (*(taus_p4->at(1)) + tauv2_v).E();
+    x1fit = 1 - tauv1_v.E() / (*(taus_p4->at(0)) + tauv1_v).E();
+    x2fit = 1 - tauv2_v.E() / (*(taus_p4->at(1)) + tauv2_v).E();
 
     TString tauorigin;
 
@@ -528,78 +528,95 @@ TMinuit* hadhadtree::initgM(){
 }
 
 void hadhadtree::definetree(TTree * tree) {
-
   tree->Branch("eventNumber", &event_number);
   tree->Branch("runNumber",&run_number);
   tree->Branch("weights",&weights);
-  tree->Branch("tau_pt_0",&tau_pt_0);
-  tree->Branch("tau_pt_1",&tau_pt_1);
-  tree->Branch("bjets_fjvt",bjets_fjvt);
-  tree->Branch("bjets_is_Jvt_HS",bjets_is_Jvt_HS);
-  tree->Branch("bjets_jvt",bjets_jvt);
-  tree->Branch("bjets_origin",bjets_origin);
-  tree->Branch("bjets_p4",bjets_p4);
-  tree->Branch("bjets_type",bjets_type);
-  tree->Branch("bjets_width",bjets_width);
-  tree->Branch("ditau_coll_approx", &ditau_coll_approx);
-  tree->Branch("ditau_coll_approx_m", &ditau_coll_approx_m);
-  tree->Branch("ditau_coll_approx_x0", &ditau_coll_approx_x0);
-  tree->Branch("ditau_coll_approx_x1", &ditau_coll_approx_x1);
-  tree->Branch("ditau_cosalpha", &ditau_cosalpha);
-  tree->Branch("ditau_deta", &ditau_deta);
-  tree->Branch("ditau_dphi", &ditau_dphi);
-  tree->Branch("ditau_dr", &ditau_dr);
-  tree->Branch("ditau_higgspt", &ditau_higgspt);
-  tree->Branch("ditau_met_centrality", &ditau_met_centrality);
-  tree->Branch("ditau_met_lep0_cos_dphi", &ditau_met_lep0_cos_dphi);
-  tree->Branch("ditau_met_lep1_cos_dphi", &ditau_met_lep1_cos_dphi);
-  tree->Branch("ditau_met_min_dphi", &ditau_met_min_dphi);
-  tree->Branch("ditau_met_sum_cos_dphi", &ditau_met_sum_cos_dphi);
-  tree->Branch("ditau_mmc_maxw_eta", &ditau_mmc_maxw_eta);
-  tree->Branch("ditau_mmc_maxw_fit_status", &ditau_mmc_maxw_fit_status);
-  tree->Branch("ditau_mmc_maxw_m", &ditau_mmc_maxw_m);
-  tree->Branch("ditau_mmc_maxw_met_et", &ditau_mmc_maxw_met_et);
-  tree->Branch("ditau_mmc_maxw_met_phi", &ditau_mmc_maxw_met_phi);
-  tree->Branch("ditau_mmc_maxw_phi", &ditau_mmc_maxw_phi);
-  tree->Branch("ditau_mmc_maxw_pt", &ditau_mmc_maxw_pt);
-  tree->Branch("ditau_mmc_maxw_x0", &ditau_mmc_maxw_x0);
-  tree->Branch("ditau_mmc_maxw_x1", &ditau_mmc_maxw_x1);
-  tree->Branch("ditau_mmc_mlm_fit_status", &ditau_mmc_mlm_fit_status);
-  tree->Branch("ditau_mmc_mlm_m", &ditau_mmc_mlm_m);
-  tree->Branch("ditau_mt_lep0_met", &ditau_mt_lep0_met);
-  tree->Branch("ditau_mt_lep1_met", &ditau_mt_lep1_met);
-  tree->Branch("met_p4", &met_p4);
-  tree->Branch("met_sumet", &met_sumet);
-  tree->Branch("taus_id",taus_id);
-  tree->Branch("taus_b_tagged",taus_b_tagged);
-  tree->Branch("taus_decay_mode",taus_decay_mode);
-  tree->Branch("taus_n_charged_tracks",taus_n_charged_tracks);
-  tree->Branch("taus_p4",taus_p4);
-  tree->Branch("taus_q",taus_q);
-  tree->Branch("jets_fjvt",jets_fjvt);
-  tree->Branch("jets_is_Jvt_HS",jets_is_Jvt_HS);
-  tree->Branch("jets_jvt",jets_jvt);
-  tree->Branch("jets_origin",jets_origin);
-  tree->Branch("jets_p4",jets_p4);
-  tree->Branch("jets_q",jets_q);
-  tree->Branch("jets_type",jets_type);
-  tree->Branch("jets_width",jets_width);
-
-  if(!isData) {
-    tree->Branch("bjets_wztruth_p4",bjets_wztruth_p4);
-    tree->Branch("bjets_wztruth_pdgid",bjets_wztruth_pdgid);
-    tree->Branch("met_truth_p4", &met_truth_p4);
-    tree->Branch("met_truth_sumet", &met_truth_sumet);
-    tree->Branch("taus_matched_mother_pdgId",taus_matched_mother_pdgId);
-    tree->Branch("taus_matched_mother_status",taus_matched_mother_status);
-    tree->Branch("taus_matched_p4",taus_matched_p4);
-    tree->Branch("taus_matched_pdgId",taus_matched_pdgId);
-    tree->Branch("taus_matched_vis_p4",taus_matched_vis_p4);
-    tree->Branch("jets_wztruth_p4",jets_wztruth_p4);
-    tree->Branch("jets_wztruth_pdgid",jets_wztruth_pdgid);
+  if(reduce == 1){
+    tree->Branch("tau_pt_0",&tau_pt_0);
+    tree->Branch("tau_pt_1",&tau_pt_1);
+    tree->Branch("bjets_fjvt",bjets_fjvt);
+    tree->Branch("bjets_is_Jvt_HS",bjets_is_Jvt_HS);
+    tree->Branch("bjets_jvt",bjets_jvt);
+    tree->Branch("bjets_origin",bjets_origin);
+    tree->Branch("bjets_p4",bjets_p4);
+    tree->Branch("bjets_type",bjets_type);
+    tree->Branch("bjets_width",bjets_width);
+    tree->Branch("ditau_coll_approx", &ditau_coll_approx);
+    tree->Branch("ditau_coll_approx_m", &ditau_coll_approx_m);
+    tree->Branch("ditau_coll_approx_x0", &ditau_coll_approx_x0);
+    tree->Branch("ditau_coll_approx_x1", &ditau_coll_approx_x1);
+    tree->Branch("ditau_cosalpha", &ditau_cosalpha);
+    tree->Branch("ditau_deta", &ditau_deta);
+    tree->Branch("ditau_dphi", &ditau_dphi);
+    tree->Branch("ditau_dr", &ditau_dr);
+    tree->Branch("ditau_higgspt", &ditau_higgspt);
+    tree->Branch("ditau_met_centrality", &ditau_met_centrality);
+    tree->Branch("ditau_met_lep0_cos_dphi", &ditau_met_lep0_cos_dphi);
+    tree->Branch("ditau_met_lep1_cos_dphi", &ditau_met_lep1_cos_dphi);
+    tree->Branch("ditau_met_min_dphi", &ditau_met_min_dphi);
+    tree->Branch("ditau_met_sum_cos_dphi", &ditau_met_sum_cos_dphi);
+    tree->Branch("ditau_mmc_maxw_eta", &ditau_mmc_maxw_eta);
+    tree->Branch("ditau_mmc_maxw_fit_status", &ditau_mmc_maxw_fit_status);
+    tree->Branch("ditau_mmc_maxw_m", &ditau_mmc_maxw_m);
+    tree->Branch("ditau_mmc_maxw_met_et", &ditau_mmc_maxw_met_et);
+    tree->Branch("ditau_mmc_maxw_met_phi", &ditau_mmc_maxw_met_phi);
+    tree->Branch("ditau_mmc_maxw_phi", &ditau_mmc_maxw_phi);
+    tree->Branch("ditau_mmc_maxw_pt", &ditau_mmc_maxw_pt);
+    tree->Branch("ditau_mmc_maxw_x0", &ditau_mmc_maxw_x0);
+    tree->Branch("ditau_mmc_maxw_x1", &ditau_mmc_maxw_x1);
+    tree->Branch("ditau_mmc_mlm_fit_status", &ditau_mmc_mlm_fit_status);
+    tree->Branch("ditau_mmc_mlm_m", &ditau_mmc_mlm_m);
+    tree->Branch("ditau_mt_lep0_met", &ditau_mt_lep0_met);
+    tree->Branch("ditau_mt_lep1_met", &ditau_mt_lep1_met);
+    tree->Branch("met_p4", &met_p4);
+    tree->Branch("met_sumet", &met_sumet);
+    tree->Branch("taus_id",taus_id);
+    tree->Branch("taus_b_tagged",taus_b_tagged);
+    tree->Branch("taus_decay_mode",taus_decay_mode);
+    tree->Branch("taus_n_charged_tracks",taus_n_charged_tracks);
+    tree->Branch("taus_p4",taus_p4);
+    tree->Branch("taus_q",taus_q);
+    tree->Branch("jets_fjvt",jets_fjvt);
+    tree->Branch("jets_is_Jvt_HS",jets_is_Jvt_HS);
+    tree->Branch("jets_jvt",jets_jvt);
+    tree->Branch("jets_origin",jets_origin);
+    tree->Branch("jets_p4",jets_p4);
+    tree->Branch("jets_q",jets_q);
+    tree->Branch("jets_type",jets_type);
+    tree->Branch("jets_width",jets_width);
+  
+    if(!isData) {
+      tree->Branch("bjets_wztruth_p4",bjets_wztruth_p4);
+      tree->Branch("bjets_wztruth_pdgid",bjets_wztruth_pdgid);
+      tree->Branch("met_truth_p4", &met_truth_p4);
+      tree->Branch("met_truth_sumet", &met_truth_sumet);
+      tree->Branch("taus_matched_mother_pdgId",taus_matched_mother_pdgId);
+      tree->Branch("taus_matched_mother_status",taus_matched_mother_status);
+      tree->Branch("taus_matched_p4",taus_matched_p4);
+      tree->Branch("taus_matched_pdgId",taus_matched_pdgId);
+      tree->Branch("taus_matched_vis_p4",taus_matched_vis_p4);
+      tree->Branch("jets_wztruth_p4",jets_wztruth_p4);
+      tree->Branch("jets_wztruth_pdgid",jets_wztruth_pdgid);
+    }
+    return;
   }
-
-
+  if(reduce == 2){
+    tree->Branch("tau_pt_0",&tau_pt_0);
+    tree->Branch("tau_pt_1",&tau_pt_1);
+    tree->Branch("etmiss",&etmiss);
+    tree->Branch("dphitauetmiss",&dphitauetmiss);
+    tree->Branch("ttvismass",&ttvismass);
+    tree->Branch("drtautau",&drtautau);
+    tree->Branch("drtaujmin",&drtaujmin);
+    tree->Branch("phicent",&phicent);
+    tree->Branch("t1mass",&t1mass);
+    tree->Branch("tautaumass",&tautaumass);
+    tree->Branch("wmass",&wmass);
+    tree->Branch("t2mass",&t2mass);
+    tree->Branch("x1fit",&x1fit);
+    tree->Branch("x2fit",&x2fit);
+    return;
+  }
 }
 void hadhadtree::definetaus(){
   if(taus_id->size()) taus_id->clear();

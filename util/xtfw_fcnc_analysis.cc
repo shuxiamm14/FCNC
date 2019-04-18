@@ -19,10 +19,10 @@ int main(int argc, char const *argv[])
   	tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",5);
   	tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
   	tau_plots->add("E^{T}_{miss} centrality","phicent","",5);
-  	tau_plots->add("m_{t,SM}","t1mass","GeV",5);
+  	tau_plots->add("m_{t,SM}","t1mass","GeV",20);
   	tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
   	tau_plots->add("m_{W}","wmass","GeV",5);
-  	tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
+  	tau_plots->add("m_{t,FCNC}","t2mass","GeV",20);
   	tau_plots->add("E_{#nu,1}/E_{#tau,1}","x1fit","",5);
   	tau_plots->add("E_{#nu,2}/E_{#tau,2}","x2fit","",5);
 
