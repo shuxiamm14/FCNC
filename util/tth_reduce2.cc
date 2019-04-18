@@ -11,9 +11,9 @@ int main(int argc, char const *argv[])
 	bool doplot = 1;
 	char inputline[100];
 	vector<TString> regions;
-	//regions.push_back("reg1l2tau1bnj");
-	//regions.push_back("reg1l1tau1b2j");
-	//regions.push_back("reg1l1tau1b3j");
+	regions.push_back("reg1l2tau1bnj");
+	regions.push_back("reg1l1tau1b2j");
+	regions.push_back("reg1l1tau1b3j");
 
 	regions.push_back("reg1e1mu1tau1b");
 	regions.push_back("reg1e1mu1tau2b");
@@ -25,7 +25,7 @@ int main(int argc, char const *argv[])
 
 	tthmltree *analysis = new tthmltree();
 	analysis->debug = 0;
-
+	analysis->applyfakeSF = 1;
 	analysis->writetree = 0;
 	analysis->fcnc = 1;
 	analysis->reduce = 2;

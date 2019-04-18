@@ -11,6 +11,9 @@ public:
    static  void     fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
    TMinuit* initgM();
    void init_hist(TString outputhistfile);
+
+   bool applyfakeSF = 0;
+
    ULong64_t       eventNumber;
    UInt_t          runNumber;
    UInt_t          randomRunNumber;

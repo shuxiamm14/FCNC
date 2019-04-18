@@ -68,20 +68,22 @@ int main(int argc, char const *argv[])
 //============================ merge_origin ============================
 	else if(plot_option == 2){
   		tau_plots->overlay(samples[6]);
-		for (int j = 0; j < 7; ++j)
+
+		for (int j = 0; j < 7; ++j){
+			tau_plots->stackorder.push_back(samples[j]);
 			for (int i = 0; i < 7; ++i)
 				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i], sampletitle[j], (enum EColor)colors[j], norm[j]);
+		}
 	}
-	for (int j = 0; j < nregions; ++j)
-		for (int k = 0; k < 2; ++k)
-		  for (int i = 1; i < 2; i+=2){
-		    printf("adding region: %s\n", (regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-//		    tau_plots->add_region(regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-		    tau_plots->merge_regions(regions[j] + "_" + nprong[k] + "_above35_veto" + bwps[i],regions[j] + "_" + nprong[k] + "_below35_veto" + bwps[i],regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
-		    //tau_plots->merge_regions(regions[j] + "_" + nprong[k] + "_above35_" + bwps[i],regions[j] + "_" + nprong[k] + "_below35_" + bwps[i],regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-		    //tau_plots->add_region(regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
-		  }
-
+	for (int j = 0; j < nregions; ++j){
+		for (int i = 1; i < 2; i+=2){
+			for (int k = 0; k < 2; ++k)
+			  tau_plots->merge_regions(regions[j] + "_" + nprong[k] + "_above35_veto" + bwps[i],regions[j] + "_" + nprong[k] + "_below35_veto" + bwps[i],regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
+			  //tau_plots->merge_regions(regions[j] + "_" + nprong[k] + "_above35_" + bwps[i],regions[j] + "_" + nprong[k] + "_below35_" + bwps[i],regions[j] + "_" + nprong[k] + "_" + bwps[i]);
+			  //tau_plots->add_region(regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
+			tau_plots->merge_regions(regions[j] + "_" + nprong[0] + "_veto" + bwps[i], regions[j] + "_" + nprong[1] + "_veto" + bwps[i],regions[j] + "_veto" + bwps[i]);
+		}
+	}
 	if(doPlots){
 		tau_plots  ->plot_stack(outputdir[plot_option]);
 	}

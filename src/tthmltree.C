@@ -659,7 +659,7 @@ void tthmltree::Loop(TTree*inputtree, TString samplename) {
 
       //===============================fill histograms, fill tree===============================
       TString tauorigin;
-      int SFbin = (tau_pt_0 / GeV > 35) + (tau_numTrack_0) - 1;
+      int SFbin = tau_pt_0 / GeV > 35;
       fakeSF = 1;
       if (sample.Contains("data")) {
         tauorigin = "data";

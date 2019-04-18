@@ -274,6 +274,14 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
         printf("jetSFs: %f\n",jetSFs);
         printf("globalweight: %f\n",globalweight);
       }
+      bool triggered = 0;
+      for(auto reg : ifregions){
+        if(reg.second == 1){
+          triggered = 1;
+          break;
+        }
+      }
+      if(!triggered) continue;
     }else{
       weight = weights->at(0);
     }
@@ -485,7 +493,7 @@ void hadhadtree::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int
     }
   }
   double met[3];
-  if (listforfit->At(2)) {
+  if (listforfit->At(5)) {
     met[0] = ((TVector3*)listforfit->At(5))->x();
     met[1] = ((TVector3*)listforfit->At(5))->y();
     met[2] = ((TVector3*)listforfit->At(5))->z();
