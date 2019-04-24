@@ -2,30 +2,25 @@
 
 int main(int argc, char const *argv[])
 {
-	if (argc != 2)
-	{
-		printf("Usage: xtfw_reduce_run dataconfigfile (mc16a_wjet.txt)\n");
-		exit(1);
-	}
 	bool debug = 0;
 	bool doplot = 1;
 	TString prefix = PACKAGE_DIR;
 	prefix += "/data/hadhadreduce1/";
 	vector<TString> regions;
-	regions.push_back("reg2mtau1b2jss");
+	//regions.push_back("reg2mtau1b2jss");
+	//regions.push_back("reg2mtau1b3jss");
+	//regions.push_back("reg2mtau1b2jos");
+	regions.push_back("reg2mtau1b3jos");
 	//regions.push_back("reg1mtau1ltau1b2jss");
 	//regions.push_back("reg2ltau1b2jss");
 	//regions.push_back("reg2ttau1b2jss");
 	//regions.push_back("reg1ttau1mtau1b2jss");
-	regions.push_back("reg2mtau1b3jss");
 	//regions.push_back("reg1mtau1ltau1b3jss");
 	//regions.push_back("reg2ltau1b3jss");
 	//regions.push_back("reg2ttau1b3jss");
 	//regions.push_back("reg1ttau1mtau1b3jss");
-	regions.push_back("reg2mtau1b2jos");
 	//regions.push_back("reg1mtau1ltau1b2jos");
 	//regions.push_back("reg2ltau1b2jos");
-	regions.push_back("reg2mtau1b3jos");
 	//regions.push_back("reg1mtau1ltau1b3jos");
 	//regions.push_back("reg2ltau1b3jos");
 	//regions.push_back("reg2ttau1b2jos");
@@ -36,10 +31,14 @@ int main(int argc, char const *argv[])
 	ifstream fn(argv[1]);
 	if(!debug) gErrorIgnoreLevel=kError;
 	hadhadtree *analysis = new hadhadtree();
+	analysis->init_reduce2();
+	analysis->plotNPs.push_back(0);
+	analysis->plotNPs.push_back(1);
 	analysis->dofcnc = 1;
 	analysis->reduce = 2;
 	analysis->debug = debug;
-	analysis->writetree = 1;
+	analysis->writetree = 0;
+	analysis->fcnc_regions = regions;
 	char inputline[500];
 	while(!fn.eof()){
 		fn.getline(inputline,500);

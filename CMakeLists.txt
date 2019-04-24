@@ -53,6 +53,7 @@ target_link_libraries(nominal ${ROOT_LIBRARIES} applyTF ${PLOTTOOLLIB})
 
 add_library(hadhadtree SHARED ${PROJECT_SOURCE_DIR}/src/hadhadtree.C ${PROJECT_SOURCE_DIR}/include/hadhadtree.h)
 target_link_libraries(hadhadtree ${ROOT_LIBRARIES} nominal ${PLOTTOOLLIB} dict)
+target_compile_definitions(hadhadtree PRIVATE PACKAGE_DIR="${CMAKE_SOURCE_DIR}")
 
 add_library(tthmltree SHARED ${PROJECT_SOURCE_DIR}/src/tthmltree.C ${PROJECT_SOURCE_DIR}/include/tthmltree.h)
 target_link_libraries(tthmltree ${ROOT_LIBRARIES} nominal ${PLOTTOOLLIB} dict)

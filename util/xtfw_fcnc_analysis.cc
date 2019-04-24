@@ -8,7 +8,7 @@ int main(int argc, char const *argv[])
 	int plot_option = 2;
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
-	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 148 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
+	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
 	tau_plots->inputfilename = "hists";
 	tau_plots->debug = 0;
   	tau_plots->add("p_{T,lead-#tau}","tau_0_pt","GeV",5);
@@ -23,8 +23,8 @@ int main(int argc, char const *argv[])
   	tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
   	tau_plots->add("m_{W}","wmass","GeV",5);
   	tau_plots->add("m_{t,FCNC}","t2mass","GeV",20);
-  	tau_plots->add("E_{#nu,1}/E_{#tau,1}","x1fit","",5);
-  	tau_plots->add("E_{#nu,2}/E_{#tau,2}","x2fit","",5);
+  	tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
+  	tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
 
   	tau_plots->blinding = 0;
 	vector<TString> regions;

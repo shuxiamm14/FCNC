@@ -23,9 +23,14 @@ hadhadtree::hadhadtree() : nominal::nominal(){
   defGeV(1);
 }
 
+void hadhadtree::init_reduce2(){
+  taus_n_charged_tracks = new vector<UInt_t> ();
+  taus_b_tagged = new vector<Int_t> ();
+}
+
 void hadhadtree::init_reduce1(){
   reduce = 1;
-  weights = new vector<Float_t> ();
+  weights = new vector<double> ();
   taus_id = new vector<Int_t> ();
   taus_b_tagged = new vector<Int_t> ();
   taus_decay_mode = new vector<UInt_t> ();
@@ -56,68 +61,70 @@ void hadhadtree::init_reduce1(){
   jets_width = new vector<Float_t> ();
   jets_wztruth_p4 = new vector<TLorentzVector*>();
   jets_wztruth_pdgid = new vector<Float_t> ();
+
 }
 
 void hadhadtree::init_hist(TString histfilename){
   //init histSaver here:
   dohist = 1;
-  fcnc_plots = new histSaver(histfilename);
-  fcnc_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV,  fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
-  fcnc_plots->set_weight(&weight);
-  fcnc_plots->debug = debug;
-
-  fcnc_plots->add(100,40.,140.,"p_{T,lead-#tau}","tau_0_pt",&tau_pt_0,false,"GeV");
-  fcnc_plots->add(100,30.,80.,"p_{T,sublead-#tau}","tau_1_pt",&tau_pt_1,false,"GeV");
-  fcnc_plots->add(100,15.,115.,"E^{T}_{miss}","etmiss",&etmiss,false,"GeV");
-  fcnc_plots->add(60,0.,3.,"#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss",&dphitauetmiss,false);
-  fcnc_plots->add(80,50.,130.,"m_{#tau#tau,vis}","ttvismass",&ttvismass,false,"GeV");
-  fcnc_plots->add(100,0.4,3.4,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
-  fcnc_plots->add(100,0.2,5.2,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
-  fcnc_plots->add(60,-1.5,1.5,"E^{T}_{miss} centrality","phicent",&phicent,false,"");
-  fcnc_plots->add(900,100.,1000.,"m_{t,SM}","t1mass",&t1mass,false,"GeV");
-  fcnc_plots->add(100,50.,150.,"m_{#tau,#tau}","tautaumass",&tautaumass,false,"GeV");
-  fcnc_plots->add(100,30.,530.,"m_{W}","wmass",&wmass,false,"GeV");
-  fcnc_plots->add(900,100.,1000.,"m_{t,FCNC}","t2mass",&t2mass,false,"GeV");
-  //fcnc_plots->add(100,50.,250.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,false,"GeV");
-  //fcnc_plots->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,false,"GeV");
-  //fcnc_plots->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,false,"GeV");
-  fcnc_plots->add(100,0.,1.,"E_{vis-#tau,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
-  fcnc_plots->add(100,0.,1.,"E_{vis-#tau,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
-  //fcnc_plots->add(100,0.,5.,"#eta_{#tau,max}","etamax",&etamax,false,"");
-  //fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
-
-  fcnc_regions.push_back("reg2mtau1b2jss");
-  fcnc_regions.push_back("reg1mtau1ltau1b2jss");
-  fcnc_regions.push_back("reg2ltau1b2jss");
-  fcnc_regions.push_back("reg2mtau1b3jss");
-  fcnc_regions.push_back("reg1mtau1ltau1b3jss");
-  fcnc_regions.push_back("reg2ltau1b3jss");
-  fcnc_regions.push_back("reg2mtau1b2jos");
-  fcnc_regions.push_back("reg1mtau1ltau1b2jos");
-  fcnc_regions.push_back("reg2ltau1b2jos");
-  fcnc_regions.push_back("reg2mtau1b3jos");
-  fcnc_regions.push_back("reg1mtau1ltau1b3jos");
-  fcnc_regions.push_back("reg2ltau1b3jos");
-  fcnc_regions.push_back("reg2ttau1b2jss");
-  fcnc_regions.push_back("reg1ttau1mtau1b2jss");
-  fcnc_regions.push_back("reg2ttau1b3jss");
-  fcnc_regions.push_back("reg1ttau1mtau1b3jss");
-  fcnc_regions.push_back("reg2ttau1b2jos");
-  fcnc_regions.push_back("reg1ttau1mtau1b2jos");
-  fcnc_regions.push_back("reg2ttau1b3jos");
-  fcnc_regions.push_back("reg1ttau1mtau1b3jos");
-
   TString nprong[] = {"1prong","3prong"};
-  
-  for (int j = 0; j < fcnc_regions.size(); ++j)
+  if(reduce == 3){
+    reader = new TMVA::Reader( "!Color:!Silent" );
+    reader->AddVariable("tau_pt_0",&tau_pt_0);
+    reader->AddVariable("tau_pt_1",&tau_pt_1);
+    reader->AddVariable("etmiss",&etmiss);
+    reader->AddVariable("dphitauetmiss",&dphitauetmiss);
+    reader->AddVariable("ttvismass",&ttvismass);
+    reader->AddVariable("drtautau",&drtautau);
+    reader->AddVariable("drtaujmin",&drtaujmin);
+    reader->AddVariable("phicent",&phicent);
+    reader->AddVariable("t1mass",&t1mass);
+    reader->AddVariable("tautaumass",&tautaumass);
+    reader->AddVariable("wmass",&wmass);
+    reader->AddVariable("t2mass",&t2mass);
+    reader->AddVariable("x1fit",&x1fit);
+    reader->AddVariable("x2fit",&x2fit);
+    for(auto region : fcnc_regions){
+      reader->BookMVA( "BDTG_1", "dataset/weights/" + region + "TMVAClassification_1_BDTG.weights.xml" );
+      reader->BookMVA( "BDTG_2", "dataset/weights/" + region + "TMVAClassification_2_BDTG.weights.xml" );
+    }
+  }
+  for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
   {
-    for (int k = 0; k < 2; ++k)
+    fcnc_plots.push_back(new histSaver(histfilename + "_" + char(plotNPs[iNP] + '0') ));
+    fcnc_plots[iNP]->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV,  fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
+    fcnc_plots[iNP]->set_weight(&weight);
+    fcnc_plots[iNP]->debug = debug;
+    if(reduce == 3) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG",&BDTG,false,"");
+    fcnc_plots[iNP]->add(100,40.,140.,"p_{T,lead-#tau}","tau_0_pt",&tau_pt_0,false,"GeV");
+    fcnc_plots[iNP]->add(100,30.,80.,"p_{T,sublead-#tau}","tau_1_pt",&tau_pt_1,false,"GeV");
+    fcnc_plots[iNP]->add(100,15.,115.,"E^{T}_{miss}","etmiss",&etmiss,false,"GeV");
+    fcnc_plots[iNP]->add(60,0.,3.,"#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss",&dphitauetmiss,false);
+    fcnc_plots[iNP]->add(80,50.,130.,"m_{#tau#tau,vis}","ttvismass",&ttvismass,false,"GeV");
+    fcnc_plots[iNP]->add(100,0.4,3.4,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
+    fcnc_plots[iNP]->add(100,0.2,5.2,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
+    fcnc_plots[iNP]->add(60,-1.5,1.5,"E^{T}_{miss} centrality","phicent",&phicent,false,"");
+    fcnc_plots[iNP]->add(900,100.,1000.,"m_{t,SM}","t1mass",&t1mass,false,"GeV");
+    fcnc_plots[iNP]->add(100,50.,150.,"m_{#tau,#tau}","tautaumass",&tautaumass,false,"GeV");
+    fcnc_plots[iNP]->add(100,30.,530.,"m_{W}","wmass",&wmass,false,"GeV");
+    fcnc_plots[iNP]->add(900,100.,1000.,"m_{t,FCNC}","t2mass",&t2mass,false,"GeV");
+    //fcnc_plots[iNP]->add(100,50.,250.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,false,"GeV");
+    //fcnc_plots[iNP]->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,false,"GeV");
+    //fcnc_plots[iNP]->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,false,"GeV");
+    fcnc_plots[iNP]->add(100,0.,1.,"E_{vis-#tau,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
+    fcnc_plots[iNP]->add(100,0.,1.,"E_{vis-#tau,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
+    //fcnc_plots[iNP]->add(100,0.,5.,"#eta_{#tau,max}","etamax",&etamax,false,"");
+    //fcnc_plots[iNP]->add(100,0.,5.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
+    for (int j = 0; j < fcnc_regions.size(); ++j)
     {
-      for (int iptbin = 0; iptbin < 2; ++iptbin)
+      for (int k = 0; k < 2; ++k)
       {
-        if(debug) printf("adding region: %s\n", (fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[1]).Data());
-        fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[1]);
-        fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[1]);
+        for (int iptbin = 0; iptbin < 2; ++iptbin)
+        {
+          if(debug) printf("adding region: %s\n", (fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[1]).Data());
+          //fcnc_plots[iNP]->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[1]);
+          fcnc_plots[iNP]->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[1]);
+        }
       }
     }
   }
@@ -126,7 +133,7 @@ void hadhadtree::init_hist(TString histfilename){
 void hadhadtree::init_sample(TString sample, TString sampletitle){
 //==========================init output n-tuple==========================
   if(writetree){
-    outputtreefile = new TFile(sample + "_tree.root","update");
+    outputtreefile = new TFile(TString(PACKAGE_DIR) + "/data/hadhadreduce" + char('0' + reduce) + "/" + sample + "_tree.root","recreate");
     for (int i = 0; i < fcnc_regions.size(); ++i)
     {
       if(debug) printf("init sample:: get region: %s\n",fcnc_regions[i].Data());
@@ -143,17 +150,20 @@ void hadhadtree::init_sample(TString sample, TString sampletitle){
   if(dohist){
     if (sample.Contains("data"))
     {
-      fcnc_plots->init_sample("data","data","data",kBlack);
+      fcnc_plots[0]->init_sample("data","data","data",kBlack);
       initdata = 1;
     }else{
       sample.Remove(0,6);
-      fcnc_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
-      fcnc_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
-      fcnc_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
-      fcnc_plots->init_sample(sample + "_lep",sample + "_lep",sampletitle + "(lepton fake #tau)",kGreen);
-      fcnc_plots->init_sample(sample + "_real",sample + "_real",sampletitle + "(real #tau)",kRed);
-      fcnc_plots->init_sample(sample + "_c",sample + "_c",sampletitle + "(c-jets fake #tau)",kOrange);
-      fcnc_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
+      for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
+      {
+        fcnc_plots[iNP]->init_sample(sample + "_g",sample + "_g_NP" + char('0' + iNP),sampletitle + "(gluon fake #tau)",(enum EColor)7);
+        fcnc_plots[iNP]->init_sample(sample + "_j",sample + "_j_NP" + char('0' + iNP),sampletitle + "(light-jet fake #tau)",kBlue);
+        fcnc_plots[iNP]->init_sample(sample + "_b",sample + "_b_NP" + char('0' + iNP),sampletitle + "(b-jets fake #tau)",kViolet);
+        fcnc_plots[iNP]->init_sample(sample + "_lep",sample + "_lep_NP" + char('0' + iNP),sampletitle + "(lepton fake #tau)",kGreen);
+        fcnc_plots[iNP]->init_sample(sample + "_real",sample + "_real_NP" + char('0' + iNP),sampletitle + "(real #tau)",kRed);
+        fcnc_plots[iNP]->init_sample(sample + "_c",sample + "_c_NP" + char('0' + iNP),sampletitle + "(c-jets fake #tau)",kOrange);
+        fcnc_plots[iNP]->init_sample(sample + "_nomatch",sample + "_nomatch_NP" + char('0' + iNP),sampletitle + "(no truth matched fake #tau)",kGray);
+      } 
     }
   }
 }
@@ -167,7 +177,7 @@ vector<TLorentzVector> convertv(vector<TLorentzVector*> vv){
 
 void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
 {  
-  if(debug) fcnc_plots->show();
+  if(debug) for (int iNP = 0; iNP < plotNPs.size(); ++iNP) fcnc_plots[iNP]->show();
   isData = samplename.Contains("data");
   int campaign = 0;
   if(isData) {
@@ -205,8 +215,6 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   if (inputtree == 0) return;
   Long64_t nentries = inputtree->GetEntriesFast();
   TString sample = samplename.Contains("data")? "data":samplename.Remove(0,6).Data();
-  initgM();
-
   if (dumptruth) {
     for (int i = 0; i < 3; ++i) {
       filetruth[i][0].open(CharAppend("hadhad", i + 2) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
@@ -219,7 +227,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
 
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     inputtree->GetEntry(jentry);
-    if (jentry >= 100000 && (jentry % 100000 == 0))
+    if ((jentry % 100000 == 0))
       std::cout << " I am here event " << jentry << " Event " << event_number << " Run " << run_number << " ismc " << mc_channel_number << std::endl;
     cutflow[0]+=1;
 //===============================SFs and weights===============================
@@ -256,6 +264,9 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       ifregions["reg1ttau1mtau1b2jos"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
       ifregions["reg2ttau1b3jos"] =      tau_0_jet_bdt_tight && tau_1_jet_bdt_tight && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
       ifregions["reg1ttau1mtau1b3jos"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
+      for (map<TString,bool>::reverse_iterator rit=ifregions.rbegin(); rit!=ifregions.rend(); ++rit)
+        if(find(fcnc_regions.begin(), fcnc_regions.end(), rit->first) == fcnc_regions.end() || rit->first == 0)
+          ifregions.erase(rit->first);
 
       float jetSFs = 
         jet_NOMINAL_central_jets_global_effSF_JVT*
@@ -286,78 +297,86 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       weight = weights->at(0);
     }
     //===============================pre-selections===============================
-    cutflow[1]+=weight;
-    if(campaign !=1 && jets_p4->at(0)->Pt() < 50 && bjets_p4->at(0)->Pt() < 50) continue;
-    cutflow[2]+=weight;
-    bool passbjetcut = 0;
-    for(auto bjet : *bjets_p4){
-      if(bjet->Pt() > 30 && abs(bjet->Eta()) < 2.5) passbjetcut = 1;
+    if(reduce == 2) {
+      cutflow[1]+=weight;
+      if(campaign !=1 && jets_p4->at(0)->Pt() < 50 && bjets_p4->at(0)->Pt() < 50) continue;
+      cutflow[2]+=weight;
+      bool passbjetcut = 0;
+      for(auto bjet : *bjets_p4){
+        if(bjet->Pt() > 30 && abs(bjet->Eta()) < 2.5) passbjetcut = 1;
+      }
+      if(!passbjetcut) continue;
+      cutflow[3]+=weight;
+      tau_pt_0 = taus_p4->at(0)->Pt();
+      tau_pt_1 = taus_p4->at(1)->Pt();
+      etmiss = met_p4->Pt();
+      ttvismass = (*(taus_p4->at(0)) + *(taus_p4->at(1))).M();
+      dphitauetmiss = fabs(met_p4->DeltaPhi(*(taus_p4->at(0)) + *(taus_p4->at(1))));
+      drtautau = taus_p4->at(0)->DeltaR(*(taus_p4->at(1)));
+      drtaujmin = 999;
+      for(auto jetp4 : *jets_p4){
+        if(drtaujmin > (*(taus_p4->at(0)) + *(taus_p4->at(1))).DeltaR(*jetp4))
+          drtaujmin = (*(taus_p4->at(0)) + *(taus_p4->at(1))).DeltaR(*jetp4);
+      }
+      if(ttvismass < 50) continue;
+      if(ttvismass > 130) continue;
+      if(drtautau > 3.4) continue;
+  
+      phicent = phi_centrality(taus_p4->at(0)->Phi(),taus_p4->at(1)->Phi(),met_p4->Phi());
+  
+      ljet_indice = findcjet("hadhad",convertv(*jets_p4),*bjets_p4->at(0),lep_v,convertv(*taus_p4));
+  
+      gM->mnparm(0, "v1pt",  tau_pt_0, 0.01, 0., 1000, ierflg);
+      gM->mnparm(1, "v1eta", taus_p4->at(0)->Eta(), 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
+      gM->mnparm(2, "v1phi", taus_p4->at(0)->Phi(), 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
+      gM->mnparm(3, "v2pt",  tau_pt_1, 0.01, 0., 1000, ierflg);
+      gM->mnparm(4, "v2eta", taus_p4->at(1)->Eta(), 0.01, taus_p4->at(1)->Eta()-0.25, taus_p4->at(1)->Eta()+0.25, ierflg);
+      gM->mnparm(5, "v2phi", taus_p4->at(1)->Phi(), 0.01, taus_p4->at(1)->Phi()-0.25, taus_p4->at(1)->Phi()+0.25, ierflg);
+  
+      taus_v[0] = *taus_p4->at(0);
+      taus_v[1] = *taus_p4->at(1);
+      mets.SetXYZ(met_p4->Px(), met_p4->Py(), met_sumet);
+      gM->SetObjectFit( & forFit);
+  
+      arglist[0] = 1000;
+      arglist[1] = 0;
+      double val[6],err[6];
+      gM->mnexcm("MIGRADE", arglist, 2, ierflg);
+      for (int i = 0; i < 6; ++i) gM->GetParameter(i, val[i], err[i]);
+  
+      TLorentzVector tauv1_v,tauv2_v;
+      tauv1_v.SetPtEtaPhiM(val[0], val[1], val[2], 0);
+      tauv2_v.SetPtEtaPhiM(val[3], val[4], val[5], 0);
+      if(jets_p4->size()>=3){
+        t1mass = (*(jets_p4->at(ljet_indice[1])) + *(jets_p4->at(ljet_indice[2])) + *(bjets_p4->at(0))).M();
+        wmass = (*(jets_p4->at(ljet_indice[1])) + *(jets_p4->at(ljet_indice[2]))).M();
+      }else{
+        t1mass = 0;
+        wmass = 0;
+      }
+      t2mass = (*(jets_p4->at(ljet_indice[0])) + *(taus_p4->at(0)) + *(taus_p4->at(1)) + tauv1_v + tauv2_v).M();
+      tautaumass = (*(taus_p4->at(0)) + *(taus_p4->at(1)) + tauv1_v + tauv2_v).M();
+  
+      x1fit = 1 - tauv1_v.E() / (*(taus_p4->at(0)) + tauv1_v).E();
+      x2fit = 1 - tauv2_v.E() / (*(taus_p4->at(1)) + tauv2_v).E();
+  
     }
-    if(!passbjetcut) continue;
-    cutflow[3]+=weight;
-    tau_pt_0 = taus_p4->at(0)->Pt();
-    tau_pt_1 = taus_p4->at(1)->Pt();
-    etmiss = met_p4->Pt();
-    ttvismass = (*(taus_p4->at(0)) + *(taus_p4->at(1))).M();
-    dphitauetmiss = fabs(met_p4->DeltaPhi(*(taus_p4->at(0)) + *(taus_p4->at(1))));
-    drtautau = taus_p4->at(0)->DeltaR(*(taus_p4->at(1)));
-    drtaujmin = 999;
-    for(auto jetp4 : *jets_p4){
-      if(drtaujmin > (*(taus_p4->at(0)) + *(taus_p4->at(1))).DeltaR(*jetp4))
-        drtaujmin = (*(taus_p4->at(0)) + *(taus_p4->at(1))).DeltaR(*jetp4);
+    if(reduce == 3){
+      if(debug) printf("eval BDTG\n");
+      BDTG = reader->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2));
     }
-    if(ttvismass < 50) continue;
-    if(ttvismass > 130) continue;
-    if(drtautau > 3.4) continue;
-
-    phicent = phi_centrality(taus_p4->at(0)->Phi(),taus_p4->at(1)->Phi(),met_p4->Phi());
-
-    ljet_indice = findcjet("hadhad",convertv(*jets_p4),*bjets_p4->at(0),lep_v,convertv(*taus_p4));
-
-    gM->mnparm(0, "v1pt",  tau_pt_0, 0.01, 0., 1000, ierflg);
-    gM->mnparm(1, "v1eta", taus_p4->at(0)->Eta(), 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
-    gM->mnparm(2, "v1phi", taus_p4->at(0)->Phi(), 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
-    gM->mnparm(3, "v2pt",  tau_pt_1, 0.01, 0., 1000, ierflg);
-    gM->mnparm(4, "v2eta", taus_p4->at(1)->Eta(), 0.01, taus_p4->at(1)->Eta()-0.25, taus_p4->at(1)->Eta()+0.25, ierflg);
-    gM->mnparm(5, "v2phi", taus_p4->at(1)->Phi(), 0.01, taus_p4->at(1)->Phi()-0.25, taus_p4->at(1)->Phi()+0.25, ierflg);
-
-    taus_v[0] = *taus_p4->at(0);
-    taus_v[1] = *taus_p4->at(1);
-    mets.SetXYZ(met_p4->Px(), met_p4->Py(), met_sumet);
-    gM->SetObjectFit( & forFit);
-
-    arglist[0] = 1000;
-    arglist[1] = 0;
-    double val[6],err[6];
-    gM->mnexcm("MIGRADE", arglist, 2, ierflg);
-    for (int i = 0; i < 6; ++i) gM->GetParameter(i, val[i], err[i]);
-
-    TLorentzVector tauv1_v,tauv2_v;
-    tauv1_v.SetPtEtaPhiM(val[0], val[1], val[2], 0);
-    tauv2_v.SetPtEtaPhiM(val[3], val[4], val[5], 0);
-    if(jets_p4->size()>=3){
-      t1mass = (*(jets_p4->at(ljet_indice[1])) + *(jets_p4->at(ljet_indice[2])) + *(bjets_p4->at(0))).M();
-      wmass = (*(jets_p4->at(ljet_indice[1])) + *(jets_p4->at(ljet_indice[2]))).M();
-    }else{
-      t1mass = 0;
-      wmass = 0;
-    }
-    t2mass = (*(jets_p4->at(ljet_indice[0])) + *(taus_p4->at(0)) + *(taus_p4->at(1)) + tauv1_v + tauv2_v).M();
-    tautaumass = (*(taus_p4->at(0)) + *(taus_p4->at(1)) + tauv1_v + tauv2_v).M();
-
-    x1fit = 1 - tauv1_v.E() / (*(taus_p4->at(0)) + tauv1_v).E();
-    x2fit = 1 - tauv2_v.E() / (*(taus_p4->at(1)) + tauv2_v).E();
-
     TString tauorigin;
-
     if (sample.Contains("data")) {
       tauorigin = "data";
       sample = "data";
+      tauabspdg = 0;
     } else {
-      int tauabspdg = (abs(taus_matched_pdgId->at(0)) == 15 && abs(taus_matched_pdgId->at(1)) == 15) ? 15 :
-                      (
-                        abs(taus_matched_pdgId->at(0)) == 15 ? abs(taus_matched_pdgId->at(1)) : abs(taus_matched_pdgId->at(0))
-                      );
+      if(reduce == 2){
+        tauabspdg = (abs(taus_matched_pdgId->at(0)) == 15 && abs(taus_matched_pdgId->at(1)) == 15) ? 15 :
+          (
+            abs(taus_matched_pdgId->at(0)) == 15 ? abs(taus_matched_pdgId->at(1)) : abs(taus_matched_pdgId->at(0))
+          );
+      }
       if (tauabspdg == 15) tauorigin = sample + "_real";
       else if (tauabspdg == 13 || tauabspdg == 11) tauorigin = sample + "_lep";
       else if (tauabspdg == 5) tauorigin = sample + "_b";
@@ -366,7 +385,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       else if (tauabspdg <= 3 && tauabspdg >=1) tauorigin = sample + "_j";
       else tauorigin = sample + "_nomatch";
     }
-
+    if(debug) printf("fill hist\n");
     for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
       if (iter->second == 1) {
         float savewt = 1;
@@ -422,7 +441,13 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           }
         }
         if (dohist) {
-          fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, taus_p4->at(1)->Pt() > 35, taus_b_tagged->at(1));
+          if(!isData)
+            for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
+            {
+              fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_pt_1 > 35, taus_b_tagged->at(1),iNP);
+            }
+          else
+              fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_pt_1 > 35, taus_b_tagged->at(1),0);
         }
         if(reduce == 1 && !isData) weight = savewt;
       }
@@ -436,12 +461,13 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   printf("cutflow: %f, %f, %f, %f\n", cutflow[0],cutflow[1],cutflow[2],cutflow[3]);
 }
 
-void hadhadtree::fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag){
+void hadhadtree::fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag, int iNP){
+  //if(taubtag) {
+  //  if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[1]).Data(), sample.Data());
+  //  fcnc_plots[iNP]->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[1]);
+  //}else{
   if(taubtag) {
-    if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[1]).Data(), sample.Data());
-    fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[1]);
-  }else{
-    fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[1]);
+    fcnc_plots[iNP]->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[1]);
   }
 }
 
@@ -579,9 +605,9 @@ void hadhadtree::definetree(TTree * tree) {
     tree->Branch("met_p4", &met_p4);
     tree->Branch("met_sumet", &met_sumet);
     tree->Branch("taus_id",taus_id);
-    tree->Branch("taus_b_tagged",taus_b_tagged);
+    tree->Branch("taus_b_tagged",&taus_b_tagged);
     tree->Branch("taus_decay_mode",taus_decay_mode);
-    tree->Branch("taus_n_charged_tracks",taus_n_charged_tracks);
+    tree->Branch("taus_n_charged_tracks",&taus_n_charged_tracks);
     tree->Branch("taus_p4",taus_p4);
     tree->Branch("taus_q",taus_q);
     tree->Branch("jets_fjvt",jets_fjvt);
@@ -609,6 +635,9 @@ void hadhadtree::definetree(TTree * tree) {
     return;
   }
   if(reduce == 2){
+    tree->Branch("taus_b_tagged",&taus_b_tagged);
+    tree->Branch("taus_n_charged_tracks",&taus_n_charged_tracks);
+    tree->Branch("tauabspdg",&tauabspdg);
     tree->Branch("tau_pt_0",&tau_pt_0);
     tree->Branch("tau_pt_1",&tau_pt_1);
     tree->Branch("etmiss",&etmiss);
@@ -837,7 +866,30 @@ void hadhadtree::Init(TTree *tree)
   // (once per file to be processed).
 
   // Set object pointer
-
+  if(reduce == 2){
+   tree->SetBranchAddress("taus_b_tagged",&taus_b_tagged);
+   tree->SetBranchAddress("taus_n_charged_tracks",&taus_n_charged_tracks);
+   tree->SetBranchAddress("tauabspdg",&tauabspdg);
+   tree->SetBranchAddress("eventNumber", &event_number);
+   tree->SetBranchAddress("runNumber", &run_number);
+   tree->SetBranchAddress("weights", &weights);
+   tree->SetBranchAddress("tauabspdg", &tauabspdg);
+   tree->SetBranchAddress("tau_pt_0", &tau_pt_0);
+   tree->SetBranchAddress("tau_pt_1", &tau_pt_1);
+   tree->SetBranchAddress("etmiss", &etmiss);
+   tree->SetBranchAddress("dphitauetmiss", &dphitauetmiss);
+   tree->SetBranchAddress("ttvismass", &ttvismass);
+   tree->SetBranchAddress("drtautau", &drtautau);
+   tree->SetBranchAddress("drtaujmin", &drtaujmin);
+   tree->SetBranchAddress("phicent", &phicent);
+   tree->SetBranchAddress("t1mass", &t1mass);
+   tree->SetBranchAddress("tautaumass", &tautaumass);
+   tree->SetBranchAddress("wmass", &wmass);
+   tree->SetBranchAddress("t2mass", &t2mass);
+   tree->SetBranchAddress("x1fit", &x1fit);
+   tree->SetBranchAddress("x2fit", &x2fit);
+   return;
+  }
   if(reduce == 1) {
     weights = 0;
     bjets_fjvt = 0;

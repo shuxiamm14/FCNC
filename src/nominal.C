@@ -43,7 +43,6 @@ nominal::nominal(){
   t2mass    = 0;
   tautaumass = 0;
   outputtreefile = 0;
-  fcnc_plots = 0;
   fake_plots = 0;
   fake_notau_plots = 0;
   TLorentzVector v1;
@@ -75,7 +74,7 @@ void nominal::readTFmeanstd(TString filename){
 
 nominal::~nominal(){
   deletepointer(fake_plots);
-  deletepointer(fcnc_plots);
+  for(auto& ele : fcnc_plots) deletepointer(ele);
   deletepointer(fake_notau_plots);
   deletepointer(gM);
   deletepointer(neutrino_pt  );
@@ -90,11 +89,12 @@ void nominal::plot(){
     fake_plots->write();
     deletepointer(fake_plots);
   }
-  if(fcnc_plots) {
-    if(debug) printf("write fcnc plots\n");
-    fcnc_plots->write();
-    deletepointer(fcnc_plots);
-  }
+  for(auto& ele : fcnc_plots) 
+    if(ele) {
+      if(debug) printf("write fcnc plots\n");
+      ele->write();
+      deletepointer(ele);
+    }
   if(fake_notau_plots) {
     if(debug) printf("write fake_notau_plots\n");
     fake_notau_plots->write();
@@ -312,12 +312,12 @@ vector<int> nominal::findwpair(vector<TLorentzVector> lightjets, int cjet){
   return output;
 }
 
-void nominal::fill_fcnc(TString region, int nprong, TString sample, int iptbin, float taubtag){
+void nominal::fill_fcnc(TString region, int nprong, TString sample, int iptbin, float taubtag, int iNP){
   for (int i = 0; i < 4; ++i){
     if(taubtag>btagwpCut[i]) {
-      fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
+      fcnc_plots[iNP]->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
     }else{
-      fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
+      fcnc_plots[iNP]->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
     }
   }
 }

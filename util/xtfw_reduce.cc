@@ -20,6 +20,29 @@ int main(int argc, char const *argv[])
 	  	return 1;
 	  }
 	}
+
+	vector<TString> regions;
+	regions.push_back("reg2mtau1b2jss");
+	//regions.push_back("reg1mtau1ltau1b2jss");
+	//regions.push_back("reg2ltau1b2jss");
+	//regions.push_back("reg2ttau1b2jss");
+	//regions.push_back("reg1ttau1mtau1b2jss");
+	regions.push_back("reg2mtau1b3jss");
+	//regions.push_back("reg1mtau1ltau1b3jss");
+	//regions.push_back("reg2ltau1b3jss");
+	//regions.push_back("reg2ttau1b3jss");
+	//regions.push_back("reg1ttau1mtau1b3jss");
+	regions.push_back("reg2mtau1b2jos");
+	//regions.push_back("reg1mtau1ltau1b2jos");
+	//regions.push_back("reg2ltau1b2jos");
+	regions.push_back("reg2mtau1b3jos");
+	//regions.push_back("reg1mtau1ltau1b3jos");
+	//regions.push_back("reg2ltau1b3jos");
+	//regions.push_back("reg2ttau1b2jos");
+	//regions.push_back("reg1ttau1mtau1b2jos");
+	//regions.push_back("reg2ttau1b3jos");
+	//regions.push_back("reg1ttau1mtau1b3jos");
+
 	TString inputconfig = argv[1];
 	inputconfig.Remove(inputconfig.Sizeof()-5,4); //remove ".txt"
 	float luminosity = 0;
@@ -54,6 +77,7 @@ int main(int argc, char const *argv[])
 	analysis->reduce = 1;
 	analysis->debug = debug;
 	analysis->writetree = 0;
+	analysis->fcnc_regions = regions;
 	if(doplot) analysis->init_hist(inputconfig);
 	analysis->init_sample(inputconfig,inputconfig);
 	TFile cutflowfile(inputconfig + "_cutflow.root","recreate");

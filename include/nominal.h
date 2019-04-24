@@ -20,10 +20,29 @@ public :
   //  {0.818782, 0.614790, 5.756198, 0.489836}   //3prong >35
   //};
   const double fakeSFs[2][4] = {
-    {0.814329,1.013681,1.297911,0.958773},  // <35
-    {1.060928,0.538011,2.654738,0.955523},  // >35
+    {1.060928,0.538011,2.654738,0.955523},  // <35
+    {0.814329,1.013681,1.297911,0.958773}  // >35
+  };
+  const double fakeSFsNPbase[2][4][4] = {
+    {
+      {0.298063,0.940926,-0.159135,0.022190},
+      {0.275509,0.073081,0.956598,0.060620},
+      {0.201924,-0.039721,0.006891,-0.978571},
+      {0.891336,-0.328237,-0.244028,0.195528}
+    },
+    {
+      {-0.874323,0.469344,-0.121289,0.023737},
+      {-0.241613,-0.203613,0.948367,-0.027652},
+      {-0.075295,-0.108700,-0.071347,-0.988648},
+      {-0.414142,-0.852316,-0.284250,0.145765}
+    }
+  };
+  const double fakeSFsNPsSigma2[2][4]{
+    {0.000501,0.001053,0.008590,0.136083},
+    {0.000436,0.000705,0.007718,0.250730}
   };
   static int GeV;
+  vector<int> plotNPs;
   bool dofcnc;
   Int_t ierflg;
   bool dumptruth;
@@ -54,7 +73,7 @@ public :
   float t2mass  ;
   float tautaumass;
   TFile *outputtreefile;
-  histSaver *fcnc_plots;
+  vector<histSaver*> fcnc_plots;
   histSaver *fake_plots;
   histSaver *fake_notau_plots;
 
@@ -89,13 +108,14 @@ public :
   void finalise_sample();
   static  void    fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
   void fill_fake(TString region, int nprong, TString sample, int ptbin, float taubtag);
-  void fill_fcnc(TString region, int nprong, TString sample, int ptbin, float taubtag);
+  void fill_fcnc(TString region, int nprong, TString sample, int ptbin, float taubtag, int iNP);
   void fill_notau(TString region, TString sample);
   bool SelectTLepid(int id);
   void defGeV(int _GeV);
   static void printv(TLorentzVector v);
   int leading_b = -1 ;
   int leading_ljet = -1 ;
+  vector<double>           *weights;
   vector<int>    ljet_indice;
   vector<float>  *neutrino_pt;
   vector<float>  *neutrino_eta;
@@ -112,14 +132,14 @@ public :
   TVector3 mets;
   TVector3 truth_mets;
   TList forFit;
-  Double_t      t2vismass;
-  Double_t      t1vismass;
-  Double_t      ttvismass;
-  Double_t      tautauvispt;
-  Double_t      weight;
-  Double_t      fakeSF;
-  Double_t      x1fit;
-  Double_t      x2fit;
-  Double_t      drtaujmin;
-  Double_t      mtaujmin;
+  float      t2vismass;
+  float      t1vismass;
+  float      ttvismass;
+  float      tautauvispt;
+  float      weight;
+  float      fakeSF;
+  float      x1fit;
+  float      x2fit;
+  float      drtaujmin;
+  float      mtaujmin;
 };
