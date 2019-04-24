@@ -194,13 +194,11 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         outputtree[fcnc_regions[i]] = new TTree(fcnc_regions[i],fcnc_regions[i]);
         if(reduce<2 || !fcnc) definetree(outputtree[fcnc_regions[i]]);
       }
-      if(reduce >= 1 || reduce == 0){
+      if(reduce==2 ){
         outputtree[fcnc_regions[i]]->Branch("t1mass",&t1mass);
         outputtree[fcnc_regions[i]]->Branch("tautaumass",&tautaumass);
         outputtree[fcnc_regions[i]]->Branch("wmass",&wmass);
         outputtree[fcnc_regions[i]]->Branch("t2mass",&t2mass);
-      }
-      if(reduce==2 || reduce == 0){
         outputtree[fcnc_regions[i]]->Branch("tau_truthType_0",&tau_truthType_0);
         outputtree[fcnc_regions[i]]->Branch("tau_truthType_1",&tau_truthType_1);
         outputtree[fcnc_regions[i]]->Branch("tau_charge_0",&tau_charge_0);
@@ -467,7 +465,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
     if(weight > 3) printf("weight > 3, drop the event\n");
     if(reduce <= 2 && nTaus_OR_Pt25 &&  mc_channel_number > 0 ) weight*=tightTau?tauSFTight:tauSFLoose;
     if(  mc_channel_number <= 0 ) weight = 1;
-    if (reduce <= 2) {
+    if (reduce == 2) {
       if (reduce != 1){
         if (onelep_type || dilep_type) {
           lep_v.SetPtEtaPhiE(lep_Pt_0, lep_Eta_0, lep_Phi_0, lep_E_0);
@@ -1175,13 +1173,6 @@ void tthmltree::Init(TTree*tree) {
   if (!tree) return;
   printf("init tree: %s \nreduce scheme: %d\n", tree->GetName(), reduce);
   tree->SetMakeClass(1);
-  if (reduce >= 1 && fcnc) {
-
-    tree->SetBranchAddress("t1mass", & t1mass);
-    tree->SetBranchAddress("tautaumass", & tautaumass);
-    tree->SetBranchAddress("wmass", & wmass);
-    tree->SetBranchAddress("t2mass", & t2mass);
-  }
   if (reduce >= 2 && fcnc) {
     tree->SetBranchAddress("neutrino_pt", & neutrino_pt);
     tree->SetBranchAddress("neutrino_eta", & neutrino_eta);
