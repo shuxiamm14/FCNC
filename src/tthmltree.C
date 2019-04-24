@@ -87,11 +87,6 @@ void tthmltree::init_hist(TString outputfilename){
   //init histSaver here:
   dohist = 1;
 
-  fcnc_regions.push_back("reg1l2tau1bnj_ss");
-  fcnc_regions.push_back("reg1l2tau1bnj_os");
-  fcnc_regions.push_back("reg1l1tau1b2j");
-  fcnc_regions.push_back("reg1l1tau1b3j");
-
   fcnc_nregions = fcnc_regions.size();
 
   TString nprong[] = {"1prong","3prong"};

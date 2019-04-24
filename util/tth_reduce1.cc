@@ -14,10 +14,16 @@ int main(int argc, char const *argv[])
 	char inputline[100];
 
 	tthmltree *analysis = new tthmltree();
-        analysis->dofcnc = 1;
+
+	analysis->fcnc_regions.push_back("reg1l2tau1bnj_ss");
+	analysis->fcnc_regions.push_back("reg1l2tau1bnj_os");
+	analysis->fcnc_regions.push_back("reg1l1tau1b2j");
+	analysis->fcnc_regions.push_back("reg1l1tau1b3j");
+
+	analysis->dofcnc = 1;
 	analysis->reduce = 1;
 	analysis->debug = 0;
-        analysis->dumptruth = 0;
+	analysis->dumptruth = 0;
 	fn.getline(inputline,200);
 	char filename[100];
 	char cate[100];
