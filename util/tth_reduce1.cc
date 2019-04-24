@@ -36,7 +36,7 @@ int main(int argc, char const *argv[])
 	printf("reading list: %s as %s with name %s\n", (prefix + "/datafiles/tthML/" + filename + ".txt").Data(), cate, title);
 	ifstream list(prefix + "/datafiles/tthML/" + filename + ".txt");
 	analysis->version = version;
-	analysis->init_hist(cate);
+//	analysis->init_hist(cate);
 	analysis->init_sample(cate, title);
 	while(!list.eof()){
 		list.getline(inputline,200);
