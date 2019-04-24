@@ -3,7 +3,7 @@
 int main(int argc, char const *argv[])
 {
 
-	bool doplot = 1;
+	bool doplot = 0;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	ifstream fn(argv[1]);
@@ -14,10 +14,16 @@ int main(int argc, char const *argv[])
 	char inputline[100];
 
 	tthmltree *analysis = new tthmltree();
-        analysis->dofcnc = 1;
+
+	analysis->fcnc_regions.push_back("reg1l2tau1bnj_ss");
+	analysis->fcnc_regions.push_back("reg1l2tau1bnj_os");
+	analysis->fcnc_regions.push_back("reg1l1tau1b2j");
+	analysis->fcnc_regions.push_back("reg1l1tau1b3j");
+
+	analysis->dofcnc = 1;
 	analysis->reduce = 1;
 	analysis->debug = 0;
-        analysis->dumptruth = 0;
+	analysis->dumptruth = 0;
 	fn.getline(inputline,200);
 	char filename[100];
 	char cate[100];
@@ -30,7 +36,7 @@ int main(int argc, char const *argv[])
 	printf("reading list: %s as %s with name %s\n", (prefix + "/datafiles/tthML/" + filename + ".txt").Data(), cate, title);
 	ifstream list(prefix + "/datafiles/tthML/" + filename + ".txt");
 	analysis->version = version;
-	analysis->init_hist(cate);
+//	analysis->init_hist(cate);
 	analysis->init_sample(cate, title);
 	while(!list.eof()){
 		list.getline(inputline,200);
