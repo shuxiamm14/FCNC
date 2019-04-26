@@ -85,8 +85,9 @@ void hadhadtree::init_hist(TString histfilename){
     reader->AddVariable("x1fit",&x1fit);
     reader->AddVariable("x2fit",&x2fit);
     for(auto region : fcnc_regions){
-      reader->BookMVA( "BDTG_1", "dataset/weights/" + region + "TMVAClassification_1_BDTG.weights.xml" );
-      reader->BookMVA( "BDTG_2", "dataset/weights/" + region + "TMVAClassification_2_BDTG.weights.xml" );
+      if(region.Contains("ss")) continue;
+      reader->BookMVA( "BDTG_1" + region, "dataset/weights/" + region + "TMVAClassification_1_BDTG.weights.xml" );
+      reader->BookMVA( "BDTG_2" + region, "dataset/weights/" + region + "TMVAClassification_2_BDTG.weights.xml" );
     }
   }
   for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
@@ -363,7 +364,8 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     }
     if(reduce == 3){
       if(debug) printf("eval BDTG\n");
-      BDTG = reader->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2));
+        if(ifregions["reg2mtau1b3jos"] || ifregions["reg2mtau1b3jss"]) BDTG = reader->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2) + "reg2mtau1b3jos");
+        if(ifregions["reg2mtau1b2jos"] || ifregions["reg2mtau1b2jss"]) BDTG = reader->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2) + "reg2mtau1b2jos");
     }
     TString tauorigin;
     if (sample.Contains("data")) {
@@ -388,6 +390,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     if(debug) printf("fill hist\n");
     for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
       if (iter->second == 1) {
+        if(debug) printf("fill region: %s\n", iter->first.Data());
         float savewt = 1;
         if(reduce == 1){
           weights->clear();
@@ -466,7 +469,7 @@ void hadhadtree::fill_fcnc(TString region, int nprong, TString sample, int iptbi
   //  if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[1]).Data(), sample.Data());
   //  fcnc_plots[iNP]->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[1]);
   //}else{
-  if(taubtag) {
+  if(!taubtag) {
     fcnc_plots[iNP]->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[1]);
   }
 }

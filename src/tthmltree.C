@@ -401,8 +401,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       if(SLtrig_match && onelep_type && (!tightLep || SelectTLepid(0)) && nTaus_OR_Pt25 && (tau_passEleBDT_0 && tau_passMuonOLR_0)){
         ifregions["reg1l1tau1b2j"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
         ifregions["reg1l1tau1b3j"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
-        ifregions["reg1l2tau1bnj_os"] = nJets_OR_T >= 2 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_0 && tau_passMuonOLR_0) && tau_charge_0*tau_charge_1 < 0;
-        ifregions["reg1l2tau1bnj_ss"] = nJets_OR_T >= 2 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_0 && tau_passMuonOLR_0) && tau_charge_0*tau_charge_1 > 0;
+        ifregions["reg1l2tau1bnj_os"] = nJets_OR_T >= 2 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 < 0;
+        ifregions["reg1l2tau1bnj_ss"] = nJets_OR_T >= 2 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 > 0;
         if (ifregions["reg1l1tau1b2j"] || ifregions["reg1l1tau1b3j"] || ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"])
           triggeredfcnc = 1;
         ifregions["reg1l2b2j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 0;
