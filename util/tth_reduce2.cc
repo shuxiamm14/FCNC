@@ -26,12 +26,12 @@ int main(int argc, char const *argv[])
 	tthmltree *analysis = new tthmltree();
 	analysis->plotNPs.push_back(0);
 	analysis->plotNPs.push_back(1);
-	analysis->debug = 0;
+	analysis->debug = 1;
 	analysis->applyfakeSF = 1;
 	analysis->writetree = 0;
 	analysis->fcnc = 1;
 	analysis->reduce = 2;
-	analysis->dumptruth = 0;
+	analysis->dumptruth = 1;
 	//analysis->readTFmeanstd("meanstddevs.txt");
 
 	fn.getline(inputline,200);
