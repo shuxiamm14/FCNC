@@ -2,6 +2,49 @@
 
 int nominal::GeV = 0;
 
+void nominal::initMVA(TString fcnc_region){
+
+  doBDT = 1;
+
+  reader[fcnc_region] = new TMVA::Reader( "!Color:!Silent" );
+
+  //common
+  reader[fcnc_region]->AddVariable("tau_pt_0",&tau_pt_0);
+  reader[fcnc_region]->AddVariable("tau_pt_1",&tau_pt_1);
+  reader[fcnc_region]->AddVariable("etmiss",&etmiss);
+  reader[fcnc_region]->AddVariable("ttvismass",&ttvismass);
+  reader[fcnc_region]->AddVariable("drtautau",&drtautau);
+  if(fcnc_region.Contains("1l2tau1bnj")){
+    //1lep + 2tau
+    reader[fcnc_region]->AddVariable("t1vismass", &t1vismass);
+    reader[fcnc_region]->AddVariable("mtaujmin", &mtaujmin);
+
+    //reader[fcnc_region]->AddVariable("tau_pt_ss", &tau_pt_ss);
+    //reader[fcnc_region]->AddVariable("tau_pt_os", &tau_pt_os);
+    reader[fcnc_region]->AddVariable("drltau", &drltau);
+    reader[fcnc_region]->AddVariable("etamax", &etamax);
+    reader[fcnc_region]->AddVariable("mtw", &mtw);
+    reader[fcnc_region]->AddVariable("drlbditau", &drlbditau);
+    reader[fcnc_region]->AddVariable("tautauvispt", &tautauvispt);
+  }else if(fcnc_region.Contains("1l1tau1b")){
+    //lephad + hadhad
+    reader[fcnc_region]->AddVariable("dphitauetmiss",&dphitauetmiss);
+    reader[fcnc_region]->AddVariable("phicent",&phicent);
+    reader[fcnc_region]->AddVariable("drtaujmin",&drtaujmin);
+    reader[fcnc_region]->AddVariable("tautaumass",&tautaumass);
+    reader[fcnc_region]->AddVariable("t2mass",&t2mass);
+    reader[fcnc_region]->AddVariable("x1fit",&x1fit);
+    reader[fcnc_region]->AddVariable("x2fit",&x2fit);
+    //4 jet only
+    if(fcnc_region.Contains("3j")){
+      reader[fcnc_region]->AddVariable("t1mass",&t1mass);
+      reader[fcnc_region]->AddVariable("wmass",&wmass);
+    }
+  }
+  reader[fcnc_region]->BookMVA( "BDTG_1" , "dataset/weights/" + fcnc_region + "TMVAClassification_1_BDTG.weights.xml" );
+  reader[fcnc_region]->BookMVA( "BDTG_2" , "dataset/weights/" + fcnc_region + "TMVAClassification_2_BDTG.weights.xml" );
+}
+
 void nominal::fill_fake(TString region, int nprong, TString sample, int iptbin, float taubtag){
   for (int i = 0; i < 4; ++i){
     if(taubtag>btagwpCut[i]) {
@@ -12,7 +55,48 @@ void nominal::fill_fake(TString region, int nprong, TString sample, int iptbin, 
   }
 }
 
+Double_t nominal::phi_centrality(Double_t aPhi, Double_t bPhi, Double_t cPhi) {
+//     Calculate the phi centrality score for an object to be between two other objects in phi
+//     Returns sqrt(2) if in dead center
+//     Returns smaller than 1 if an object is not between
+//     a and b are the bounds, c is the vector to be tested
+
+  Double_t A = sin(cPhi - aPhi)/sin(bPhi - aPhi);
+  Double_t B = sin(bPhi - cPhi)/sin(bPhi - aPhi);
+
+  return (A+B)/sqrt(A*A + B*B);
+}
+
+
+
+RooRealVar  nominal::_dR_("_dR_","",0,0.8);
+RooRealVar  nominal::_m1_("_m1_","",0.06);
+RooRealVar  nominal::_w1_("_w1_","",0.03);
+RooGaussian nominal::_gaus_("_gaus_","",_dR_,_m1_,_w1_);
+RooRealVar  nominal::_m2_("_m2_","",0.1);
+RooRealVar  nominal::_w2_("_w2_","",0.1);
+RooLandau   nominal::_land_("_land_","",_dR_,_m2_,_w2_);
+RooRealVar  nominal::_fr1_("_fr1_","",0.56);
+RooAddPdf   nominal::_pdf_("_pdf_","",_gaus_,_land_,_fr1_);
+
+Float_t nominal::getHadTauProb(Float_t _dR, Float_t _p) {
+  if(_dR>=_dR_.getMax()) return 0;
+  if(_p<25) _p = 25;
+  Float_t m1 = 4.56088e+00/(_p+2.30554e-02*_p*_p)+2.00545e-02;
+  Float_t w1 = 2.56901e+01/(_p*_p)+9.63415e-03;
+  Float_t m2 = 5.70742e+00/(_p+2.07263e-02*_p*_p)+4.32004e-02;
+  Float_t w2 = 4.34997e+00/pow(_p,1.5)+7.31908e-03;
+  _m1_.setVal(m1);
+  _w1_.setVal(w1);
+  _m2_.setVal(m2);
+  _w2_.setVal(w2);
+  _dR_.setVal(_dR);
+  return _pdf_.getVal(_dR_);
+}
+
+
 nominal::nominal(){
+  doBDT = 0;
   dofcnc = 0;
   ierflg = 0;
   dumptruth = 0;

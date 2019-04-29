@@ -6,11 +6,6 @@
 #include <TChain.h>
 #include <TFile.h>
 
-#include "RooRealVar.h"
-#include "RooGaussian.h"
-#include "RooLandau.h"
-#include "RooAddPdf.h"
-
 // Header file for the classes stored in the TTree if any.
 #include "TLorentzVector.h"
 #include "TVector3.h"
@@ -33,25 +28,10 @@ public :
    TMinuit* initgM();
    void init_reduce1();
    void init_reduce2();
-   static Float_t getHadTauProb(Float_t _dR, Float_t _p);
-   TMVA::Reader *reader;
-   double BDTG;
    float tau_pt_0;
    float tau_pt_1;
    bool isData = 0;
-   float etmiss = 0;
-   float dphitauetmiss = 0;
-   float phicent = 0;
    int tauabspdg = 0;
-   static RooRealVar  _dR_;
-   static RooRealVar  _m1_;
-   static RooRealVar  _w1_;
-   static RooGaussian _gaus_;
-   static RooRealVar  _m2_;
-   static RooRealVar  _w2_;
-   static RooLandau   _land_;
-   static RooRealVar  _fr1_;
-   static RooAddPdf   _pdf_;
 
    vector<Int_t>           *taus_id = 0;
    vector<Int_t>           *taus_b_tagged = 0;

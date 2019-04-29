@@ -31,6 +31,11 @@ int main(int argc, char const *argv[])
   	tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",5);
   	tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
   	tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
+
+  	tau_plots->add("E^{T}_{miss}","etmiss","GeV",5);
+    tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
+    tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
+
   	tau_plots->blinding = 30;
 	TString regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
 	int nregions = 3;
@@ -48,7 +53,7 @@ int main(int argc, char const *argv[])
 	tau_plots->muteregion("35_veto");
 	tau_plots->muteregion("prong");
 	TString samples[] = {"Other", "Vjets", "diboson", "ttH", "ttV", "ttbar","fcnc_ch"};
-	double norm[] = {1,1,1,1,1,1,5};
+	double norm[] = {1,1,1,1,1,1,50};
 	TString sampletitle[] = {"Other", "V+jets", "Diboson", "#bar{t}tH", "#bar{t}tV", "#bar{t}t", "#bar{t}t#rightarrow bWqH"};
 	stringstream ss;
 	ss<<"(BR=" << 0.2*norm[6] << "%)";

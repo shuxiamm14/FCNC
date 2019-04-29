@@ -24,14 +24,15 @@ int main(int argc, char const *argv[])
 	//regions.push_back("reg1l2b2j");
 
 	tthmltree *analysis = new tthmltree();
+	analysis->fcnc_regions = regions;
 	analysis->plotNPs.push_back(0);
 	analysis->plotNPs.push_back(1);
-	analysis->debug = 1;
+	analysis->debug = 0;
 	analysis->applyfakeSF = 1;
-	analysis->writetree = 0;
+	analysis->writetree = 1;
 	analysis->fcnc = 1;
 	analysis->reduce = 2;
-	analysis->dumptruth = 1;
+	analysis->dumptruth = 0;
 	//analysis->readTFmeanstd("meanstddevs.txt");
 
 	fn.getline(inputline,200);
@@ -39,6 +40,10 @@ int main(int argc, char const *argv[])
 	char title[100];
 	int version;
 	sscanf(inputline,"%d %s %s",&version,cate,title);
+	if(analysis->reduce == 3) {
+		analysis->writetree = 0;
+		doplot = 1;
+	}
 	if(doplot) analysis->init_hist(cate);
 	analysis->version = version;
 	analysis->init_sample(cate, title);

@@ -2,6 +2,13 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include "histSaver.h"
+
+#include "RooRealVar.h"
+#include "RooGaussian.h"
+#include "RooLandau.h"
+#include "RooAddPdf.h"
+
+
 // Header file for the classes stored in the TTree if any.
 #include <vector>
 TMinuit* gM = 0;
@@ -41,6 +48,19 @@ public :
     {0.000501,0.001053,0.008590,0.136083},
     {0.000436,0.000705,0.007718,0.250730}
   };
+  
+  map<TString, TMVA::Reader*> reader;
+
+  static RooRealVar  _dR_;
+  static RooRealVar  _m1_;
+  static RooRealVar  _w1_;
+  static RooGaussian _gaus_;
+  static RooRealVar  _m2_;
+  static RooRealVar  _w2_;
+  static RooLandau   _land_;
+  static RooRealVar  _fr1_;
+  static RooAddPdf   _pdf_;
+
   static int GeV;
   vector<int> plotNPs;
   bool dofcnc;
@@ -50,6 +70,8 @@ public :
   double fcncmatched;
   double leptonicw;
   bool fcnc;
+  bool doBDT;
+  double BDTG;
   int debug;
   bool dosys;
   int reduce;
@@ -72,6 +94,10 @@ public :
   float wmass   ;
   float t2mass  ;
   float tautaumass;
+  float etmiss = 0;
+  float dphitauetmiss = 0;
+  float phicent = 0;
+
   TFile *outputtreefile;
   vector<histSaver*> fcnc_plots;
   histSaver *fake_plots;
@@ -97,6 +123,7 @@ public :
   map<TString, TTree*> outputtree;
   void readTFmeanstd(TString filename);
   TMinuit* initgM();
+  void initMVA(TString fcnc_region);
   void dumpTruth(int part);
   TLorentzVector vectorPtEtaPhiE(vector<float> vec);
   virtual void    Init(TTree *tree){};
@@ -104,7 +131,8 @@ public :
   virtual vector<int> findcjet(TString channel, vector<TLorentzVector> ljet, TLorentzVector bjet, TLorentzVector lepton, vector<TLorentzVector> taus);
   virtual vector<int> findcjetML(TString channel, vector<TLorentzVector> ljet, TLorentzVector bjet, TLorentzVector lepton, vector<TLorentzVector> taus, int part);
   vector<int> findwpair(vector<TLorentzVector> lightjets, int cjet);
-
+  static Float_t getHadTauProb(Float_t _dR, Float_t _p);
+  Double_t phi_centrality(Double_t aPhi, Double_t bPhi, Double_t cPhi);
   void finalise_sample();
   static  void    fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
   void fill_fake(TString region, int nprong, TString sample, int ptbin, float taubtag);
@@ -142,4 +170,6 @@ public :
   float      x2fit;
   float      drtaujmin;
   float      mtaujmin;
+  float      tau_pt_0;
+  float      tau_pt_1;
 };

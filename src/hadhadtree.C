@@ -6,18 +6,6 @@
 #include <TCanvas.h>
 #include "fcnc_include.h"
 
-Double_t phi_centrality(Double_t aPhi, Double_t bPhi, Double_t cPhi) {
-//     Calculate the phi centrality score for an object to be between two other objects in phi
-//     Returns sqrt(2) if in dead center
-//     Returns smaller than 1 if an object is not between
-//     a and b are the bounds, c is the vector to be tested
-
-  Double_t A = sin(cPhi - aPhi)/sin(bPhi - aPhi);
-  Double_t B = sin(bPhi - cPhi)/sin(bPhi - aPhi);
-
-  return (A+B)/sqrt(A*A + B*B);
-}
-
 
 hadhadtree::hadhadtree() : nominal::nominal(){
   defGeV(1);
@@ -69,26 +57,8 @@ void hadhadtree::init_hist(TString histfilename){
   dohist = 1;
   TString nprong[] = {"1prong","3prong"};
   if(reduce == 3){
-    reader = new TMVA::Reader( "!Color:!Silent" );
-    reader->AddVariable("tau_pt_0",&tau_pt_0);
-    reader->AddVariable("tau_pt_1",&tau_pt_1);
-    reader->AddVariable("etmiss",&etmiss);
-    reader->AddVariable("dphitauetmiss",&dphitauetmiss);
-    reader->AddVariable("ttvismass",&ttvismass);
-    reader->AddVariable("drtautau",&drtautau);
-    reader->AddVariable("drtaujmin",&drtaujmin);
-    reader->AddVariable("phicent",&phicent);
-    reader->AddVariable("t1mass",&t1mass);
-    reader->AddVariable("tautaumass",&tautaumass);
-    reader->AddVariable("wmass",&wmass);
-    reader->AddVariable("t2mass",&t2mass);
-    reader->AddVariable("x1fit",&x1fit);
-    reader->AddVariable("x2fit",&x2fit);
-    for(auto region : fcnc_regions){
-      if(region.Contains("ss")) continue;
-      reader->BookMVA( "BDTG_1" + region, "dataset/weights/" + region + "TMVAClassification_1_BDTG.weights.xml" );
-      reader->BookMVA( "BDTG_2" + region, "dataset/weights/" + region + "TMVAClassification_2_BDTG.weights.xml" );
-    }
+    initMVA("reg2mtau1b3jos");
+    initMVA("reg2mtau1b2jos");
   }
   for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
   {
@@ -96,7 +66,7 @@ void hadhadtree::init_hist(TString histfilename){
     fcnc_plots[iNP]->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV,  fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
     fcnc_plots[iNP]->set_weight(&weight);
     fcnc_plots[iNP]->debug = debug;
-    if(reduce == 3) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG",&BDTG,false,"");
+    if(reduce == 3 && doBDT) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG",&BDTG,false,"");
     fcnc_plots[iNP]->add(100,40.,140.,"p_{T,lead-#tau}","tau_0_pt",&tau_pt_0,false,"GeV");
     fcnc_plots[iNP]->add(100,30.,80.,"p_{T,sublead-#tau}","tau_1_pt",&tau_pt_1,false,"GeV");
     fcnc_plots[iNP]->add(100,15.,115.,"E^{T}_{miss}","etmiss",&etmiss,false,"GeV");
@@ -352,8 +322,8 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
         t1mass = (*(jets_p4->at(ljet_indice[1])) + *(jets_p4->at(ljet_indice[2])) + *(bjets_p4->at(0))).M();
         wmass = (*(jets_p4->at(ljet_indice[1])) + *(jets_p4->at(ljet_indice[2]))).M();
       }else{
-        t1mass = 0;
-        wmass = 0;
+        t1mass = (*(jets_p4->at(ljet_indice[0])) + *(jets_p4->at(ljet_indice[1])) + *(bjets_p4->at(0))).M();
+        wmass = (*(jets_p4->at(ljet_indice[0])) + *(jets_p4->at(ljet_indice[1]))).M();
       }
       t2mass = (*(jets_p4->at(ljet_indice[0])) + *(taus_p4->at(0)) + *(taus_p4->at(1)) + tauv1_v + tauv2_v).M();
       tautaumass = (*(taus_p4->at(0)) + *(taus_p4->at(1)) + tauv1_v + tauv2_v).M();
@@ -364,8 +334,8 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     }
     if(reduce == 3){
       if(debug) printf("eval BDTG\n");
-        if(ifregions["reg2mtau1b3jos"] || ifregions["reg2mtau1b3jss"]) BDTG = reader->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2) + "reg2mtau1b3jos");
-        if(ifregions["reg2mtau1b2jos"] || ifregions["reg2mtau1b2jss"]) BDTG = reader->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2) + "reg2mtau1b2jos");
+        if(ifregions["reg2mtau1b3jos"] || ifregions["reg2mtau1b3jss"]) BDTG = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2));
+        if(ifregions["reg2mtau1b2jos"] || ifregions["reg2mtau1b2jss"]) BDTG = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2));
     }
     TString tauorigin;
     if (sample.Contains("data")) {
@@ -474,31 +444,7 @@ void hadhadtree::fill_fcnc(TString region, int nprong, TString sample, int iptbi
   }
 }
 
-RooRealVar  hadhadtree::_dR_("_dR_","",0,0.8);
-RooRealVar  hadhadtree::_m1_("_m1_","",0.06);
-RooRealVar  hadhadtree::_w1_("_w1_","",0.03);
-RooGaussian hadhadtree::_gaus_("_gaus_","",_dR_,_m1_,_w1_);
-RooRealVar  hadhadtree::_m2_("_m2_","",0.1);
-RooRealVar  hadhadtree::_w2_("_w2_","",0.1);
-RooLandau   hadhadtree::_land_("_land_","",_dR_,_m2_,_w2_);
-RooRealVar  hadhadtree::_fr1_("_fr1_","",0.56);
-RooAddPdf   hadhadtree::_pdf_("_pdf_","",_gaus_,_land_,_fr1_);
-
 // input parameter _p in GeV (>25 GeV)
-Float_t hadhadtree::getHadTauProb(Float_t _dR, Float_t _p) {
-  if(_dR>=_dR_.getMax()) return 0;
-  if(_p<25) _p = 25;
-  Float_t m1 = 4.56088e+00/(_p+2.30554e-02*_p*_p)+2.00545e-02;
-  Float_t w1 = 2.56901e+01/(_p*_p)+9.63415e-03;
-  Float_t m2 = 5.70742e+00/(_p+2.07263e-02*_p*_p)+4.32004e-02;
-  Float_t w2 = 4.34997e+00/pow(_p,1.5)+7.31908e-03;
-  _m1_.setVal(m1);
-  _w1_.setVal(w1);
-  _m2_.setVal(m2);
-  _w2_.setVal(w2);
-  _dR_.setVal(_dR);
-  return _pdf_.getVal(_dR_);
-}
 
 void hadhadtree::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag) {
 
