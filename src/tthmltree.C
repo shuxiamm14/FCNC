@@ -8,8 +8,22 @@
 
 tthmltree::tthmltree():nominal::nominal(){
   defGeV(1000);
+  dofit1l2tau = 0;
   weights = new vector<double> ();
+  initialize_fit(TString(PACKAGE_DIR) + "/data/tau_pars.root");
 }
+
+TH2F* tthmltree::prob_20_40 = 0;
+TH2F* tthmltree::prob_40_60 = 0;
+TH2F* tthmltree::prob_60_80 = 0;
+TH2F* tthmltree::prob_80_100 = 0;
+TH2F* tthmltree::prob_100_120 = 0;
+TH2F* tthmltree::prob_120_140 = 0;
+TH2F* tthmltree::prob_140_160 = 0;
+TH2F* tthmltree::prob_160_200 = 0;
+TH2F* tthmltree::prob_200_300 = 0;
+TH2F* tthmltree::prob_300_400 = 0;
+TH2F* tthmltree::prob_400 = 0;
 
 TMinuit* tthmltree::initgM(){
 
@@ -25,22 +39,77 @@ TMinuit* tthmltree::initgM(){
   return gM;
 }
 
+
+//void tthmltree::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag) {
+//  if(!GeV) {
+//    printf("Error: nominal::GeV not initialised\n");
+//    exit(0);
+//  }
+//  TList *listforfit = (TList*) gM->GetObjectFit();
+//  if (!listforfit)
+//  {
+//    printf("list isnt found\n");
+//    exit(1);
+//  }
+//  enum lorentzv{tau1,tau2,bj,cj,lep};
+//  
+//  TLorentzVector vectors[5];
+//  TLorentzVector neutrino[3];
+//  for( int i = 0; i<5 ; ++i) {
+//    if (listforfit->At(i))
+//    {
+//      vectors[i] = *((TLorentzVector*)listforfit->At(i));
+//    }else{
+//      printf("i-th parameter is not found\n");
+//      exit(1);
+//    }
+//  }
+//  double met[3];
+//  if (listforfit->At(5)) {
+//    met[0] = ((TVector3*)listforfit->At(5))->x();
+//    met[1] = ((TVector3*)listforfit->At(5))->y();
+//    met[2] = ((TVector3*)listforfit->At(5))->z();
+//  }
+//  else { printf("met parameter is not found\n"); exit(1); }
+//
+//  neutrino[0].SetPtEtaPhiM(par[0]*vectors[tau1].Pt(),vectors[tau1].Eta(),vectors[tau1].Phi(),vectors[lep].Pt()==0?par[2]:0);
+//  neutrino[1].SetPtEtaPhiM(par[1]*vectors[tau2].Pt(),vectors[tau2].Eta(),vectors[tau2].Phi(),0);
+//  Float_t Hmass = (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]).M();
+//  Float_t met_resol = 13.1*GeV+0.50*sqrt(met[2]*GeV);
+//  Double_t chisq = 1e10;
+//
+//  if(vectors[lep].Pt()!=0){
+//    neutrino[2].SetPtEtaPhiM(par[2],par[3],par[4],0);
+//  
+//    TLorentzVector t1 = neutrino[2]+vectors[lep]+vectors[bj];
+//  
+//    Float_t t2mass= (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]+vectors[cj]).M();
+//    Float_t wmass = (vectors[lep] + neutrino[2]).M();
+//    Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px()+neutrino[2].Px();
+//    Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py()+neutrino[2].Py();
+//    Float_t pConstrain = (vectors[bj].Dot(vectors[lep])/100) + (vectors[bj].Dot(neutrino[2])/100);
+//    chisq =  pow((wmass-81*GeV)/10/GeV,2) + pow((t1.M()-172.5*GeV)/25/GeV,2) +pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2) + pow((Hmass-125*GeV)/10/GeV,2);// + pow((t2mass-172.5)/30,2);// + pow((pConstrain-110)/20,2);
+//  }else{
+//    Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px();
+//    Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py();
+//    chisq = pow((Hmass-125*GeV)/10*GeV,2) + pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2);
+//  }
+//  f = chisq;
+//}
+
 void tthmltree::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag) {
-  if(!GeV) {
-    printf("Error: nominal::GeV not initialised\n");
-    exit(0);
-  }
+
   TList *listforfit = (TList*) gM->GetObjectFit();
   if (!listforfit)
   {
     printf("list isnt found\n");
     exit(1);
   }
-  enum lorentzv{tau1,tau2,bj,cj,lep};
+  enum lorentzv{tau1,tau2};
   
-  TLorentzVector vectors[5];
-  TLorentzVector neutrino[3];
-  for( int i = 0; i<5 ; ++i) {
+  TLorentzVector vectors[2];
+  TLorentzVector neutrino[2];
+  for( int i = 0; i<2 ; ++i) {
     if (listforfit->At(i))
     {
       vectors[i] = *((TLorentzVector*)listforfit->At(i));
@@ -57,28 +126,25 @@ void tthmltree::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_
   }
   else { printf("met parameter is not found\n"); exit(1); }
 
-  neutrino[0].SetPtEtaPhiM(par[0]*vectors[tau1].Pt(),vectors[tau1].Eta(),vectors[tau1].Phi(),vectors[lep].Pt()==0?par[2]:0);
-  neutrino[1].SetPtEtaPhiM(par[1]*vectors[tau2].Pt(),vectors[tau2].Eta(),vectors[tau2].Phi(),0);
-  Float_t Hmass = (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]).M();
-  Float_t met_resol = 13.1*GeV+0.50*sqrt(met[2]*GeV);
-  Double_t chisq = 1e10;
+  neutrino[0].SetPtEtaPhiM(par[0],par[1],par[2],par[6]);
+  neutrino[1].SetPtEtaPhiM(par[3],par[4],par[5],0);
+  Float_t prob1(0), prob2(0);
 
-  if(vectors[lep].Pt()!=0){
-    neutrino[2].SetPtEtaPhiM(par[2],par[3],par[4],0);
+  prob1 = getLepTauProb(vectors[tau1].DeltaR(neutrino[0]),neutrino[0].M(),(vectors[tau1]+neutrino[0]).P());
+  prob2 = getHadTauProb(vectors[tau2].DeltaR(neutrino[1]),(vectors[tau2]+neutrino[1]).P());
+
+  Float_t mass1 = (vectors[tau1]+neutrino[0]).M();
+  Float_t mass2 = (vectors[tau2]+neutrino[1]).M();
+  Float_t mass = (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]).M();
+  Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px();
+  Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py();
   
-    TLorentzVector t1 = neutrino[2]+vectors[lep]+vectors[bj];
-  
-    Float_t t2mass= (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]+vectors[cj]).M();
-    Float_t wmass = (vectors[lep] + neutrino[2]).M();
-    Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px()+neutrino[2].Px();
-    Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py()+neutrino[2].Py();
-    Float_t pConstrain = (vectors[bj].Dot(vectors[lep])/100) + (vectors[bj].Dot(neutrino[2])/100);
-    chisq =  pow((wmass-81*GeV)/10/GeV,2) + pow((t1.M()-172.5*GeV)/25/GeV,2) +pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2) + pow((Hmass-125*GeV)/10/GeV,2);// + pow((t2mass-172.5)/30,2);// + pow((pConstrain-110)/20,2);
-  }else{
-    Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px();
-    Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py();
-    chisq = pow((Hmass-125*GeV)/10*GeV,2) + pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2);
+  Double_t chisq = 1e10;
+  if(prob1>0 && prob2>0) {
+    Float_t met_resol = (13.1+0.50*sqrt(met[2]/GeV))*GeV;
+    chisq = -2*log(prob1) -2*log(prob2) + pow((mass1-1.777*GeV)/1.777/GeV,2) + pow((mass2-1.777*GeV)/1.777/GeV,2) + pow((mass-125*GeV)/20/GeV,2) + pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2);
   }
+  
   f = chisq;
 }
 
@@ -91,12 +157,18 @@ void tthmltree::init_hist(TString outputfilename){
 
   TString nprong[] = {"1prong","3prong"};
   
+  if(reduce == 3){
+    initMVA("reg1l2tau1bnj");
+    initMVA("reg1l1tau1b2j");
+    initMVA("reg1l1tau1b3j");
+  }
+
   for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
   {
     fcnc_plots.push_back(new histSaver(outputfilename + "_fcnc" + char('0' + plotNPs[iNP])));
     fcnc_plots[iNP]->set_weight(&weight);
     fcnc_plots[iNP]->debug = !!debug;
-  
+    if(reduce == 3) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG",&BDTG,false,"");
     fcnc_plots[iNP]->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
     fcnc_plots[iNP]->add(10,25.,125.,"p_{T,SS#tau}","tauptss",&tau_pt_ss,true,"GeV");
     fcnc_plots[iNP]->add(10,25.,125.,"p_{T,OS#tau}","tauptos",&tau_pt_os,true,"GeV");
@@ -118,6 +190,10 @@ void tthmltree::init_hist(TString outputfilename){
     fcnc_plots[iNP]->add(92,0.4,5.,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
     fcnc_plots[iNP]->add(60,0.4,3.4,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
     fcnc_plots[iNP]->add(100,50.,250.,"M(#tau#tau#light-jet,min)","mtaujmin",&mtaujmin,true,"");
+    fcnc_plots[iNP]->add(100,15.,115.,"E^{T}_{miss}","etmiss",&etmiss,true,"GeV");
+    fcnc_plots[iNP]->add(60,0.,3.,"#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss",&dphitauetmiss,false);
+    fcnc_plots[iNP]->add(60,-1.5,1.5,"E^{T}_{miss} centrality","phicent",&phicent,false,"");
+
     for (int j = 0; j < fcnc_nregions; ++j){
       for (int k = 0; k < 2; ++k)
       {
@@ -224,6 +300,9 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         outputtree[fcnc_regions[i]]->Branch("drtautau",&drtautau);
         outputtree[fcnc_regions[i]]->Branch("drtaujmin", &drtaujmin);
         outputtree[fcnc_regions[i]]->Branch("mtaujmin", &mtaujmin);
+        outputtree[fcnc_regions[i]]->Branch("etmiss",&etmiss);
+        outputtree[fcnc_regions[i]]->Branch("dphitauetmiss",&dphitauetmiss);
+        outputtree[fcnc_regions[i]]->Branch("phicent",&phicent);
 
       }
     }
@@ -457,7 +536,10 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
     }
     //===============================find leading b,non b jets===============================
     if( mc_channel_number > 0) weight*=tightLep?lepSFObjLoose:lepSFIDLoose*lepSFTrigLoose;
-    if(weight > 3) printf("weight > 3, drop the event\n");
+    if(weight > 2) {
+      printf("weight > 1, drop the event\n");
+      continue;
+    }
     if(reduce <= 2 && nTaus_OR_Pt25 &&  mc_channel_number > 0 ) weight*=tightTau?tauSFTight:tauSFLoose;
     if(  mc_channel_number <= 0 ) weight = 1;
     if (reduce == 2) {
@@ -538,84 +620,118 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
         }
         cjet_v = ljets_v[ljet_indice[0]];
         mets.SetXYZ(met_met*cos(met_phi), met_met*sin(met_phi), MET_RefFinal_sumet);
+        etmiss = met_met;
         //==  =============================fit neutrino===============================
-        gM->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
-        gM->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
-
-        if (nTaus_OR_Pt25 >= 2) {
-          gM->mnparm(2, "pt3", 10000, 10000, 0., 1000000., ierflg);
-          gM->mnparm(3, "eta3", 0, 0.1, -5, 5, ierflg);
-          gM->mnparm(4, "phi3", 0, 0.1, -PI, PI, ierflg);
-          arglist[0] = 5;
-        } else {
-          gM->mnparm(2, "v1mass", 1000, 1, 0., 1776, ierflg);
-          arglist[0] = 3;
+        if(nTaus_OR_Pt25 == 1 || dofit1l2tau){
+          if (nTaus_OR_Pt25 >= 2) {
+            gM->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
+            gM->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
+            gM->mnparm(2, "pt3", 10000, 10000, 0., 1000000., ierflg);
+            gM->mnparm(3, "eta3", 0, 0.1, -5, 5, ierflg);
+            gM->mnparm(4, "phi3", 0, 0.1, -PI, PI, ierflg);
+            arglist[0] = 5;
+          } else {
+            gM->mnparm(0, "v1pt",  tau_pt_0, 1, 0., 1000000, ierflg);
+            gM->mnparm(1, "v1eta", taus_v[0].Eta(), 0.01, taus_v[0].Eta()-0.25, taus_v[0].Eta()+0.25, ierflg);
+            gM->mnparm(2, "v1phi", taus_v[0].Phi(), 0.01, taus_v[0].Phi()-0.25, taus_v[0].Phi()+0.25, ierflg);
+            gM->mnparm(3, "v2pt",  tau_pt_1, 1, 0., 1000000, ierflg);
+            gM->mnparm(4, "v2eta", taus_v[1].Eta(), 0.01, taus_v[1].Eta()-0.25, taus_v[1].Eta()+0.25, ierflg);
+            gM->mnparm(5, "v2phi", taus_v[1].Phi(), 0.01, taus_v[1].Phi()-0.25, taus_v[1].Phi()+0.25, ierflg);
+            gM->mnparm(6, "v1m", 500, 0.01, 0, 1776, ierflg);
+            arglist[0] = 7;
+          }
+  
+          gM->SetObjectFit( & forFit);
+  
+          arglist[1] = 60.;
+          Double_t val[7] = {
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          };
+          Double_t err[7] = {
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          };
+  
+          if(debug) printf("start kinematic fit\n");
+          gM->mnexcm("SCAN", arglist, 2, ierflg);
+          for (int i = 0; i < 7; ++i) gM->GetParameter(i, val[i], err[i]);
+  
+          if (nTaus_OR_Pt25 >= 2) {
+            gM->mnparm(0, "rpt1", val[0], 0.01, 0., 2., ierflg);
+            gM->mnparm(1, "rpt2", val[1], 0.01, 0., 2., ierflg);
+            gM->mnparm(2, "pt3",  val[2], 10000, 0., 1000000., ierflg);
+            gM->mnparm(3, "eta3", val[3], 0.1, -5, 5, ierflg);
+            gM->mnparm(4, "phi3", val[4], 0.1, -PI, PI, ierflg);
+          } else {
+            gM->mnparm(0, "v1pt",  val[0], 1, 0., 1000000, ierflg);
+            gM->mnparm(1, "v1eta", val[1], 0.01, taus_v[0].Eta()-0.25, taus_v[0].Eta()+0.25, ierflg);
+            gM->mnparm(2, "v1phi", val[2], 0.01, taus_v[0].Phi()-0.25, taus_v[0].Phi()+0.25, ierflg);
+            gM->mnparm(3, "v2pt",  val[3], 1, 0., 1000000, ierflg);
+            gM->mnparm(4, "v2eta", val[4], 0.01, taus_v[1].Eta()-0.25, taus_v[1].Eta()+0.25, ierflg);
+            gM->mnparm(5, "v2phi", val[5], 0.01, taus_v[1].Phi()-0.25, taus_v[1].Phi()+0.25, ierflg);
+            gM->mnparm(6, "v1m",   val[6], 0.01, 0, 1776, ierflg);
+          }
+  
+          arglist[0] = 1000;
+          arglist[1] = 0;
+  
+          gM->mnexcm("MIGRADE", arglist, 2, ierflg);
+          for (int i = 0; i < (nTaus_OR_Pt25 >= 2 ? 5 : 7); ++i) gM->GetParameter(i, val[i], err[i]);
+          if(debug) printf("finish kinematic fit\n");
+          Double_t fmin, fedm, errdef;
+          Int_t npari, nparx, istat;
+          gM->mnstat(fmin, fedm, errdef, npari, nparx, istat);
+          TLorentzVector tauv1_v;
+          if(nTaus_OR_Pt25 >= 2) tauv1_v.SetPtEtaPhiM(val[0]*taus_v[0].Pt(), taus_v[0].Eta(), taus_v[0].Phi(), nJets_OR_T >= 2 ? 0 : val[2]);
+          else tauv1_v.SetPtEtaPhiM(val[0],val[1],val[2],val[6]);
+          TLorentzVector tauv2_v;
+          if(nTaus_OR_Pt25 >= 2) tauv2_v.SetPtEtaPhiM(val[1]*taus_v[1].Pt(), taus_v[1].Eta(), taus_v[1].Phi(), 0);
+          else tauv2_v.SetPtEtaPhiM(val[3],val[4],val[5],6);
+          if(nTaus_OR_Pt25 >= 2) {
+            x1fit = 1 / (1 + val[0]);
+            x2fit = 1 / (1 + val[1]);
+          }else{
+            x1fit = taus_v[0].E() / (taus_v[0] + tauv1_v).E();
+            x2fit = taus_v[1].E() / (taus_v[1] + tauv2_v).E();
+          }
+          neutrino_pt->push_back(tauv1_v.Pt());
+          neutrino_pt->push_back(tauv2_v.Pt());
+          neutrino_eta->push_back(tauv1_v.Eta());
+          neutrino_eta->push_back(tauv2_v.Eta());
+          neutrino_phi->push_back(tauv1_v.Phi());
+          neutrino_phi->push_back(tauv2_v.Phi());
+          neutrino_m->push_back(tauv1_v.M());
+          neutrino_m->push_back(tauv2_v.M());
+          if (nTaus_OR_Pt25 >= 2) {
+            TLorentzVector wv_v;
+            wv_v.SetPtEtaPhiM(val[2], val[3], val[4], 0);
+            neutrino_pt->push_back(wv_v.Pt());
+            neutrino_eta->push_back(wv_v.Eta());
+            neutrino_phi->push_back(wv_v.Phi());
+            neutrino_m->push_back(wv_v.M());
+            t1mass = (lep_v + wv_v + bjet_v).M();
+            wmass = (lep_v + wv_v).M();
+          }
+          t2mass = (tauv2_v + taus_v[0] + tauv1_v + taus_v[1] + cjet_v).M();
+          tautaumass = (tauv2_v + taus_v[0] + tauv1_v + taus_v[1]).M();
         }
-        gM->SetObjectFit( & forFit);
 
-        arglist[1] = 60.;
-        Double_t val[5] = {
-          0,
-          0,
-          0,
-          0,
-          0
-        };
-        Double_t err[5] = {
-          0,
-          0,
-          0,
-          0,
-          0
-        };
-
-        if(debug) printf("start kinematic fit\n");
-        gM->mnexcm("SCAN", arglist, 2, ierflg);
-        for (int i = 0; i < 5; ++i) gM->GetParameter(i, val[i], err[i]);
-        gM->mnparm(0, "rpt1", val[0], 0.01, 0., 2., ierflg);
-        gM->mnparm(1, "rpt2", val[1], 0.01, 0., 2., ierflg);
         if (nTaus_OR_Pt25 >= 2) {
-          gM->mnparm(2, "pt3", val[2], 10, 0., 1000., ierflg);
-          gM->mnparm(3, "eta3", val[3], 0.1, -5, 5, ierflg);
-          gM->mnparm(4, "phi3", val[4], 0.1, -PI, PI, ierflg);
-        } else {
-          gM->mnparm(2, "v1mass", val[2], 1, 0., 1776, ierflg);
-        }
-
-        arglist[0] = 1000;
-        arglist[1] = 0;
-
-        gM->mnexcm("MIGRADE", arglist, 2, ierflg);
-        for (int i = 0; i < (nTaus_OR_Pt25 >= 2 ? 5 : 3); ++i) gM->GetParameter(i, val[i], err[i]);
-        if(debug) printf("finish kinematic fit\n");
-        Double_t fmin, fedm, errdef;
-        Int_t npari, nparx, istat;
-        gM->mnstat(fmin, fedm, errdef, npari, nparx, istat);
-        TLorentzVector tauv1_v;
-        tauv1_v.SetPtEtaPhiM(val[0]*taus_v[0].Pt(), taus_v[0].Eta(), taus_v[0].Phi(), nJets_OR_T >= 2 ? 0 : val[2]);
-        TLorentzVector tauv2_v;
-        tauv2_v.SetPtEtaPhiM(val[1]*taus_v[1].Pt(), taus_v[1].Eta(), taus_v[1].Phi(), 0);
-        x1fit = val[0] / (1 + val[0]);
-        x2fit = val[1] / (1 + val[1]);
-        neutrino_pt->push_back(tauv1_v.Pt());
-        neutrino_pt->push_back(tauv2_v.Pt());
-        neutrino_eta->push_back(tauv1_v.Eta());
-        neutrino_eta->push_back(tauv2_v.Eta());
-        neutrino_phi->push_back(tauv1_v.Phi());
-        neutrino_phi->push_back(tauv2_v.Phi());
-        neutrino_m->push_back(tauv1_v.M());
-        neutrino_m->push_back(tauv2_v.M());
-        if (nTaus_OR_Pt25 >= 2) {
-          TLorentzVector wv_v;
-          wv_v.SetPtEtaPhiM(val[2], val[3], val[4], 0);
-          neutrino_pt->push_back(wv_v.Pt());
-          neutrino_eta->push_back(wv_v.Eta());
-          neutrino_phi->push_back(wv_v.Phi());
-          neutrino_m->push_back(wv_v.M());
-          t1mass = (lep_v + wv_v + bjet_v).M();
+          tau_pt_ss = lep_ID_0*tau_charge_0 > 0 ? tau_pt_0 : tau_pt_1;
+          tau_pt_os = lep_ID_0*tau_charge_0 < 0 ? tau_pt_0 : tau_pt_1;
           drlbditau = (lep_v + bjet_v).DeltaR(taus_v[0] + taus_v[1]);
           t1vismass = (lep_v + bjet_v).M();
-          wmass = (lep_v + wv_v).M();
           mtw = 2*lep_Pt_0*MET_RefFinal_et*(1 - cos(MET_RefFinal_phi - lep_Phi_0));
           mtw = mtw > 0 ? sqrt(mtw) : 0.;
           etamax = fabs(tau_eta_0) > fabs(tau_eta_1) ? fabs(tau_eta_0) : fabs(tau_eta_1);
@@ -626,9 +742,9 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
             printv(taus_v[1]);
             printv(lep_v);
           }
-          tau_pt_ss = lep_ID_0*tau_charge_0 > 0 ? tau_pt_0 : tau_pt_1;
-          tau_pt_os = lep_ID_0*tau_charge_0 < 0 ? tau_pt_0 : tau_pt_1;
+          phicent = 0;
         } else {
+          phicent = phi_centrality(taus_v[0].Phi(),taus_v[1].Phi(),met_phi);
           t1vismass = t1mass;
           drlbditau = 0;
           mtw = 0;
@@ -639,82 +755,89 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
         }
         tau_leadpt = taus_v[0].Pt();
         tau_subpt = taus_v[1].Pt();
-        t2mass = (tauv2_v + taus_v[0] + tauv1_v + taus_v[1] + cjet_v).M();
-        tautaumass = (tauv2_v + taus_v[0] + tauv1_v + taus_v[1]).M();
         ttvismass = (taus_v[0] + taus_v[1]).M();
         tautauvispt = (taus_v[0] + taus_v[1]).Pt();
         t2vismass = (taus_v[0] + taus_v[1] + cjet_v).M();
         drtautau = taus_v[0].DeltaR(taus_v[1]);
         drtauj = (taus_v[0] + taus_v[1]).DeltaR(cjet_v);
+
       } else if (nJets_OR_T - nJets_OR_T_MV2c10_70) {
         if (ifregions["reg1l1tau2b1j_os"] || ifregions["reg1l1tau2b1j_ss"]) {
           if(nJets_OR_T != 3) continue;
           taulmass = (taus_v[1] + ljets_v[0]).M();
         } else taulmass = 0;
       }
-
+      dphitauetmiss = fabs(met_phi - (taus_v[0] + taus_v[1]).Phi());
+    }
+    if(reduce == 3){
+      if(debug) printf("eval BDTG\n");
+      if(ifregions["reg1l2tau1bnj"]) BDTG = reader["reg1l2tau1bnj"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+      if(ifregions["reg1l1tau1b2j"]) BDTG = reader["reg1l1tau1b2j"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+      if(ifregions["reg1l1tau1b3j"]) BDTG = reader["reg1l1tau1b3j"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+    }
       //===============================fill histograms, fill tree===============================
-      TString tauorigin;
-      int SFbin[2] = {tau_pt_0 / GeV > 35, tau_pt_1 / GeV > 35};
-      fakeSF = 1;
-      int origintag[2] = {-1,-1};
-      if (sample.Contains("data")) {
-        tauorigin = "data";
-        sample = "data";
-      } else if (nTaus_OR_Pt25 >= 1) {
-        if (tau_truthType_0 == 10) tauorigin = sample + "_real";
-        else if (tau_truthJetFlavour_0 < 0 && (tau_truthType_0 == 2 || tau_truthType_0 == 6)) tauorigin = sample + "_lep";
-        else
-          switch (tau_truthJetFlavour_0) {
+    if(debug) printf("derive origin\n");
+    TString tauorigin;
+    int SFbin[2] = {tau_pt_0 / GeV > 35, tau_pt_1 / GeV > 35};
+    fakeSF = 1;
+    int origintag[2] = {-1,-1};
+    if (sample.Contains("data")) {
+      tauorigin = "data";
+      sample = "data";
+    } else if (nTaus_OR_Pt25 >= 1) {
+      if (tau_truthType_0 == 10) tauorigin = sample + "_real";
+      else if (tau_truthJetFlavour_0 < 0 && (tau_truthType_0 == 2 || tau_truthType_0 == 6)) tauorigin = sample + "_lep";
+      else
+        switch (tau_truthJetFlavour_0) {
+        case 5:
+          tauorigin = sample + "_b";
+          fakeSF = fakeSFs[SFbin[0]][0];
+          origintag[0] = 0;
+          break;
+        case 4:
+          tauorigin = sample + "_c";
+          fakeSF = fakeSFs[SFbin[0]][1];
+          origintag[0] = 1;
+          break;
+        case 21:
+          tauorigin = sample + "_g";
+          fakeSF = fakeSFs[SFbin[0]][2];
+          origintag[0] = 2;
+          break;
+        default:
+          tauorigin = sample + "_j";
+          fakeSF = fakeSFs[SFbin[0]][3];
+          origintag[0] = 3;
+        }
+      if(nTaus_OR_Pt25 >= 2)
+        if (tau_truthType_1 != 10 && tau_truthType_1 !=2 && tau_truthType_1 !=6 && tau_truthJetFlavour_1 < 0)
+          switch (tau_truthJetFlavour_1) {
           case 5:
-            tauorigin = sample + "_b";
-            fakeSF = fakeSFs[SFbin[0]][0];
-            origintag[0] = 0;
+            fakeSF *= fakeSFs[SFbin[1]][0];
+            origintag[1] = 0;
             break;
           case 4:
-            tauorigin = sample + "_c";
-            fakeSF = fakeSFs[SFbin[0]][1];
-            origintag[0] = 1;
+            fakeSF *= fakeSFs[SFbin[1]][1];
+            origintag[1] = 1;
             break;
           case 21:
-            tauorigin = sample + "_g";
-            fakeSF = fakeSFs[SFbin[0]][2];
-            origintag[0] = 2;
+            fakeSF *= fakeSFs[SFbin[1]][2];
+            origintag[1] = 2;
             break;
           default:
-            tauorigin = sample + "_j";
-            fakeSF = fakeSFs[SFbin[0]][3];
-            origintag[0] = 3;
+            fakeSF *= fakeSFs[SFbin[1]][3];
+            origintag[1] = 3;
           }
-        if(nTaus_OR_Pt25 >= 2)
-          if (tau_truthType_1 != 10 && tau_truthType_1 !=2 && tau_truthType_1 !=6 && tau_truthJetFlavour_1 < 0)
-            switch (tau_truthJetFlavour_1) {
-            case 5:
-              fakeSF *= fakeSFs[SFbin[1]][0];
-              origintag[1] = 0;
-              break;
-            case 4:
-              fakeSF *= fakeSFs[SFbin[1]][1];
-              origintag[1] = 1;
-              break;
-            case 21:
-              fakeSF *= fakeSFs[SFbin[1]][2];
-              origintag[1] = 2;
-              break;
-            default:
-              fakeSF *= fakeSFs[SFbin[1]][3];
-              origintag[1] = 3;
-            }
-      }
-
-      double valNP;
+    }
+    if(debug) printf("calc SF\n");
+    if(reduce == 1){
       weights->clear();
       weights->push_back(weight);
       weights->push_back(weight*fakeSF);
       if(fcnc && mc_channel_number){
         for (int iNP = 0; iNP < 8; ++iNP)
         {
-          valNP = weight;
+          double valNP = weight;
           for (int itau = 0; itau < nTaus_OR_Pt25; ++itau)
           {
             if(origintag[itau] >= 0 ){
@@ -728,25 +851,30 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           weights->push_back(valNP);
         }
       }
+    }
 
-      if (dumptruth && triggeredfcnc && sample.Contains("fcnc")) dumpTruth(EventNumber % 2);
-
-      for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
-        if (iter->second == 1) {
-          if (writetree) outputtree[iter->first]->Fill();
-          if (dohist) {
-            for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
-            {
-              if(iNP != 0 && !mc_channel_number) continue;
-              weight = weights->at(plotNPs[iNP]);
-              if (iter->first.Contains("tau")) {
-                if (triggeredfcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, iNP);
-                else if (!sample.Contains("fcnc")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
-              } else fill_notau(iter->first, sample);
-            }
+    if (dumptruth && triggeredfcnc && sample.Contains("fcnc")) dumpTruth(EventNumber % 2);
+    for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
+      if (iter->second == 1) {
+        if (writetree) {
+          if(debug) printf("fill tree: %s\n", iter->first.Data());
+          outputtree[iter->first]->Fill();
+        }
+        if (dohist) {
+          if(debug) printf("fill hist\n");
+          for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
+          {
+            if(iNP != 0 && !mc_channel_number) continue;
+            weight = weights->at(plotNPs[iNP]);
+            if (iter->first.Contains("tau")) {
+              if (triggeredfcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, iNP);
+              else if (!sample.Contains("fcnc")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
+            } else fill_notau(iter->first, sample);
           }
         }
       }
+    }
+    if(reduce ==2){
       neutrino_pt->clear();
       neutrino_eta->clear();
       neutrino_phi->clear();
@@ -905,6 +1033,268 @@ bool tthmltree::SelectTLepid(int id) {
   }
   return pass;
 }
+
+Float_t tthmltree::getLepTauProb(Float_t _dR, Float_t _minv, Float_t _p) {
+  if(!prob_20_40 ||
+     !prob_40_60 ||
+     !prob_60_80 ||
+     !prob_80_100 ||
+     !prob_100_120 ||
+     !prob_120_140 ||
+     !prob_140_160 ||
+     !prob_160_200 ||
+     !prob_200_300 ||
+     !prob_300_400 ||
+     !prob_400) {
+    printf("Error: prob_xx_xx empty.\n");
+    return 0;
+  }
+  
+  TH2F* prob1(0);
+  TH2F* prob2(0);
+  Float_t fr1 = 0.5;
+
+  if(_p<35) prob1 = prob2 = prob_20_40;
+  else if(_p<45) {
+    prob1 = prob_20_40;
+    prob2 = prob_40_60;
+    fr1 = (45-_p)/(45-35);
+  }
+  else if(_p<55) prob1 = prob2 = prob_40_60;
+  else if(_p<65) {
+    prob1 = prob_40_60;
+    prob2 = prob_60_80;
+    fr1 = (65-_p)/(65-55);
+  }
+  else if(_p<75) prob1 = prob2 = prob_60_80;
+  else if(_p<85) {
+    prob1 = prob_60_80;
+    prob2 = prob_80_100;
+    fr1 = (85-_p)/(85-75);
+  }
+  else if(_p<95) prob1 = prob2 = prob_80_100;
+  else if(_p<105) {
+    prob1 = prob_80_100;
+    prob2 = prob_100_120;
+    fr1 = (105-_p)/(105-95);
+  }
+  else if(_p<115) prob1 = prob2 = prob_100_120;
+  else if(_p<125) {
+    prob1 = prob_100_120;
+    prob2 = prob_120_140;
+    fr1 = (125-_p)/(125-115);
+  }
+  else if(_p<135) prob1 = prob2 = prob_120_140;
+  else if(_p<145) {
+    prob1 = prob_120_140;
+    prob2 = prob_140_160;
+    fr1 = (145-_p)/(145-135);
+  }
+  else if(_p<155) prob1 = prob2 = prob_140_160;
+  else if(_p<165) {
+    prob1 = prob_140_160;
+    prob2 = prob_160_200;
+    fr1 = (165-_p)/(165-155);
+  }
+  else if(_p<195) prob1 = prob2 = prob_160_200;
+  else if(_p<220) {
+    prob1 = prob_160_200;
+    prob2 = prob_200_300;
+    fr1 = (220-_p)/(220-195);
+  }
+  else if(_p<280) prob1 = prob2 = prob_200_300;
+  else if(_p<330) {
+    prob1 = prob_200_300;
+    prob2 = prob_300_400;
+    fr1 = (330-_p)/(330-280);
+  }
+  else if(_p<380) prob1 = prob2 = prob_300_400;
+  else if(_p<430) {
+    prob1 = prob_300_400;
+    prob2 = prob_400;
+    fr1 = (430-_p)/(430-380);
+  }
+  else prob1 = prob2 = prob_400;
+
+  Float_t val = 0;
+  if(_minv<prob2->GetXaxis()->GetXmax() && _dR<prob2->GetYaxis()->GetXmax()) {
+    //val = fr1*prob1->GetBinContent(prob1->FindBin(_minv,_dR)) + (1-fr1)*prob2->GetBinContent(prob2->FindBin(_minv,_dR));
+    val = fr1*eval(_minv,_dR,prob1) + (1-fr1)*eval(_minv,_dR,prob2);
+  }
+  else if(_minv<prob1->GetXaxis()->GetXmax() && _dR<prob1->GetYaxis()->GetXmax()) {
+    //val = fr1*prob1->GetBinContent(prob1->FindBin(_minv,_dR));
+    val = fr1*eval(_minv,_dR,prob1);
+  }
+  return val;
+}
+
+void tthmltree::initialize_fit(const char* input) {
+  printf("reading in histograms\n");
+  TFile f(input,"READ");
+
+  prob_20_40 = (TH2F*) f.Get("prob_20_40");
+  prob_40_60 = (TH2F*) f.Get("prob_40_60");
+  prob_60_80 = (TH2F*) f.Get("prob_60_80");
+  prob_80_100 = (TH2F*) f.Get("prob_80_100");
+  prob_100_120 = (TH2F*) f.Get("prob_100_120");
+  prob_120_140 = (TH2F*) f.Get("prob_120_140");
+  prob_140_160 = (TH2F*) f.Get("prob_140_160");
+  prob_160_200 = (TH2F*) f.Get("prob_160_200");
+  prob_200_300 = (TH2F*) f.Get("prob_200_300");
+  prob_300_400 = (TH2F*) f.Get("prob_300_400");
+  prob_400 = (TH2F*) f.Get("prob_400");
+
+  prob_20_40->SetDirectory(0);
+  prob_40_60->SetDirectory(0);
+  prob_60_80->SetDirectory(0);
+  prob_80_100->SetDirectory(0);
+  prob_100_120->SetDirectory(0);
+  prob_120_140->SetDirectory(0);
+  prob_140_160->SetDirectory(0);
+  prob_160_200->SetDirectory(0);
+  prob_200_300->SetDirectory(0);
+  prob_300_400->SetDirectory(0);
+  prob_400->SetDirectory(0);
+
+  fillOverFlow(prob_20_40);
+  fillOverFlow(prob_40_60);
+  fillOverFlow(prob_60_80);
+  fillOverFlow(prob_80_100);
+  fillOverFlow(prob_100_120);
+  fillOverFlow(prob_120_140);
+  fillOverFlow(prob_140_160);
+  fillOverFlow(prob_160_200);
+  fillOverFlow(prob_200_300);
+  fillOverFlow(prob_300_400);
+  fillOverFlow(prob_400);
+
+  f.Close();
+}
+
+//at least 2x2 bins:
+void tthmltree::fillOverFlow(TH2F* h) {
+  Int_t nx = h->GetNbinsX();
+  Int_t ny = h->GetNbinsY();
+  for(Int_t i=1; i<=nx; i++) {
+    h->SetBinContent(i,0,2*h->GetBinContent(i,1)-h->GetBinContent(i,2));
+    h->SetBinContent(i,ny+1,2*h->GetBinContent(i,ny)-h->GetBinContent(i,ny-1));
+  }
+  for(Int_t j=1; j<=ny; j++) {
+    h->SetBinContent(0,j,2*h->GetBinContent(1,j)-h->GetBinContent(2,j));
+    h->SetBinContent(nx+1,j,2*h->GetBinContent(nx,j)-h->GetBinContent(nx-1,j));
+  }
+  h->SetBinContent(0,0,h->GetBinContent(0,1)+h->GetBinContent(1,0)-h->GetBinContent(1,1));
+  h->SetBinContent(0,ny+1,h->GetBinContent(0,ny)+h->GetBinContent(1,ny+1)-h->GetBinContent(1,ny));
+  h->SetBinContent(nx+1,0,h->GetBinContent(nx,0)+h->GetBinContent(nx+1,1)-h->GetBinContent(nx,1));
+  h->SetBinContent(nx+1,ny+1,h->GetBinContent(nx,ny+1)+h->GetBinContent(nx+1,ny)-h->GetBinContent(nx,ny));
+}
+
+// get smooth output from 2-d histogram (at least 2x2 bins)
+Float_t tthmltree::eval(const Float_t x, const Float_t y, const TH2F* h) {
+  Int_t nx = h->GetNbinsX();
+  Int_t ny = h->GetNbinsY();
+  Int_t bx = h->GetXaxis()->FindBin(x);
+  Int_t by = h->GetYaxis()->FindBin(y);
+  if(bx<1 || bx>nx || by<1 || by>ny) return 0;
+
+  std::pair<Float_t,Float_t> c1;
+  std::pair<Float_t,Float_t> c2;
+  std::pair<Float_t,Float_t> c3;
+  std::pair<Float_t,Float_t> c4;
+  Float_t z1(0), z2(0), z3(0), z4(0);
+  std::pair<Float_t,Float_t> c(h->GetXaxis()->GetBinCenter(bx),h->GetYaxis()->GetBinCenter(by));
+
+  if(x<c.first && y<c.second) {
+    c1.first  = h->GetXaxis()->GetBinCenter(bx-1);
+    c1.second = h->GetYaxis()->GetBinCenter(by-1);
+    z1 = h->GetBinContent(bx-1,by-1);
+    c2.first  = h->GetXaxis()->GetBinCenter(bx);
+    c2.second = h->GetYaxis()->GetBinCenter(by-1);
+    z2 = h->GetBinContent(bx,by-1);
+    c3.first  = h->GetXaxis()->GetBinCenter(bx);
+    c3.second = h->GetYaxis()->GetBinCenter(by);
+    z3 = h->GetBinContent(bx,by);
+    c4.first  = h->GetXaxis()->GetBinCenter(bx-1);
+    c4.second = h->GetYaxis()->GetBinCenter(by);
+    z4 = h->GetBinContent(bx-1,by);
+  }
+  else if(x>=c.first && y<c.second) {
+    c1.first  = h->GetXaxis()->GetBinCenter(bx);
+    c1.second = h->GetYaxis()->GetBinCenter(by-1);
+    z1 = h->GetBinContent(bx,by-1);
+    c2.first  = h->GetXaxis()->GetBinCenter(bx+1);
+    c2.second = h->GetYaxis()->GetBinCenter(by-1);
+    z2 = h->GetBinContent(bx+1,by-1);
+    c3.first  = h->GetXaxis()->GetBinCenter(bx+1);
+    c3.second = h->GetYaxis()->GetBinCenter(by);
+    z3 = h->GetBinContent(bx+1,by);
+    c4.first  = h->GetXaxis()->GetBinCenter(bx);
+    c4.second = h->GetYaxis()->GetBinCenter(by);
+    z4 = h->GetBinContent(bx,by);
+  }
+  else if(x<c.first && y>=c.second) {
+    c1.first  = h->GetXaxis()->GetBinCenter(bx-1);
+    c1.second = h->GetYaxis()->GetBinCenter(by);
+    z1 = h->GetBinContent(bx-1,by);
+    c2.first  = h->GetXaxis()->GetBinCenter(bx);
+    c2.second = h->GetYaxis()->GetBinCenter(by);
+    z2 = h->GetBinContent(bx,by);
+    c3.first  = h->GetXaxis()->GetBinCenter(bx);
+    c3.second = h->GetYaxis()->GetBinCenter(by+1);
+    z3 = h->GetBinContent(bx,by+1);
+    c4.first  = h->GetXaxis()->GetBinCenter(bx-1);
+    c4.second = h->GetYaxis()->GetBinCenter(by+1);
+    z4 = h->GetBinContent(bx-1,by+1);
+  }
+  else if(x>=c.first && y>=c.second) {
+    c1.first  = h->GetXaxis()->GetBinCenter(bx);
+    c1.second = h->GetYaxis()->GetBinCenter(by);
+    z1 = h->GetBinContent(bx,by);
+    c2.first  = h->GetXaxis()->GetBinCenter(bx+1);
+    c2.second = h->GetYaxis()->GetBinCenter(by);
+    z2 = h->GetBinContent(bx+1,by);
+    c3.first  = h->GetXaxis()->GetBinCenter(bx+1);
+    c3.second = h->GetYaxis()->GetBinCenter(by+1);
+    z3 = h->GetBinContent(bx+1,by+1);
+    c4.first  = h->GetXaxis()->GetBinCenter(bx);
+    c4.second = h->GetYaxis()->GetBinCenter(by+1);
+    z4 = h->GetBinContent(bx,by+1);
+  }
+  Float_t a = (x-c1.first)/(c2.first-c1.first);
+  Float_t b = (y-c1.second)/(c4.second-c1.second);
+  return (1-a)*(1-b)*z1 + (1-a)*b*z4 + a*(1-b)*z2 + a*b*z3;
+}
+
+//at least 2 bins:
+void tthmltree::fillOverFlow(TH1F* h) {
+  Int_t nx = h->GetNbinsX();
+  h->SetBinContent(0,2*h->GetBinContent(1)-h->GetBinContent(2));
+  h->SetBinContent(nx+1,2*h->GetBinContent(nx)-h->GetBinContent(nx-1));
+}
+
+// get smooth output from 1-d histogram (at least 2 bins)
+Float_t eval(const Float_t x, const TH1F* h) {
+  Int_t nx = h->GetNbinsX();
+  Int_t bx = h->GetXaxis()->FindBin(x);
+  if(bx<1 || bx>nx) return 0;
+  Float_t x1(0), x2(0), z1(0), z2(0);
+  Float_t c = h->GetBinCenter(bx);
+  if(x<c) {
+    x1 = h->GetBinCenter(bx-1);
+    z1 = h->GetBinContent(bx-1);
+    x2 = h->GetBinCenter(bx);
+    z2 = h->GetBinContent(bx);
+  }
+  else {
+    x1 = h->GetBinCenter(bx);
+    z1 = h->GetBinContent(bx);
+    x2 = h->GetBinCenter(bx+1);
+    z2 = h->GetBinContent(bx+1);
+  }
+  Float_t a = (x-x1)/(x2-x1);
+  return (1-a)*z1 + a*z2;
+}
+
 
 void tthmltree::Init(TTree*tree) {
   printf("init tree: version %d\n", version);
@@ -1201,7 +1591,9 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("eventNumber", & eventNumber);
     tree->SetBranchAddress("drtaujmin", & drtaujmin);
     tree->SetBranchAddress("mtaujmin", & mtaujmin);
-
+    tree->SetBranchAddress("etmiss",&etmiss);
+    tree->SetBranchAddress("dphitauetmiss",&dphitauetmiss);
+    tree->SetBranchAddress("phicent",&phicent);
     return;
   }
 

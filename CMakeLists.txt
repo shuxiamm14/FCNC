@@ -57,6 +57,7 @@ target_compile_definitions(hadhadtree PRIVATE PACKAGE_DIR="${CMAKE_SOURCE_DIR}")
 
 add_library(tthmltree SHARED ${PROJECT_SOURCE_DIR}/src/tthmltree.C ${PROJECT_SOURCE_DIR}/include/tthmltree.h)
 target_link_libraries(tthmltree ${ROOT_LIBRARIES} nominal ${PLOTTOOLLIB} dict)
+target_compile_definitions(tthmltree PRIVATE PACKAGE_DIR="${CMAKE_SOURCE_DIR}")
 
 file( GLOB APP_SOURCES RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/util/tth* )
 foreach( sourcefile ${APP_SOURCES} )

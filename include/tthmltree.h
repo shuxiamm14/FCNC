@@ -11,8 +11,26 @@ public:
    static  void     fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
    TMinuit* initgM();
    void init_hist(TString outputhistfile);
+   static Float_t getLepTauProb(Float_t _dR, Float_t _minv, Float_t _p) ;
+   void initialize_fit(const char* input);
+   static void fillOverFlow(TH2F* h);
+   static Float_t eval(const Float_t x, const Float_t y, const TH2F* h);
+   static void fillOverFlow(TH1F* h);
 
+   bool dofit1l2tau = 0;
    bool applyfakeSF = 0;
+   static TH2F* prob_20_40;
+   static TH2F* prob_40_60;
+   static TH2F* prob_60_80;
+   static TH2F* prob_80_100;
+   static TH2F* prob_100_120;
+   static TH2F* prob_120_140;
+   static TH2F* prob_140_160;
+   static TH2F* prob_160_200;
+   static TH2F* prob_200_300;
+   static TH2F* prob_300_400;
+   static TH2F* prob_400;
+
 
    ULong64_t       eventNumber;
    UInt_t          runNumber;
