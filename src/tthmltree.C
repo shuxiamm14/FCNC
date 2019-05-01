@@ -252,6 +252,7 @@ void tthmltree::init_hist(TString outputfilename){
 
 void tthmltree::init_sample(TString sample, TString sampletitle){
 //==========================init output n-tuple==========================
+  fcnc_nregions = fcnc_regions.size();
   if(writetree){
     outputtreefile = new TFile(sample + "_tree.root","update");
     map<TString, TTree*>::iterator iter;
@@ -744,6 +745,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           }
           phicent = 0;
         } else {
+          tau_pt_1 = lep_Pt_0;
           phicent = phi_centrality(taus_v[0].Phi(),taus_v[1].Phi(),met_phi);
           t1vismass = t1mass;
           drlbditau = 0;
@@ -771,7 +773,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
     }
     if(reduce == 3){
       if(debug) printf("eval BDTG\n");
-      if(ifregions["reg1l2tau1bnj"]) BDTG = reader["reg1l2tau1bnj"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"]) BDTG = reader["reg1l2tau1bnj"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
       if(ifregions["reg1l1tau1b2j"]) BDTG = reader["reg1l1tau1b2j"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
       if(ifregions["reg1l1tau1b3j"]) BDTG = reader["reg1l1tau1b3j"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
     }

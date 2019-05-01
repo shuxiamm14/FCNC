@@ -28,8 +28,6 @@ public :
    TMinuit* initgM();
    void init_reduce1();
    void init_reduce2();
-   float tau_pt_0;
-   float tau_pt_1;
    bool isData = 0;
    int tauabspdg = 0;
 

@@ -13,33 +13,33 @@ int main(int argc, char const *argv[])
 	tau_plots->debug = 0;
 	tau_plots->sensitivevariable = "BDTG";
 	tau_plots->add("BDT discriminant","BDTG","",5);
-  	//tau_plots->add("p_{T,lead-#tau}","tau_0_pt","GeV",5);
-  	//tau_plots->add("p_{T,sublead-#tau}","tau_1_pt","GeV",5);
-  	//tau_plots->add("E^{T}_{miss}","etmiss","GeV",2);
-  	//tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",5);
-  	//tau_plots->add("m_{#tau#tau,vis}","ttvismass","",5);
-  	//tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",5);
-  	//tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-  	//tau_plots->add("E^{T}_{miss} centrality","phicent","",5);
-  	//tau_plots->add("m_{t,SM}","t1mass","GeV",20);
-  	//tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
-  	//tau_plots->add("m_{W}","wmass","GeV",5);
-  	//tau_plots->add("m_{t,FCNC}","t2mass","GeV",20);
-  	//tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
-  	//tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
+  	tau_plots->add("p_{T,lead-#tau}","tau_0_pt","GeV",5);
+  	tau_plots->add("p_{T,sublead-#tau}","tau_1_pt","GeV",5);
+  	tau_plots->add("E^{T}_{miss}","etmiss","GeV",2);
+  	tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",5);
+  	tau_plots->add("m_{#tau#tau,vis}","ttvismass","",5);
+  	tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",5);
+  	tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
+  	tau_plots->add("E^{T}_{miss} centrality","phicent","",5);
+  	tau_plots->add("m_{t,SM}","t1mass","GeV",20);
+  	tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
+  	tau_plots->add("m_{W}","wmass","GeV",5);
+  	tau_plots->add("m_{t,FCNC}","t2mass","GeV",20);
+  	tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
+  	tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
 
   	tau_plots->blinding = 0;
 	vector<TString> regions;
-	//regions.push_back("reg2mtau1b2jss");
+	regions.push_back("reg2mtau1b2jss");
+	regions.push_back("reg2mtau1b2jos");
 	//regions.push_back("reg1mtau1ltau1b2jss");
 	//regions.push_back("reg2ltau1b2jss");
 	regions.push_back("reg2mtau1b3jss");
+	regions.push_back("reg2mtau1b3jos");
 	//regions.push_back("reg1mtau1ltau1b3jss");
 	//regions.push_back("reg2ltau1b3jss");
-	//regions.push_back("reg2mtau1b2jos");
 	//regions.push_back("reg1mtau1ltau1b2jos");
 	//regions.push_back("reg2ltau1b2jos");
-	regions.push_back("reg2mtau1b3jos");
 	//regions.push_back("reg1mtau1ltau1b3jos");
 	//regions.push_back("reg2ltau1b3jos");
 	int nregions = regions.size();
@@ -95,7 +95,7 @@ int main(int argc, char const *argv[])
 	}
 	if(plot_option == 2){
   		tau_plots->templatesample("reg2mtau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b3jos","fake","Fake",kYellow,1);
-  		//tau_plots->templatesample("reg2mtau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b2jos","fake","Fake",kYellow,1);
+  		tau_plots->templatesample("reg2mtau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b2jos","fake","Fake",kYellow,1);
   		//tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
   		//tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
 

@@ -8,10 +8,11 @@ int main(int argc, char const *argv[])
 	  fprintf(stderr,"Error: can't open file: %s\n",argv[1]);
 	  return 1;
 	}
-	bool doplot = 1;
+	bool doplot = 0;
 	char inputline[100];
 	vector<TString> regions;
-	regions.push_back("reg1l2tau1bnj");
+	regions.push_back("reg1l2tau1bnj_os");
+	regions.push_back("reg1l2tau1bnj_ss");
 	regions.push_back("reg1l1tau1b2j");
 	regions.push_back("reg1l1tau1b3j");
 

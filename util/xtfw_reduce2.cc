@@ -7,9 +7,9 @@ int main(int argc, char const *argv[])
 	TString prefix = PACKAGE_DIR;
 	prefix += "/data/hadhadreduce2/";
 	vector<TString> regions;
-	//regions.push_back("reg2mtau1b2jss");
+	regions.push_back("reg2mtau1b2jss");
+	regions.push_back("reg2mtau1b2jos");
 	regions.push_back("reg2mtau1b3jss");
-	//regions.push_back("reg2mtau1b2jos");
 	regions.push_back("reg2mtau1b3jos");
 	//regions.push_back("reg1mtau1ltau1b2jss");
 	//regions.push_back("reg2ltau1b2jss");
@@ -33,7 +33,7 @@ int main(int argc, char const *argv[])
 	hadhadtree *analysis = new hadhadtree();
 	analysis->init_reduce2();
 	analysis->plotNPs.push_back(0);
-	analysis->plotNPs.push_back(1);
+	//analysis->plotNPs.push_back(1);
 	analysis->dofcnc = 1;
 	analysis->reduce = 3;
 	analysis->debug = debug;
@@ -51,6 +51,7 @@ int main(int argc, char const *argv[])
 		printf("reading file: %s\n", (prefix + filename + "_tree.root").Data());
 		TFile inputfile(prefix + filename + "_tree.root");
 		for(auto reg : regions){
+			printf("Loop region: %s\n", reg.Data());
 			analysis->Loop( (TTree*)inputfile.Get(reg), filename, 1);
 		}
 		inputfile.Close();

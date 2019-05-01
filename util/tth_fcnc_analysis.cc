@@ -11,6 +11,10 @@ int main(int argc, char const *argv[])
 	tau_plots->inputfilename = "hists";
 	tau_plots->debug = 0;
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
+
+	tau_plots->sensitivevariable = "BDTG";
+	tau_plots->add("BDT discriminant","BDTG","",5);
+
   	tau_plots->add("p_{T,lead-#tau}","taupt","GeV",1);
   	tau_plots->add("m_{t,SM}","t1mass","GeV",5);
   	tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
