@@ -78,7 +78,7 @@ int main(int argc, char const *argv[])
 	else if(plot_option == 2){
   		tau_plots->overlay(samples[6]);
 		for (int j = 0; j < 7; ++j)
-			for (int i = 6; i < 7; i += 1)
+			for (int i = 4; i < 7; i += 2)
 				if (origin[i] != "real")
 				{
 					tau_plots->read_sample( "fakeMC", samples[j] + "_" + origin[i] + "_NP0", "FakeMC", kPink, norm[j]);

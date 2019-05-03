@@ -66,7 +66,8 @@ void hadhadtree::init_hist(TString histfilename){
     fcnc_plots[iNP]->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV,  fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
     fcnc_plots[iNP]->set_weight(&weight);
     fcnc_plots[iNP]->debug = debug;
-    if(reduce == 3 && doBDT) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG",&BDTG,false,"");
+    if(reduce == 3 && doBDT) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG_train",&BDTG_train,false,"");
+    if(reduce == 3 && doBDT) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG_test",&BDTG_test,false,"");
     fcnc_plots[iNP]->add(100,40.,140.,"p_{T,lead-#tau}","tau_0_pt",&tau_pt_0,false,"GeV");
     fcnc_plots[iNP]->add(100,30.,80.,"p_{T,sublead-#tau}","tau_1_pt",&tau_pt_1,false,"GeV");
     fcnc_plots[iNP]->add(100,15.,115.,"E^{T}_{miss}","etmiss",&etmiss,false,"GeV");
@@ -328,10 +329,12 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     }
     if(reduce == 3){
       if(ifregions["reg2mtau1b3jos"] || ifregions["reg2mtau1b3jss"]) {
-        BDTG = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2) );
+        BDTG_test = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2) );
+        BDTG_train = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(event_number%2)) );
       }
       if(ifregions["reg2mtau1b2jos"] || ifregions["reg2mtau1b2jss"]) {
-        BDTG = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2) );
+        BDTG_test = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2) );
+        BDTG_train = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(event_number%2)) );
       }
     }
     TString tauorigin;
@@ -509,6 +512,7 @@ TMinuit* hadhadtree::initgM(){
 
 void hadhadtree::definetree(TTree * tree) {
   tree->Branch("eventNumber", &event_number);
+  tree->Branch("mc_channel_number", &mc_channel_number);
   tree->Branch("runNumber",&run_number);
   tree->Branch("weights",&weights);
   if(reduce == 1){
@@ -817,6 +821,7 @@ void hadhadtree::Init(TTree *tree)
    tree->SetBranchAddress("taus_n_charged_tracks",&taus_n_charged_tracks);
    tree->SetBranchAddress("tauabspdg",&tauabspdg);
    tree->SetBranchAddress("eventNumber", &event_number);
+   tree->SetBranchAddress("mc_channel_number", &mc_channel_number);
    tree->SetBranchAddress("runNumber", &run_number);
    tree->SetBranchAddress("weights", &weights);
    tree->SetBranchAddress("tauabspdg", &tauabspdg);
@@ -871,6 +876,7 @@ void hadhadtree::Init(TTree *tree)
     jets_type = 0;
     jets_width = 0;
     tree->SetBranchAddress("eventNumber", &event_number);
+    tree->SetBranchAddress("mc_channel_number", &mc_channel_number);
     tree->SetBranchAddress("runNumber", &run_number);
     tree->SetBranchAddress("weights", &weights);
     tree->SetBranchAddress("tau_pt_0", &tau_pt_0);

@@ -41,7 +41,7 @@ int main(int argc, char const *argv[])
     tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
 
   	tau_plots->blinding = 30;
-	TString regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
+	TString regions[] = {"reg1l2tau1bnj_os","reg1l1tau1b2j","reg1l1tau1b3j"};
 	int nregions = 3;
 	TString nprong[] = {"1prong","3prong"};
 	for (int j = 0; j < nregions; ++j)
@@ -84,7 +84,7 @@ int main(int argc, char const *argv[])
 		for (int j = 0; j < 7; ++j){
 			tau_plots->stackorder.push_back(samples[j]);
 			for (int i = 0; i < 7; ++i)
-				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
+				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
 		}
 	}
 	for (int j = 0; j < nregions; ++j){

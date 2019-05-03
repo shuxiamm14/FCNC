@@ -29,7 +29,6 @@ int main(int argc, char const *argv[])
 	analysis->plotNPs.push_back(0);
 	analysis->plotNPs.push_back(1);
 	analysis->debug = 0;
-	analysis->applyfakeSF = 1;
 	analysis->writetree = 1;
 	analysis->fcnc = 1;
 	analysis->reduce = 2;
@@ -48,7 +47,7 @@ int main(int argc, char const *argv[])
 	if(doplot) analysis->init_hist(cate);
 	analysis->version = version;
 	analysis->init_sample(cate, title);
-	TString rootfilename = prefix + "/data/reduce1/" + cate + "_tree.root";
+	TString rootfilename = prefix + "/data/reduce" + char(analysis->reduce - 1 + '0') + "/" + cate + "_tree.root";
 	printf("reading Root file: %s\n", rootfilename.Data());
 	TFile inputfile(rootfilename);
 	for (auto i : regions)
