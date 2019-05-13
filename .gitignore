@@ -6,3 +6,4 @@ update.sh
 data
 build
 config/tensorflow/*backup
+config/weights
