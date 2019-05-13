@@ -2,7 +2,6 @@
 #include <regex> 
 #include <fdeep/fdeep.hpp>
 #include "applyTF.h"
-#include "fcnc_include.h"
 
 map<TString, fdeep::model*> models;
 

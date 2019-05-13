@@ -1515,7 +1515,6 @@ public:
    Float_t         lep_SFObjLoose_4;
    Float_t         lep_SFObjTight_4;
    Int_t           lep_nInnerPix_4;
-   Float_t         tau_pt_0;
    Float_t         tau_eta_0;
    Float_t         tau_phi_0;
    Float_t         tau_charge_0;
@@ -1551,7 +1550,6 @@ public:
    Float_t         tau_promptTauInput_MV2c10_0;
    Float_t         tau_promptTauVeto_0;
    Float_t         tau_promptTauIso_0;
-   Float_t         tau_pt_1;
    Float_t         tau_eta_1;
    Float_t         tau_phi_1;
    Float_t         tau_charge_1;

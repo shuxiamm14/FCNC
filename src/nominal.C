@@ -7,12 +7,10 @@ void nominal::initMVA(TString fcnc_region){
   doBDT = 1;
 
   reader[fcnc_region] = new TMVA::Reader( "!Color:!Silent" );
+  reader[fcnc_region]->AddVariable("tau_pt_0",&tau_pt_0);
+  reader[fcnc_region]->AddVariable("tau_pt_1",&tau_pt_1);
 
   if(fcnc_region == "reg2mtau1b3jos" || fcnc_region == "reg2mtau1b2jos" || fcnc_region == "reg1l1tau1b3j" ||  fcnc_region == "reg1l1tau1b2j"){
-    if(fcnc_region == "reg2mtau1b3jos" || fcnc_region == "reg2mtau1b2jos" ){
-      reader[fcnc_region]->AddVariable("tau_pt_0",&tau_pt_0);
-      reader[fcnc_region]->AddVariable("tau_pt_1",&tau_pt_1);
-    }
     reader[fcnc_region]->AddVariable("etmiss",&etmiss);
     reader[fcnc_region]->AddVariable("dphitauetmiss",&dphitauetmiss);
     reader[fcnc_region]->AddVariable("drtautau",&drtautau);
@@ -34,8 +32,6 @@ void nominal::initMVA(TString fcnc_region){
     //reader[fcnc_region]->AddVariable("x2fit", &x2fit");
     reader[fcnc_region]->AddVariable("t1vismass",&t1vismass);
     reader[fcnc_region]->AddVariable("mtaujmin",&mtaujmin);
-    reader[fcnc_region]->AddVariable("tau_pt_ss",&tau_pt_ss);
-    reader[fcnc_region]->AddVariable("tau_pt_os",&tau_pt_os);
     reader[fcnc_region]->AddVariable("drltau",&drltau);
     reader[fcnc_region]->AddVariable("drtautau",&drtautau);
     reader[fcnc_region]->AddVariable("etamax",&etamax);

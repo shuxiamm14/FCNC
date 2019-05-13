@@ -29,12 +29,9 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
    TMVA::Factory *factory = new TMVA::Factory(weightfile, outputFile,
                                                "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
    TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
-
+   dataloader->AddVariable("tau_pt_0",'F');
+   dataloader->AddVariable("tau_pt_1",'F');
    if(region == "reg2mtau1b3jos" || region == "reg2mtau1b2jos" || region == "reg1l1tau1b3j" ||  region == "reg1l1tau1b2j"){
-      if(region == "reg2mtau1b3jos" || region == "reg2mtau1b2jos" ){
-         dataloader->AddVariable("tau_pt_0",'F');
-         dataloader->AddVariable("tau_pt_1",'F');
-      }
       dataloader->AddVariable("etmiss",'F');
       dataloader->AddVariable("dphitauetmiss",'F');
       dataloader->AddVariable("drtautau",'F');
@@ -56,8 +53,6 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
       //dataloader->AddVariable("x2fit", 'F');
       dataloader->AddVariable("t1vismass",'F');
       dataloader->AddVariable("mtaujmin",'F');
-      dataloader->AddVariable("tau_pt_ss",'F');
-      dataloader->AddVariable("tau_pt_os",'F');
       dataloader->AddVariable("drltau",'F');
       dataloader->AddVariable("drtautau",'F');
       dataloader->AddVariable("etamax",'F');
@@ -73,10 +68,11 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
 
    TChain* signal = new TChain(region);
    TChain* background = new TChain(region);
-   if(region.Contains("2mtau")){
-      TChain* datatreess;
-      TChain* mctreess;
 
+   TChain* datatreess;
+   TChain* mctreess;
+
+   if(region.Contains("2mtau")){
       TString inputdatanameshad[] = {"data1516","data17","data18"};
       TString inputsignameshad[] = {"mc16a_fcnc_ch","mc16d_fcnc_ch","mc16e_fcnc_ch","mc16a_fcnc_uh","mc16d_fcnc_uh","mc16e_fcnc_uh"};
       TString inputbkgnameshad[] = {"mc16a_wjet","mc16d_wjet","mc16e_wjet","mc16a_zll","mc16d_zll","mc16e_zll","mc16a_smhiggs","mc16a_ztautau","mc16d_smhiggs","mc16d_ztautau","mc16e_smhiggs","mc16e_ztautau","mc16a_diboson","mc16a_top","mc16d_diboson","mc16d_top","mc16e_diboson","mc16e_top"};
@@ -121,8 +117,15 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
       dataloader->SetSignalWeightExpression    ("weights[0]");
       dataloader->SetBackgroundWeightExpression("weights[0]");
    }else{
+      TString inputdatanamestth[] = {"data1516","data17"};
       TString inputsignamestth[] = {"fcnc_ch","fcnc_uh"};
       TString inputbkgnamestth[] = {"Vjets","diboson","ttV","ttbarnohad","other","ttH","ttbargamma","sherpattbar"};
+
+      if(region.Contains("reg1l2tau1bnj")) {
+         datatreess = new TChain("reg1l2tau1bnj_ss");
+         mctreess = new TChain("reg1l2tau1bnj_ss");
+      }
+
       prefix += "/data/reduce2/";
       for (int i = 0; i < 2; ++i){
          signal->Add(prefix + inputsignamestth[i]+"a_tree.root");
@@ -130,6 +133,15 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
       }
    //   for (int i = 0; i < 7; ++i)
    //      background->Add(prefix + inputbkgnames[i]+"_tree.root");
+
+      if(region.Contains("reg1l2tau1bnj")) {
+         datatreess -> Add(prefix + inputdatanamestth[0]+"_tree.root");
+         datatreess -> Add(prefix + inputdatanamestth[1]+"_tree.root");
+         mctreess->Add(prefix + inputbkgnamestth[3]+"a_tree.root");
+         mctreess->Add(prefix + inputbkgnamestth[6]+"a_tree.root");
+         mctreess->Add(prefix + inputbkgnamestth[3]+"d_tree.root");
+         mctreess->Add(prefix + inputbkgnamestth[6]+"d_tree.root");
+      }
       background->Add(prefix + inputbkgnamestth[3]+"a_tree.root");
       background->Add(prefix + inputbkgnamestth[6]+"a_tree.root");
       //background->Add(prefix + inputbkgnamestth[7]+"a_tree.root");
@@ -137,12 +149,16 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
       background->Add(prefix + inputbkgnamestth[6]+"d_tree.root");
       //background->Add(prefix + inputbkgnamestth[7]+"d_tree.root");
       //background->Add(prefix + "data_tree.root");
-      TCut mycuts = region.Contains("reg1l2tau1bnj") ? "tau_truthType_0 == 10 && tau_truthType_1 == 10 && (tau_charge_0 * tau_charge_1<0) && weights[0] >0" : "tau_truthType_0 == 10 && weights[0] >0";
+
+
+      TCut mycuts = region.Contains("reg1l2tau1bnj") ? "tau_truthType_0 == 10 && tau_truthType_1 == 10 && weights[0] >0" : "tau_truthType_0 == 10 && weights[0] >0";
       TCut mycutb = "weights[0]>0";
       printf(" >>>> Training signal events: %d\n",(Int_t)signal->GetEntries((const char*)(mycuts && cut)));
       printf(" >>>> Training background events: %d\n",(Int_t)background->GetEntries((const char*)(mycutb && cut)));
       dataloader->AddTree(signal, "Signal", 1.0, mycuts && cut, Types::kTraining);
       dataloader->AddTree(background, "Background", 1.0, mycutb && cut, Types::kTraining);
+      if(region.Contains("reg1l2tau1bnj")) dataloader->AddTree(mctreess, "Background", 1.0, mycutb && cut, Types::kTraining);
+      if(region.Contains("reg1l2tau1bnj")) dataloader->AddTree(datatreess, "Background", 1.0, mycutb && cut, Types::kTraining);
       dataloader->AddTree(signal, "Signal", 1.0, mycuts && !cut, Types::kTesting);
       dataloader->AddTree(background, "Background", 1.0, mycutb && !cut, Types::kTesting);
    //   dataloader->SetSignalWeightExpression    ("weights[0]*fakeSF");

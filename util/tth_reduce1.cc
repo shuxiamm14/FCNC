@@ -1,5 +1,5 @@
 #include "tthmltree.h"
-
+#include <thread>
 int main(int argc, char const *argv[])
 {
 
@@ -11,6 +11,8 @@ int main(int argc, char const *argv[])
 	  fprintf(stderr,"Error: can't open file: %s\n",argv[1]);
 	  return 1;
 	}
+	thread th1(PrintTime, 5);
+	th1.detach();
 	char inputline[100];
 
 	tthmltree *analysis = new tthmltree();

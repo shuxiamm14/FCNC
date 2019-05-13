@@ -1,11 +1,15 @@
 #include "hadhadtree.h"
+#include "fcnc_include.h"
+#include <thread>
 
 int main(int argc, char const *argv[])
 {
+
+	thread th1(PrintTime, 5);
+	th1.detach();
 	bool debug = 0;
-	bool doplot = 1;
 	TString prefix = PACKAGE_DIR;
-	prefix += "/data/hadhadreduce2/";
+	prefix += "/data/hadhadreduce";
 	vector<TString> regions;
 	regions.push_back("reg2mtau1b2jss");
 	regions.push_back("reg2mtau1b2jos");
@@ -37,7 +41,10 @@ int main(int argc, char const *argv[])
 	analysis->dofcnc = 1;
 	analysis->reduce = 3;
 	analysis->debug = debug;
-	analysis->writetree = 0;
+	analysis->writetree = analysis->reduce == 2 ? 1 : 0;
+	bool doplot = analysis->reduce == 2 ? 0 : 1;
+	prefix += char('0' + analysis->reduce - 1);
+	prefix += "/";
 	analysis->fcnc_regions = regions;
 	char inputline[500];
 	while(!fn.eof()){

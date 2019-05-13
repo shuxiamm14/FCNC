@@ -11,8 +11,9 @@ int main(int argc, char const *argv[])
 	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
 	tau_plots->inputfilename = "hists";
 	tau_plots->debug = 0;
-	tau_plots->sensitivevariable = "BDTG";
-	tau_plots->add("BDT discriminant","BDTG","",5);
+	tau_plots->sensitivevariable = "BDTG_test";
+	tau_plots->add("BDT discriminant","BDTG_train","",5);
+	tau_plots->add("BDT discriminant","BDTG_test","",5);
   	tau_plots->add("p_{T,lead-#tau}","tau_0_pt","GeV",5);
   	tau_plots->add("p_{T,sublead-#tau}","tau_1_pt","GeV",5);
   	tau_plots->add("E^{T}_{miss}","etmiss","GeV",2);
@@ -27,8 +28,8 @@ int main(int argc, char const *argv[])
   	tau_plots->add("m_{t,FCNC}","t2mass","GeV",20);
   	tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
   	tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
-
-  	tau_plots->blinding = 0;
+  	gErrorIgnoreLevel = kWarning;
+  	tau_plots->blinding = 3;
 	vector<TString> regions;
 	regions.push_back("reg2mtau1b2jss");
 	regions.push_back("reg2mtau1b2jos");

@@ -1,4 +1,5 @@
 #include "hadhadtree.h"
+#include <thread>
 
 int main(int argc, char const *argv[])
 {
@@ -7,6 +8,8 @@ int main(int argc, char const *argv[])
 		printf("Usage: xtfw_reduce_run dataconfigfile (mc16a_wjet.txt)\n");
 		exit(1);
 	}
+	thread th1(PrintTime, 5);
+	th1.detach();
 	bool debug = 0;
 	bool doplot = 1;
 	TString prefix1;

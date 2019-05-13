@@ -170,18 +170,19 @@ void tthmltree::init_hist(TString outputfilename){
     fcnc_plots[iNP]->debug = !!debug;
     if(reduce == 3) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG_train",&BDTG_train,false,"");
     if(reduce == 3) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG_test",&BDTG_test,false,"");
-    fcnc_plots[iNP]->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+    fcnc_plots[iNP]->add(10,25.,125.,"p_{T,#tau}","taupt_0",&tau_pt_0,true,"GeV");
+    fcnc_plots[iNP]->add(10,25.,125.,"p_{T,#tau}","taupt_1",&tau_pt_1,true,"GeV");
     fcnc_plots[iNP]->add(10,25.,125.,"p_{T,SS#tau}","tauptss",&tau_pt_ss,true,"GeV");
     fcnc_plots[iNP]->add(10,25.,125.,"p_{T,OS#tau}","tauptos",&tau_pt_os,true,"GeV");
     fcnc_plots[iNP]->add(100,100.,300.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
-    fcnc_plots[iNP]->add(100,0.,50.,"m^{T}_{W}","mtw",&mtw,true,"GeV");
+    fcnc_plots[iNP]->add(100,0.,200.,"m^{T}_{W}","mtw",&mtw,true,"GeV");
     fcnc_plots[iNP]->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
     fcnc_plots[iNP]->add(100,0.,250.,"m_{W}","wmass",&wmass,true,"GeV");
     fcnc_plots[iNP]->add(150,120.,270.,"m_{t,FCNC}","t2mass",&t2mass,true,"GeV");
-    fcnc_plots[iNP]->add(100,0.,250.,"m_{#tau#tau,vis}","tautauvismass",&ttvismass,true,"GeV");
+    fcnc_plots[iNP]->add(100,25.,125.,"m_{#tau#tau,vis}","tautauvismass",&ttvismass,true,"GeV");
     fcnc_plots[iNP]->add(100,0.,200.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,true,"GeV");
     fcnc_plots[iNP]->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,true,"GeV");
-    fcnc_plots[iNP]->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,true,"GeV");
+    fcnc_plots[iNP]->add(150,40.,190.,"m_{t,SM,vis}","t1vismass",&t1vismass,true,"GeV");
     fcnc_plots[iNP]->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
     fcnc_plots[iNP]->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
     fcnc_plots[iNP]->add(60,0.,6.,"#DeltaR(l+b-jet,#tau+#tau)","drlbditau",&drlbditau,false,"");
@@ -776,6 +777,11 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       }
       dphitauetmiss = fabs(met_phi - (taus_v[0] + taus_v[1]).Phi());
     }
+    if (ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"])
+      if(t1vismass > 190*GeV )
+        continue;
+    if(ttvismass > 125*GeV ) continue;
+    if(ttvismass < 25*GeV ) continue;
     if(reduce == 3){
       if(debug) printf("eval BDTG\n");
       if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"]) BDTG_test = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
@@ -844,7 +850,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       weights->clear();
       weights->push_back(weight);
       weights->push_back(weight*fakeSF);
-      if(fcnc && mc_channel_number){
+      if(triggeredfcnc && mc_channel_number){
         for (int iNP = 0; iNP < 8; ++iNP)
         {
           double valNP = weight;
@@ -874,7 +880,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           if(debug) printf("fill hist\n");
           for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
           {
-            if(iNP != 0 && !mc_channel_number) continue;
+            if(iNP != 0 && tauorigin.Contains("data")) continue;
             weight = weights->at(plotNPs[iNP]);
             if (iter->first.Contains("tau")) {
               if (triggeredfcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, iNP);
@@ -1573,6 +1579,7 @@ void tthmltree::Init(TTree*tree) {
 
   if (reduce >= 2 && fcnc) {
     tree->SetBranchAddress("neutrino_pt", & neutrino_pt);
+    tree->SetBranchAddress("mc_channel_number", & mc_channel_number);
     tree->SetBranchAddress("neutrino_eta", & neutrino_eta);
     tree->SetBranchAddress("neutrino_phi", & neutrino_phi);
     tree->SetBranchAddress("neutrino_m", & neutrino_m);
