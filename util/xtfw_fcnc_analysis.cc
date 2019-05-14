@@ -56,9 +56,9 @@ int main(int argc, char const *argv[])
 	    	tau_plots->add_region(regions[j] + "_" + nprong[k] + "_below35_vetobtagwp70");
 	    }
 	tau_plots->muteregion("prong");
-	TString samples[] = {"smhiggs", "wjet", "diboson", "zll", "ztautau", "top","fcnc_ch"};
+	TString samples[] = {"smhiggs", "wjet", "diboson", "zll", "ztautau", "top","fcnc_ch","fcnc_prod_ch"};
 	double norm[] = {1,1,1,1,1,1,1};
-	TString sampletitle[] = {"SM Higgs", "W+jets", "Diboson", "Z#rightarrowll", "Z#rightarrow#tau#tau", "Top production(real tau)", "#bar{t}t#rightarrow bWqH"};
+	TString sampletitle[] = {"SM Higgs", "W+jets", "Diboson", "Z#rightarrowll", "Z#rightarrow#tau#tau", "Top production(real tau)", "#bar{t}t#rightarrow bWqH", "ctH Prod Mode"};
 	stringstream ss;
 	ss<<"(BR=" << norm[6] << "%)";
 	TString tmp;
@@ -77,14 +77,16 @@ int main(int argc, char const *argv[])
 	}
 //============================ merge_origin ============================
 	else if(plot_option == 2){
-  		tau_plots->overlay(samples[6]);
-		for (int j = 0; j < 7; ++j)
+  		tau_plots->overlay(samples[7]);
+		for (int j = 0; j < 8; ++j){
+			if(j == 6) continue;
 			for (int i = 4; i < 7; i += 2)
 				if (origin[i] != "real")
 				{
 					tau_plots->read_sample( "fakeMC", samples[j] + "_" + origin[i] + "_NP0", "FakeMC", kPink, norm[j]);
 				}else
 					tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+		}
 
 	}
 	for (int j = 0; j < nregions; ++j){
@@ -121,7 +123,7 @@ int main(int argc, char const *argv[])
   		stacks.push_back("diboson");
   		//stacks.push_back("fakeMC");
   		stacks.push_back("fake");
-  		stacks.push_back("fcnc_ch");
+  		stacks.push_back("fcnc_prod_ch");
   		tau_plots->stackorder = stacks;
   	}
 
