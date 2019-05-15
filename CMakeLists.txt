@@ -77,8 +77,3 @@ foreach( sourcefile ${APP_SOURCES} )
     target_compile_definitions(${exename} PRIVATE PACKAGE_DIR="${CMAKE_SOURCE_DIR}")
   target_link_libraries(${exename} ${ROOT_LIBRARIES} hadhadtree)
 endforeach( sourcefile ${APP_SOURCES} )
-
-add_executable( print_cutflow_hadhad_run util/print_cutflow_hadhad.cc)
-
-target_compile_definitions(print_cutflow_hadhad_run PRIVATE PACKAGE_DIR="${CMAKE_SOURCE_DIR}")
-target_link_libraries(print_cutflow_hadhad_run ${PLOTTOOLLIB} ${ROOT_LIBRARIES})
