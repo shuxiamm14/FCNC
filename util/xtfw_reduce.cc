@@ -134,9 +134,9 @@ int main(int argc, char const *argv[])
 	cutflowraw->SetBinContent(1,totgenRaw);
 	cutflowraw->SetBinContent(2,totDAODRaw);
 	cutflow->GetXaxis()->SetBinLabel(1,"Total Events");
-	cutflow->GetXaxis()->SetBinLabel(1,"DAOD");
+	cutflow->GetXaxis()->SetBinLabel(2,"DAOD");
 	cutflowraw->GetXaxis()->SetBinLabel(1,"Total Events");
-	cutflowraw->GetXaxis()->SetBinLabel(1,"DAOD");
+	cutflowraw->GetXaxis()->SetBinLabel(2,"DAOD");
 	while(!fn.eof()){
 		fn.getline(inputline,500);
 		if(strlen(inputline)==0) continue;
