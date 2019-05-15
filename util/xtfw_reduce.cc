@@ -115,8 +115,8 @@ int main(int argc, char const *argv[])
 	fn.seekg(0, fn.beg);
 	TH1D *cutflow = 0;
 	TH1D *cutflowraw = 0;
-	cutflow = new TH1D("cutflow_HSM_common_weighted","cutflow_HSM_common_weighted",30,-2,28);
-	cutflowraw = new TH1D("cutflow_HSM_common_raw","cutflow_HSM_common_raw",30,-2,28);
+	cutflow = new TH1D("cutflow_HSM_common_weighted","cutflow_HSM_common_weighted",23,0,23);
+	cutflowraw = new TH1D("cutflow_HSM_common_raw","cutflow_HSM_common_raw",23,0,23);
 	double totgenWeighted = 0;
 	long totgenRaw = 0;
 	double totDAODWeighted = 0;
