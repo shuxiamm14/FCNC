@@ -300,11 +300,11 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     }else{
       weight = weights->at(0);
     }
-    cutflowraw[0]+=1;
-    cutflow[0]+=weight;
-    cutflow2[0]+=pow(weight,2);
     //===============================pre-selections===============================
     if(reduce == 2) {
+      cutflowraw[0]+=1;
+      cutflow[0]+=weight;
+      cutflow2[0]+=pow(weight,2);
       if(campaign !=1 && jets_p4->at(0)->Pt() < 50 && bjets_p4->at(0)->Pt() < 50) continue;
       cutflow[1]+=weight;
       cutflow2[1]+=pow(weight,2);
