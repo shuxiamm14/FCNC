@@ -228,7 +228,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   int nloop = debug ? min((Long64_t)1000,nentries) : nentries;
   float ngluon = 0;
   gM = initgM();
-  printf("nentries: %ld\n", nloop);
+  printf("nentries: %d\n", nloop);
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     inputtree->GetEntry(jentry);
     //if(mc_channel_number == 411172 || mc_channel_number == 411173 || mc_channel_number == 411176 || mc_channel_number == 411177)
@@ -248,11 +248,17 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       float weight_pileup = NOMINAL_pileup_combined_weight;
       weight = isData?1:weight_mc*weight_pileup*jetSFs*globalweight;
 
-      cutflowraw[0]+=weight;
+      cutflowraw[0]+=1;
+      cutflow[0]+=weight;
+      cutflow2[0]+=pow(weight,2);
       if(!tau_0_trig_trigger_matched || !tau_1_trig_trigger_matched) continue;
-      cutflowraw[1]+=weight;
+      cutflowraw[1]+=1;
+      cutflow[1]+=weight;
+      cutflow2[1]+=pow(weight,2);
       if((tau_1_n_charged_tracks!=1 && tau_1_n_charged_tracks!=3) || (tau_0_n_charged_tracks!=1 && tau_0_n_charged_tracks!=3)) continue;
-      cutflowraw[2]+=weight;
+      cutflowraw[2]+=1;
+      cutflow[2]+=weight;
+      cutflow2[2]+=pow(weight,2);
       lepton_SF = 
         tau_0_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
         tau_1_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
@@ -284,11 +290,12 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       ifregions["reg1ttau1mtau1b3jos"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
 
 
-      if(ifregions["reg2mtau1b3jos"]) cutflowraw[3]+=weight;
+      if(ifregions["reg2mtau1b3jos"]) cutflowraw[3]+=1;
 
       for (auto iter : ifregions)
         if(iter.second == 0 || find(fcnc_regions.begin(),fcnc_regions.end(),iter.first) == fcnc_regions.end())
           ifregions.erase(iter.first);
+
       if(!ifregions.size()) continue;
       if(debug){
         printf("event: %llu\n",event_number);
@@ -486,7 +493,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     for (auto itertmp : outputtree)
       itertmp.second->Write(itertmp.first, TObject::kWriteDelete);
   }
-  if(reduce == 2) printf("cutflow: %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f\n", cutflow[0],cutflow2[0],cutflow[1],cutflow2[1],cutflow[2],cutflow2[2],cutflow[3],cutflow2[3],cutflow[4],cutflow2[4],cutflow[5],cutflow2[5]);
+  printf("cutflow: %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f\n", cutflow[0],sqrt(cutflow2[0]),cutflow[1],sqrt(cutflow2[1]),cutflow[2],sqrt(cutflow2[2]),cutflow[3],sqrt(cutflow2[3]),cutflow[4],sqrt(cutflow2[4]),cutflow[5],sqrt(cutflow2[5]));
   printf("cutflowraw: %d, %d, %d, %d, %d, %d\n", cutflowraw[0],cutflowraw[1],cutflowraw[2],cutflowraw[3],cutflowraw[4],cutflowraw[5]);
 }
 
