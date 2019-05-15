@@ -228,7 +228,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   int nloop = debug ? min((Long64_t)1000,nentries) : nentries;
   float ngluon = 0;
   gM = initgM();
-
+  printf("nentries: %ld\n", nloop);
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     inputtree->GetEntry(jentry);
     if(mc_channel_number == 411172 || mc_channel_number == 411173 || mc_channel_number == 411176 || mc_channel_number == 411177)
