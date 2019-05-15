@@ -238,10 +238,21 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
 //===============================SFs and weights===============================
     Float_t lepton_SF = 0;
     if(reduce == 1){
-      cutflowraw[0]+=1;
+      float jetSFs = 
+        jet_NOMINAL_central_jets_global_effSF_JVT*
+        jet_NOMINAL_central_jets_global_ineffSF_JVT*
+        jet_NOMINAL_forward_jets_global_effSF_JVT*
+        jet_NOMINAL_forward_jets_global_ineffSF_JVT*
+        jet_NOMINAL_global_effSF_MV2c10*
+        jet_NOMINAL_global_ineffSF_MV2c10;
+      float weight_pileup = NOMINAL_pileup_combined_weight;
+      weight = isData?1:weight_mc*weight_pileup*jetSFs*globalweight;
+
+      cutflowraw[0]+=weight;
       if(!tau_0_trig_trigger_matched || !tau_1_trig_trigger_matched) continue;
+      cutflowraw[1]+=weight;
       if((tau_1_n_charged_tracks!=1 && tau_1_n_charged_tracks!=3) || (tau_0_n_charged_tracks!=1 && tau_0_n_charged_tracks!=3)) continue;
-      cutflowraw[1]+=1;
+      cutflowraw[2]+=weight;
       lepton_SF = 
         tau_0_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
         tau_1_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
@@ -273,22 +284,12 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       ifregions["reg1ttau1mtau1b3jos"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
 
 
-      if(ifregions["reg2mtau1b3jos"]) cutflowraw[2]+=1;
+      if(ifregions["reg2mtau1b3jos"]) cutflowraw[3]+=weight;
 
       for (auto iter : ifregions)
         if(iter.second == 0 || find(fcnc_regions.begin(),fcnc_regions.end(),iter.first) == fcnc_regions.end())
           ifregions.erase(iter.first);
       if(!ifregions.size()) continue;
-      if(ifregions["reg2mtau1b3jos"]) cutflowraw[3]+=1;
-      float jetSFs = 
-        jet_NOMINAL_central_jets_global_effSF_JVT*
-        jet_NOMINAL_central_jets_global_ineffSF_JVT*
-        jet_NOMINAL_forward_jets_global_effSF_JVT*
-        jet_NOMINAL_forward_jets_global_ineffSF_JVT*
-        jet_NOMINAL_global_effSF_MV2c10*
-        jet_NOMINAL_global_ineffSF_MV2c10;
-      float weight_pileup = NOMINAL_pileup_combined_weight;
-      weight = isData?1:weight_mc*weight_pileup*jetSFs*globalweight;
       if(debug){
         printf("event: %llu\n",event_number);
         printf("weight_mc: %f\n",weight_mc);
@@ -456,7 +457,6 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
         }
         if (writetree){
           if(outputtree.find(iter->first) != outputtree.end()){
-            if(reduce ==1 && ifregions["reg2mtau1b3jos"]) cutflowraw[4]+=1;
             outputtree[iter->first]->Fill();
           }
           else{
