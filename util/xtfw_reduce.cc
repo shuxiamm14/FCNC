@@ -156,7 +156,7 @@ int main(int argc, char const *argv[])
 				cutflowraw->GetXaxis()->SetBinLabel(i+2,inputcutflow->GetXaxis()->GetBinLabel(i));
 			}
 			cutflow->Fill(i+2,inputcutflow->GetBinContent(i)*xsecs[dsid]*luminosity/totgenraw[dsid]/87);
-			cutflowraw->Fill(i+2,inputcutflow->GetBinContent(i));
+			cutflowraw->Fill(i+2,inputcutflow->GetBinContent(i)/87);
 		}
 		analysis->Loop( (TTree*)inputfile.Get("NOMINAL"), inputconfig, isData ? 1 : xsecs[dsid]*luminosity/totgenweighted[dsid]);
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
