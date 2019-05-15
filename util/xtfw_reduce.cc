@@ -133,7 +133,10 @@ int main(int argc, char const *argv[])
 	cutflow->SetBinContent(2,totDAODWeighted);
 	cutflowraw->SetBinContent(1,totgenRaw);
 	cutflowraw->SetBinContent(2,totDAODRaw);
-
+	cutflow->GetXaxis()->SetBinLabel(1,"Total Events");
+	cutflow->GetXaxis()->SetBinLabel(1,"DAOD");
+	cutflowraw->GetXaxis()->SetBinLabel(1,"Total Events");
+	cutflowraw->GetXaxis()->SetBinLabel(1,"DAOD");
 	while(!fn.eof()){
 		fn.getline(inputline,500);
 		if(strlen(inputline)==0) continue;
@@ -145,8 +148,16 @@ int main(int argc, char const *argv[])
 		printf("reading file: DSID: %d name %s\n", isData? 0 : dsid, filename);
 		TFile inputfile(filename);
 		if(!isData && xsecs.find(dsid) == xsecs.end()) printf("xsec for DSID %d not found, please update your Xsec file\n", dsid);
-		cutflow->Add((TH1D*)inputfile.Get("cutflow_HSM_common"),xsecs[dsid]*luminosity/totgenraw[dsid]/87);
-		cutflowraw->Add((TH1D*)inputfile.Get("cutflow_HSM_common"));
+		TH1D *inputcutflow = (TH1D*)inputfile.Get("cutflow_HSM_common");
+		for (int i = 1; i <= inputcutflow->GetNbinsX(); ++i)
+		{
+			if(TString(cutflow->GetXaxis()->GetBinLabel(i+2)) == "") {
+				cutflow->GetXaxis()->SetBinLabel(i+2,inputcutflow->GetXaxis()->GetBinLabel(i));
+				cutflowraw->GetXaxis()->SetBinLabel(i+2,inputcutflow->GetXaxis()->GetBinLabel(i));
+			}
+			cutflow->Fill(i+2,inputcutflow->GetBinContent(i)*xsecs[dsid]*luminosity/totgenraw[dsid]/87);
+			cutflowraw->Fill(i+2,inputcutflow->GetBinContent(i));
+		}
 		analysis->Loop( (TTree*)inputfile.Get("NOMINAL"), inputconfig, isData ? 1 : xsecs[dsid]*luminosity/totgenweighted[dsid]);
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		inputfile.Close();
