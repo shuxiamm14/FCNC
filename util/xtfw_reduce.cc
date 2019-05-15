@@ -85,23 +85,28 @@ int main(int argc, char const *argv[])
 	analysis->init_sample(inputconfig,inputconfig);
 	map<int,double> totgenweighted;
 	map<int,double> totgenraw;
-	map<int,double> nDAODraw;
-	if(!isData){
-		printf("Reading bin 8\n");
-		while(!fn.eof()){
-			fn.getline(inputline,500);
-			if(strlen(inputline)==0) continue;
-			if(inputline[0]=='#') continue;
-			char filename[500];
-			int dsid;
-			if(!isData) sscanf(inputline,"%d %s",&dsid,filename);
-			else sscanf(inputline,"%s",filename);
-			printf("reading file: DSID: %d name %s\n", dsid, filename);
-			TFile inputfile(filename);
-			if(!inputfile.Get("h_metadata")) {
-				printf("h_metadata not found, exit.\n");
-				exit(1);
-			}
+	map<int,long> nDAODraw;
+	double totgenWeighted = 0;
+	long totgenRaw = 0;
+	double totDAODWeighted = 0;
+	long totDAODRaw = 0;
+
+	printf("Reading bin 8\n");
+	while(!fn.eof()){
+		fn.getline(inputline,500);
+		if(strlen(inputline)==0) continue;
+		if(inputline[0]=='#') continue;
+		char filename[500];
+		int dsid;
+		if(!isData) sscanf(inputline,"%d %s",&dsid,filename);
+		else sscanf(inputline,"%s",filename);
+		printf("reading file: DSID: %d name %s\n", dsid, filename);
+		TFile inputfile(filename);
+		if(!inputfile.Get("h_metadata")) {
+			printf("h_metadata not found, exit.\n");
+			exit(1);
+		}
+		if(!isData){
 			if(totgenweighted.find(dsid) == totgenweighted.end()) totgenweighted[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
 			else totgenweighted[dsid] += ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
 			if(totgenraw.find(dsid) == totgenraw.end()) totgenraw[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(7);
@@ -109,25 +114,27 @@ int main(int argc, char const *argv[])
 			if(nDAODraw.find(dsid) == nDAODraw.end()) nDAODraw[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(10);
 			else nDAODraw[dsid] += ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(10);
 			inputfile.Close();
+			for (auto pair : totgenraw)
+			{
+				totgenWeighted += xsecs[pair.first]*luminosity;
+				totgenRaw += pair.second;
+				totDAODRaw += nDAODraw[pair.first];
+				totDAODWeighted += nDAODraw[pair.first]/pair.second*xsecs[pair.first]*luminosity;
+			}
+		}else{
+			totgenWeighted = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(7);
+			totgenRaw = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(7);
+			totDAODWeighted = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(10);
+			totDAODRaw = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(10);
 		}
 	}
+
 	fn.clear();
 	fn.seekg(0, fn.beg);
 	TH1D *cutflow = 0;
 	TH1D *cutflowraw = 0;
 	cutflow = new TH1D("cutflow_HSM_common_weighted","cutflow_HSM_common_weighted",23,0,23);
 	cutflowraw = new TH1D("cutflow_HSM_common_raw","cutflow_HSM_common_raw",23,0,23);
-	double totgenWeighted = 0;
-	long totgenRaw = 0;
-	double totDAODWeighted = 0;
-	long totDAODRaw = 0;
-	for (auto pair : totgenraw)
-	{
-		totgenWeighted += xsecs[pair.first]*luminosity;
-		totgenRaw += pair.second;
-		totDAODRaw += nDAODraw[pair.first];
-		totDAODWeighted += nDAODraw[pair.first]/pair.second*xsecs[pair.first]*luminosity;
-	}
 
 	cutflow->SetBinContent(1,totgenWeighted);
 	cutflow->SetBinContent(2,totDAODWeighted);
@@ -155,8 +162,8 @@ int main(int argc, char const *argv[])
 				cutflow->GetXaxis()->SetBinLabel(i+2,inputcutflow->GetXaxis()->GetBinLabel(i));
 				cutflowraw->GetXaxis()->SetBinLabel(i+2,inputcutflow->GetXaxis()->GetBinLabel(i));
 			}
-			cutflow->Fill(i+1,inputcutflow->GetBinContent(i)*xsecs[dsid]*luminosity/totgenraw[dsid]/87);
-			cutflowraw->Fill(i+1,inputcutflow->GetBinContent(i)/87);
+			cutflow->Fill(i+1,inputcutflow->GetBinContent(i)*xsecs[dsid]*luminosity/totgenraw[dsid]/(isData?1:87));
+			cutflowraw->Fill(i+1,inputcutflow->GetBinContent(i)/(isData?1:87));
 		}
 		analysis->Loop( (TTree*)inputfile.Get("NOMINAL"), inputconfig, isData ? 1 : xsecs[dsid]*luminosity/totgenweighted[dsid]);
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
