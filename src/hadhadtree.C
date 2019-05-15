@@ -175,6 +175,38 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     0,
     0
   };
+  double cutflow2[] = {
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  };
+  int cutflowraw[] = {
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  };
   reduce -= 1;
   Init(inputtree);
   reduce += 1;
@@ -203,12 +235,13 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       continue;
     if ((jentry % 100000 == 0) || debug)
       std::cout << " I am here event " << jentry << " Event " << event_number << " Run " << run_number << " ismc " << mc_channel_number << std::endl;
-    cutflow[0]+=1;
 //===============================SFs and weights===============================
     Float_t lepton_SF = 0;
     if(reduce == 1){
+      cutflowraw[0]+=1;
       if(!tau_0_trig_trigger_matched || !tau_1_trig_trigger_matched) continue;
       if((tau_1_n_charged_tracks!=1 && tau_1_n_charged_tracks!=3) || (tau_0_n_charged_tracks!=1 && tau_0_n_charged_tracks!=3)) continue;
+      cutflowraw[1]+=1;
       lepton_SF = 
         tau_0_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
         tau_1_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
@@ -240,10 +273,13 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       ifregions["reg1ttau1mtau1b3jos"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
 
 
+      if(ifregions["reg2mtau1b3jos"]) cutflowraw[2]+=1;
+
       for (auto iter : ifregions)
         if(iter.second == 0 || find(fcnc_regions.begin(),fcnc_regions.end(),iter.first) == fcnc_regions.end())
           ifregions.erase(iter.first);
       if(!ifregions.size()) continue;
+      if(ifregions["reg2mtau1b3jos"]) cutflowraw[3]+=1;
       float jetSFs = 
         jet_NOMINAL_central_jets_global_effSF_JVT*
         jet_NOMINAL_central_jets_global_ineffSF_JVT*
@@ -264,17 +300,23 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     }else{
       weight = weights->at(0);
     }
+    cutflowraw[0]+=1;
+    cutflow[0]+=weight;
+    cutflow2[0]+=pow(weight,2);
     //===============================pre-selections===============================
     if(reduce == 2) {
-      cutflow[1]+=weight;
       if(campaign !=1 && jets_p4->at(0)->Pt() < 50 && bjets_p4->at(0)->Pt() < 50) continue;
-      cutflow[2]+=weight;
+      cutflow[1]+=weight;
+      cutflow2[1]+=pow(weight,2);
+      cutflowraw[1]+=1;
       bool passbjetcut = 0;
       for(auto bjet : *bjets_p4){
         if(bjet->Pt() > 30 && abs(bjet->Eta()) < 2.5) passbjetcut = 1;
       }
       if(!passbjetcut) continue;
-      cutflow[3]+=weight;
+      cutflow[2]+=weight;
+      cutflow2[2]+=pow(weight,2);
+      cutflowraw[2]+=1;
       tau_pt_0 = taus_p4->at(0)->Pt();
       tau_pt_1 = taus_p4->at(1)->Pt();
       etmiss = met_p4->Pt();
@@ -287,8 +329,17 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           drtaujmin = (*(taus_p4->at(0)) + *(taus_p4->at(1))).DeltaR(*jetp4);
       }
       if(ttvismass < 50) continue;
+      cutflow[3]+=weight;
+      cutflow2[3]+=pow(weight,2);
+      cutflowraw[3]+=1;
       if(ttvismass > 130) continue;
+      cutflow[4]+=weight;
+      cutflow2[4]+=pow(weight,2);
+      cutflowraw[4]+=1;
       if(drtautau > 3.4) continue;
+      cutflow[5]+=weight;
+      cutflow2[5]+=pow(weight,2);
+      cutflowraw[5]+=1;
   
       phicent = phi_centrality(taus_p4->at(0)->Phi(),taus_p4->at(1)->Phi(),met_p4->Phi());
   
@@ -404,8 +455,10 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           weights->push_back(weight);
         }
         if (writetree){
-          if(outputtree.find(iter->first) != outputtree.end())
+          if(outputtree.find(iter->first) != outputtree.end()){
+            if(reduce ==1 && ifregions["reg2mtau1b3jos"]) cutflowraw[4]+=1;
             outputtree[iter->first]->Fill();
+          }
           else{
             printf("Error: outputtree cannot find: %s\n", iter->first.Data());
             for(auto itertmp : outputtree){
@@ -433,7 +486,8 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     for (auto itertmp : outputtree)
       itertmp.second->Write(itertmp.first, TObject::kWriteDelete);
   }
-  printf("cutflow: %f, %f, %f, %f\n", cutflow[0],cutflow[1],cutflow[2],cutflow[3]);
+  if(reduce == 2) printf("cutflow: %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f\n", cutflow[0],cutflow2[0],cutflow[1],cutflow2[1],cutflow[2],cutflow2[2],cutflow[3],cutflow2[3],cutflow[4],cutflow2[4],cutflow[5],cutflow2[5]);
+  printf("cutflowraw: %d, %d, %d, %d, %d, %d\n", cutflowraw[0],cutflowraw[1],cutflowraw[2],cutflowraw[3],cutflowraw[4],cutflowraw[5]);
 }
 
 void hadhadtree::fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag, int iNP){
