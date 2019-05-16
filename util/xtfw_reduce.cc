@@ -166,13 +166,6 @@ int main(int argc, char const *argv[])
 			double error = cutflow->GetBinContent(i+2) ? cutflow->GetBinError(i+2) : 0;
 			error = sqrt(pow(error,2) + pow(inputcutflow->GetBinError(i)*(isData?1:xsecs[dsid]*luminosity/totgenraw[dsid]/sqrt(87)),2));
 			cutflow->Fill(i+1,inputcutflow->GetBinContent(i)*(isData?1:xsecs[dsid]*luminosity/totgenraw[dsid]/87));
-			printf("bin content %f, bin error: %f, bin content now: %f, error now: %f\n",
-				inputcutflow->GetBinContent(i)*(isData?1:xsecs[dsid]*luminosity/totgenraw[dsid]/87),
-				inputcutflow->GetBinError(i)*(isData?1:xsecs[dsid]*luminosity/totgenraw[dsid]/sqrt(87)),
-				cutflow->GetBinContent(i+2),
-				error
-			);
-
 			cutflow->SetBinError(i+2, error);
 			error = cutflowraw->GetBinContent(i+2) ? cutflowraw->GetBinError(i+2) : 0;
 			cutflowraw->Fill(i+1,inputcutflow->GetBinContent(i)/(isData?1:87));
