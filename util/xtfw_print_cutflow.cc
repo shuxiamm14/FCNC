@@ -1,5 +1,25 @@
 #include "fcnc_include.h"
 
+int countDigit(float n) 
+{ 
+    int count = 0; 
+    while (n >= 10) { 
+        n = n / 10; 
+        ++count; 
+    } 
+    return count; 
+} 
+
+std::string ReplaceString(std::string subject, const std::string& search,
+                          const std::string& replace) {
+    size_t pos = 0;
+    while ((pos = subject.find(search, pos)) != std::string::npos) {
+         subject.replace(pos, search.length(), replace);
+         pos += replace.length();
+    }
+    return subject;
+}
+
 int main(int argc, char const *argv[])
 {
 	if (argc != 2)
@@ -13,6 +33,7 @@ int main(int argc, char const *argv[])
 	TString datafilesdir = TString(PACKAGE_DIR) + "/datafiles/xTFW/";
 
 	map<TString, map<TString, float>> cutflow; //	sample, cut, event number
+	map<TString, map<TString, float>> cutflowerr; //	sample, cut, event number
 	vector<TString> cuts;
 	vector<TString> samples;
 
@@ -40,19 +61,20 @@ int main(int argc, char const *argv[])
 			for (int i = 1; i <= hcutflow->GetNbinsX(); ++i)
 			{
 				cutflow[sample][hcutflow->GetXaxis()->GetBinLabel(i)] += hcutflow->GetBinContent(i);
+				cutflowerr[sample][hcutflow->GetXaxis()->GetBinLabel(i)] += hcutflow->GetBinError(i);
 				if(count == 1) cuts.push_back(hcutflow->GetXaxis()->GetBinLabel(i));
 			}
 		}
 	}
 
-	for (int isep = 0; isep < 2; ++isep)
+	for (int isep = 0; isep < 3; ++isep)
 	{
 		printf("\\hline\ncut");
-		int isample = 0;
+		int isample = -1;
 		for(auto sample: samples){
 			isample++;
-			if(isample % 2 == isep) continue;
-			printf(" & %s", sample.Data());
+			if(isample % 3 != isep) continue;
+			printf(" & %s", ReplaceString(string(sample),"_"," ").c_str());
 		}
 		printf("\\\\ \\hline\n");
 		
@@ -72,13 +94,15 @@ int main(int argc, char const *argv[])
 			if(iter == "Di-tau dEta cut") continue;
 			if(iter == "Coll approx cuts") continue;
 			printf("%s", iter == "All events" ? "skim" : iter.Data());
-			isample = 0;
+			isample = -1;
 			for(auto sample: samples){
 				isample++;
-				if(isample % 2 == isep) continue;
-				printf(" & %ld", long(round(cutflow[sample][iter])));
+				if(isample % 3 != isep) continue;
+				int ndigit = countDigit(cutflow[sample][iter]);
+				if(ndigit > 4) printf(" & $( %4.2f \\pm %4.2f ) \\times 10^{%d}$", cutflow[sample][iter]/pow(10,ndigit), cutflowerr[sample][iter]/pow(10,ndigit), ndigit);
+				else printf(" & $%4.2f \\pm %4.2f$", cutflow[sample][iter], cutflowerr[sample][iter]);
 			}
-			if(isep == 1) printf(" & ");
+			if(isep == 2) printf(" & ");
 			printf("\\\\ \\hline\n");
 		}
 	}

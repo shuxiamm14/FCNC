@@ -135,7 +135,8 @@ int main(int argc, char const *argv[])
 	TH1D *cutflowraw = 0;
 	cutflow = new TH1D("cutflow_HSM_common_weighted","cutflow_HSM_common_weighted",23,0,23);
 	cutflowraw = new TH1D("cutflow_HSM_common_raw","cutflow_HSM_common_raw",23,0,23);
-
+	cutflow->Sumw2();
+	cutflowraw->Sumw2();
 	cutflow->SetBinContent(1,totgenWeighted);
 	cutflow->SetBinContent(2,totDAODWeighted);
 	cutflowraw->SetBinContent(1,totgenRaw);
@@ -162,8 +163,12 @@ int main(int argc, char const *argv[])
 				cutflow->GetXaxis()->SetBinLabel(i+2,inputcutflow->GetXaxis()->GetBinLabel(i));
 				cutflowraw->GetXaxis()->SetBinLabel(i+2,inputcutflow->GetXaxis()->GetBinLabel(i));
 			}
-			cutflow->Fill(i+1,inputcutflow->GetBinContent(i)*xsecs[dsid]*luminosity/totgenraw[dsid]/(isData?1:87));
+			double error = cutflow->GetBinContent(i+1) ? cutflow->GetBinError(i+1) : 0;
+			cutflow->Fill(i+1,inputcutflow->GetBinContent(i)*(isData?1:xsecs[dsid]*luminosity/totgenraw[dsid]/87));
+			cutflow->SetBinError(i+1, sqrt(pow(error,2) + pow(inputcutflow->GetBinError(i)*(isData?1:xsecs[dsid]*luminosity/totgenraw[dsid]/sqrt(87)),2)));
+			error = cutflowraw->GetBinContent(i+1) ? cutflowraw->GetBinError(i+1) : 0;
 			cutflowraw->Fill(i+1,inputcutflow->GetBinContent(i)/(isData?1:87));
+			cutflow->SetBinError(i+1, sqrt(pow(error,2) + pow(inputcutflow->GetBinError(i)/(isData?1:sqrt(87)),2)));
 		}
 		analysis->Loop( (TTree*)inputfile.Get("NOMINAL"), inputconfig, isData ? 1 : xsecs[dsid]*luminosity/totgenweighted[dsid]);
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
