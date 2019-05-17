@@ -119,13 +119,6 @@ int main(int argc, char const *argv[])
 			if(nDAODraw.find(dsid) == nDAODraw.end()) nDAODraw[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(10);
 			else nDAODraw[dsid] += ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(10);
 			inputfile.Close();
-			for (auto pair : totgenraw)
-			{
-				totgenWeighted = xsecs[pair.first]*luminosity;
-				totgenRaw += pair.second;
-				totDAODRaw += nDAODraw[pair.first];
-				totDAODWeighted += nDAODraw[pair.first]/pair.second*xsecs[pair.first]*luminosity;
-			}
 		}else{
 			totgenWeighted = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(7);
 			totgenRaw = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(7);
@@ -136,6 +129,14 @@ int main(int argc, char const *argv[])
 			totDAODWeightederr = ((TH1*)inputfile.Get("h_metadata"))->GetBinError(10);
 			totDAODRawerr = ((TH1*)inputfile.Get("h_metadata"))->GetBinError(10);
 		}
+	}
+
+	for (auto pair : totgenraw)
+	{
+		totgenWeighted += xsecs[pair.first]*luminosity;
+		totgenRaw += pair.second;
+		totDAODRaw += nDAODraw[pair.first];
+		totDAODWeighted += nDAODraw[pair.first]/pair.second*xsecs[pair.first]*luminosity;
 	}
 
 	fn.clear();
