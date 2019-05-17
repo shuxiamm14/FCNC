@@ -91,6 +91,11 @@ int main(int argc, char const *argv[])
 	double totDAODWeighted = 0;
 	long totDAODRaw = 0;
 
+	double totgenWeightederr = 0;
+	double totgenRawerr = 0;
+	double totDAODWeightederr = 0;
+	double totDAODRawerr = 0;
+
 	printf("Reading bin 8\n");
 	while(!fn.eof()){
 		fn.getline(inputline,500);
@@ -116,7 +121,7 @@ int main(int argc, char const *argv[])
 			inputfile.Close();
 			for (auto pair : totgenraw)
 			{
-				totgenWeighted += xsecs[pair.first]*luminosity;
+				totgenWeighted = xsecs[pair.first]*luminosity;
 				totgenRaw += pair.second;
 				totDAODRaw += nDAODraw[pair.first];
 				totDAODWeighted += nDAODraw[pair.first]/pair.second*xsecs[pair.first]*luminosity;
@@ -126,6 +131,10 @@ int main(int argc, char const *argv[])
 			totgenRaw = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(7);
 			totDAODWeighted = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(10);
 			totDAODRaw = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(10);
+			totgenWeightederr = ((TH1*)inputfile.Get("h_metadata"))->GetBinError(7);
+			totgenRawerr = ((TH1*)inputfile.Get("h_metadata"))->GetBinError(7);
+			totDAODWeightederr = ((TH1*)inputfile.Get("h_metadata"))->GetBinError(10);
+			totDAODRawerr = ((TH1*)inputfile.Get("h_metadata"))->GetBinError(10);
 		}
 	}
 
@@ -141,6 +150,10 @@ int main(int argc, char const *argv[])
 	cutflow->SetBinContent(2,totDAODWeighted);
 	cutflowraw->SetBinContent(1,totgenRaw);
 	cutflowraw->SetBinContent(2,totDAODRaw);
+	cutflow->SetBinError(1,totgenWeightederr);
+	cutflow->SetBinError(2,totDAODWeightederr);
+	cutflowraw->SetBinError(1,totgenRawerr);
+	cutflowraw->SetBinError(2,totDAODRawerr);
 	cutflow->GetXaxis()->SetBinLabel(1,"Total Events");
 	cutflow->GetXaxis()->SetBinLabel(2,"DAOD");
 	cutflowraw->GetXaxis()->SetBinLabel(1,"Total Events");

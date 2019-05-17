@@ -56,13 +56,61 @@ int main(int argc, char const *argv[])
 		{
 			if(runcampaign != 0 && j != runcampaign -1 ) continue;
 			count ++;
-			TFile treefile(sample=="data"? prefix + campaigndata[j] + "_tree.root" : prefix + campaign[j] + "_" + TString(sample) + "_tree.root");
+			TFile treefile(sample=="data"? prefix + campaigndata[j] + "_tree.root" : prefix + campaign[j] + "_" + sample + "_tree.root");
 			TH1D *hcutflow = (TH1D*) treefile.Get(sample=="data"? "cutflow_HSM_common_raw" : argv[2]);
 			for (int i = 1; i <= hcutflow->GetNbinsX(); ++i)
 			{
 				cutflow[sample][hcutflow->GetXaxis()->GetBinLabel(i)] += hcutflow->GetBinContent(i);
 				cutflowerr[sample][hcutflow->GetXaxis()->GetBinLabel(i)] += hcutflow->GetBinError(i);
 				if(count == 1) cuts.push_back(hcutflow->GetXaxis()->GetBinLabel(i));
+			}
+			if(count == 1) {
+				cuts.push_back("n-tuple");
+				cuts.push_back("trigger matching");
+				cuts.push_back("n tracks = 1,3");
+			
+				cuts.push_back("2 medium OS tau");
+				cuts.push_back("jet pt cut");
+				cuts.push_back("bjet pt eta cut");
+				cuts.push_back("tautau vis mass > 50");
+				cuts.push_back("tautau vis mass < 130");
+				cuts.push_back("drtautau > 3.4");
+			}
+			ifstream logfile1(prefix + "../../reduce1log/" + (sample=="data"? campaigndata[j] : campaign[j] + "_" + sample) + ".txt");
+			printf("log file: %s\n", (prefix + "../../reduce1log/" + (sample=="data"? campaigndata[j] : campaign[j] + "_" + sample) + ".txt").Data());
+			while(!logfile1.eof()){
+				logfile1.getline(inputline,500);
+				if(strlen(inputline)==0) continue;
+				if(inputline[0]=='#') continue;
+				float cutf[3], cutferr[3];
+				sscanf(inputline,"%f +/- %f, %f +/- %f, %f +/- %f", &cutf[0], &cutferr[0], &cutf[1], &cutferr[1], &cutf[2], &cutferr[2]);
+				cutflow[sample]["n-tuple"] += cutf[0];
+				cutflowerr[sample]["n-tuple"] = sqrt(pow(cutflowerr[sample]["n-tuple"],2) + pow(cutferr[0],2));
+				cutflow[sample]["trigger matching"] += cutf[1];
+				cutflowerr[sample]["trigger matching"] = sqrt(pow(cutflowerr[sample]["trigger matching"],2) + pow(cutferr[1],2));
+				cutflow[sample]["n tracks = 1,3"] += cutf[2];
+				cutflowerr[sample]["n tracks = 1,3"] = sqrt(pow(cutflowerr[sample]["n tracks = 1,3"],2) + pow(cutferr[2],2));
+			}
+			ifstream logfile2(prefix + "../../reduce2log/" + (sample=="data"? campaigndata[j] : campaign[j] + "_" + sample) + ".txt");
+			printf("log file: %s\n", (prefix + "../../reduce1log/" + (sample=="data"? campaigndata[j] : campaign[j] + "_" + sample) + ".txt").Data());
+			while(!logfile2.eof()){
+				logfile2.getline(inputline,500);
+				if(strlen(inputline)==0) continue;
+				if(inputline[0]=='#') continue;
+				float cutf[6], cutferr[6];
+				sscanf(inputline,"%f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f", &cutf[0], &cutferr[0], &cutf[1], &cutferr[1], &cutf[2], &cutferr[2], &cutf[3], &cutferr[3], &cutf[4], &cutferr[4], &cutf[5], &cutferr[5]);
+				cutflow[sample]["2 medium OS tau"] += cutf[0];
+				cutflowerr[sample]["2 medium OS tau"] = sqrt(pow(cutflowerr[sample]["2 medium OS tau"],2) + pow(cutferr[0],2));
+				cutflow[sample]["jet pt cut"] += cutf[1];
+				cutflowerr[sample]["jet pt cut"] = sqrt(pow(cutflowerr[sample]["jet pt cut"],2) + pow(cutferr[1],2));
+				cutflow[sample]["bjet pt eta cut"] += cutf[2];
+				cutflowerr[sample]["bjet pt eta cut"] = sqrt(pow(cutflowerr[sample]["bjet pt eta cut"],2) + pow(cutferr[2],2));
+				cutflow[sample]["tautau vis mass > 50"] += cutf[3];
+				cutflowerr[sample]["tautau vis mass > 50"] = sqrt(pow(cutflowerr[sample]["tautau vis mass > 50"],2) + pow(cutferr[3],2));
+				cutflow[sample]["tautau vis mass < 130"] += cutf[4];
+				cutflowerr[sample]["tautau vis mass < 130"] = sqrt(pow(cutflowerr[sample]["tautau vis mass < 130"],2) + pow(cutferr[4],2));
+				cutflow[sample]["drtautau > 3.4"] += cutf[5];
+				cutflowerr[sample]["drtautau > 3.4"] = sqrt(pow(cutflowerr[sample]["drtautau > 3.4"],2) + pow(cutferr[5],2));
 			}
 		}
 	}
