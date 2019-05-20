@@ -1,4 +1,5 @@
 #include "hadhadtree.h"
+#include <thread>
 
 int main(int argc, char const *argv[])
 {
@@ -7,6 +8,8 @@ int main(int argc, char const *argv[])
 		printf("Usage: xtfw_reduce_run dataconfigfile (mc16a_wjet.txt)\n");
 		exit(1);
 	}
+	thread th1(PrintTime, 5);
+	th1.detach();
 	bool debug = 0;
 	bool doplot = 1;
 	TString prefix1;
@@ -80,32 +83,82 @@ int main(int argc, char const *argv[])
 	analysis->fcnc_regions = regions;
 	if(doplot) analysis->init_hist(inputconfig);
 	analysis->init_sample(inputconfig,inputconfig);
-	TFile cutflowfile(inputconfig + "_cutflow.root","recreate");
-	map<int,double> totgen;
-	if(!isData){
-		printf("Reading bin 8\n");
-		while(!fn.eof()){
-			fn.getline(inputline,500);
-			if(strlen(inputline)==0) continue;
-			if(inputline[0]=='#') continue;
-			char filename[500];
-			int dsid;
-			if(!isData) sscanf(inputline,"%d %s",&dsid,filename);
-			else sscanf(inputline,"%s",filename);
-			printf("reading file: DSID: %d name %s\n", dsid, filename);
-			TFile inputfile(filename);
-			if(!inputfile.Get("h_metadata")) {
-				printf("h_metadata not found, exit.\n");
-				exit(1);
-			}
-			if(totgen.find(dsid) == totgen.end()) totgen[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
-			else totgen[dsid] += ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
+	map<int,double> totgenweighted;
+	map<int,double> totgenraw;
+	map<int,long> nDAODraw;
+	double totgenWeighted = 0;
+	long totgenRaw = 0;
+	double totDAODWeighted = 0;
+	long totDAODRaw = 0;
+
+	double totgenWeightederr = 0;
+	double totgenRawerr = 0;
+	double totDAODWeightederr = 0;
+	double totDAODRawerr = 0;
+
+	printf("Reading bin 8\n");
+	while(!fn.eof()){
+		fn.getline(inputline,500);
+		if(strlen(inputline)==0) continue;
+		if(inputline[0]=='#') continue;
+		char filename[500];
+		int dsid;
+		if(!isData) sscanf(inputline,"%d %s",&dsid,filename);
+		else sscanf(inputline,"%s",filename);
+		printf("reading file: DSID: %d name %s\n", dsid, filename);
+		TFile inputfile(filename);
+		if(!inputfile.Get("h_metadata")) {
+			printf("h_metadata not found, exit.\n");
+			exit(1);
+		}
+		if(!isData){
+			if(totgenweighted.find(dsid) == totgenweighted.end()) totgenweighted[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
+			else totgenweighted[dsid] += ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
+			if(totgenraw.find(dsid) == totgenraw.end()) totgenraw[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(7);
+			else totgenraw[dsid] += ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(7);
+			if(nDAODraw.find(dsid) == nDAODraw.end()) nDAODraw[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(10);
+			else nDAODraw[dsid] += ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(10);
 			inputfile.Close();
+		}else{
+			totgenWeighted = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(7);
+			totgenRaw = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(7);
+			totDAODWeighted = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(10);
+			totDAODRaw = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(10);
+			totgenWeightederr = ((TH1*)inputfile.Get("h_metadata"))->GetBinError(7);
+			totgenRawerr = ((TH1*)inputfile.Get("h_metadata"))->GetBinError(7);
+			totDAODWeightederr = ((TH1*)inputfile.Get("h_metadata"))->GetBinError(10);
+			totDAODRawerr = ((TH1*)inputfile.Get("h_metadata"))->GetBinError(10);
 		}
 	}
+
+	for (auto pair : totgenraw)
+	{
+		totgenWeighted += xsecs[pair.first]*luminosity;
+		totgenRaw += pair.second;
+		totDAODRaw += nDAODraw[pair.first];
+		totDAODWeighted += nDAODraw[pair.first]/pair.second*xsecs[pair.first]*luminosity;
+	}
+
 	fn.clear();
 	fn.seekg(0, fn.beg);
 	TH1D *cutflow = 0;
+	TH1D *cutflowraw = 0;
+	cutflow = new TH1D("cutflow_HSM_common_weighted","cutflow_HSM_common_weighted",23,0,23);
+	cutflowraw = new TH1D("cutflow_HSM_common_raw","cutflow_HSM_common_raw",23,0,23);
+	cutflow->Sumw2();
+	cutflowraw->Sumw2();
+	cutflow->SetBinContent(1,totgenWeighted);
+	cutflow->SetBinContent(2,totDAODWeighted);
+	cutflowraw->SetBinContent(1,totgenRaw);
+	cutflowraw->SetBinContent(2,totDAODRaw);
+	cutflow->SetBinError(1,totgenWeightederr);
+	cutflow->SetBinError(2,totDAODWeightederr);
+	cutflowraw->SetBinError(1,totgenRawerr);
+	cutflowraw->SetBinError(2,totDAODRawerr);
+	cutflow->GetXaxis()->SetBinLabel(1,"Total Events");
+	cutflow->GetXaxis()->SetBinLabel(2,"DAOD");
+	cutflowraw->GetXaxis()->SetBinLabel(1,"Total Events");
+	cutflowraw->GetXaxis()->SetBinLabel(2,"DAOD");
 	while(!fn.eof()){
 		fn.getline(inputline,500);
 		if(strlen(inputline)==0) continue;
@@ -117,15 +170,27 @@ int main(int argc, char const *argv[])
 		printf("reading file: DSID: %d name %s\n", isData? 0 : dsid, filename);
 		TFile inputfile(filename);
 		if(!isData && xsecs.find(dsid) == xsecs.end()) printf("xsec for DSID %d not found, please update your Xsec file\n", dsid);
-		cutflowfile.cd();
-		if(!cutflow) cutflow = (TH1D*)inputfile.Get("cutflow_HSM_common")->Clone();
-		else cutflow->Add((TH1D*)inputfile.Get("cutflow_HSM_common"));
-		analysis->Loop( (TTree*)inputfile.Get("NOMINAL"), inputconfig, isData ? 1 : xsecs[dsid]*luminosity/totgen[dsid]);
-		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgen[dsid]);
+		TH1D *inputcutflow = (TH1D*)inputfile.Get("cutflow_HSM_common");
+		for (int i = 1; i <= inputcutflow->GetNbinsX(); ++i)
+		{
+			if(TString(cutflow->GetXaxis()->GetBinLabel(i+2)) == "") {
+				cutflow->GetXaxis()->SetBinLabel(i+2,inputcutflow->GetXaxis()->GetBinLabel(i));
+				cutflowraw->GetXaxis()->SetBinLabel(i+2,inputcutflow->GetXaxis()->GetBinLabel(i));
+			}
+			double error = cutflow->GetBinContent(i+2) ? cutflow->GetBinError(i+2) : 0;
+			error = sqrt(pow(error,2) + pow(inputcutflow->GetBinError(i)*(isData?1:xsecs[dsid]*luminosity/totgenraw[dsid]/sqrt(87)),2));
+			cutflow->Fill(i+1,inputcutflow->GetBinContent(i)*(isData?1:xsecs[dsid]*luminosity/totgenraw[dsid]/87));
+			cutflow->SetBinError(i+2, error);
+			error = cutflowraw->GetBinContent(i+2) ? cutflowraw->GetBinError(i+2) : 0;
+			cutflowraw->Fill(i+1,inputcutflow->GetBinContent(i)/(isData?1:87));
+			cutflowraw->SetBinError(i+2, sqrt(pow(error,2) + pow(inputcutflow->GetBinError(i)/(isData?1:sqrt(87)),2)));
+		}
+		analysis->Loop( (TTree*)inputfile.Get("NOMINAL"), inputconfig, isData ? 1 : xsecs[dsid]*luminosity/totgenweighted[dsid]);
+		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		inputfile.Close();
 	}
 	cutflow->Write();
-	cutflowfile.Close();
+	cutflowraw->Write();
 	analysis->finalise_sample();
 	return 0;
 }

@@ -11,34 +11,39 @@ int main(int argc, char const *argv[])
 	tau_plots->inputfilename = "hists";
 	tau_plots->debug = 0;
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
-  	tau_plots->add("p_{T,lead-#tau}","taupt","GeV",1);
-  	tau_plots->add("m_{t,SM}","t1mass","GeV",5);
-  	tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
-  	tau_plots->add("m_{W}","wmass","GeV",5);
-  	tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
-  	tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",5);
-  	tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",5);
+
+	tau_plots->sensitivevariable = "BDTG_test";
+	tau_plots->add("BDT discriminant","BDTG_test","",10);
+
+  	//tau_plots->add("p_{T,SS#tau}","tauptss","GeV",1);
+  	//tau_plots->add("p_{T,OS#tau}","tauptos","GeV",1);
+  	tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
+  	tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
+  	tau_plots->add("m_{t,SM}","t1mass","GeV",10);
+  	tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",10);
+  	tau_plots->add("m_{W}","wmass","GeV",10);
+  	tau_plots->add("m_{t,FCNC}","t2mass","GeV",10);
+  	tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",10);
+  	tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
   	tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
   	tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
-  	tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",5);
-  	tau_plots->add("p_{T,SS#tau}","tauptss","GeV",1);
-  	tau_plots->add("p_{T,OS#tau}","tauptos","GeV",1);
-  	tau_plots->add("m^{T}_{W}","mtw","GeV",5);
-  	tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",5);
-  	tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",5);
-  	tau_plots->add("#eta_{#tau,max}","etamax","",5);
-  	tau_plots->add("#DeltaR(l,#tau)","drltau","",4);
-  	tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",5);
+  	tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
+  	tau_plots->add("m^{T}_{W}","mtw","GeV",10);
+  	tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",10);
+  	tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",10);
+  	tau_plots->add("#eta_{#tau,max}","etamax","",10);
+  	tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
+  	tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
   	tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
-  	tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-
-  	tau_plots->add("E^{T}_{miss}","etmiss","GeV",5);
-    tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
-    tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
-
-  	tau_plots->blinding = 30;
-	TString regions[] = {"reg1l2tau1bnj","reg1l1tau1b2j","reg1l1tau1b3j"};
-	int nregions = 3;
+  	tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",10);
+//
+  	tau_plots->add("E^{T}_{miss}","etmiss","GeV",20);
+    tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",12);
+    tau_plots->add("E^{T}_{miss} centrality","phicent","",6);
+    gErrorIgnoreLevel = kWarning;
+  	tau_plots->blinding = 3;
+	TString regions[] = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j","reg1l1tau1b3j"};
+	int nregions = 4;
 	TString nprong[] = {"1prong","3prong"};
 	for (int j = 0; j < nregions; ++j)
 	  for (int k = 0; k < 2; ++k)
@@ -53,7 +58,7 @@ int main(int argc, char const *argv[])
 	tau_plots->muteregion("35_veto");
 	tau_plots->muteregion("prong");
 	TString samples[] = {"Other", "Vjets", "diboson", "ttH", "ttV", "ttbar","fcnc_ch"};
-	double norm[] = {1,1,1,1,1,1,50};
+	double norm[] = {1,1,1,1,1,1,5};
 	TString sampletitle[] = {"Other", "V+jets", "Diboson", "#bar{t}tH", "#bar{t}tV", "#bar{t}t", "#bar{t}t#rightarrow bWqH"};
 	stringstream ss;
 	ss<<"(BR=" << 0.2*norm[6] << "%)";
@@ -80,7 +85,7 @@ int main(int argc, char const *argv[])
 		for (int j = 0; j < 7; ++j){
 			tau_plots->stackorder.push_back(samples[j]);
 			for (int i = 0; i < 7; ++i)
-				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
+				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
 		}
 	}
 	for (int j = 0; j < nregions; ++j){

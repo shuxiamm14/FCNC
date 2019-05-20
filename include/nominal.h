@@ -71,7 +71,8 @@ public :
   double leptonicw;
   bool fcnc;
   bool doBDT;
-  double BDTG;
+  double BDTG_train;
+  double BDTG_test;
   int debug;
   bool dosys;
   int reduce;
