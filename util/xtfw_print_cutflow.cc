@@ -70,6 +70,7 @@ int main(int argc, char const *argv[])
 				cuts.push_back("n tracks = 1,3");
 			
 				cuts.push_back("2 medium OS tau");
+				cuts.push_back("true taus");
 				cuts.push_back("jet pt cut");
 				cuts.push_back("bjet pt eta cut");
 				cuts.push_back("tautau vis mass > 50");
@@ -97,20 +98,22 @@ int main(int argc, char const *argv[])
 				logfile2.getline(inputline,500);
 				if(strlen(inputline)==0) continue;
 				if(inputline[0]=='#') continue;
-				float cutf[6], cutferr[6];
-				sscanf(inputline,"%f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f", &cutf[0], &cutferr[0], &cutf[1], &cutferr[1], &cutf[2], &cutferr[2], &cutf[3], &cutferr[3], &cutf[4], &cutferr[4], &cutf[5], &cutferr[5]);
+				float cutf[7], cutferr[7];
+				sscanf(inputline,"%f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f, %f +/- %f", &cutf[0], &cutferr[0], &cutf[1], &cutferr[1], &cutf[2], &cutferr[2], &cutf[3], &cutferr[3], &cutf[4], &cutferr[4], &cutf[5], &cutferr[5], &cutf[6], &cutferr[6]);
 				cutflow[sample]["2 medium OS tau"] += cutf[0];
 				cutflowerr[sample]["2 medium OS tau"] = sqrt(pow(cutflowerr[sample]["2 medium OS tau"],2) + pow(cutferr[0],2));
-				cutflow[sample]["jet pt cut"] += cutf[1];
-				cutflowerr[sample]["jet pt cut"] = sqrt(pow(cutflowerr[sample]["jet pt cut"],2) + pow(cutferr[1],2));
-				cutflow[sample]["bjet pt eta cut"] += cutf[2];
-				cutflowerr[sample]["bjet pt eta cut"] = sqrt(pow(cutflowerr[sample]["bjet pt eta cut"],2) + pow(cutferr[2],2));
-				cutflow[sample]["tautau vis mass > 50"] += cutf[3];
-				cutflowerr[sample]["tautau vis mass > 50"] = sqrt(pow(cutflowerr[sample]["tautau vis mass > 50"],2) + pow(cutferr[3],2));
-				cutflow[sample]["tautau vis mass < 130"] += cutf[4];
-				cutflowerr[sample]["tautau vis mass < 130"] = sqrt(pow(cutflowerr[sample]["tautau vis mass < 130"],2) + pow(cutferr[4],2));
-				cutflow[sample]["drtautau > 3.4"] += cutf[5];
-				cutflowerr[sample]["drtautau > 3.4"] = sqrt(pow(cutflowerr[sample]["drtautau > 3.4"],2) + pow(cutferr[5],2));
+				cutflow[sample]["true taus"] += cutf[1];
+				cutflowerr[sample]["true taus"] = sqrt(pow(cutflowerr[sample]["true taus"],2) + pow(cutferr[1],2));
+				cutflow[sample]["jet pt cut"] += cutf[2];
+				cutflowerr[sample]["jet pt cut"] = sqrt(pow(cutflowerr[sample]["jet pt cut"],2) + pow(cutferr[2],2));
+				cutflow[sample]["bjet pt eta cut"] += cutf[3];
+				cutflowerr[sample]["bjet pt eta cut"] = sqrt(pow(cutflowerr[sample]["bjet pt eta cut"],2) + pow(cutferr[3],2));
+				cutflow[sample]["tautau vis mass > 50"] += cutf[4];
+				cutflowerr[sample]["tautau vis mass > 50"] = sqrt(pow(cutflowerr[sample]["tautau vis mass > 50"],2) + pow(cutferr[4],2));
+				cutflow[sample]["tautau vis mass < 130"] += cutf[5];
+				cutflowerr[sample]["tautau vis mass < 130"] = sqrt(pow(cutflowerr[sample]["tautau vis mass < 130"],2) + pow(cutferr[5],2));
+				cutflow[sample]["drtautau > 3.4"] += cutf[6];
+				cutflowerr[sample]["drtautau > 3.4"] = sqrt(pow(cutflowerr[sample]["drtautau > 3.4"],2) + pow(cutferr[6],2));
 			}
 		}
 	}
