@@ -313,18 +313,22 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       cutflowraw[0]+=1;
       cutflow[0]+=weight;
       cutflow2[0]+=pow(weight,2);
-      if(campaign !=1 && jets_p4->at(0)->Pt() < 50 && bjets_p4->at(0)->Pt() < 50) continue;
+      if(!isData && !(abs(taus_matched_pdgId->at(0)) == 15 && abs(taus_matched_pdgId->at(1)) == 15)) continue;
+      cutflowraw[1]+=1;
       cutflow[1]+=weight;
       cutflow2[1]+=pow(weight,2);
-      cutflowraw[1]+=1;
+      if(campaign !=1 && jets_p4->at(0)->Pt() < 50 && bjets_p4->at(0)->Pt() < 50) continue;
+      cutflow[2]+=weight;
+      cutflow2[2]+=pow(weight,2);
+      cutflowraw[2]+=1;
       bool passbjetcut = 0;
       for(auto bjet : *bjets_p4){
         if(bjet->Pt() > 30 && abs(bjet->Eta()) < 2.5) passbjetcut = 1;
       }
       if(!passbjetcut) continue;
-      cutflow[2]+=weight;
-      cutflow2[2]+=pow(weight,2);
-      cutflowraw[2]+=1;
+      cutflow[3]+=weight;
+      cutflow2[3]+=pow(weight,2);
+      cutflowraw[3]+=1;
       tau_pt_0 = taus_p4->at(0)->Pt();
       tau_pt_1 = taus_p4->at(1)->Pt();
       etmiss = met_p4->Pt();
@@ -337,17 +341,17 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           drtaujmin = (*(taus_p4->at(0)) + *(taus_p4->at(1))).DeltaR(*jetp4);
       }
       if(ttvismass < 50) continue;
-      cutflow[3]+=weight;
-      cutflow2[3]+=pow(weight,2);
-      cutflowraw[3]+=1;
-      if(ttvismass > 130) continue;
       cutflow[4]+=weight;
       cutflow2[4]+=pow(weight,2);
       cutflowraw[4]+=1;
-      if(drtautau > 3.4) continue;
+      if(ttvismass > 130) continue;
       cutflow[5]+=weight;
       cutflow2[5]+=pow(weight,2);
       cutflowraw[5]+=1;
+      if(drtautau > 3.4) continue;
+      cutflow[6]+=weight;
+      cutflow2[6]+=pow(weight,2);
+      cutflowraw[6]+=1;
   
       phicent = phi_centrality(taus_p4->at(0)->Phi(),taus_p4->at(1)->Phi(),met_p4->Phi());
   
