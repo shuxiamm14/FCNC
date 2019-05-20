@@ -231,7 +231,8 @@ void tthmltree::init_hist(TString outputfilename){
   
   fake_nregions = sizeof(_fake_regions)/sizeof(TString);
   int fake_nregionsnotau = sizeof(fake_regions_notau)/sizeof(TString);
-  fake_regions = (TString**)malloc((fake_nregions+fake_nregionsnotau)*sizeof(TString*));
+  //fake_regions = (TString**)malloc((fake_nregions+fake_nregionsnotau)*sizeof(TString*));
+  fake_regions = (TString**)malloc(fake_nregions/sizeof(TString*));
   
   for (int j = 0; j < fake_nregions; ++j){
     fake_regions[j] = new TString(_fake_regions[j]);
@@ -245,11 +246,11 @@ void tthmltree::init_hist(TString outputfilename){
       }
     }
   }
-  for (int j = 0; j < sizeof(fake_regions_notau)/sizeof(TString); ++j){
-    fake_notau_plots->add_region(fake_regions_notau[j]);
-    fake_regions[j+fake_nregions] = new TString(fake_regions_notau[j]);
-  }
-  fake_nregions+=fake_nregionsnotau;
+  //for (int j = 0; j < sizeof(fake_regions_notau)/sizeof(TString); ++j){
+  //  fake_notau_plots->add_region(fake_regions_notau[j]);
+  //  fake_regions[j+fake_nregions] = new TString(fake_regions_notau[j]);
+  //}
+  //fake_nregions+=fake_nregionsnotau;
 }
 
 void tthmltree::init_sample(TString sample, TString sampletitle){
@@ -509,12 +510,11 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
         ifregions["reg1e1mu1tau1b"] = nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T == 1 && nTaus_OR_Pt25 == 1;
         ifregions["reg1e1mu2b"] = nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 0;
       }
-      for (iter = ifregions.begin(); iter != ifregions.end();){
+      for (iter = ifregions.begin(); iter != ifregions.end();iter++){
         if(debug == 2) 
           printf("region: %s, %d\n", iter->first.Data(), iter->second);
-        if (iter->second) {
+        if (iter->second && find(fcnc_regions.begin(),fcnc_regions.end(),iter->first) != fcnc_regions.end()) {
           triggered = 1;
-          iter++;
         }else{
           ifregions.erase(iter->first);
         }
