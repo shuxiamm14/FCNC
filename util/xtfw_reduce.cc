@@ -92,9 +92,7 @@ int main(int argc, char const *argv[])
 	long totDAODRaw = 0;
 
 	double totgenWeightederr = 0;
-	double totgenRawerr = 0;
 	double totDAODWeightederr = 0;
-	double totDAODRawerr = 0;
 
 	printf("Reading bin 8\n");
 	while(!fn.eof()){
@@ -125,18 +123,21 @@ int main(int argc, char const *argv[])
 			totDAODWeighted = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(10);
 			totDAODRaw = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(10);
 			totgenWeightederr = ((TH1*)inputfile.Get("h_metadata"))->GetBinError(7);
-			totgenRawerr = ((TH1*)inputfile.Get("h_metadata"))->GetBinError(7);
 			totDAODWeightederr = ((TH1*)inputfile.Get("h_metadata"))->GetBinError(10);
-			totDAODRawerr = ((TH1*)inputfile.Get("h_metadata"))->GetBinError(10);
 		}
 	}
-
-	for (auto pair : totgenraw)
-	{
-		totgenWeighted += xsecs[pair.first]*luminosity;
-		totgenRaw += pair.second;
-		totDAODRaw += nDAODraw[pair.first];
-		totDAODWeighted += nDAODraw[pair.first]/pair.second*xsecs[pair.first]*luminosity;
+	if(!isData){
+		for (auto pair : totgenraw)
+		{
+			totgenWeighted += xsecs[pair.first]*luminosity;
+			totgenWeightederr += pair.second/pow(pair.second*xsecs[pair.first]*luminosity,2);
+			totgenRaw += pair.second;
+			totDAODRaw += nDAODraw[pair.first];
+			totDAODWeighted += nDAODraw[pair.first]/pair.second*xsecs[pair.first]*luminosity;
+			totDAODWeightederr += nDAODraw[pair.first]/pow(pair.second*xsecs[pair.first]*luminosity,2);
+		}
+		totgenWeightederr = sqrt(totgenWeightederr);
+		totDAODWeightederr = sqrt(totDAODWeightederr);
 	}
 
 	fn.clear();
@@ -153,8 +154,8 @@ int main(int argc, char const *argv[])
 	cutflowraw->SetBinContent(2,totDAODRaw);
 	cutflow->SetBinError(1,totgenWeightederr);
 	cutflow->SetBinError(2,totDAODWeightederr);
-	cutflowraw->SetBinError(1,totgenRawerr);
-	cutflowraw->SetBinError(2,totDAODRawerr);
+	cutflowraw->SetBinError(1,sqrt((double)totgenRaw));
+	cutflowraw->SetBinError(2,sqrt((double)totDAODRaw));
 	cutflow->GetXaxis()->SetBinLabel(1,"Total Events");
 	cutflow->GetXaxis()->SetBinLabel(2,"DAOD");
 	cutflowraw->GetXaxis()->SetBinLabel(1,"Total Events");
