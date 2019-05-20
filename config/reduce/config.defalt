@@ -2,7 +2,10 @@
 #7 fcnc_uHtautau_mc16a fcnc_uh #bar{t}t#rightarrowbWuH
 #7 fcnc_cHtautau_mc16d fcnc_ch #bar{t}t#rightarrowbWcH
 #7 fcnc_uHtautau_mc16d fcnc_uh #bar{t}t#rightarrowbWuH
-
+7 fcnc_prod_uH_mc16a fcnc_prod_uH ug#rightarrowtH
+7 fcnc_prod_uH_mc16d fcnc_prod_uH ug#rightarrowtH
+7 fcnc_prod_cH_mc16a fcnc_prod_cH cg#rightarrowtH
+7 fcnc_prod_cH_mc16d fcnc_prod_cH cg#rightarrowtH
 6 data_combined_25ns_R21_data1516 data Data
 6 data_combined_25ns_R21_data17 data Data
 6 diboson_mc16a diboson Diboson
