@@ -92,8 +92,8 @@ int main(int argc, char const *argv[])
 				cutflow[sample]["n tracks = 1,3"] += cutf[2];
 				cutflowerr[sample]["n tracks = 1,3"] = sqrt(pow(cutflowerr[sample]["n tracks = 1,3"],2) + pow(cutferr[2],2));
 			}
-			ifstream logfile2(prefix + "../../reduce2log/" + (sample=="data"? campaigndata[j] : campaign[j] + "_" + sample) + ".txt");
-			printf("log file: %s\n", (prefix + "../../reduce1log/" + (sample=="data"? campaigndata[j] : campaign[j] + "_" + sample) + ".txt").Data());
+			ifstream logfile2(prefix + "../../reduce22jlog/" + (sample=="data"? campaigndata[j] : campaign[j] + "_" + sample) + ".txt");
+			printf("log file: %s\n", (prefix + "../../reduce22jlog/" + (sample=="data"? campaigndata[j] : campaign[j] + "_" + sample) + ".txt").Data());
 			while(!logfile2.eof()){
 				logfile2.getline(inputline,500);
 				if(strlen(inputline)==0) continue;
@@ -153,7 +153,6 @@ int main(int argc, char const *argv[])
 				if(ndigit > 4) printf(" & $( %4.2f \\pm %4.2f ) \\times 10^{%d}$", cutflow[sample][iter]/pow(10,ndigit), cutflowerr[sample][iter]/pow(10,ndigit), ndigit);
 				else printf(" & $%4.2f \\pm %4.2f$", cutflow[sample][iter], cutflowerr[sample][iter]);
 			}
-			if(isep == 2) printf(" & ");
 			printf("\\\\ \\hline\n");
 		}
 	}

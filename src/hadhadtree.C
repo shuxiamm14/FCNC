@@ -430,8 +430,10 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     for (auto itertmp : outputtree)
       itertmp.second->Write(itertmp.first, TObject::kWriteDelete);
   }
-  hadcutflow.print();
-  hadcutflow.clear();
+  if(reduce <=2){
+    hadcutflow.print();
+    hadcutflow.clear();
+  }
 }
 
 void hadhadtree::fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag, int iNP){
