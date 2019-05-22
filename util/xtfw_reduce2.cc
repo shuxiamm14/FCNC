@@ -11,9 +11,9 @@ int main(int argc, char const *argv[])
 	TString prefix = PACKAGE_DIR;
 	prefix += "/data/hadhadreduce";
 	vector<TString> regions;
-	//regions.push_back("reg2mtau1b2jss");
-	//regions.push_back("reg2mtau1b2jos");
-	//regions.push_back("reg2mtau1b3jss");
+	regions.push_back("reg2mtau1b2jss");
+	regions.push_back("reg2mtau1b2jos");
+	regions.push_back("reg2mtau1b3jss");
 	regions.push_back("reg2mtau1b3jos");
 	//regions.push_back("reg1mtau1ltau1b2jss");
 	//regions.push_back("reg2ltau1b2jss");
@@ -39,7 +39,7 @@ int main(int argc, char const *argv[])
 	analysis->plotNPs.push_back(0);
 	//analysis->plotNPs.push_back(1);
 	analysis->dofcnc = 1;
-	analysis->reduce = 2;
+	analysis->reduce = 3;
 	analysis->debug = debug;
 	analysis->writetree = analysis->reduce == 2 ? 1 : 0;
 	bool doplot = analysis->reduce == 2 ? 0 : 1;

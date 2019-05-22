@@ -1,10 +1,9 @@
 #include "histSaver.h"
 #include "TH1D.h"
 
-int main(int argc, char const *argv[])
+void plot(int signalmode, TString fcncquark)
 {
 	bool doPlots = 1;
-
 	int plot_option = 2;
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
@@ -56,9 +55,28 @@ int main(int argc, char const *argv[])
 	    	tau_plots->add_region(regions[j] + "_" + nprong[k] + "_below35_vetobtagwp70");
 	    }
 	tau_plots->muteregion("prong");
-	TString samples[] = {"smhiggs", "wjet", "diboson", "zll", "ztautau", "top","fcnc_ch","fcnc_prod_ch"};
+	vector<TString> samples;
+	samples.push_back("smhiggs");
+	samples.push_back("wjet");
+	samples.push_back("diboson");
+	samples.push_back("zll");
+	samples.push_back("ztautau");
+	samples.push_back("top");
+	if(signalmode == 1) samples.push_back("fcnc_" + fcncquark + "h");
+	if(signalmode == 2) samples.push_back("fcnc_prod_" + fcncquark + "h");
+	if(signalmode == 3) samples.push_back("t" + fcncquark + "H");
 	double norm[] = {1,1,1,1,1,1,1};
-	TString sampletitle[] = {"SM Higgs", "W+jets", "Diboson", "Z#rightarrowll", "Z#rightarrow#tau#tau", "Top production(real tau)", "#bar{t}t#rightarrow bWqH", "ctH Prod Mode"};
+	vector<TString> sampletitle;
+	sampletitle.push_back("SM Higgs");
+	sampletitle.push_back("W+jets");
+	sampletitle.push_back("Diboson");
+	sampletitle.push_back("Z#rightarrowll");
+	sampletitle.push_back("Z#rightarrow#tau#tau");
+	sampletitle.push_back("Top production(real tau)");
+	if(signalmode == 1) sampletitle.push_back("#bar{t}t#rightarrowbW" + fcncquark + "H");
+	if(signalmode == 2) sampletitle.push_back(fcncquark + "tH Prod Mode");
+	if(signalmode == 3) sampletitle.push_back("t" + fcncquark + "H merged signal");
+
 	stringstream ss;
 	ss<<"(BR=" << norm[6] << "%)";
 	TString tmp;
@@ -71,21 +89,30 @@ int main(int argc, char const *argv[])
 	tau_plots->read_sample("data","data","data",kBlack, 1);
 //============================ merge_sample============================
 	if(plot_option == 1){
-		for (int j = 0; j < 6; ++j)
+		for (int j = 0; j < samples.size(); ++j)
 			for (int i = 0; i < 7; ++i)
 				tau_plots->read_sample( origin[i], samples[j] + "_" + origin[i], origintitle[i], (enum EColor)colors[i], norm[j]);
 	}
 //============================ merge_origin ============================
 	else if(plot_option == 2){
-  		tau_plots->overlay(samples[7]);
-		for (int j = 0; j < 8; ++j){
-			if(j == 6) continue;
-			for (int i = 4; i < 7; i += 2)
+  		tau_plots->overlay(samples[samples.size()-1]);
+		for (int j = 0; j < samples.size(); ++j){
+			for (int i = 6; i < 7; i += 2)
 				if (origin[i] != "real")
 				{
 					tau_plots->read_sample( "fakeMC", samples[j] + "_" + origin[i] + "_NP0", "FakeMC", kPink, norm[j]);
-				}else
-					tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+				}else{
+					if(j == samples.size()-1){
+						if(signalmode != 2){
+							tau_plots->read_sample( samples[j], "fcnc_" + fcncquark + "h" + "_qq_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+							tau_plots->read_sample( samples[j], "fcnc_" + fcncquark + "h" + "_lv_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+						}
+						if(signalmode != 1)
+							tau_plots->read_sample( samples[j], "fcnc_prod_" + fcncquark + "h" + "_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+					}else
+						tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+				}
+
 		}
 
 	}
@@ -123,12 +150,30 @@ int main(int argc, char const *argv[])
   		stacks.push_back("diboson");
   		//stacks.push_back("fakeMC");
   		stacks.push_back("fake");
-  		stacks.push_back("fcnc_prod_ch");
+  		if(signalmode == 2) stacks.push_back("fcnc_prod_" + fcncquark + "h");
+  		if(signalmode == 1) stacks.push_back("fcnc_" + fcncquark + "h");
+  		if(signalmode == 3) stacks.push_back("t" + fcncquark + "H");
   		tau_plots->stackorder = stacks;
   	}
 
 	if(doPlots){
-		tau_plots  ->plot_stack(outputdir[plot_option]);
+		TString outputname = signalmode == 3 ? "merged" : (signalmode == 1 ? "decay" : "prod");
+		outputname += fcncquark;
+		outputname += "H";
+		tau_plots  ->plot_stack("output/" + outputname);
 	}
+}
+
+int main(int argc, char const *argv[])
+{
+	
+	int signalmode = 1; //1 decay, 2 prod, 3 both
+	TString fcncquark = "u";
+	plot(1,"u");
+	plot(1,"c");
+	plot(2,"u");
+	plot(2,"c");
+	plot(3,"u");
+	plot(3,"c");
 	return 0;
 }
