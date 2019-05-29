@@ -26,19 +26,24 @@ int main(int argc, char const *argv[])
 
 	vector<TString> regions;
 	regions.push_back("reg2mtau1b2jss");
+	regions.push_back("reg2mtau1b3jss");
+	regions.push_back("reg2mtau1b3jos");
+	regions.push_back("reg2mtau1b2jos");
+
+	regions.push_back("reg2mtau2b2jss");
+	regions.push_back("reg2mtau2b3jss");
+	regions.push_back("reg2mtau2b3jos");
+	regions.push_back("reg2mtau2b2jos");
 	//regions.push_back("reg1mtau1ltau1b2jss");
 	//regions.push_back("reg2ltau1b2jss");
 	//regions.push_back("reg2ttau1b2jss");
 	//regions.push_back("reg1ttau1mtau1b2jss");
-	regions.push_back("reg2mtau1b3jss");
 	//regions.push_back("reg1mtau1ltau1b3jss");
 	//regions.push_back("reg2ltau1b3jss");
 	//regions.push_back("reg2ttau1b3jss");
 	//regions.push_back("reg1ttau1mtau1b3jss");
-	regions.push_back("reg2mtau1b2jos");
 	//regions.push_back("reg1mtau1ltau1b2jos");
 	//regions.push_back("reg2ltau1b2jos");
-	regions.push_back("reg2mtau1b3jos");
 	//regions.push_back("reg1mtau1ltau1b3jos");
 	//regions.push_back("reg2ltau1b3jos");
 	//regions.push_back("reg2ttau1b2jos");
