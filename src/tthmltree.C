@@ -12,6 +12,7 @@ tthmltree::tthmltree():nominal::nominal(){
   weights = new vector<double> ();
   initialize_fit(TString(PACKAGE_DIR) + "/data/tau_pars.root");
   dovetobwp["btagwp70"] = 1;
+  tthcutflow.set_weight(&weight);
 }
 
 TH2F* tthmltree::prob_20_40 = 0;
@@ -436,17 +437,9 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
   bool triggeredfcnc = 0;
   if(reduce > 1) triggeredfcnc = ((TString)inputtree->GetName()).Contains("reg1l1tau1b2j")|| ((TString)inputtree->GetName()).Contains("reg1l1tau1b3j") || ((TString)inputtree->GetName()).Contains("reg1l2tau1bnj");
   float ngluon = 0;
-  if(reduce == 1)
-    for (int i = 0; i < fcnc_regions.size(); ++i)
-    {
-      tthcutflow[fcnc_regions[i]].set_weight(&weight);
-    }
-  else{
-    tthcutflow[inputtree->GetName()].set_weight(&weight);
-  }
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     inputtree->GetEntry(jentry);
-    for(auto &cutf: tthcutflow) cutf.second.newEvent();
+    tthcutflow.newEvent();
     if ((jentry % 100000 == 0))
       std::cout << " I am here event " << jentry << " Event " << eventNumber << " Run " << runNumber << " ismc " << mc_channel_number << std::endl;
     //===============================pre-selections===============================
@@ -472,11 +465,11 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
         (RunYear >= 2016 && (HLT_2e17_lhvloose_nod0 || HLT_e17_lhloose_nod0_mu14 || HLT_mu22_mu8noL1));
 
       if (nTaus_OR_Pt25 >= 1) basic_selection = basic_selection && (tau_numTrack_0 == 1 || tau_numTrack_0 == 3); // assuming triggers for 2017 is same for 2016 
-
-      if (!basic_selection) continue;
       if (reduce <= 2) weight = mc_channel_number > 0 ? mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight: 1.0;
       if( mc_channel_number > 0) weight*=tightLep?lepSFObjLoose:lepSFIDLoose*lepSFTrigLoose;
-      for(auto &cutf: tthcutflow) cutf.second.fill();
+      tthcutflow.fill();
+      if (!basic_selection) continue;
+      tthcutflow.fill();
 
       bool trig_match = (lep_isTrigMatch_0 || lep_isTrigMatch_1 || lep_isTrigMatch_2 || lep_isTrigMatch_3 || matchDLTll01 || matchDLTll02 || matchDLTll12 || matchDLTll03 || matchDLTll13 || matchDLTll23);
       bool SLtrig_match =
@@ -554,14 +547,13 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
         }
       }
       if(!passtight) continue;
-      if(reduce == 1) {for(auto theregion: fcnc_regions) if(ifregions[theregion]) tthcutflow[theregion].fill();}
-      else tthcutflow[inputtree->GetName()].fill();
+      tthcutflow.fill();
     }
     else weight = weights->at(0);
 
     if (reduce == 2) {
 
-      tthcutflow[inputtree->GetName()].fill();
+      tthcutflow.fill();
       if (debug == 2) printf("event weight: %f\n", weight);
       if (debug == 2) {
         for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
@@ -574,7 +566,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
         printf("weight > 1, drop the event\n");
         continue;
       }
-      tthcutflow[inputtree->GetName()].fill();
+      tthcutflow.fill();
       if(reduce <= 2 && nTaus_OR_Pt25 &&  mc_channel_number > 0 ) weight*=tightTau?tauSFTight:tauSFLoose;
       if(  mc_channel_number <= 0 ) weight = 1;
 
@@ -634,7 +626,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       if (triggeredfcnc) {
         if (tau_MV2c10_0 > btagwpCut[1]) continue;
         if (nTaus_OR_Pt25 == 2 && tau_MV2c10_1 > btagwpCut[1]) continue;
-        tthcutflow[inputtree->GetName()].fill();
+        tthcutflow.fill();
         if (ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"]) {
           if (nJets_OR_T - nJets_OR_T_MV2c10_70 > 1)
             //ljet_indice = findcjetML("lep2tau",ljets_v,bjet_v,lep_v,taus_v,eventNumber%2);
@@ -810,11 +802,11 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       if (ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"])
         if(t1vismass > 190*GeV )
           continue;
-      tthcutflow[inputtree->GetName()].fill();
+      tthcutflow.fill();
       if(ttvismass > 125*GeV ) continue;
-      tthcutflow[inputtree->GetName()].fill();
+      tthcutflow.fill();
       if(ttvismass < 25*GeV ) continue;      
-      tthcutflow[inputtree->GetName()].fill();
+      tthcutflow.fill();
       if(debug) printf("eval BDTG\n");
       if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"]) BDTG_test = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
       if(ifregions["reg1l1tau1b2j_ss"] || ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau2b2j_ss"] || ifregions["reg1l1tau2b2j_os"]) BDTG_test = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
@@ -930,15 +922,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       ljets_v.clear();
     }
   }
-  if(reduce == 1)
-    for(auto & thecut : tthcutflow){
-      thecut.second.print();
-      thecut.second.clear();
-    }
-  else{
-    tthcutflow[inputtree->GetName()].print();
-    tthcutflow[inputtree->GetName()].clear();
-  }
+  tthcutflow.print();
+  tthcutflow.clear();
   if (dumptruth) {
     if (TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) {
       filetruth[0][0].close();
