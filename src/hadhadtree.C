@@ -182,6 +182,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   float ngluon = 0;
   gM = initgM();
   printf("nentries: %d\n", nloop);
+  if(nentries == 0) return;
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     hadcutflow.newEvent();
     inputtree->GetEntry(jentry);
