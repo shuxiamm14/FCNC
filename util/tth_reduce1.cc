@@ -16,12 +16,18 @@ int main(int argc, char const *argv[])
 	char inputline[100];
 
 	tthmltree *analysis = new tthmltree();
-
-	analysis->fcnc_regions.push_back("reg1l2tau1bnj_ss");
+	analysis->fcnc_regions.push_back("reg1l1tau1b2j_os");
+	analysis->fcnc_regions.push_back("reg1l1tau1b3j_os");
+	analysis->fcnc_regions.push_back("reg1l1tau2b2j_os");
+	analysis->fcnc_regions.push_back("reg1l1tau2b3j_os");
+	analysis->fcnc_regions.push_back("reg1l1tau1b2j_ss");
+	analysis->fcnc_regions.push_back("reg1l1tau1b3j_ss");
+	analysis->fcnc_regions.push_back("reg1l1tau2b2j_ss");
+	analysis->fcnc_regions.push_back("reg1l1tau2b3j_ss");
 	analysis->fcnc_regions.push_back("reg1l2tau1bnj_os");
-	analysis->fcnc_regions.push_back("reg1l1tau1b2j");
-	analysis->fcnc_regions.push_back("reg1l1tau1b3j");
-
+	analysis->fcnc_regions.push_back("reg1l2tau1bnj_ss");
+	analysis->fcnc_regions.push_back("reg1l2tau2bnj_os");
+	analysis->fcnc_regions.push_back("reg1l2tau2bnj_ss");
 	analysis->dofcnc = 1;
 	analysis->reduce = 1;
 	analysis->debug = 0;
