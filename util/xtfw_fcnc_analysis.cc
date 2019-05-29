@@ -10,9 +10,10 @@ void plot(int signalmode, TString fcncquark)
 	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
 	tau_plots->inputfilename = "hists";
 	tau_plots->debug = 0;
+	bool fakeMC = 1;
 	tau_plots->sensitivevariable = "BDTG_test";
-	tau_plots->add("BDT discriminant","BDTG_train","",5);
 	tau_plots->add("BDT discriminant","BDTG_test","",5);
+	tau_plots->add("BDT discriminant","BDTG_train","",5);
   	tau_plots->add("p_{T,lead-#tau}","tau_0_pt","GeV",5);
   	tau_plots->add("p_{T,sublead-#tau}","tau_1_pt","GeV",5);
   	tau_plots->add("E^{T}_{miss}","etmiss","GeV",2);
@@ -65,14 +66,14 @@ void plot(int signalmode, TString fcncquark)
 	if(signalmode == 1) samples.push_back("fcnc_" + fcncquark + "h");
 	if(signalmode == 2) samples.push_back("fcnc_prod_" + fcncquark + "h");
 	if(signalmode == 3) samples.push_back("t" + fcncquark + "H");
-	double norm[] = {1,1,1,1,1,1,1};
+	double norm[] = {1,1,1,1,1,1,0.2};
 	vector<TString> sampletitle;
 	sampletitle.push_back("SM Higgs");
 	sampletitle.push_back("W+jets");
 	sampletitle.push_back("Diboson");
 	sampletitle.push_back("Z#rightarrowll");
 	sampletitle.push_back("Z#rightarrow#tau#tau");
-	sampletitle.push_back("Top production(real tau)");
+	sampletitle.push_back("Top production");
 	if(signalmode == 1) sampletitle.push_back("#bar{t}t#rightarrowbW" + fcncquark + "H");
 	if(signalmode == 2) sampletitle.push_back(fcncquark + "tH Prod Mode");
 	if(signalmode == 3) sampletitle.push_back("t" + fcncquark + "H merged signal");
@@ -97,10 +98,11 @@ void plot(int signalmode, TString fcncquark)
 	else if(plot_option == 2){
   		tau_plots->overlay(samples[samples.size()-1]);
 		for (int j = 0; j < samples.size(); ++j){
-			for (int i = 6; i < 7; i += 2)
-				if (origin[i] != "real")
+			for (int i = 0; i < 7; i++){
+				if(!fakeMC && origin[i] != "real") continue;
+				if (origin[i] != "real" && j != samples.size()-1)
 				{
-					tau_plots->read_sample( "fakeMC", samples[j] + "_" + origin[i] + "_NP0", "FakeMC", kPink, norm[j]);
+					tau_plots->read_sample( "fake", samples[j] + "_" + origin[i] + "_NP0", "Fake MC", kPink, norm[j]);
 				}else{
 					if(j == samples.size()-1){
 						if(signalmode != 2){
@@ -112,6 +114,7 @@ void plot(int signalmode, TString fcncquark)
 					}else
 						tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}
+			}
 
 		}
 
@@ -124,21 +127,22 @@ void plot(int signalmode, TString fcncquark)
 		tau_plots->merge_regions(regions[j] + "_" + nprong[0],regions[j] + "_" + nprong[1],regions[j]);
 	}
 	if(plot_option == 2){
-  		tau_plots->templatesample("reg2mtau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b3jos","fake","Fake",kYellow,1);
-  		tau_plots->templatesample("reg2mtau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b2jos","fake","Fake",kYellow,1);
-  		//tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
-  		//tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
-
-  		//tau_plots->templatesample("reg2mtau1b3jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b3jos","fake","Fake",kYellow,1);
-  		//tau_plots->templatesample("reg2mtau1b2jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b2jos","fake","Fake",kYellow,1);
-  		////tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
-  		////tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
-
-  		//tau_plots->templatesample("reg2mtau1b3jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b3jos","fake","Fake",kYellow,1);
-  		//tau_plots->templatesample("reg2mtau1b2jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b2jos","fake","Fake",kYellow,1);
-  		////tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
-  		////tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
-
+		if(!fakeMC){
+  			tau_plots->templatesample("reg2mtau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b3jos","fake","Fake",kYellow,1);
+  			tau_plots->templatesample("reg2mtau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b2jos","fake","Fake",kYellow,1);
+  			//tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
+  			//tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
+	
+  			//tau_plots->templatesample("reg2mtau1b3jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b3jos","fake","Fake",kYellow,1);
+  			//tau_plots->templatesample("reg2mtau1b2jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b2jos","fake","Fake",kYellow,1);
+  			////tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
+  			////tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
+	
+  			//tau_plots->templatesample("reg2mtau1b3jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b3jos","fake","Fake",kYellow,1);
+  			//tau_plots->templatesample("reg2mtau1b2jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b2jos","fake","Fake",kYellow,1);
+  			////tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
+  			////tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
+  		}
   		vector<TString> stacks;
 
   		//tau_plots->overlay("fake");
@@ -148,7 +152,6 @@ void plot(int signalmode, TString fcncquark)
   		stacks.push_back("wjet");
   		stacks.push_back("zll");
   		stacks.push_back("diboson");
-  		//stacks.push_back("fakeMC");
   		stacks.push_back("fake");
   		if(signalmode == 2) stacks.push_back("fcnc_prod_" + fcncquark + "h");
   		if(signalmode == 1) stacks.push_back("fcnc_" + fcncquark + "h");

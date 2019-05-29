@@ -51,9 +51,9 @@ void nominal::initMVA(TString fcnc_region){
 void nominal::fill_fake(TString region, int nprong, TString sample, int iptbin, float taubtag){
   for (int i = 0; i < 4; ++i){
     if(taubtag>btagwpCut[i]) {
-      fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
+      if(dobwp[bwps[i]] == 1) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
     }else{
-      fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
+      if(dovetobwp[bwps[i]] == 1) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
     }
   }
 }
@@ -136,6 +136,13 @@ nominal::nominal(){
   for(int i = 0 ; i < 2 ; ++i){
     taus_v.push_back(v1);
   }
+
+  for (int i = 0; i < 4; ++i)
+  {
+    dobwp[bwps[i]] = 0;
+    dovetobwp[bwps[i]] = 0;
+  }
+
   forFit.Add(&(taus_v[0]));
   forFit.Add(&(taus_v[1]));
   forFit.Add(&bjet_v);
@@ -402,9 +409,9 @@ vector<int> nominal::findwpair(vector<TLorentzVector> lightjets, int cjet){
 void nominal::fill_fcnc(TString region, int nprong, TString sample, int iptbin, float taubtag, int iNP){
   for (int i = 0; i < 4; ++i){
     if(taubtag>btagwpCut[i]) {
-      fcnc_plots[iNP]->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
+      if(dobwp[bwps[i]] == 1) fcnc_plots[iNP]->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
     }else{
-      fcnc_plots[iNP]->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
+      if(dovetobwp[bwps[i]] == 1) fcnc_plots[iNP]->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
     }
   }
 }
