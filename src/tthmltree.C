@@ -1688,7 +1688,6 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("eventNumber", & eventNumber);
   tree->SetBranchAddress("runNumber", & runNumber);
   tree->SetBranchAddress("randomRunNumber", & randomRunNumber);
-  tree->SetBranchAddress("mcChannelNumber", & mcChannelNumber);
   tree->SetBranchAddress("mu", & mu);
   tree->SetBranchAddress("backgroundFlags", & backgroundFlags);
   tree->SetBranchAddress("hasBadMuon", & hasBadMuon);
