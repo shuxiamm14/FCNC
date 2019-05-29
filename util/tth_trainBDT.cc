@@ -123,7 +123,7 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
       dataloader->SetBackgroundWeightExpression("weights[0]");
    }else{
       TString inputdatanamestth[] = {"data1516","data17"};
-      TString inputsignamestth[] = {"fcnc_ch","fcnc_uh","fcnc_prod_uh","fcnc_prod_ch"};
+      TString inputsignamestth[] = {"fcnc_ch","fcnc_uh"};//,"fcnc_prod_uh","fcnc_prod_ch"};
       TString inputbkgnamestth[] = {"Vjets","diboson","ttV","ttbarnohad","other","ttH","ttbargamma","sherpattbar"};
 
       if(region.Contains("reg1l2tau1bnj")) {
