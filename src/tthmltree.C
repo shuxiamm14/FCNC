@@ -160,7 +160,7 @@ void tthmltree::init_hist(TString outputfilename){
   TString nprong[] = {"1prong","3prong"};
   
   if(reduce == 3){
-    initMVA("reg1l2tau1bnj_os");
+    initMVA("reg1l2tau1bnj");
     initMVA("reg1l1tau1b2j");
     initMVA("reg1l1tau1b3j");
   }
@@ -227,34 +227,24 @@ void tthmltree::init_hist(TString outputfilename){
   fake_notau_plots->add(10,0.,200.,"p_{T,b}","bpt",&pt_b,true,"GeV");
   fake_notau_plots->add(10,0.,200.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
   
-  TString _fake_regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_os","reg1l1tau2b1j_ss","reg1l1tau2b_os","reg1l1tau2b_ss","reg1e1mu1tau1b"};
-
-  TString fake_regions_notau[] = {"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
-  
-  fake_nregions = sizeof(_fake_regions)/sizeof(TString);
-  int fake_nregionsnotau = sizeof(fake_regions_notau)/sizeof(TString);
-  //fake_regions = (TString**)malloc((fake_nregions+fake_nregionsnotau)*sizeof(TString*));
-  fake_regions = (TString**)malloc(fake_nregions/sizeof(TString*));
+  fake_nregions = fake_regions.size();
+  fake_nregions_notau = fake_regions_notau.size();
   
   for (int j = 0; j < fake_nregions; ++j){
-    fake_regions[j] = new TString(_fake_regions[j]);
     for (int k = 0; k < 2; ++k){
       for (int i = 0; i < 4; i+=1){
         for (int iptbin = 0; iptbin < 2; ++iptbin)
         {
-          if(dobwp[bwps[i]]) fake_plots->add_region(*fake_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
-          if(dovetobwp[bwps[i]]) fake_plots->add_region(*fake_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+          if(dobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
+          if(dovetobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
         }
       }
     }
   }
-  //for (int j = 0; j < sizeof(fake_regions_notau)/sizeof(TString); ++j){
-  //  fake_notau_plots->add_region(fake_regions_notau[j]);
-  //  fake_regions[j+fake_nregions] = new TString(fake_regions_notau[j]);
-  //}
-  //fake_nregions+=fake_nregionsnotau;
+  for (int j = 0; j < fake_nregions_notau; ++j){
+    fake_notau_plots->add_region(fake_regions_notau[j]);
+  }
 }
-
 void tthmltree::init_sample(TString sample, TString sampletitle){
 //==========================init output n-tuple==========================
   fcnc_nregions = fcnc_regions.size();
@@ -320,13 +310,24 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
 
     for (int i = 0; i < fake_nregions; ++i)
     {
-      if(debug) printf("init sample:: get region: %s\n", fake_regions[i]->Data());
-      if (outputtreefile->Get(*fake_regions[i])) {
-        outputtree[*fake_regions[i]] = (TTree*)(outputtreefile->Get(*fake_regions[i]));
-        Init(outputtree[*fake_regions[i]]);
+      if(debug) printf("init sample:: get region: %s\n", fake_regions[i].Data());
+      if (outputtreefile->Get(fake_regions[i])) {
+        outputtree[fake_regions[i]] = (TTree*)(outputtreefile->Get(fake_regions[i]));
+        Init(outputtree[fake_regions[i]]);
       }else{
-        outputtree[*fake_regions[i]] = new TTree(*fake_regions[i],*fake_regions[i]);
-        definetree(outputtree[*fake_regions[i]]);
+        outputtree[fake_regions[i]] = new TTree(fake_regions[i],fake_regions[i]);
+        definetree(outputtree[fake_regions[i]]);
+      }
+    }
+    for (int i = 0; i < fake_nregions_notau; ++i)
+    {
+      if(debug) printf("init sample:: get region: %s\n", fake_regions_notau[i].Data());
+      if (outputtreefile->Get(fake_regions_notau[i])) {
+        outputtree[fake_regions_notau[i]] = (TTree*)(outputtreefile->Get(fake_regions_notau[i]));
+        Init(outputtree[fake_regions_notau[i]]);
+      }else{
+        outputtree[fake_regions_notau[i]] = new TTree(fake_regions_notau[i],fake_regions_notau[i]);
+        definetree(outputtree[fake_regions_notau[i]]);
       }
     }
   }
@@ -436,7 +437,10 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
   }
   int nloop = debug ? 1000 : nentries;
   bool triggeredfcnc = 0;
-  if(reduce > 1) triggeredfcnc = ((TString)inputtree->GetName()).Contains("reg1l1tau1b2j")|| ((TString)inputtree->GetName()).Contains("reg1l1tau1b3j") || ((TString)inputtree->GetName()).Contains("reg1l2tau1bnj");
+  if(reduce > 1) {
+    triggeredfcnc = ((TString)inputtree->GetName()).Contains("reg1l1tau1b2j")|| ((TString)inputtree->GetName()).Contains("reg1l1tau1b3j") || ((TString)inputtree->GetName()).Contains("reg1l2tau1bnj");
+    triggeredfcnc = triggeredfcnc || ((TString)inputtree->GetName()).Contains("reg1l1tau2b2j")|| ((TString)inputtree->GetName()).Contains("reg1l1tau2b3j") || ((TString)inputtree->GetName()).Contains("reg1l2tau2bnj");
+  }
   float ngluon = 0;
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     inputtree->GetEntry(jentry);
@@ -808,12 +812,12 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       if(ttvismass < 25*GeV ) continue;      
       tthcutflow.fill();
       if(debug) printf("eval BDTG\n");
-      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"]) BDTG_test = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
-      if(ifregions["reg1l1tau1b2j_ss"] || ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau2b2j_ss"] || ifregions["reg1l1tau2b2j_os"]) BDTG_test = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
-      if(ifregions["reg1l1tau1b3j_ss"] || ifregions["reg1l1tau1b3j_os"] || ifregions["reg1l1tau2b3j_ss"] || ifregions["reg1l1tau2b3j_os"]) BDTG_test = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
-      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"]) BDTG_train = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
-      if(ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau1b2j_ss"] || ifregions["reg1l1tau2b2j_os"] || ifregions["reg1l1tau2b2j_ss"]) BDTG_train = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
-      if(ifregions["reg1l1tau1b3j_os"] || ifregions["reg1l1tau1b3j_ss"] || ifregions["reg1l1tau2b3j_os"] || ifregions["reg1l1tau2b3j_ss"]) BDTG_train = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"]) BDTG_test = reader["reg1l2tau1bnj"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+      if(ifregions["reg1l1tau1b2j_ss"] || ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau2b2j_ss"] || ifregions["reg1l1tau2b2j_os"]) BDTG_test = reader["reg1l1tau1b2j"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+      if(ifregions["reg1l1tau1b3j_ss"] || ifregions["reg1l1tau1b3j_os"] || ifregions["reg1l1tau2b3j_ss"] || ifregions["reg1l1tau2b3j_os"]) BDTG_test = reader["reg1l1tau1b3j"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"]) BDTG_train = reader["reg1l2tau1bnj"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+      if(ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau1b2j_ss"] || ifregions["reg1l1tau2b2j_os"] || ifregions["reg1l1tau2b2j_ss"]) BDTG_train = reader["reg1l1tau1b2j"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+      if(ifregions["reg1l1tau1b3j_os"] || ifregions["reg1l1tau1b3j_ss"] || ifregions["reg1l1tau2b3j_os"] || ifregions["reg1l1tau2b3j_ss"]) BDTG_train = reader["reg1l1tau1b3j"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
     }
       //===============================fill histograms, fill tree===============================
     if(debug) printf("derive origin\n");
@@ -922,6 +926,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       ljets_v.clear();
     }
   }
+  if(reduce > 1) printf("%s ", inputtree->GetName());
   tthcutflow.print();
   tthcutflow.clear();
   if (dumptruth) {

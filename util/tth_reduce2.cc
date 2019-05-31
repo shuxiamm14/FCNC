@@ -13,8 +13,16 @@ int main(int argc, char const *argv[])
 	vector<TString> regions;
 	regions.push_back("reg1l2tau1bnj_os");
 	regions.push_back("reg1l2tau1bnj_ss");
-	regions.push_back("reg1l1tau1b2j");
-	regions.push_back("reg1l1tau1b3j");
+	regions.push_back("reg1l1tau1b2j_os");
+	regions.push_back("reg1l1tau1b2j_ss");
+	regions.push_back("reg1l1tau1b3j_os");
+	regions.push_back("reg1l1tau1b3j_ss");
+	regions.push_back("reg1l2tau2bnj_os");
+	regions.push_back("reg1l2tau2bnj_ss");
+	regions.push_back("reg1l1tau2b2j_os");
+	regions.push_back("reg1l1tau2b2j_ss");
+	regions.push_back("reg1l1tau2b3j_os");
+	regions.push_back("reg1l1tau2b3j_ss");
 
 	//regions.push_back("reg1e1mu1tau1b");
 	//regions.push_back("reg1e1mu1tau2b");

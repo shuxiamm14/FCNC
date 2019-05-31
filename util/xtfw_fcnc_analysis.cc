@@ -165,6 +165,7 @@ void plot(int signalmode, TString fcncquark)
 		outputname += "H";
 		tau_plots  ->plot_stack("output/" + outputname);
 	}
+	deletepointer(tau_plots);
 }
 
 int main(int argc, char const *argv[])

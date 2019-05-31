@@ -182,6 +182,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   float ngluon = 0;
   gM = initgM();
   printf("nentries: %d\n", nloop);
+  if(nentries == 0) return;
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     hadcutflow.newEvent();
     inputtree->GetEntry(jentry);
@@ -245,8 +246,10 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       ifregions["reg2ttau1b3jos"] =      tau_0_jet_bdt_tight && tau_1_jet_bdt_tight && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
       ifregions["reg1ttau1mtau1b3jos"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
 
-
-      if(ifregions["reg2mtau1b3jos"]) hadcutflow.fill();
+      ifregions["reg2mtau2b2jss"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 2 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
+      ifregions["reg2mtau2b3jss"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 2 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
+      ifregions["reg2mtau2b2jos"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 2 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
+      ifregions["reg2mtau2b3jos"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 2 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
 
       for (auto iter : ifregions)
         if(iter.second == 0 || find(fcnc_regions.begin(),fcnc_regions.end(),iter.first) == fcnc_regions.end())
@@ -335,11 +338,11 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   
     }
     if(reduce == 3){
-      if(ifregions["reg2mtau1b3jos"] || ifregions["reg2mtau1b3jss"]) {
+      if(ifregions["reg2mtau1b3jos"] || ifregions["reg2mtau1b3jss"] || ifregions["reg2mtau2b3jos"] || ifregions["reg2mtau2b3jss"]) {
         BDTG_test = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2) );
         BDTG_train = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(event_number%2)) );
       }
-      if(ifregions["reg2mtau1b2jos"] || ifregions["reg2mtau1b2jss"]) {
+      if(ifregions["reg2mtau1b2jos"] || ifregions["reg2mtau1b2jss"] || ifregions["reg2mtau2b3jos"] || ifregions["reg2mtau2b3jss"]) {
         BDTG_test = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2) );
         BDTG_train = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(event_number%2)) );
       }
@@ -440,6 +443,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       itertmp.second->Write(itertmp.first, TObject::kWriteDelete);
   }
   if(reduce <=2){
+    printf("%s \n", inputtree->GetName());
     hadcutflow.print();
     hadcutflow.clear();
   }

@@ -31,10 +31,10 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
    TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
    dataloader->AddVariable("tau_pt_0",'F');
    dataloader->AddVariable("tau_pt_1",'F');
+   dataloader->AddVariable("drtautau",'F');
    if(region == "reg2mtau1b3jos" || region == "reg2mtau1b2jos" || region == "reg1l1tau1b3j" ||  region == "reg1l1tau1b2j"){
       dataloader->AddVariable("etmiss",'F');
       dataloader->AddVariable("dphitauetmiss",'F');
-      dataloader->AddVariable("drtautau",'F');
       dataloader->AddVariable("phicent",'F');
       dataloader->AddVariable("tautaumass",'F');
       if(region != "reg1l1tau1b2j"){
@@ -54,7 +54,6 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
       dataloader->AddVariable("t1vismass",'F');
       dataloader->AddVariable("mtaujmin",'F');
       dataloader->AddVariable("drltau",'F');
-      dataloader->AddVariable("drtautau",'F');
       dataloader->AddVariable("etamax",'F');
       dataloader->AddVariable("mtw",'F');
       dataloader->AddVariable("drlbditau",'F');
