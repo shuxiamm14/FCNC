@@ -248,6 +248,9 @@ void tthmltree::init_hist(TString outputfilename){
 void tthmltree::init_sample(TString sample, TString sampletitle){
 //==========================init output n-tuple==========================
   fcnc_nregions = fcnc_regions.size();
+  fake_nregions = fake_regions.size();
+  fake_nregions_notau = fake_regions_notau.size();
+
   if(writetree){
     outputtreefile = new TFile(sample + "_tree.root","update");
     map<TString, TTree*>::iterator iter;
