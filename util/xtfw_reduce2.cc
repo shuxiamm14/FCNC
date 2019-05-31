@@ -42,7 +42,6 @@ int main(int argc, char const *argv[])
 	analysis->init_reduce2();
 	analysis->plotNPs.push_back(0);
 	//analysis->plotNPs.push_back(1);
-	analysis->dofcnc = 1;
 	analysis->reduce = 3;
 	analysis->debug = debug;
 	analysis->writetree = analysis->reduce == 2 ? 1 : 0;

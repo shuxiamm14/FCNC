@@ -37,7 +37,6 @@ int main(int argc, char const *argv[])
 	analysis->fake_regions_notau.push_back("reg1e1mu2bnj");
 	analysis->fake_regions_notau.push_back("reg1l2b2j");
 	analysis->fake_regions_notau.push_back("reg1e1mu2b");
-	analysis->dofcnc = 1;
 	analysis->reduce = 1;
 	analysis->debug = 0;
 	analysis->dumptruth = 0;

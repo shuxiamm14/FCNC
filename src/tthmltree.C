@@ -538,7 +538,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       for (iter = ifregions.begin(); iter != ifregions.end();){
         if(debug == 2) 
           printf("region: %s, %d\n", iter->first.Data(), iter->second);
-        if (iter->second) {
+        if (iter->second && (find(fcnc_regions.begin(),fcnc_regions.end(),iter->first) != fcnc_regions.end() || find(fake_regions.begin(),fake_regions.end(),iter->first) != fake_regions.end() || find(fake_regions_notau.begin(),fake_regions_notau.end(),iter->first) != fake_regions_notau.end() ) ) {
           triggered = 1;
           iter++;
         }else{

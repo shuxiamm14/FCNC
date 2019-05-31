@@ -100,7 +100,6 @@ Float_t nominal::getHadTauProb(Float_t _dR, Float_t _p) {
 
 nominal::nominal(){
   doBDT = 0;
-  dofcnc = 0;
   ierflg = 0;
   dumptruth = 0;
   nonfcncmatched = 0;
