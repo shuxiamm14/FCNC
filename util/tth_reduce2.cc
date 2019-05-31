@@ -10,32 +10,40 @@ int main(int argc, char const *argv[])
 	}
 	bool doplot = 0;
 	char inputline[100];
-	vector<TString> regions;
-	regions.push_back("reg1l2tau1bnj_os");
-	regions.push_back("reg1l2tau1bnj_ss");
-	regions.push_back("reg1l1tau1b2j_os");
-	regions.push_back("reg1l1tau1b2j_ss");
-	regions.push_back("reg1l1tau1b3j_os");
-	regions.push_back("reg1l1tau1b3j_ss");
-	regions.push_back("reg1l2tau2bnj_os");
-	regions.push_back("reg1l2tau2bnj_ss");
-	regions.push_back("reg1l1tau2b2j_os");
-	regions.push_back("reg1l1tau2b2j_ss");
-	regions.push_back("reg1l1tau2b3j_os");
-	regions.push_back("reg1l1tau2b3j_ss");
+	bool dofake = 1;
+	vector<TString> regions,regions1;
+	if(dofake){
+		regions.push_back("reg1e1mu1tau1b");
+		regions.push_back("reg1e1mu1tau2b");
+		regions.push_back("reg1l1tau2b1j_os");
+		regions.push_back("reg1l1tau2b1j_ss");
 
-	//regions.push_back("reg1e1mu1tau1b");
-	//regions.push_back("reg1e1mu1tau2b");
-	//regions.push_back("reg1e1mu2b");
-	//regions.push_back("reg1e1mu2bnj");
-	//regions.push_back("reg1l1tau2b1j_os");
-	//regions.push_back("reg1l1tau2b1j_ss");
-	//regions.push_back("reg1l2b2j");
-
+		regions1.push_back("reg1e1mu2b");
+		regions1.push_back("reg1e1mu2bnj");
+		regions1.push_back("reg1l2b2j");
+	}else{
+		regions.push_back("reg1l2tau1bnj_os");
+		regions.push_back("reg1l2tau1bnj_ss");
+		regions.push_back("reg1l1tau1b2j_os");
+		regions.push_back("reg1l1tau1b2j_ss");
+		regions.push_back("reg1l1tau1b3j_os");
+		regions.push_back("reg1l1tau1b3j_ss");
+		regions.push_back("reg1l2tau2bnj_os");
+		regions.push_back("reg1l2tau2bnj_ss");
+		regions.push_back("reg1l1tau2b2j_os");
+		regions.push_back("reg1l1tau2b2j_ss");
+		regions.push_back("reg1l1tau2b3j_os");
+		regions.push_back("reg1l1tau2b3j_ss");
+	}
 	tthmltree *analysis = new tthmltree();
-	analysis->fcnc_regions = regions;
+	if(!dofake) analysis->fcnc_regions = regions;
+	else {
+		analysis->fake_regions = regions;
+		analysis->fake_regions_notau = regions1;
+	}
+	regions.insert(regions.end(),regions1.begin(),regions1.end());
 	analysis->plotNPs.push_back(0);
-	analysis->plotNPs.push_back(1);
+	if(!dofake) analysis->plotNPs.push_back(1);
 	analysis->debug = 0;
 	analysis->writetree = 1;
 	analysis->fcnc = 1;
@@ -48,7 +56,7 @@ int main(int argc, char const *argv[])
 	char title[100];
 	int version;
 	sscanf(inputline,"%d %s %s",&version,cate,title);
-	if(analysis->reduce == 3) {
+	if(analysis->reduce == 3 || dofake ) {
 		analysis->writetree = 0;
 		doplot = 1;
 	}

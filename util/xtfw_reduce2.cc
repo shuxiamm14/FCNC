@@ -43,7 +43,7 @@ int main(int argc, char const *argv[])
 	analysis->plotNPs.push_back(0);
 	//analysis->plotNPs.push_back(1);
 	analysis->dofcnc = 1;
-	analysis->reduce = 2;
+	analysis->reduce = 3;
 	analysis->debug = debug;
 	analysis->writetree = analysis->reduce == 2 ? 1 : 0;
 	bool doplot = analysis->reduce == 2 ? 0 : 1;
