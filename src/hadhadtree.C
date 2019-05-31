@@ -443,6 +443,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       itertmp.second->Write(itertmp.first, TObject::kWriteDelete);
   }
   if(reduce <=2){
+    printf("%s \n", inputtree->GetName());
     hadcutflow.print();
     hadcutflow.clear();
   }

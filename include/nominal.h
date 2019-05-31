@@ -111,9 +111,11 @@ public :
   fstream filetruth[6][2];
   Double_t arglist[10];
   vector<TString> fcnc_regions;
+  vector<TString> fake_regions;
+  vector<TString> fake_regions_notau;
   int fcnc_nregions;
-  TString **fake_regions;
   int fake_nregions;
+  int fake_nregions_notau;
   bool writetree = 1;
   TString bwps[4] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
   TString ptbin[2] = {"below35","above35"};

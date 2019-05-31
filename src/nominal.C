@@ -23,7 +23,7 @@ void nominal::initMVA(TString fcnc_region){
     reader[fcnc_region]->AddVariable("t2mass",&t2mass);
     reader[fcnc_region]->AddVariable("x1fit",&x1fit);
     reader[fcnc_region]->AddVariable("x2fit",&x2fit);
-  }else if(fcnc_region == "reg1l2tau1bnj_os"){
+  }else if(fcnc_region == "reg1l2tau1bnj"){
     //reader[fcnc_region]->AddVariable("t1mass",&t1mass);
     //reader[fcnc_region]->AddVariable("wmass",&wmass);
     //reader[fcnc_region]->AddVariable("tautaumass",&tautaumass);
