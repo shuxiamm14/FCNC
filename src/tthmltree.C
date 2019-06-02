@@ -11,7 +11,6 @@ tthmltree::tthmltree():nominal::nominal(){
   dofit1l2tau = 0;
   weights = new vector<double> ();
   initialize_fit(TString(PACKAGE_DIR) + "/data/tau_pars.root");
-  dovetobwp["btagwp70"] = 1;
   tthcutflow.set_weight(&weight);
 }
 
