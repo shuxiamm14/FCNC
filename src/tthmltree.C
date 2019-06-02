@@ -537,7 +537,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       for (iter = ifregions.begin(); iter != ifregions.end();iter++){
         if(debug == 2) 
           printf("region: %s, %d\n", iter->first.Data(), iter->second);
-        if (iter->second && find(fcnc_regions.begin(),fcnc_regions.end(),iter->first) != fcnc_regions.end()) {
+        if (iter->second && (find(fcnc_regions.begin(),fcnc_regions.end(),iter->first) != fcnc_regions.end() || find(fake_regions.begin(),fake_regions.end(),iter->first) != fake_regions.end() || find(fake_regions_notau.begin(),fake_regions_notau.end(),iter->first) != fake_regions_notau.end() ) ) {
           triggered = 1;
         }else{
           ifregions.erase(iter->first);
@@ -1607,7 +1607,7 @@ void tthmltree::Init(TTree*tree) {
   printf("init tree: %s \nreduce scheme: %d\n", tree->GetName(), reduce);
   tree->SetMakeClass(1);
 
-  if(reduce>=1 && fcnc) tree->SetBranchAddress("weights", & weights);
+  if(reduce>=1) tree->SetBranchAddress("weights", & weights);
 
   if (reduce >= 2 && fcnc) {
     tree->SetBranchAddress("neutrino_pt", & neutrino_pt);

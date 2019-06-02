@@ -64,7 +64,6 @@ public :
 
   static int GeV;
   vector<int> plotNPs;
-  bool dofcnc;
   Int_t ierflg;
   bool dumptruth;
   double nonfcncmatched;
