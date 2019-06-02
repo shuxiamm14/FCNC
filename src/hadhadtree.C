@@ -136,6 +136,7 @@ void hadhadtree::init_sample(TString sample, TString sampletitle){
         fcnc_plots[iNP]->init_sample(sample + "_real",sample + "_real_NP" + char('0' + iNP),sampletitle + "(real #tau)",kRed);
         fcnc_plots[iNP]->init_sample(sample + "_c",sample + "_c_NP" + char('0' + iNP),sampletitle + "(c-jets fake #tau)",kOrange);
         fcnc_plots[iNP]->init_sample(sample + "_nomatch",sample + "_nomatch_NP" + char('0' + iNP),sampletitle + "(no truth matched fake #tau)",kGray);
+        fcnc_plots[iNP]->init_sample(sample + "_doublefake",sample + "_doublefake_NP" + char('0' + iNP),sampletitle + "(no truth matched fake #tau)",kGray);
       } 
     }
   }
@@ -358,6 +359,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           (
             abs(taus_matched_pdgId->at(0)) == 15 ? abs(taus_matched_pdgId->at(1)) : abs(taus_matched_pdgId->at(0))
           );
+        if(abs(taus_matched_pdgId->at(0)) != 15 && abs(taus_matched_pdgId->at(1)) != 15) tauabspdg = 14;
       }
       if (tauabspdg == 15) tauorigin = sample + "_real";
       else if (tauabspdg == 13 || tauabspdg == 11) tauorigin = sample + "_lep";
@@ -365,6 +367,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       else if (tauabspdg == 4) tauorigin = sample + "_c";
       else if (tauabspdg ==21) tauorigin = sample + "_g";
       else if (tauabspdg <= 3 && tauabspdg >=1) tauorigin = sample + "_j";
+      else if (tauabspdg == 14) tauorigin = sample + "_doublefake";
       else tauorigin = sample + "_nomatch";
     }
     if(debug) printf("fill hist\n");

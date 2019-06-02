@@ -36,13 +36,13 @@ int main(int argc, char const *argv[])
 	//regions.push_back("reg2ttau1b3jos");
 	//regions.push_back("reg1ttau1mtau1b3jos");
 
-	ifstream fn(argv[1]);
+	ifstream fn(argv[2]);
 	if(!debug) gErrorIgnoreLevel=kError;
 	hadhadtree *analysis = new hadhadtree();
 	analysis->init_reduce2();
 	analysis->plotNPs.push_back(0);
 	//analysis->plotNPs.push_back(1);
-	analysis->reduce = 3;
+	analysis->reduce = *argv[1]-'0';
 	analysis->debug = debug;
 	analysis->writetree = analysis->reduce == 2 ? 1 : 0;
 	bool doplot = analysis->reduce == 2 ? 0 : 1;
