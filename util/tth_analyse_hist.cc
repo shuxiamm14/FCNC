@@ -40,7 +40,7 @@ int main(int argc, char const *argv[])
 	TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
 
 	TString nprong[] = {"1prong_","3prong_",""};
-	TString abvorbl[] = {"above35_","below35_"};
+	TString abvorbl[] = {"below35_","above35_"};
 	for (int j = 0; j < 3; ++j)
 	  //notau_plots->add_region(regions[j]);
 	  for (int i = 1; i < 4; i+=2)
@@ -157,7 +157,7 @@ int main(int argc, char const *argv[])
 //============================ do fit here============================
 				//fitter->asimovfit(100,nprong[iprong]+"ptbin"+char(ptbin+'0')+".root");
 				double chi2 = fitter->fit(val,err,0);
-				printf("%sptbin: %d, b: %f+/-%f, c: %f+/-%f, g: %f+/-%f, j: %f+/-%f;  Chi2:%f\n",nprong[iprong].Data(), ptbin+1, val[0],err[0], val[1],err[1], val[2],err[2], val[3],err[3], chi2);
+				printf("%sptbin: %d, b: %4.2f+/-%4.2f, c: %4.2f+/-%4.2f, g: %4.2f+/-%4.2f, j: %4.2f+/-%4.2f;  Chi2:%f\n",nprong[iprong].Data(), ptbin+1, val[0],err[0], val[1],err[1], val[2],err[2], val[3],err[3], chi2);
 				fitter->calculateEigen();
 				fitter->clear();
 //============================post-fit plots============================

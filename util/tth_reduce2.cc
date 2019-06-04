@@ -10,7 +10,7 @@ int main(int argc, char const *argv[])
 	}
 	bool doplot = 0;
 	char inputline[100];
-	bool dofake = 1;
+	bool dofake = 0;
 	vector<TString> regions,regions1;
 	if(dofake){
 		regions.push_back("reg1e1mu1tau1b");
