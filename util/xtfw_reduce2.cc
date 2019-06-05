@@ -35,13 +35,13 @@ int main(int argc, char const *argv[])
 	//regions.push_back("reg1ttau1mtau1b2jos");
 	//regions.push_back("reg2ttau1b3jos");
 	//regions.push_back("reg1ttau1mtau1b3jos");
-
+	printf("reading list: %s\n", argv[2]);
 	ifstream fn(argv[2]);
 	if(!debug) gErrorIgnoreLevel=kError;
 	hadhadtree *analysis = new hadhadtree();
 	analysis->init_reduce2();
 	analysis->plotNPs.push_back(0);
-	//analysis->plotNPs.push_back(1);
+	analysis->plotNPs.push_back(1);
 	analysis->reduce = *argv[1]-'0';
 	analysis->debug = debug;
 	analysis->writetree = analysis->reduce == 2 ? 1 : 0;
