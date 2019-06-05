@@ -53,7 +53,7 @@ int main(int argc, char const *argv[])
 	analysis->debug = 0;
 	analysis->writetree = 1;
 	analysis->fcnc = 1;
-	analysis->reduce = 2;
+	analysis->reduce = 3;
 	analysis->dumptruth = 0;
 	//analysis->readTFmeanstd("meanstddevs.txt");
 

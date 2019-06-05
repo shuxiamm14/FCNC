@@ -1,7 +1,7 @@
 #include "histSaver.h"
 #include "TH1D.h"
 
-void plot(int signalmode, TString fcncquark)
+void plot()
 {
 	bool doPlots = 1;
 
@@ -42,7 +42,7 @@ void plot(int signalmode, TString fcncquark)
     tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
     gErrorIgnoreLevel = kWarning;
   	tau_plots->blinding = 2;
-	TString regions[] = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_os","reg1l1tau1b3j_os"};
+	TString regions[] = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os"};
 //	TString regions[] = {"reg1l2tau1bnj_os"};
 	int nregions = sizeof(regions)/sizeof(TString);
 	TString nprong[] = {"1prong","3prong"};
@@ -65,10 +65,13 @@ void plot(int signalmode, TString fcncquark)
 	samples.push_back("ttH");
 	samples.push_back("ttV");
 	samples.push_back("ttbar");
-	if(signalmode == 1) samples.push_back("fcnc_" + fcncquark + "h");
-	if(signalmode == 2) samples.push_back("fcnc_prod_" + fcncquark + "h");
-	if(signalmode == 3) samples.push_back("t" + fcncquark + "H");
-	double norm[] = {1,1,1,1,1,1,1};
+	samples.push_back("fcnc_uh");
+	samples.push_back("fcnc_prod_uh");
+	samples.push_back("tuH");
+	samples.push_back("fcnc_ch");
+	samples.push_back("fcnc_prod_ch");
+	samples.push_back("tcH");
+	double norm[] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
 	vector<TString> sampletitle;
 	sampletitle.push_back("Other");
 	sampletitle.push_back("V+jets");
@@ -76,10 +79,12 @@ void plot(int signalmode, TString fcncquark)
 	sampletitle.push_back("#bar{t}tH");
 	sampletitle.push_back("#bar{t}tV");
 	sampletitle.push_back("#bar{t}t");
-
-	if(signalmode == 1) sampletitle.push_back("#bar{t}t#rightarrowbW" + fcncquark + "H");
-	if(signalmode == 2) sampletitle.push_back(fcncquark + "tH Prod Mode");
-	if(signalmode == 3) sampletitle.push_back("t" + fcncquark + "H merged signal");
+	sampletitle.push_back("#bar{t}t#rightarrowbWuH");
+	sampletitle.push_back("utH Prod Mode");
+	sampletitle.push_back("tuH merged signal");
+	sampletitle.push_back("#bar{t}t#rightarrowbWcH");
+	sampletitle.push_back("ctH Prod Mode");
+	sampletitle.push_back("tcH merged signal");
 
 	stringstream ss;
 	ss<<"(BR=" << 0.2*norm[6] << "%)";
@@ -88,7 +93,7 @@ void plot(int signalmode, TString fcncquark)
 	sampletitle[6]+=tmp;
 	TString origin[] = {"b", "c", "g", "j", "lep", "nomatch", "real", "data"};
 	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "real #tau"};
-	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed};
+	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kRed, kRed, kRed, kRed, kRed};
 
 	tau_plots->read_sample("data","data","data",kBlack, 1);
 //============================ merge_sample============================
@@ -101,18 +106,18 @@ void plot(int signalmode, TString fcncquark)
 	}
 //============================ merge_origin ============================
 	else if(plot_option == 2){
-  		tau_plots->overlay(samples[6]);
-
-		for (int j = 0; j < 7; ++j){
-			tau_plots->stackorder.push_back(samples[j]);
+		for (int j = 0; j < samples.size(); ++j){
+			if(j < 6) tau_plots->stackorder.push_back(samples[j]);
 			for (int i = fakeMC? 0:6; i < 7; ++i){
-				if(j == samples.size()-1){
-					if(signalmode != 2)
-						tau_plots->read_sample( samples[j], "fcnc_" + fcncquark + "h_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
-					if(signalmode != 1)
-						tau_plots->read_sample( samples[j], "fcnc_prod_" + fcncquark + "h_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
-				}else
+				if(j == samples.size()-4){
+						tau_plots->read_sample( samples[j], "fcnc_uh_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+						tau_plots->read_sample( samples[j], "fcnc_prod_uh_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+				}else if(j == samples.size()-1){
+						tau_plots->read_sample( samples[j], "fcnc_ch_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+						tau_plots->read_sample( samples[j], "fcnc_prod_ch_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+				}else{
 					tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+				}
 			}
 		}
 	}
@@ -130,27 +135,24 @@ void plot(int signalmode, TString fcncquark)
 		if(!fakeMC){
   			//tau_plots->templatesample("reg2mtau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b3jos","fake","Fake",kYellow,1);
   			//tau_plots->templatesample("reg2mtau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b2jos","fake","Fake",kYellow,1);
-			tau_plots->templatesample("reg1l2tau1bnj_ss","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l2tau1bnj_os","fake","Fake",kYellow,1);
+			tau_plots->templatesample("reg1l2tau1bnj_ss_vetobtagwp70","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l2tau1bnj_os_vetobtagwp70","fake","Fake",kYellow,1);
+			tau_plots->templatesample("reg1l1tau1b2j_ss_vetobtagwp70","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b2j_os_vetobtagwp70","fake","Fake",kYellow,1);
+			tau_plots->templatesample("reg1l1tau1b3j_ss_vetobtagwp70","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b3j_os_vetobtagwp70","fake","Fake",kYellow,1);
+			tau_plots->stackorder.push_back("fake");
   		}
   	}
 
 	if(doPlots){
-		TString outputname = signalmode == 3 ? "merged" : (signalmode == 1 ? "decay" : "prod");
-		outputname += fcncquark;
-		outputname += "H";
-		tau_plots  ->plot_stack("output/" + outputname);
+		for (int i = 6; i < 12; ++i)
+		{
+			printf("plot signal: %s\n", samples[i].Data());
+  			tau_plots->overlay(samples[i]);
+			tau_plots->plot_stack("output/" + samples[i]);
+		}
 	}
 }
 int main(int argc, char const *argv[])
 {
-	
-	int signalmode = 1; //1 decay, 2 prod, 3 both
-	TString fcncquark = "u";
-	plot(1,"u");
-	//plot(1,"c");
-	//plot(2,"u");
-	//plot(2,"c");
-	//plot(3,"u");
-	//plot(3,"c");
+	plot();
 	return 0;
 }

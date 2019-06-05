@@ -421,8 +421,6 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
             weight *= lepton_SF*trig_SF;
           }
           weights->push_back(weight);
-        }
-        if(reduce == 3){
           if(faketau >=0 && sample.Contains("top")){
             int prongbin = taus_n_charged_tracks->at(faketau) == 3;
             int ptbin;
@@ -436,7 +434,6 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
               else if(faketaupt < 75) ptbin = 1;
               else ptbin = 2;
             }
-            printf("%d, %d, %f\n", prongbin, ptbin, fakeSFML[prongbin][ptbin]);
             weights->push_back(weight*fakeSFML[prongbin][ptbin]);
           }else{
             weights->push_back(weight);
