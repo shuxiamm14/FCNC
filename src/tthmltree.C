@@ -832,7 +832,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
     if (sample.Contains("data")) {
       tauorigin = "data";
       sample = "data";
-    } else if (nTaus_OR_Pt25 >= 1 || reduce == 3) {
+    } else if (nTaus_OR_Pt25 >= 1) {
       if (tau_truthType_0 == 10) tauorigin = sample + "_real";
       else if (tau_truthJetFlavour_0 < 0 && (tau_truthType_0 == 2 || tau_truthType_0 == 6)) tauorigin = sample + "_lep";
       else
@@ -881,8 +881,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
     if(reduce == 1){
       weights->clear();
       weights->push_back(weight);
-      weights->push_back(weight*fakeSF);
       if(triggeredfcnc && mc_channel_number){
+        weights->push_back(weight*fakeSF);
         for (int iNP = 0; iNP < 8; ++iNP)
         {
           double valNP = weight;
@@ -898,6 +898,26 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           }
           weights->push_back(valNP);
         }
+        double tmpfakeSFML = 1;
+        for (int i = 0; i < 2; ++i)
+        {
+          if(origintag[i] != -1){
+                int prongbin = (i==0?tau_numTrack_0:tau_numTrack_1) == 3;
+                int ptbin;
+                double faketaupt = (i==0?tau_pt_0:tau_pt_1) / GeV;
+                if(prongbin == 0) {
+                  if(faketaupt<45) ptbin = 0;
+                  else if(faketaupt < 70) ptbin = 1;
+                  else ptbin = 2;
+                }else{
+                  if(faketaupt<50) ptbin = 0;
+                  else if(faketaupt < 75) ptbin = 1;
+                  else ptbin = 2;
+                }
+                tmpfakeSFML *= fakeSFML[prongbin][ptbin];
+          }
+        }
+        weights->push_back(weight*tmpfakeSFML);
       }
     }
 

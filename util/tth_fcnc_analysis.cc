@@ -42,7 +42,8 @@ void plot()
     tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
     gErrorIgnoreLevel = kWarning;
   	tau_plots->blinding = 2;
-	TString regions[] = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os"};
+	TString regions[] = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os",
+						"reg1l2tau2bnj_ss","reg1l2tau2bnj_os","reg1l1tau2b2j_ss","reg1l1tau2b2j_os","reg1l1tau2b3j_ss","reg1l1tau2b3j_os"};
 //	TString regions[] = {"reg1l2tau1bnj_os"};
 	int nregions = sizeof(regions)/sizeof(TString);
 	TString nprong[] = {"1prong","3prong"};
@@ -138,6 +139,10 @@ void plot()
 			tau_plots->templatesample("reg1l2tau1bnj_ss_vetobtagwp70","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l2tau1bnj_os_vetobtagwp70","fake","Fake",kYellow,1);
 			tau_plots->templatesample("reg1l1tau1b2j_ss_vetobtagwp70","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b2j_os_vetobtagwp70","fake","Fake",kYellow,1);
 			tau_plots->templatesample("reg1l1tau1b3j_ss_vetobtagwp70","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b3j_os_vetobtagwp70","fake","Fake",kYellow,1);
+
+			tau_plots->templatesample("reg1l2tau2bnj_ss_vetobtagwp70","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l2tau2bnj_os_vetobtagwp70","fake","Fake",kYellow,1);
+			tau_plots->templatesample("reg1l1tau2b2j_ss_vetobtagwp70","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau2b2j_os_vetobtagwp70","fake","Fake",kYellow,1);
+			tau_plots->templatesample("reg1l1tau2b3j_ss_vetobtagwp70","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau2b3j_os_vetobtagwp70","fake","Fake",kYellow,1);
 			tau_plots->stackorder.push_back("fake");
   		}
   	}
