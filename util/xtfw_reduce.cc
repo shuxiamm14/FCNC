@@ -1,5 +1,4 @@
 #include "hadhadtree.h"
-#include <thread>
 
 int main(int argc, char const *argv[])
 {
@@ -8,10 +7,8 @@ int main(int argc, char const *argv[])
 		printf("Usage: xtfw_reduce_run dataconfigfile (mc16a_wjet.txt)\n");
 		exit(1);
 	}
-	thread th1(PrintTime, 5);
-	th1.detach();
 	bool debug = 0;
-	bool doplot = 1;
+	bool doplot = 0;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	ifstream fn(prefix + "/datafiles/xTFW/run/" + argv[1]);
@@ -83,7 +80,7 @@ int main(int argc, char const *argv[])
 	analysis->init_reduce1();
 	analysis->reduce = 1;
 	analysis->debug = debug;
-	analysis->writetree = 0;
+	analysis->writetree = 1;
 	analysis->fcnc_regions = regions;
 	if(doplot) analysis->init_hist(inputconfig);
 	analysis->init_sample(inputconfig,inputconfig);

@@ -186,6 +186,8 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   int nloop = debug ? min((Long64_t)1000,nentries) : nentries;
   float ngluon = 0;
   gM = initgM();
+  fstream signalevtnb;
+  if(samplename.Contains("fcnc")) signalevtnb.open((samplename+"_evt.txt").Data(), fstream:: in | fstream::out | fstream::app);
   printf("nentries: %d\n", nloop);
   if(nentries == 0) return;
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
@@ -344,6 +346,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   
     }
     if(reduce == 3){
+      if(ifregions["reg2mtau1b3jos"] || ifregions["reg2mtau1b2jos"]) if(samplename.Contains("fcnc")) signalevtnb<<mc_channel_number<<" "<<event_number<<endl;
       if(ifregions["reg2mtau1b3jos"] || ifregions["reg2mtau1b3jss"] || ifregions["reg2mtau2b3jos"] || ifregions["reg2mtau2b3jss"]) {
         BDTG_test = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2) );
         BDTG_train = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(event_number%2)) );
@@ -360,7 +363,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       sample = "data";
       tauabspdg = 0;
     } else {
-      if(reduce == 2){
+      if(reduce <= 2){
         tauabspdg = (abs(taus_matched_pdgId->at(0)) == 15 && abs(taus_matched_pdgId->at(1)) == 15) ? 15 :
           (
             abs(taus_matched_pdgId->at(0)) == 15 ? abs(taus_matched_pdgId->at(1)) : abs(taus_matched_pdgId->at(0))

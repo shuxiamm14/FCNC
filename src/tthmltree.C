@@ -346,13 +346,13 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
       else sample.Remove(sample.Sizeof()-2);
       for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
       {
-        fcnc_plots[iNP]->init_sample(sample + "_g",sample + "_g_NP" + char('0' + iNP),sampletitle + "(gluon fake #tau)",(enum EColor)7);
-        fcnc_plots[iNP]->init_sample(sample + "_j",sample + "_j_NP" + char('0' + iNP),sampletitle + "(light-jet fake #tau)",kBlue);
-        fcnc_plots[iNP]->init_sample(sample + "_b",sample + "_b_NP" + char('0' + iNP),sampletitle + "(b-jets fake #tau)",kViolet);
-        fcnc_plots[iNP]->init_sample(sample + "_lep",sample + "_lep_NP" + char('0' + iNP),sampletitle + "(lepton fake #tau)",kGreen);
-        fcnc_plots[iNP]->init_sample(sample + "_real",sample + "_real_NP" + char('0' + iNP),sampletitle + "(real #tau)",kRed);
-        fcnc_plots[iNP]->init_sample(sample + "_c",sample + "_c_NP" + char('0' + iNP),sampletitle + "(c-jets fake #tau)",kOrange);
-        fcnc_plots[iNP]->init_sample(sample + "_nomatch",sample + "_nomatch_NP" + char('0' + iNP),sampletitle + "(no truth matched fake #tau)",kGray);
+        fcnc_plots[iNP]->init_sample(sample + "_g",sample + "_g_NP" + char('0' + plotNPs[iNP]),sampletitle + "(gluon fake #tau)",(enum EColor)7);
+        fcnc_plots[iNP]->init_sample(sample + "_j",sample + "_j_NP" + char('0' + plotNPs[iNP]),sampletitle + "(light-jet fake #tau)",kBlue);
+        fcnc_plots[iNP]->init_sample(sample + "_b",sample + "_b_NP" + char('0' + plotNPs[iNP]),sampletitle + "(b-jets fake #tau)",kViolet);
+        fcnc_plots[iNP]->init_sample(sample + "_lep",sample + "_lep_NP" + char('0' + plotNPs[iNP]),sampletitle + "(lepton fake #tau)",kGreen);
+        fcnc_plots[iNP]->init_sample(sample + "_real",sample + "_real_NP" + char('0' + plotNPs[iNP]),sampletitle + "(real #tau)",kRed);
+        fcnc_plots[iNP]->init_sample(sample + "_c",sample + "_c_NP" + char('0' + plotNPs[iNP]),sampletitle + "(c-jets fake #tau)",kOrange);
+        fcnc_plots[iNP]->init_sample(sample + "_nomatch",sample + "_nomatch_NP" + char('0' + plotNPs[iNP]),sampletitle + "(no truth matched fake #tau)",kGray);
       }
       fake_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
       fake_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
@@ -410,7 +410,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
   if (samplename.Contains("ttbar")) sample = "ttbar";
   else if (!samplename.Contains("data")) sample.Remove(sample.Sizeof() - 2);
   gM = initgM();
-
+  fstream signalevtnb;
+  if(samplename.Contains("fcnc")) signalevtnb.open((samplename+"_evt.txt").Data(), fstream:: in | fstream::out | fstream::app);
   if (dumptruth) {
     if(reduce > 1){
       if (TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) {
@@ -814,6 +815,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       if(ttvismass < 25*GeV ) continue;      
       tthcutflow.fill();
       if(debug) printf("eval BDTG\n");
+      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau1b3j_os"]) if(samplename.Contains("fcnc"))signalevtnb<<mc_channel_number<<" "<<eventNumber<<endl;
+
       if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"]) BDTG_test = reader["reg1l2tau1bnj"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
       if(ifregions["reg1l1tau1b2j_ss"] || ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau2b2j_ss"] || ifregions["reg1l1tau2b2j_os"]) BDTG_test = reader["reg1l1tau1b2j"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
       if(ifregions["reg1l1tau1b3j_ss"] || ifregions["reg1l1tau1b3j_os"] || ifregions["reg1l1tau2b3j_ss"] || ifregions["reg1l1tau2b3j_os"]) BDTG_test = reader["reg1l1tau1b3j"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
@@ -830,7 +833,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
     if (sample.Contains("data")) {
       tauorigin = "data";
       sample = "data";
-    } else if (nTaus_OR_Pt25 >= 1) {
+    } else if (nTaus_OR_Pt25 >= 1 || reduce == 3) {
       if (tau_truthType_0 == 10) tauorigin = sample + "_real";
       else if (tau_truthJetFlavour_0 < 0 && (tau_truthType_0 == 2 || tau_truthType_0 == 6)) tauorigin = sample + "_lep";
       else
