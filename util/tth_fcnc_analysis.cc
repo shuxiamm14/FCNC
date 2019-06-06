@@ -11,7 +11,7 @@ void plot()
 	tau_plots->inputfilename = "hists";
 	tau_plots->debug = 0;
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
-	bool fakeMC = 0;
+	bool fakeMC = 1;
 	tau_plots->sensitivevariable = "BDTG_test";
 	tau_plots->add("BDT discriminant","BDTG_test","",10);
 

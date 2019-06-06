@@ -12,7 +12,7 @@ void plot()
 	tau_plots->inputfilename = "hists";
 	tau_plots->debug = 0;
 	bool calibttbarfake = 1;
-	bool fakeMC = 1;
+	bool fakeMC = 0;
 	tau_plots->sensitivevariable = "BDTG_test";
 	tau_plots->add("BDT discriminant","BDTG_test","",5);
 	tau_plots->add("BDT discriminant","BDTG_train","",5);
@@ -130,8 +130,9 @@ void plot()
 					}else if(j == samples.size()-6){
 						tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
 						tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
-					}else
+					}else{
 						tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
+					}
 				}
 				else if(!fakeMC && calibttbarfake && samples[j] == "top"){
 					tau_plots->read_sample( "top_fake", samples[j] + "_" + origin[i] + "_NP1", sampletitle[j] + "(Fake #tau)", kTeal, norm[j]);
@@ -191,6 +192,7 @@ void plot()
 	if(doPlots){
 		for (int i = samples.size()-6; i < samples.size(); ++i)
 		{
+  			tau_plots->overlay(samples[i]);
 			tau_plots  ->plot_stack("output/" + samples[i]);
 		}
 		
