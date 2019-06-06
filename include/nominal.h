@@ -17,7 +17,8 @@ const double btag70wt = 0.8303;
 
 class nominal {
 public :
-
+  map<TString,bool> dobwp;
+  map<TString,bool> dovetobwp;
 // Fixed size dimensions of array or collections stored in the TTree if any.
   const double btagwpCut[4]={0.94,0.83,0.64,0.11};
   //const double fakeSFs[4][4] = {
@@ -25,11 +26,16 @@ public :
   //  {0.770841, 0.524360, 2.233151, 0.769241},  //1prong >35
   //  {1.157861, 0.792569, 1.349050, 1.426554},  //3prong <35
   //  {0.818782, 0.614790, 5.756198, 0.489836}   //3prong >35
-  //};
+  //};  
+  
+  const double fakeSFML[2][3] = {{1.05,0.94,0.64} , {1.25,1.30,0.52}}; //1prong: 25-45, 45-70, 70- ; 3prong: 25-50, 50-75, 75-
+  const double fakeSFMLNP[2][3] = {{0.064,0.2247,0.122} , {0.422,0.7879,0.7068}};
+
   const double fakeSFs[2][4] = {
     {1.060928,0.538011,2.654738,0.955523},  // <35
     {0.814329,1.013681,1.297911,0.958773}  // >35
   };
+
   const double fakeSFsNPbase[2][4][4] = {
     {
       {0.298063,0.940926,-0.159135,0.022190},
@@ -63,7 +69,6 @@ public :
 
   static int GeV;
   vector<int> plotNPs;
-  bool dofcnc;
   Int_t ierflg;
   bool dumptruth;
   double nonfcncmatched;
@@ -110,9 +115,11 @@ public :
   fstream filetruth[6][2];
   Double_t arglist[10];
   vector<TString> fcnc_regions;
+  vector<TString> fake_regions;
+  vector<TString> fake_regions_notau;
   int fcnc_nregions;
-  TString **fake_regions;
   int fake_nregions;
+  int fake_nregions_notau;
   bool writetree = 1;
   TString bwps[4] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
   TString ptbin[2] = {"below35","above35"};

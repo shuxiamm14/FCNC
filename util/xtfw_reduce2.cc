@@ -15,6 +15,10 @@ int main(int argc, char const *argv[])
 	regions.push_back("reg2mtau1b2jos");
 	regions.push_back("reg2mtau1b3jss");
 	regions.push_back("reg2mtau1b3jos");
+	regions.push_back("reg2mtau2b2jss");
+	regions.push_back("reg2mtau2b2jos");
+	regions.push_back("reg2mtau2b3jss");
+	regions.push_back("reg2mtau2b3jos");
 	//regions.push_back("reg1mtau1ltau1b2jss");
 	//regions.push_back("reg2ltau1b2jss");
 	//regions.push_back("reg2ttau1b2jss");
@@ -31,15 +35,14 @@ int main(int argc, char const *argv[])
 	//regions.push_back("reg1ttau1mtau1b2jos");
 	//regions.push_back("reg2ttau1b3jos");
 	//regions.push_back("reg1ttau1mtau1b3jos");
-
-	ifstream fn(argv[1]);
+	printf("reading list: %s\n", argv[2]);
+	ifstream fn(argv[2]);
 	if(!debug) gErrorIgnoreLevel=kError;
 	hadhadtree *analysis = new hadhadtree();
 	analysis->init_reduce2();
 	analysis->plotNPs.push_back(0);
-	//analysis->plotNPs.push_back(1);
-	analysis->dofcnc = 1;
-	analysis->reduce = 3;
+	analysis->plotNPs.push_back(1);
+	analysis->reduce = *argv[1]-'0';
 	analysis->debug = debug;
 	analysis->writetree = analysis->reduce == 2 ? 1 : 0;
 	bool doplot = analysis->reduce == 2 ? 0 : 1;

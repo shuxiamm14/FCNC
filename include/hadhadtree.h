@@ -5,7 +5,7 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
-
+#include "cutflow.h"
 // Header file for the classes stored in the TTree if any.
 #include "TLorentzVector.h"
 #include "TVector3.h"
@@ -30,7 +30,7 @@ public :
    void init_reduce2();
    bool isData = 0;
    int tauabspdg = 0;
-
+   cutflow hadcutflow;
    vector<Int_t>           *taus_id = 0;
    vector<Int_t>           *taus_b_tagged = 0;
    vector<UInt_t>          *taus_decay_mode = 0;

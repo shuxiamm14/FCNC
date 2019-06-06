@@ -40,7 +40,7 @@ int main(int argc, char const *argv[])
 	TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
 
 	TString nprong[] = {"1prong_","3prong_",""};
-	TString abvorbl[] = {"above35_","below35_"};
+	TString abvorbl[] = {"below35_","above35_"};
 	for (int j = 0; j < 3; ++j)
 	  //notau_plots->add_region(regions[j]);
 	  for (int i = 1; i < 4; i+=2)
@@ -48,11 +48,11 @@ int main(int argc, char const *argv[])
 	  		for (int iabvorbl = 0; iabvorbl < 2; ++iabvorbl)
 	  		{
 				tau_plots->add_region(regions[j] + "_" + nprong[k] + abvorbl[iabvorbl] + bwps[i]);
-				tau_plots->add_region(regions[j] + "_" + nprong[k] + abvorbl[iabvorbl] + "veto" + bwps[i]);
+				if(i == 1) tau_plots->add_region(regions[j] + "_" + nprong[k] + abvorbl[iabvorbl] + "veto" + bwps[i]);
 	  		}
 	    }
 
-	TString samples[] = {"Other", "Vjets", "diboson", "ttH", "ttV", "ttbar"};
+	TString samples[] = {"other", "Vjets", "diboson", "ttH", "ttV", "ttbar"};
 	TString sampletitle[] = {"Other", "V+jets", "Diboson", "#bar{t}tH", "#bar{t}tV", "#bar{t}t"};
 
 	TString origin[] = {"b", "c", "g", "j", "lep", "nomatch", "real", "data"};
@@ -97,7 +97,7 @@ int main(int argc, char const *argv[])
 		  	for (int ptbin = 0; ptbin < 2; ++ptbin)
 		  	{
 		  		tau_plots->merge_regions(regions[j] + "_" + nprong[0] + abvorbl[ptbin] + bwps[i], regions[j] + "_" + nprong[1] + abvorbl[ptbin] + bwps[i],  regions[j] + "_" + abvorbl[ptbin] + bwps[i]);
-		  		tau_plots->merge_regions(regions[j] + "_" + nprong[0] + abvorbl[ptbin] + "veto" + bwps[i], regions[j] + "_" + nprong[1] + abvorbl[ptbin] + "veto" + bwps[i],  regions[j] + "_" + abvorbl[ptbin] + "veto" + bwps[i]);
+		  		if(i == 1) tau_plots->merge_regions(regions[j] + "_" + nprong[0] + abvorbl[ptbin] + "veto" + bwps[i], regions[j] + "_" + nprong[1] + abvorbl[ptbin] + "veto" + bwps[i],  regions[j] + "_" + abvorbl[ptbin] + "veto" + bwps[i]);
 		  	}
 		  }
 	}
@@ -111,7 +111,7 @@ int main(int argc, char const *argv[])
 				for (int j = 0; j < 3; ++j)
 				{
 					tau_plots->merge_regions(regions[j] + "_" + nprong[iprong] + abvorbl[0] + bwps[i],regions[j] + "_" + nprong[iprong] + abvorbl[1] + bwps[i],regions[j] + "_" + nprong[iprong] + bwps[i]);
-					tau_plots->merge_regions(regions[j] + "_" + nprong[iprong] + abvorbl[0] + "veto" + bwps[i],regions[j] + "_" + nprong[iprong] + abvorbl[1]  + "veto" + bwps[i],regions[j] + "_" + nprong[iprong] + "veto" + bwps[i]);
+					if(i == 1) tau_plots->merge_regions(regions[j] + "_" + nprong[iprong] + abvorbl[0] + "veto" + bwps[i],regions[j] + "_" + nprong[iprong] + abvorbl[1]  + "veto" + bwps[i],regions[j] + "_" + nprong[iprong] + "veto" + bwps[i]);
 				}
 			}
 		}
@@ -157,7 +157,7 @@ int main(int argc, char const *argv[])
 //============================ do fit here============================
 				//fitter->asimovfit(100,nprong[iprong]+"ptbin"+char(ptbin+'0')+".root");
 				double chi2 = fitter->fit(val,err,0);
-				printf("%sptbin: %d, b: %f+/-%f, c: %f+/-%f, g: %f+/-%f, j: %f+/-%f;  Chi2:%f\n",nprong[iprong].Data(), ptbin+1, val[0],err[0], val[1],err[1], val[2],err[2], val[3],err[3], chi2);
+				printf("%sptbin: %d, b: %4.2f+/-%4.2f, c: %4.2f+/-%4.2f, g: %4.2f+/-%4.2f, j: %4.2f+/-%4.2f;  Chi2:%f\n",nprong[iprong].Data(), ptbin+1, val[0],err[0], val[1],err[1], val[2],err[2], val[3],err[3], chi2);
 				fitter->calculateEigen();
 				fitter->clear();
 //============================post-fit plots============================
@@ -167,6 +167,7 @@ int main(int argc, char const *argv[])
 					for (int ifveto = 0; ifveto < 2; ++ifveto){		
 						for (int ibtag = 0; ibtag < 2; ++ibtag){
 							for (int i = 0; i < 3; ++i){
+								if(ifveto==1 && ibtag==1) continue; 
 								target = tau_plots->grabhist(origin[iorigin],regions[i] + "_" + nprong[iprong] + abvorbl[ptbin] + (ifveto?"veto":"") + bwps[ibtag*2+1],0);
 								target->Scale(val[iorigin]);
 							} // loop region
@@ -178,7 +179,7 @@ int main(int argc, char const *argv[])
 				for (int j = 0; j < 3; ++j)
 				{
 					tau_plots->merge_regions(regions[j] + "_" + nprong[iprong] + abvorbl[0] + bwps[i],regions[j] + "_" + nprong[iprong] + abvorbl[1] + bwps[i],regions[j] + "_" + nprong[iprong] + bwps[i]);
-					tau_plots->merge_regions(regions[j] + "_" + nprong[iprong] + abvorbl[0] + "veto" + bwps[i],regions[j] + "_" + nprong[iprong] + abvorbl[1]  + "veto" + bwps[i],regions[j] + "_" + nprong[iprong] + "veto" + bwps[i]);
+					if(i == 1) tau_plots->merge_regions(regions[j] + "_" + nprong[iprong] + abvorbl[0] + "veto" + bwps[i],regions[j] + "_" + nprong[iprong] + abvorbl[1]  + "veto" + bwps[i],regions[j] + "_" + nprong[iprong] + "veto" + bwps[i]);
 				}
 			}
 		} // loop prong

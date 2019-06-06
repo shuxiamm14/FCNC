@@ -9,6 +9,7 @@
 
 hadhadtree::hadhadtree() : nominal::nominal(){
   defGeV(1);
+  hadcutflow.set_weight(&weight);
 }
 
 void hadhadtree::init_reduce2(){
@@ -128,13 +129,14 @@ void hadhadtree::init_sample(TString sample, TString sampletitle){
       sample.Remove(0,6);
       for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
       {
-        fcnc_plots[iNP]->init_sample(sample + "_g",sample + "_g_NP" + char('0' + iNP),sampletitle + "(gluon fake #tau)",(enum EColor)7);
-        fcnc_plots[iNP]->init_sample(sample + "_j",sample + "_j_NP" + char('0' + iNP),sampletitle + "(light-jet fake #tau)",kBlue);
-        fcnc_plots[iNP]->init_sample(sample + "_b",sample + "_b_NP" + char('0' + iNP),sampletitle + "(b-jets fake #tau)",kViolet);
-        fcnc_plots[iNP]->init_sample(sample + "_lep",sample + "_lep_NP" + char('0' + iNP),sampletitle + "(lepton fake #tau)",kGreen);
-        fcnc_plots[iNP]->init_sample(sample + "_real",sample + "_real_NP" + char('0' + iNP),sampletitle + "(real #tau)",kRed);
-        fcnc_plots[iNP]->init_sample(sample + "_c",sample + "_c_NP" + char('0' + iNP),sampletitle + "(c-jets fake #tau)",kOrange);
-        fcnc_plots[iNP]->init_sample(sample + "_nomatch",sample + "_nomatch_NP" + char('0' + iNP),sampletitle + "(no truth matched fake #tau)",kGray);
+        fcnc_plots[iNP]->init_sample(sample + "_g",sample + "_g_NP" + char('0' + plotNPs[iNP]),sampletitle + "(gluon fake #tau)",(enum EColor)7);
+        fcnc_plots[iNP]->init_sample(sample + "_j",sample + "_j_NP" + char('0' + plotNPs[iNP]),sampletitle + "(light-jet fake #tau)",kBlue);
+        fcnc_plots[iNP]->init_sample(sample + "_b",sample + "_b_NP" + char('0' + plotNPs[iNP]),sampletitle + "(b-jets fake #tau)",kViolet);
+        fcnc_plots[iNP]->init_sample(sample + "_lep",sample + "_lep_NP" + char('0' + plotNPs[iNP]),sampletitle + "(lepton fake #tau)",kGreen);
+        fcnc_plots[iNP]->init_sample(sample + "_real",sample + "_real_NP" + char('0' + plotNPs[iNP]),sampletitle + "(real #tau)",kRed);
+        fcnc_plots[iNP]->init_sample(sample + "_c",sample + "_c_NP" + char('0' + plotNPs[iNP]),sampletitle + "(c-jets fake #tau)",kOrange);
+        fcnc_plots[iNP]->init_sample(sample + "_nomatch",sample + "_nomatch_NP" + char('0' + plotNPs[iNP]),sampletitle + "(no truth matched fake #tau)",kGray);
+        fcnc_plots[iNP]->init_sample(sample + "_doublefake",sample + "_doublefake_NP" + char('0' + plotNPs[iNP]),sampletitle + "(no truth matched fake #tau)",kGray);
       } 
     }
   }
@@ -148,7 +150,11 @@ vector<TLorentzVector> convertv(vector<TLorentzVector*> vv){
 }
 
 void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
-{  
+{
+  if(!inputtree) {
+    printf("ERROR: input tree is empty\n");
+    exit(0);
+  }
   if(debug && dohist) for (int iNP = 0; iNP < plotNPs.size(); ++iNP) fcnc_plots[iNP]->show();
   isData = samplename.Contains("data");
   int campaign = 0;
@@ -159,22 +165,6 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   }
   bool doweightsys = ((TString)inputtree->GetName() == "NOMINAL")? 1 : 0;
   if(reduce > 1) ifregions[inputtree->GetName()] = 1;
-  double cutflow[] = {
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-  };
   reduce -= 1;
   Init(inputtree);
   reduce += 1;
@@ -196,19 +186,44 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   int nloop = debug ? min((Long64_t)1000,nentries) : nentries;
   float ngluon = 0;
   gM = initgM();
-
+  fstream signalevtnb;
+  if(samplename.Contains("fcnc")) signalevtnb.open((samplename+"_evt.txt").Data(), fstream:: in | fstream::out | fstream::app);
+  printf("nentries: %d\n", nloop);
+  if(nentries == 0) return;
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
+    hadcutflow.newEvent();
     inputtree->GetEntry(jentry);
-    if(mc_channel_number == 411172 || mc_channel_number == 411173 || mc_channel_number == 411176 || mc_channel_number == 411177)
-      continue;
+    //if(mc_channel_number == 411172 || mc_channel_number == 411173 || mc_channel_number == 411176 || mc_channel_number == 411177)
+    //  continue;
     if ((jentry % 100000 == 0) || debug)
       std::cout << " I am here event " << jentry << " Event " << event_number << " Run " << run_number << " ismc " << mc_channel_number << std::endl;
-    cutflow[0]+=1;
+/*
+    if(year == 2015) passtrigger = HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1TAU20IM_2TAU12IM || HLT_tau35_loose1_tracktwo_tau25_loose1_tracktwo;
+    if(year == 2016) passtrigger = HLT_tau35_loose1_tracktwo_tau25_loose1_tracktwo || HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo || HLT_tau80_medium1_TAU60_tau50_medium1_L1TAU12 || HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo;
+    if(year == 2017) passtrigger = HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo || HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I_J25 || HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1DR_TAU20ITAU12I_J25 || HLT_tau40_medium1_tracktwo_tau35_medium1_tracktwo
+      || HLT_tau80_medium1_tracktwo_L1TAU60_tau50_medium1_tracktwo_L1TAU12 || HLT_tau80_medium1_tracktwo_L1TAU60_tau35_medium1_tracktwo_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I || HLT_tau80_medium1_tracktwo_L1TAU60_tau50_medium1_tracktwo_L1TAU12 || HLT_tau80_medium1_tracktwo_L1TAU60_tau35_medium1_tracktwo_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I || HLT_tau80_medium1_tracktwo_L1TAU60_tau60_medium1_tracktwo_L1TAU40;
+    if(year == 2018) passtrigger = HLT_tau80_medium1_tracktwoEF_L1TAU60_tau60_medium1_tracktwoEF_L1TAU40 || HLT_tau80_medium1_tracktwoEF_L1TAU60_tau35_medium1_tracktwoEF_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I || HLT_tau80_mediumRNN_tracktwoMVA_L1TAU60_tau60_mediumRNN_tracktwoMVA_L1TAU40 || HLT_tau80_mediumRNN_tracktwoMVA_L1TAU60_tau35_mediumRNN_tracktwoMVA_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I
+      || HLT_tau40_medium1_tracktwoEF_tau35_medium1_tracktwoEF || HLT_tau35_medium1_tracktwoEF_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25 || HLT_tau40_mediumRNN_tracktwoMVA_tau35_mediumRNN_tracktwoMVA || HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;
+    if(!passtrigger) continue;
+*/
 //===============================SFs and weights===============================
     Float_t lepton_SF = 0;
     if(reduce == 1){
+      float jetSFs = 
+        jet_NOMINAL_central_jets_global_effSF_JVT*
+        jet_NOMINAL_central_jets_global_ineffSF_JVT*
+        jet_NOMINAL_forward_jets_global_effSF_JVT*
+        jet_NOMINAL_forward_jets_global_ineffSF_JVT*
+        jet_NOMINAL_global_effSF_MV2c10*
+        jet_NOMINAL_global_ineffSF_MV2c10;
+      float weight_pileup = NOMINAL_pileup_combined_weight;
+      weight = isData?1:weight_mc*weight_pileup*jetSFs*globalweight;
+      hadcutflow.fill();
       if(!tau_0_trig_trigger_matched || !tau_1_trig_trigger_matched) continue;
+      hadcutflow.fill();
       if((tau_1_n_charged_tracks!=1 && tau_1_n_charged_tracks!=3) || (tau_0_n_charged_tracks!=1 && tau_0_n_charged_tracks!=3)) continue;
+      hadcutflow.fill();
+      if(weight > 5) continue;
       lepton_SF = 
         tau_0_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
         tau_1_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
@@ -239,20 +254,16 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       ifregions["reg2ttau1b3jos"] =      tau_0_jet_bdt_tight && tau_1_jet_bdt_tight && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
       ifregions["reg1ttau1mtau1b3jos"] = tau_0_jet_bdt_tight + tau_1_jet_bdt_tight == 1 && tau_0_jet_bdt_medium + tau_1_jet_bdt_medium == 1 && n_bjets == 1 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
 
+      ifregions["reg2mtau2b2jss"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 2 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1;
+      ifregions["reg2mtau2b3jss"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 2 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1;
+      ifregions["reg2mtau2b2jos"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 2 && jets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1;
+      ifregions["reg2mtau2b3jos"] =      tau_0_jet_bdt_medium && tau_1_jet_bdt_medium && n_bjets == 2 && jets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1;
 
       for (auto iter : ifregions)
         if(iter.second == 0 || find(fcnc_regions.begin(),fcnc_regions.end(),iter.first) == fcnc_regions.end())
           ifregions.erase(iter.first);
+
       if(!ifregions.size()) continue;
-      float jetSFs = 
-        jet_NOMINAL_central_jets_global_effSF_JVT*
-        jet_NOMINAL_central_jets_global_ineffSF_JVT*
-        jet_NOMINAL_forward_jets_global_effSF_JVT*
-        jet_NOMINAL_forward_jets_global_ineffSF_JVT*
-        jet_NOMINAL_global_effSF_MV2c10*
-        jet_NOMINAL_global_ineffSF_MV2c10;
-      float weight_pileup = NOMINAL_pileup_combined_weight;
-      weight = isData?1:weight_mc*weight_pileup*jetSFs*globalweight;
       if(debug){
         printf("event: %llu\n",event_number);
         printf("weight_mc: %f\n",weight_mc);
@@ -266,15 +277,17 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     }
     //===============================pre-selections===============================
     if(reduce == 2) {
-      cutflow[1]+=weight;
+      hadcutflow.fill();
+      if(!isData && sample.Contains("fcnc") && !(abs(taus_matched_pdgId->at(0)) == 15 && abs(taus_matched_pdgId->at(1)) == 15)) continue;
+      hadcutflow.fill();
       if(campaign !=1 && jets_p4->at(0)->Pt() < 50 && bjets_p4->at(0)->Pt() < 50) continue;
-      cutflow[2]+=weight;
+      hadcutflow.fill();
       bool passbjetcut = 0;
       for(auto bjet : *bjets_p4){
         if(bjet->Pt() > 30 && abs(bjet->Eta()) < 2.5) passbjetcut = 1;
       }
       if(!passbjetcut) continue;
-      cutflow[3]+=weight;
+      hadcutflow.fill();
       tau_pt_0 = taus_p4->at(0)->Pt();
       tau_pt_1 = taus_p4->at(1)->Pt();
       etmiss = met_p4->Pt();
@@ -287,8 +300,11 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           drtaujmin = (*(taus_p4->at(0)) + *(taus_p4->at(1))).DeltaR(*jetp4);
       }
       if(ttvismass < 50) continue;
+      hadcutflow.fill();
       if(ttvismass > 130) continue;
+      hadcutflow.fill();
       if(drtautau > 3.4) continue;
+      hadcutflow.fill();
   
       phicent = phi_centrality(taus_p4->at(0)->Phi(),taus_p4->at(1)->Phi(),met_p4->Phi());
   
@@ -330,16 +346,18 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   
     }
     if(reduce == 3){
-      if(ifregions["reg2mtau1b3jos"] || ifregions["reg2mtau1b3jss"]) {
+      if(ifregions["reg2mtau1b3jos"] || ifregions["reg2mtau1b2jos"]) if(samplename.Contains("fcnc")) signalevtnb<<mc_channel_number<<" "<<event_number<<endl;
+      if(ifregions["reg2mtau1b3jos"] || ifregions["reg2mtau1b3jss"] || ifregions["reg2mtau2b3jos"] || ifregions["reg2mtau2b3jss"]) {
         BDTG_test = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2) );
         BDTG_train = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(event_number%2)) );
       }
-      if(ifregions["reg2mtau1b2jos"] || ifregions["reg2mtau1b2jss"]) {
+      if(ifregions["reg2mtau1b2jos"] || ifregions["reg2mtau1b2jss"] || ifregions["reg2mtau2b2jos"] || ifregions["reg2mtau2b2jss"]) {
         BDTG_test = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2) );
         BDTG_train = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(event_number%2)) );
       }
     }
     TString tauorigin;
+    int faketau = -1;
     if (sample.Contains("data")) {
       tauorigin = "data";
       sample = "data";
@@ -350,6 +368,9 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           (
             abs(taus_matched_pdgId->at(0)) == 15 ? abs(taus_matched_pdgId->at(1)) : abs(taus_matched_pdgId->at(0))
           );
+        if(abs(taus_matched_pdgId->at(0)) != 15 && abs(taus_matched_pdgId->at(1)) != 15) tauabspdg = 14;
+        else if (abs(taus_matched_pdgId->at(0)) == 15) faketau = 1;
+        else faketau = 0;
       }
       if (tauabspdg == 15) tauorigin = sample + "_real";
       else if (tauabspdg == 13 || tauabspdg == 11) tauorigin = sample + "_lep";
@@ -357,6 +378,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       else if (tauabspdg == 4) tauorigin = sample + "_c";
       else if (tauabspdg ==21) tauorigin = sample + "_g";
       else if (tauabspdg <= 3 && tauabspdg >=1) tauorigin = sample + "_j";
+      else if (tauabspdg == 14) tauorigin = sample + "_doublefake";
       else tauorigin = sample + "_nomatch";
     }
     if(debug) printf("fill hist\n");
@@ -402,10 +424,28 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
             weight *= lepton_SF*trig_SF;
           }
           weights->push_back(weight);
+          if(faketau >=0 && sample.Contains("top")){
+            int prongbin = taus_n_charged_tracks->at(faketau) == 3;
+            int ptbin;
+            double faketaupt = taus_p4->at(faketau)->Pt();
+            if(prongbin == 0) {
+              if(faketaupt<45) ptbin = 0;
+              else if(faketaupt < 70) ptbin = 1;
+              else ptbin = 2;
+            }else{
+              if(faketaupt<50) ptbin = 0;
+              else if(faketaupt < 75) ptbin = 1;
+              else ptbin = 2;
+            }
+            weights->push_back(weight*fakeSFML[prongbin][ptbin]);
+          }else{
+            weights->push_back(weight);
+          }
         }
         if (writetree){
-          if(outputtree.find(iter->first) != outputtree.end())
+          if(outputtree.find(iter->first) != outputtree.end()){
             outputtree[iter->first]->Fill();
+          }
           else{
             printf("Error: outputtree cannot find: %s\n", iter->first.Data());
             for(auto itertmp : outputtree){
@@ -419,7 +459,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
             for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
             {
               weight = weights->at(plotNPs[iNP]);
-              fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_pt_1 > 35, taus_b_tagged->at(1),iNP);
+              fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_pt_1 > 35, taus_b_tagged->at(1),plotNPs[iNP]);
             }
           else
               fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_pt_1 > 35, taus_b_tagged->at(1),0);
@@ -433,7 +473,11 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     for (auto itertmp : outputtree)
       itertmp.second->Write(itertmp.first, TObject::kWriteDelete);
   }
-  printf("cutflow: %f, %f, %f, %f\n", cutflow[0],cutflow[1],cutflow[2],cutflow[3]);
+  if(reduce <=2){
+    printf("%s \n", inputtree->GetName());
+    hadcutflow.print();
+    hadcutflow.clear();
+  }
 }
 
 void hadhadtree::fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag, int iNP){

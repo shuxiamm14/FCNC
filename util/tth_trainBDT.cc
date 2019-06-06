@@ -31,10 +31,10 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
    TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
    dataloader->AddVariable("tau_pt_0",'F');
    dataloader->AddVariable("tau_pt_1",'F');
+   dataloader->AddVariable("drtautau",'F');
    if(region == "reg2mtau1b3jos" || region == "reg2mtau1b2jos" || region == "reg1l1tau1b3j" ||  region == "reg1l1tau1b2j"){
       dataloader->AddVariable("etmiss",'F');
       dataloader->AddVariable("dphitauetmiss",'F');
-      dataloader->AddVariable("drtautau",'F');
       dataloader->AddVariable("phicent",'F');
       dataloader->AddVariable("tautaumass",'F');
       if(region != "reg1l1tau1b2j"){
@@ -54,7 +54,6 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
       dataloader->AddVariable("t1vismass",'F');
       dataloader->AddVariable("mtaujmin",'F');
       dataloader->AddVariable("drltau",'F');
-      dataloader->AddVariable("drtautau",'F');
       dataloader->AddVariable("etamax",'F');
       dataloader->AddVariable("mtw",'F');
       dataloader->AddVariable("drlbditau",'F');
@@ -74,7 +73,12 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
 
    if(region.Contains("2mtau")){
       TString inputdatanameshad[] = {"data1516","data17","data18"};
-      TString inputsignameshad[] = {"mc16a_fcnc_ch","mc16d_fcnc_ch","mc16e_fcnc_ch","mc16a_fcnc_uh","mc16d_fcnc_uh","mc16e_fcnc_uh"};
+      TString inputsignameshad[] = {"mc16a_fcnc_ch_qq","mc16d_fcnc_ch_qq","mc16e_fcnc_ch_qq",
+                                    "mc16a_fcnc_uh_qq","mc16d_fcnc_uh_qq","mc16e_fcnc_uh_qq",
+                                    "mc16a_fcnc_ch_lv","mc16d_fcnc_ch_lv","mc16e_fcnc_ch_lv",
+                                    "mc16a_fcnc_uh_lv","mc16d_fcnc_uh_lv","mc16e_fcnc_uh_lv",
+                                    "mc16a_fcnc_prod_ch","mc16d_fcnc_prod_ch","mc16e_fcnc_prod_ch",
+                                    "mc16a_fcnc_prod_uh","mc16d_fcnc_prod_uh","mc16e_fcnc_prod_uh"};
       TString inputbkgnameshad[] = {"mc16a_wjet","mc16d_wjet","mc16e_wjet","mc16a_zll","mc16d_zll","mc16e_zll","mc16a_smhiggs","mc16a_ztautau","mc16d_smhiggs","mc16d_ztautau","mc16e_smhiggs","mc16e_ztautau","mc16a_diboson","mc16a_top","mc16d_diboson","mc16d_top","mc16e_diboson","mc16e_top"};
    
       double norm = region == "reg2mtau1b2jos"? 4097.810002/2816.409586 : 4331.872451/3191.282355;
@@ -118,7 +122,7 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
       dataloader->SetBackgroundWeightExpression("weights[0]");
    }else{
       TString inputdatanamestth[] = {"data1516","data17"};
-      TString inputsignamestth[] = {"fcnc_ch","fcnc_uh"};
+      TString inputsignamestth[] = {"fcnc_ch","fcnc_uh"};//,"fcnc_prod_uh","fcnc_prod_ch"};
       TString inputbkgnamestth[] = {"Vjets","diboson","ttV","ttbarnohad","other","ttH","ttbargamma","sherpattbar"};
 
       if(region.Contains("reg1l2tau1bnj")) {

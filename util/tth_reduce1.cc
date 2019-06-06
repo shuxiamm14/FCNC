@@ -16,13 +16,27 @@ int main(int argc, char const *argv[])
 	char inputline[100];
 
 	tthmltree *analysis = new tthmltree();
-
-	analysis->fcnc_regions.push_back("reg1l2tau1bnj_ss");
-	analysis->fcnc_regions.push_back("reg1l2tau1bnj_os");
-	analysis->fcnc_regions.push_back("reg1l1tau1b2j");
-	analysis->fcnc_regions.push_back("reg1l1tau1b3j");
-
-	analysis->dofcnc = 1;
+	//analysis->fcnc_regions.push_back("reg1l1tau1b2j_os");
+	//analysis->fcnc_regions.push_back("reg1l1tau1b3j_os");
+	//analysis->fcnc_regions.push_back("reg1l1tau2b2j_os");
+	//analysis->fcnc_regions.push_back("reg1l1tau2b3j_os");
+	//analysis->fcnc_regions.push_back("reg1l1tau1b2j_ss");
+	//analysis->fcnc_regions.push_back("reg1l1tau1b3j_ss");
+	//analysis->fcnc_regions.push_back("reg1l1tau2b2j_ss");
+	//analysis->fcnc_regions.push_back("reg1l1tau2b3j_ss");
+	//analysis->fcnc_regions.push_back("reg1l2tau1bnj_os");
+	//analysis->fcnc_regions.push_back("reg1l2tau1bnj_ss");
+	//analysis->fcnc_regions.push_back("reg1l2tau2bnj_os");
+	//analysis->fcnc_regions.push_back("reg1l2tau2bnj_ss");
+	analysis->fake_regions.push_back("reg1e1mu1tau2b");
+	analysis->fake_regions.push_back("reg1l1tau2b1j_os");
+	analysis->fake_regions.push_back("reg1l1tau2b1j_ss");
+	analysis->fake_regions.push_back("reg1l1tau2b_os");
+	analysis->fake_regions.push_back("reg1l1tau2b_ss");
+	analysis->fake_regions.push_back("reg1e1mu1tau1b");
+	analysis->fake_regions_notau.push_back("reg1e1mu2bnj");
+	analysis->fake_regions_notau.push_back("reg1l2b2j");
+	analysis->fake_regions_notau.push_back("reg1e1mu2b");
 	analysis->reduce = 1;
 	analysis->debug = 0;
 	analysis->dumptruth = 0;

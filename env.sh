@@ -7,7 +7,7 @@ if [ -z ${ttH_fakes_DIR+x} ] ; then
 	  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
 	done
 	export ttH_fakes_DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
-	export PATH+=:$ttH_fakes_DIR/bin:$ttH_fakes_DIR/scripts:$ttH_fakes_DIR/tensorflow:$ttH_fakes_DIR/scripts
+	export PATH+=:$ttH_fakes_DIR/bin:$ttH_fakes_DIR/script:$ttH_fakes_DIR/tensorflow:$ttH_fakes_DIR/scripts
 	if [ $(uname) = "Darwin" ]; then
 		export DYLD_LIBRARY_PATH+=:$ttH_fakes_DIR/lib
 	else
