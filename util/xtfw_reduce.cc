@@ -3,9 +3,9 @@
 
 int main(int argc, char const *argv[])
 {
-	if (argc != 2)
+	if (argc != 3)
 	{
-		printf("Usage: xtfw_reduce_run dataconfigfile (mc16a_wjet.txt)\n");
+		printf("Usage: xtfw_reduce_run dataconfigfile (mc16a_wjet.txt) syst name\n");
 		exit(1);
 	}
 	thread th1(PrintTime, 5);
@@ -80,6 +80,8 @@ int main(int argc, char const *argv[])
 	}
 	if(!debug) gErrorIgnoreLevel=kError;
 	hadhadtree *analysis = new hadhadtree();
+	analysis->SystematicsName = argv[2];
+	analysis->nominaltree = TString(argv[2]) == "NOMINAL";
 	analysis->init_reduce1();
 	analysis->reduce = 1;
 	analysis->debug = debug;
@@ -190,7 +192,7 @@ int main(int argc, char const *argv[])
 			cutflowraw->Fill(i+1,inputcutflow->GetBinContent(i)/(isData?1:87));
 			cutflowraw->SetBinError(i+2, sqrt(pow(error,2) + pow(inputcutflow->GetBinError(i)/(isData?1:sqrt(87)),2)));
 		}
-		analysis->Loop( (TTree*)inputfile.Get("NOMINAL"), inputconfig, isData ? 1 : xsecs[dsid]*luminosity/totgenweighted[dsid]);
+		analysis->Loop( (TTree*)inputfile.Get(argv[2]), inputconfig, isData ? 1 : xsecs[dsid]*luminosity/totgenweighted[dsid]);
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		inputfile.Close();
 	}
