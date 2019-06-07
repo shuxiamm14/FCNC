@@ -164,7 +164,6 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   }else{
     campaign = samplename.Contains("mc16a") ? 1: (samplename.Contains("mc16d")? 2:3);
   }
-  bool doweightsys = ((TString)inputtree->GetName() == "NOMINAL")? 1 : 0;
   if(reduce > 1) ifregions[inputtree->GetName()] = 1;
   reduce -= 1;
   Init(inputtree);
@@ -222,7 +221,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       hadcutflow.fill();
       if(!tau_0_trig_trigger_matched || !tau_1_trig_trigger_matched) continue;
       hadcutflow.fill();
-      if((tau_1_n_charged_tracks!=1 && tau_1_n_charged_tracks!=3) || (tau_0_n_charged_tracks!=1 && tau_0_n_charged_tracks!=3)) continue;
+      if((tau_1_allTrk_n!=1 && tau_1_allTrk_n!=3) || (tau_0_allTrk_n!=1 && tau_0_allTrk_n!=3)) continue;
       hadcutflow.fill();
       if(weight > 5) continue;
       lepton_SF = 
