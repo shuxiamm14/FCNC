@@ -272,6 +272,8 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
         printf("jetSFs: %f\n",jetSFs);
         printf("globalweight: %f\n",globalweight);
       }
+      tau_pt_0 = taus_p4->at(0)->Pt();
+      tau_pt_1 = taus_p4->at(1)->Pt();
     }else{
       weight = weights->at(0);
     }
@@ -288,8 +290,6 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       }
       if(!passbjetcut) continue;
       hadcutflow.fill();
-      tau_pt_0 = taus_p4->at(0)->Pt();
-      tau_pt_1 = taus_p4->at(1)->Pt();
       etmiss = met_p4->Pt();
       ttvismass = (*(taus_p4->at(0)) + *(taus_p4->at(1))).M();
       dphitauetmiss = fabs(met_p4->DeltaPhi(*(taus_p4->at(0)) + *(taus_p4->at(1))));
