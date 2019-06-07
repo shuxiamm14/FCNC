@@ -102,7 +102,7 @@ void hadhadtree::definetaus(){
   if(!isData && nominaltree) if(taus_matched_mother_pdgId->size()) taus_matched_mother_pdgId->clear();
   if(!isData && nominaltree) if(taus_matched_mother_status->size()) taus_matched_mother_status->clear();
   if(!isData && nominaltree) if(taus_matched_p4->size()) taus_matched_p4->clear();
-  if(!isData && nominaltree) if(taus_matched_pdgId->size()) taus_matched_pdgId->clear();
+  if(!isData) if(taus_matched_pdgId->size()) taus_matched_pdgId->clear();
   if(!isData && nominaltree) if(taus_matched_vis_p4->size()) taus_matched_vis_p4->clear();
   if(taus_n_charged_tracks->size()) taus_n_charged_tracks->clear();
   if(taus_p4->size()) taus_p4->clear();
@@ -118,7 +118,7 @@ void hadhadtree::definetaus(){
   if(!isData && nominaltree) taus_matched_mother_pdgId->push_back(tau_0_matched_mother_pdgId);
   if(!isData && nominaltree) taus_matched_mother_status->push_back(tau_0_matched_mother_status);
   if(!isData && nominaltree) taus_matched_p4->push_back(tau_0_matched_p4);
-  if(!isData && nominaltree) taus_matched_pdgId->push_back(tau_0_matched_pdgId);
+  if(!isData) taus_matched_pdgId->push_back(tau_0_matched_pdgId);
   if(!isData && nominaltree) taus_matched_vis_p4->push_back(tau_0_matched_vis_p4);
   taus_n_charged_tracks->push_back(tau_0_allTrk_n);
   taus_p4->push_back(tau_0_p4);
@@ -130,7 +130,7 @@ void hadhadtree::definetaus(){
   if(!isData && nominaltree) taus_matched_mother_pdgId->push_back(tau_1_matched_mother_pdgId);
   if(!isData && nominaltree) taus_matched_mother_status->push_back(tau_1_matched_mother_status);
   if(!isData && nominaltree) taus_matched_p4->push_back(tau_1_matched_p4);
-  if(!isData && nominaltree) taus_matched_pdgId->push_back(tau_1_matched_pdgId);
+  if(!isData) taus_matched_pdgId->push_back(tau_1_matched_pdgId);
   if(!isData && nominaltree) taus_matched_vis_p4->push_back(tau_1_matched_vis_p4);
   taus_n_charged_tracks->push_back(tau_0_allTrk_n);
   taus_p4->push_back(tau_1_p4);
@@ -1472,6 +1472,7 @@ void hadhadtree::Init(TTree *tree)
     tree->SetBranchAddress("tau_1_NOMINAL_TauEffSF_VeryLooseLlhEleOLR_electron", &tau_1_NOMINAL_TauEffSF_VeryLooseLlhEleOLR_electron, &b_tau_1_NOMINAL_TauEffSF_VeryLooseLlhEleOLR_electron);
     tree->SetBranchAddress("tau_1_NOMINAL_TauEffSF_reco", &tau_1_NOMINAL_TauEffSF_reco, &b_tau_1_NOMINAL_TauEffSF_reco);
     tree->SetBranchAddress("tau_1_NOMINAL_TauEffSF_selection", &tau_1_NOMINAL_TauEffSF_selection, &b_tau_1_NOMINAL_TauEffSF_selection);
+    tree->SetBranchAddress("tau_0_matched_pdgId", &tau_0_matched_pdgId, &b_tau_0_matched_pdgId);
     if(nominaltree){
       tree->SetBranchAddress("tau_0_matched", &tau_0_matched, &b_tau_0_matched);
       tree->SetBranchAddress("tau_0_matched_classifierParticleOrigin", &tau_0_matched_classifierParticleOrigin, &b_tau_0_matched_classifierParticleOrigin);
@@ -1496,7 +1497,6 @@ void hadhadtree::Init(TTree *tree)
       tree->SetBranchAddress("tau_0_matched_p4_vis_charged_track0", &tau_0_matched_p4_vis_charged_track0, &b_tau_0_matched_p4_vis_charged_track0);
       tree->SetBranchAddress("tau_0_matched_p4_vis_charged_track1", &tau_0_matched_p4_vis_charged_track1, &b_tau_0_matched_p4_vis_charged_track1);
       tree->SetBranchAddress("tau_0_matched_p4_vis_charged_track2", &tau_0_matched_p4_vis_charged_track2, &b_tau_0_matched_p4_vis_charged_track2);
-      tree->SetBranchAddress("tau_0_matched_pdgId", &tau_0_matched_pdgId, &b_tau_0_matched_pdgId);
       tree->SetBranchAddress("tau_0_matched_q", &tau_0_matched_q, &b_tau_0_matched_q);
       tree->SetBranchAddress("tau_0_matched_status", &tau_0_matched_status, &b_tau_0_matched_status);
       tree->SetBranchAddress("tau_0_matched_type", &tau_0_matched_type, &b_tau_0_matched_type);
@@ -1802,7 +1802,6 @@ void hadhadtree::Init(TTree *tree)
       tree->SetBranchAddress("tau_1_matched_p4_vis_charged_track0", &tau_1_matched_p4_vis_charged_track0, &b_tau_1_matched_p4_vis_charged_track0);
       tree->SetBranchAddress("tau_1_matched_p4_vis_charged_track1", &tau_1_matched_p4_vis_charged_track1, &b_tau_1_matched_p4_vis_charged_track1);
       tree->SetBranchAddress("tau_1_matched_p4_vis_charged_track2", &tau_1_matched_p4_vis_charged_track2, &b_tau_1_matched_p4_vis_charged_track2);
-      tree->SetBranchAddress("tau_1_matched_pdgId", &tau_1_matched_pdgId, &b_tau_1_matched_pdgId);
       tree->SetBranchAddress("tau_1_matched_pz", &tau_1_matched_pz, &b_tau_1_matched_pz);
       tree->SetBranchAddress("tau_1_matched_q", &tau_1_matched_q, &b_tau_1_matched_q);
       tree->SetBranchAddress("tau_1_matched_status", &tau_1_matched_status, &b_tau_1_matched_status);
@@ -1812,6 +1811,7 @@ void hadhadtree::Init(TTree *tree)
       tree->SetBranchAddress("tau_1_matched_vis_neutral_pions_p4", &tau_1_matched_vis_neutral_pions_p4, &b_tau_1_matched_vis_neutral_pions_p4);
       tree->SetBranchAddress("tau_1_matched_vis_p4", &tau_1_matched_vis_p4, &b_tau_1_matched_vis_p4);
     }
+    tree->SetBranchAddress("tau_1_matched_pdgId", &tau_1_matched_pdgId, &b_tau_1_matched_pdgId);
     tree->SetBranchAddress("tau_eta_centrality", &tau_eta_centrality, &b_tau_eta_centrality);   
     tree->SetBranchAddress("HTXS_Njets_pTjet25", &HTXS_Njets_pTjet25, &b_HTXS_Njets_pTjet25);
     tree->SetBranchAddress("HTXS_Njets_pTjet30", &HTXS_Njets_pTjet30, &b_HTXS_Njets_pTjet30);
