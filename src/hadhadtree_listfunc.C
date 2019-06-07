@@ -56,21 +56,23 @@ void hadhadtree::definetree(TTree * tree) {
     tree->Branch("jets_origin",jets_origin);
     tree->Branch("jets_p4",jets_p4);
     tree->Branch("jets_q",jets_q);
-    tree->Branch("jets_type",jets_type);
+    if(nominaltree) tree->Branch("jets_type",jets_type);
     tree->Branch("jets_width",jets_width);
   
     if(!isData) {
-      tree->Branch("bjets_wztruth_p4",bjets_wztruth_p4);
-      tree->Branch("bjets_wztruth_pdgid",bjets_wztruth_pdgid);
-      tree->Branch("met_truth_p4", &met_truth_p4);
-      tree->Branch("met_truth_sumet", &met_truth_sumet);
-      tree->Branch("taus_matched_mother_pdgId",taus_matched_mother_pdgId);
-      tree->Branch("taus_matched_mother_status",taus_matched_mother_status);
       tree->Branch("taus_matched_p4",taus_matched_p4);
-      tree->Branch("taus_matched_pdgId",taus_matched_pdgId);
-      tree->Branch("taus_matched_vis_p4",taus_matched_vis_p4);
-      tree->Branch("jets_wztruth_p4",jets_wztruth_p4);
-      tree->Branch("jets_wztruth_pdgid",jets_wztruth_pdgid);
+      if(nominaltree){
+        tree->Branch("bjets_wztruth_p4",bjets_wztruth_p4);
+        tree->Branch("bjets_wztruth_pdgid",bjets_wztruth_pdgid);
+        tree->Branch("met_truth_p4", &met_truth_p4);
+        tree->Branch("met_truth_sumet", &met_truth_sumet);
+        tree->Branch("taus_matched_mother_pdgId",taus_matched_mother_pdgId);
+        tree->Branch("taus_matched_mother_status",taus_matched_mother_status);
+        tree->Branch("taus_matched_pdgId",taus_matched_pdgId);
+        tree->Branch("taus_matched_vis_p4",taus_matched_vis_p4);
+        tree->Branch("jets_wztruth_p4",jets_wztruth_p4);
+        tree->Branch("jets_wztruth_pdgid",jets_wztruth_pdgid);
+      }
     }
     return;
   }
