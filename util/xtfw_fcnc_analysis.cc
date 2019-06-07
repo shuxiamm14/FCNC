@@ -10,7 +10,7 @@ void plot()
 	tau_plots->doROC = 1;
 	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
 	tau_plots->inputfilename = "hists";
-	tau_plots->debug = 0;
+	tau_plots->debug = 1;
 	bool calibttbarfake = 1;
 	bool fakeMC = 0;
 	tau_plots->sensitivevariable = "BDTG_test";

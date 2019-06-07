@@ -364,7 +364,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       sample = "data";
       tauabspdg = 0;
     } else {
-      if(reduce == 2){
+      if(reduce <= 2){
         tauabspdg = (abs(taus_matched_pdgId->at(0)) == 15 && abs(taus_matched_pdgId->at(1)) == 15) ? 15 :
           (
             abs(taus_matched_pdgId->at(0)) == 15 ? abs(taus_matched_pdgId->at(1)) : abs(taus_matched_pdgId->at(0))
