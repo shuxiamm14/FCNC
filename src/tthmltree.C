@@ -887,21 +887,21 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       weights->push_back(weight);
       if(triggeredfcnc && mc_channel_number){
         weights->push_back(weight*fakeSF);
-        for (int iNP = 0; iNP < 8; ++iNP)
-        {
-          double valNP = weight;
-          for (int itau = 0; itau < nTaus_OR_Pt25; ++itau)
-          {
-            if(origintag[itau] >= 0 ){
-              if ( iNP < 4 && SFbin[itau] == 0 )
-                 valNP *= fakeSFs[SFbin[itau]][origintag[itau]]+fakeSFsNPbase[SFbin[itau]][origintag[itau]][iNP]*sqrt(fakeSFsNPsSigma2[SFbin[itau]][iNP]);
-              else if (iNP >= 4 && iNP < 8 && SFbin[itau] == 1) {
-                 valNP *= fakeSFs[SFbin[itau]][origintag[itau]]+fakeSFsNPbase[SFbin[itau]][origintag[itau]][iNP-4]*sqrt(fakeSFsNPsSigma2[SFbin[itau]][iNP-4]);
-              }
-            }
-          }
-          weights->push_back(valNP);
-        }
+        //for (int iNP = 0; iNP < 8; ++iNP)
+        //{
+        //  double valNP = weight;
+        //  for (int itau = 0; itau < nTaus_OR_Pt25; ++itau)
+        //  {
+        //    if(origintag[itau] >= 0 ){
+        //      if ( iNP < 4 && SFbin[itau] == 0 )
+        //         valNP *= fakeSFs[SFbin[itau]][origintag[itau]]+fakeSFsNPbase[SFbin[itau]][origintag[itau]][iNP]*sqrt(fakeSFsNPsSigma2[SFbin[itau]][iNP]);
+        //      else if (iNP >= 4 && iNP < 8 && SFbin[itau] == 1) {
+        //         valNP *= fakeSFs[SFbin[itau]][origintag[itau]]+fakeSFsNPbase[SFbin[itau]][origintag[itau]][iNP-4]*sqrt(fakeSFsNPsSigma2[SFbin[itau]][iNP-4]);
+        //      }
+        //    }
+        //  }
+        //  weights->push_back(valNP);
+        //}
         double tmpfakeSFML = 1;
         for (int i = 0; i < 2; ++i)
         {
