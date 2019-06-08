@@ -11,14 +11,18 @@
 
 // Header file for the classes stored in the TTree if any.
 #include <vector>
-TMinuit* gM = 0;
 
+#ifndef NO_TMINUIT
+TMinuit* gM = 0;
+#endif
 const double btag70wt = 0.8303;
 
 class nominal {
 public :
   map<TString,bool> dobwp;
   map<TString,bool> dovetobwp;
+
+  TString SystematicsName = "NOMINAL";
 // Fixed size dimensions of array or collections stored in the TTree if any.
   const double btagwpCut[4]={0.94,0.83,0.64,0.11};
   //const double fakeSFs[4][4] = {

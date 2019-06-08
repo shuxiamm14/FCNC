@@ -23,6 +23,7 @@ public :
    void definetaus();
    void definejets();
    void definetree(TTree * tree);
+   void addWeightSys();
    void fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag, int iNP);
    static  void     fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
    TMinuit* initgM();
@@ -30,6 +31,7 @@ public :
    void init_reduce2();
    bool isData = 0;
    int tauabspdg = 0;
+   bool nominaltree = 0;
    cutflow hadcutflow;
    vector<Int_t>           *taus_id = 0;
    vector<Int_t>           *taus_b_tagged = 0;
