@@ -48,8 +48,8 @@ int main(int argc, char const *argv[])
 		analysis->fake_regions_notau = regions1;
 	}
 	regions.insert(regions.end(),regions1.begin(),regions1.end());
-	analysis->plotNPs.push_back(0);
-	if(!dofake) analysis->plotNPs.push_back(1);
+	analysis->plotNPs.push_back(2);
+	//if(!dofake) analysis->plotNPs.push_back(1);
 	analysis->debug = 0;
 	analysis->writetree = 1;
 	analysis->fcnc = 1;
@@ -65,6 +65,13 @@ int main(int argc, char const *argv[])
 	if(analysis->reduce == 3 || dofake ) {
 		analysis->writetree = 0;
 		doplot = 1;
+	}
+
+	if(analysis->reduce == 3) {
+		if(TString(cate).Contains("data")){
+			analysis->plotNPs.clear();
+			analysis->plotNPs.push_back(0);
+		}
 	}
 	if(doplot) analysis->init_hist(cate);
 	analysis->version = version;

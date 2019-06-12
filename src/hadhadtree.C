@@ -425,7 +425,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           }
           weights->push_back(weight); //nominal
           if(nominaltree){
-            if(faketau >=0 && sample.Contains("top")){
+            if(faketau >=0){
               int prongbin = taus_n_charged_tracks->at(faketau) == 3;
               int ptbin;
               double faketaupt = taus_p4->at(faketau)->Pt();
