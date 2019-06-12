@@ -4,7 +4,10 @@
 
 int main(int argc, char const *argv[])
 {
-
+	if (argc != 4)
+	{
+		printf("please input reduce scheme, sample.txt, sysname\nFor example: >$xtfw_reduce2_run 2 mc16a_top.txt NOMINAL");
+	}
 	thread th1(PrintTime, 5);
 	th1.detach();
 	bool debug = 0;
@@ -46,8 +49,7 @@ int main(int argc, char const *argv[])
 	analysis->debug = debug;
 	analysis->writetree = analysis->reduce == 2 ? 1 : 0;
 	bool doplot = analysis->reduce == 2 ? 0 : 1;
-	prefix += char('0' + analysis->reduce - 1);
-	prefix += "/";
+	prefix = prefix + char('0' + analysis->reduce - 1) + "/" + argv[3] + "/";
 	analysis->fcnc_regions = regions;
 	char inputline[500];
 	while(!fn.eof()){
