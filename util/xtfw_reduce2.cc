@@ -8,8 +8,6 @@ int main(int argc, char const *argv[])
 	{
 		printf("please input reduce scheme, sample.txt, sysname\nFor example: >$xtfw_reduce2_run 2 mc16a_top.txt NOMINAL");
 	}
-	thread th1(PrintTime, 5);
-	th1.detach();
 	bool debug = 0;
 	TString prefix = PACKAGE_DIR;
 	prefix += "/data/hadhadreduce";
@@ -43,8 +41,10 @@ int main(int argc, char const *argv[])
 	if(!debug) gErrorIgnoreLevel=kError;
 	hadhadtree *analysis = new hadhadtree();
 	analysis->init_reduce2();
-	analysis->plotNPs.push_back(0);
-	analysis->plotNPs.push_back(1);
+	for(int i = 0; i < 168; ++i) {
+		if(i == 1) continue;
+		analysis->plotNPs.push_back(i);
+	}
 	analysis->reduce = *argv[1]-'0';
 	analysis->debug = debug;
 	analysis->writetree = analysis->reduce == 2 ? 1 : 0;

@@ -487,7 +487,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
             {
               if(plotNPs[iNP] == 1) continue; //weights->at(1) is the fake factor, not NP
               weight = weights->at(0) * weights->at(1) * (iNP == 0? 1: weights->at(plotNPs[iNP])); // weights->at(0) is the nominal weight
-              fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_pt_1 > 35, taus_b_tagged->at(1),plotNPs[iNP]);
+              fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_pt_1 > 35, taus_b_tagged->at(1),iNP);
             }
           else
               fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_pt_1 > 35, taus_b_tagged->at(1),0);
