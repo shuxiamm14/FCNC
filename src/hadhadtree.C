@@ -132,14 +132,14 @@ void hadhadtree::init_sample(TString sample, TString sampletitle){
       sample.Remove(0,6);
       for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
       {
-        fcnc_plots[iNP]->init_sample(sample + "_g",sample + "_g_NP" + char('0' + plotNPs[iNP]),sampletitle + "(gluon fake #tau)",(enum EColor)7);
-        fcnc_plots[iNP]->init_sample(sample + "_j",sample + "_j_NP" + char('0' + plotNPs[iNP]),sampletitle + "(light-jet fake #tau)",kBlue);
-        fcnc_plots[iNP]->init_sample(sample + "_b",sample + "_b_NP" + char('0' + plotNPs[iNP]),sampletitle + "(b-jets fake #tau)",kViolet);
-        fcnc_plots[iNP]->init_sample(sample + "_lep",sample + "_lep_NP" + char('0' + plotNPs[iNP]),sampletitle + "(lepton fake #tau)",kGreen);
-        fcnc_plots[iNP]->init_sample(sample + "_real",sample + "_real_NP" + char('0' + plotNPs[iNP]),sampletitle + "(real #tau)",kRed);
-        fcnc_plots[iNP]->init_sample(sample + "_c",sample + "_c_NP" + char('0' + plotNPs[iNP]),sampletitle + "(c-jets fake #tau)",kOrange);
-        fcnc_plots[iNP]->init_sample(sample + "_nomatch",sample + "_nomatch_NP" + char('0' + plotNPs[iNP]),sampletitle + "(no truth matched fake #tau)",kGray);
-        fcnc_plots[iNP]->init_sample(sample + "_doublefake",sample + "_doublefake_NP" + char('0' + plotNPs[iNP]),sampletitle + "(no truth matched fake #tau)",kGray);
+        fcnc_plots[iNP]->init_sample(sample + "_g",sample + "_g_NP" + to_string(plotNPs[iNP]),sampletitle + "(gluon fake #tau)",(enum EColor)7);
+        fcnc_plots[iNP]->init_sample(sample + "_j",sample + "_j_NP" + to_string(plotNPs[iNP]),sampletitle + "(light-jet fake #tau)",kBlue);
+        fcnc_plots[iNP]->init_sample(sample + "_b",sample + "_b_NP" + to_string(plotNPs[iNP]),sampletitle + "(b-jets fake #tau)",kViolet);
+        fcnc_plots[iNP]->init_sample(sample + "_lep",sample + "_lep_NP" + to_string(plotNPs[iNP]),sampletitle + "(lepton fake #tau)",kGreen);
+        fcnc_plots[iNP]->init_sample(sample + "_real",sample + "_real_NP" + to_string(plotNPs[iNP]),sampletitle + "(real #tau)",kRed);
+        fcnc_plots[iNP]->init_sample(sample + "_c",sample + "_c_NP" + to_string(plotNPs[iNP]),sampletitle + "(c-jets fake #tau)",kOrange);
+        fcnc_plots[iNP]->init_sample(sample + "_nomatch",sample + "_nomatch_NP" + to_string(plotNPs[iNP]),sampletitle + "(no truth matched fake #tau)",kGray);
+        fcnc_plots[iNP]->init_sample(sample + "_doublefake",sample + "_doublefake_NP" + to_string(plotNPs[iNP]),sampletitle + "(no truth matched fake #tau)",kGray);
       } 
     }
   }
