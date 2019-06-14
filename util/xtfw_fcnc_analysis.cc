@@ -3,15 +3,15 @@
 
 void plot()
 {
-	bool doPlots = 1;
+	bool doPlots = 0;
 	int plot_option = 2;
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
 	tau_plots->doROC = 1;
 	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
 	tau_plots->inputfilename = "hists";
-	tau_plots->debug = 1;
-	bool calibttbarfake = 1;
+	tau_plots->debug = 0;
+	bool calibfake = 1;
 	bool fakeMC = 0;
 	tau_plots->sensitivevariable = "BDTG_test";
 	tau_plots->add("BDT discriminant","BDTG_test","",5);
@@ -111,7 +111,7 @@ void plot()
   		tau_plots->overlay(samples[samples.size()-1]);
 		for (int j = 0; j < samples.size(); ++j){
 			for (int i = 0; i < 7; i++){
-				if (fakeMC && origin[i] != "real" && samples[j] == "top")
+				if (fakeMC && origin[i] != "real")
 				{
 					tau_plots->read_sample( "fake1truth", samples[j] + "_" + origin[i] + "_NP1", "Fake MC, 1 truth #tau", kMagenta, norm[j]);
 				}
@@ -134,12 +134,12 @@ void plot()
 						tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
 					}
 				}
-				else if(!fakeMC && calibttbarfake && samples[j] == "top"){
-					tau_plots->read_sample( "top_fake", samples[j] + "_" + origin[i] + "_NP1", sampletitle[j] + "(Fake #tau)", kTeal, norm[j]);
+				else if(!fakeMC && calibfake){
+					tau_plots->read_sample( "fake", samples[j] + "_" + origin[i] + "_NP1", "MC Fake #tau", kTeal, norm[j]);
 				}
 				
 			}
-			if(fakeMC && j != samples.size()-1) tau_plots->read_sample( "fake0truth", samples[j] + "_" + origin[8] + "_NP1", "Fake MC, 0 truth #tau", kTeal, norm[j]);
+			if(fakeMC && j != samples.size()-1) tau_plots->read_sample( "fake0truth", samples[j] + "_" + origin[8] + "_NP1", "fake, 0 truth #tau", kTeal, norm[j]);
 		}
 
 	}
@@ -152,10 +152,10 @@ void plot()
 	}
 	if(plot_option == 2){
 		if(!fakeMC){
-  			tau_plots->templatesample("reg2mtau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 top_fake","reg2mtau1b3jos","fake","Fake",kYellow,1);
-  			tau_plots->templatesample("reg2mtau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 top_fake","reg2mtau1b2jos","fake","Fake",kYellow,1);
-  			tau_plots->templatesample("reg2mtau2b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 top_fake","reg2mtau2b3jos","fake","Fake",kYellow,1);
-  			tau_plots->templatesample("reg2mtau2b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 top_fake","reg2mtau2b2jos","fake","Fake",kYellow,1);
+  			tau_plots->templatesample("reg2mtau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b3jos","fakeSS","Fake",kYellow,1);
+  			tau_plots->templatesample("reg2mtau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b2jos","fakeSS","Fake",kYellow,1);
+  			tau_plots->templatesample("reg2mtau2b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b3jos","fakeSS","Fake",kYellow,1);
+  			tau_plots->templatesample("reg2mtau2b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b2jos","fakeSS","Fake",kYellow,1);
   			//tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
   			//tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
 	
@@ -174,13 +174,13 @@ void plot()
   		//tau_plots->overlay("fake");
   		stacks.push_back("ztautau");
   		stacks.push_back("top");
-  		if(!fakeMC && calibttbarfake) stacks.push_back("top_fake");
+  		if(!fakeMC && calibfake) stacks.push_back("fake");
   		stacks.push_back("smhiggs");
   		stacks.push_back("wjet");
   		stacks.push_back("zll");
   		stacks.push_back("diboson");
   		if(!fakeMC) {
-  			stacks.push_back("fake");
+  			stacks.push_back("fakeSS");
   		}
   		else{
   			stacks.push_back("fake1truth");
@@ -188,7 +188,7 @@ void plot()
   		}
   		tau_plots->stackorder = stacks;
   	}
-
+	tau_plots->write_trexinput("NP1");
 	if(doPlots){
 		for (int i = samples.size()-6; i < samples.size(); ++i)
 		{
