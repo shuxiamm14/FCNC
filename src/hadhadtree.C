@@ -63,7 +63,7 @@ void hadhadtree::init_hist(TString histfilename){
   }
   for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
   {
-    fcnc_plots.push_back(new histSaver(histfilename + "_" + char(plotNPs[iNP] + '0') ));
+    fcnc_plots.push_back(new histSaver(histfilename + "_" + to_string(plotNPs[iNP])));
     fcnc_plots[iNP]->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV,  fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
     fcnc_plots[iNP]->set_weight(&weight);
     fcnc_plots[iNP]->debug = debug;
