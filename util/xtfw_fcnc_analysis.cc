@@ -1,7 +1,182 @@
 #include "histSaver.h"
 #include "TH1D.h"
+#include <chrono>
+#include <unistd.h>
+#include <cstdlib>
+#include <sys/ioctl.h>
 
-void plot()
+TString NPnames[] = {
+	"NOMINAL",
+	"fakeSF",
+	"fakeSFNP1",
+	"fakeSFNP2",
+	"fakeSFNP3",
+	"fakeSFNP4",
+	"fakeSFNP5",
+	"fakeSFNP6",
+	"PRW_DATASF_1up_pileup_combined_weight",
+	"PRW_DATASF_1down_pileup_combined_weight",
+	"jet_FT_EFF_Eigen_B_0_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_0_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_0_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_0_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_1_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_1_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_1_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_1_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_2_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_2_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_2_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_3_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_3_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_3_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_3_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_4_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_4_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_4_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_4_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_5_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_5_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_5_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_5_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_6_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_6_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_6_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_6_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_7_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_7_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_7_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_7_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_8_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_8_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_8_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_B_8_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_0_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_0_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_0_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_0_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_1_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_1_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_1_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_1_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_2_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_2_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_2_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_2_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_3_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_3_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_3_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_C_3_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_0_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_0_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_0_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_0_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_1_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_1_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_1_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_1_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_2_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_2_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_2_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_2_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_3_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_3_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_3_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_3_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_4_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_4_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_4_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_Eigen_Light_4_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_extrapolation_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_extrapolation_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_extrapolation_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_extrapolation_1down_global_ineffSF_MV2c10",
+	"jet_FT_EFF_extrapolation_from_charm_1up_global_effSF_MV2c10",
+	"jet_FT_EFF_extrapolation_from_charm_1down_global_effSF_MV2c10",
+	"jet_FT_EFF_extrapolation_from_charm_1up_global_ineffSF_MV2c10",
+	"jet_FT_EFF_extrapolation_from_charm_1down_global_ineffSF_MV2c10",
+	"jet_JET_JvtEfficiency_1up_central_jets_global_effSF_JVT",
+	"jet_JET_JvtEfficiency_1down_central_jets_global_effSF_JVT",
+	"jet_JET_JvtEfficiency_1up_central_jets_global_ineffSF_JVT",
+	"jet_JET_JvtEfficiency_1down_central_jets_global_ineffSF_JVT",
+	"jet_JET_fJvtEfficiency_1up_forward_jets_global_effSF_JVT",
+	"jet_JET_fJvtEfficiency_1down_forward_jets_global_effSF_JVT",
+	"jet_JET_fJvtEfficiency_1up_forward_jets_global_ineffSF_JVT",
+	"jet_JET_fJvtEfficiency_1down_forward_jets_global_ineffSF_JVT",
+	"TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1up_TauEffSF_selection",
+	"TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_selection",
+	"TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1up_TauEffSF_selection",
+	"TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1down_TauEffSF_selection",
+	"TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1up_TauEffSF_selection",
+	"TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1down_TauEffSF_selection",
+	"TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1up_TauEffSF_HadTauEleOLR_tauhad",
+	"TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1down_TauEffSF_HadTauEleOLR_tauhad",
+	"TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1up_TauEffSF_selection",
+	"TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1down_TauEffSF_selection",
+	"TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1up_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1down_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1up_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1down_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1up_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1down_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1up_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1down_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1up_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1down_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1up_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1down_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1up_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1down_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_JETID_SYST_1up_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_JETID_SYST_1down_TauEffSF_JetBDTmedium",
+	"TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1up_TauEffSF_reco",
+	"TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1down_TauEffSF_reco",
+	"TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1up_TauEffSF_reco",
+	"TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1down_TauEffSF_reco",
+	"TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1up_TauEffSF_selection",
+	"TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1down_TauEffSF_selection",
+	"TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1up_TauEffSF_selection",
+	"TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1down_TauEffSF_selection",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM"
+};
+
+void plot(int iNP)
 {
 	bool doPlots = 0;
 	int plot_option = 2;
@@ -9,7 +184,7 @@ void plot()
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
 	tau_plots->doROC = 1;
 	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
-	tau_plots->inputfilename = "hists";
+	tau_plots->inputfilename = "hists"+to_string(iNP);
 	tau_plots->debug = 0;
 	bool calibfake = 1;
 	bool fakeMC = 0;
@@ -113,33 +288,33 @@ void plot()
 			for (int i = 0; i < 7; i++){
 				if (fakeMC && origin[i] != "real")
 				{
-					tau_plots->read_sample( "fake1truth", samples[j] + "_" + origin[i] + "_NP1", "Fake MC, 1 truth #tau", kMagenta, norm[j]);
+					tau_plots->read_sample( "fake1truth", samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), "Fake MC, 1 truth #tau", kMagenta, norm[j]);
 				}
 				if(origin[i] == "real"){
 					if(j == samples.size()-4){
-						tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
-						tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
-						tau_plots->read_sample( samples[j], TString("fcnc_prod_ch") + "_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
+						tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+						tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+						tau_plots->read_sample( samples[j], TString("fcnc_prod_ch") + "_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 					}else if(j == samples.size()-1){
-						tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
-						tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
-						tau_plots->read_sample( samples[j], TString("fcnc_prod_uh") + "_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
+						tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+						tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+						tau_plots->read_sample( samples[j], TString("fcnc_prod_uh") + "_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 					}else if(j == samples.size()-3){
-						tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
-						tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
+						tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+						tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 					}else if(j == samples.size()-6){
-						tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
-						tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
+						tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+						tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 					}else{
-						tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP1", sampletitle[j], (enum EColor)colors[j], norm[j]);
+						tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 					}
 				}
 				else if(!fakeMC && calibfake){
-					tau_plots->read_sample( "fake", samples[j] + "_" + origin[i] + "_NP1", "MC Fake #tau", kTeal, norm[j]);
+					tau_plots->read_sample( "fake", samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), "MC Fake #tau", kTeal, norm[j]);
 				}
 				
 			}
-			if(fakeMC && j != samples.size()-1) tau_plots->read_sample( "fake0truth", samples[j] + "_" + origin[8] + "_NP1", "fake, 0 truth #tau", kTeal, norm[j]);
+			if(fakeMC && j != samples.size()-1) tau_plots->read_sample( "fake0truth", samples[j] + "_" + origin[8] + "_NP" + to_string(iNP), "fake, 0 truth #tau", kTeal, norm[j]);
 		}
 
 	}
@@ -188,7 +363,9 @@ void plot()
   		}
   		tau_plots->stackorder = stacks;
   	}
-	tau_plots->write_trexinput("NP1");
+//	if(iNP == 0)
+		tau_plots->write_trexinput(NPnames[iNP],"recreate");
+//	else tau_plots->write_trexinput(NPnames[iNP],"update");
 	if(doPlots){
 		for (int i = samples.size()-6; i < samples.size(); ++i)
 		{
@@ -202,6 +379,25 @@ void plot()
 
 int main(int argc, char const *argv[])
 {
-	plot();
+	struct winsize w; 
+	ioctl(0, TIOCGWINSZ, &w);
+	auto start = chrono::steady_clock::now();
+
+	for (int i = 0; i < 168; ++i)
+	{
+		if (i == 1)
+		{
+			continue;
+		}
+		auto end = chrono::steady_clock::now();
+		stringstream ss;
+		ss<<"Elapsed time in seconds : "<< chrono::duration_cast<chrono::seconds>(end - start).count()
+		<< " sec";
+	
+		printf("%*s\n" , w.ws_col, ss.str().c_str());
+		printf("=============================generating NP %d : %s=============================\n", i, NPnames[i].Data());
+		plot(i);
+	}
+	
 	return 0;
 }
