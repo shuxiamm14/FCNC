@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <cstdlib>
 #include <sys/ioctl.h>
-
+#include "observable.h"
 TString NPnames[] = {
 	"NOMINAL",
 	"fakeSF",
@@ -326,26 +326,7 @@ void plot(int iNP)
 		tau_plots->merge_regions(regions[j] + "_" + nprong[0],regions[j] + "_" + nprong[1],regions[j]);
 	}
 	if(plot_option == 2){
-		if(!fakeMC){
-  			tau_plots->templatesample("reg2mtau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b3jos","fakeSS","Fake",kYellow,1);
-  			tau_plots->templatesample("reg2mtau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b2jos","fakeSS","Fake",kYellow,1);
-  			tau_plots->templatesample("reg2mtau2b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b3jos","fakeSS","Fake",kYellow,1);
-  			tau_plots->templatesample("reg2mtau2b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b2jos","fakeSS","Fake",kYellow,1);
-  			//tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
-  			//tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
-	
-  			//tau_plots->templatesample("reg2mtau1b3jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b3jos","fake","Fake",kYellow,1);
-  			//tau_plots->templatesample("reg2mtau1b2jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b2jos","fake","Fake",kYellow,1);
-  			////tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
-  			////tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
-	
-  			//tau_plots->templatesample("reg2mtau1b3jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b3jos","fake","Fake",kYellow,1);
-  			//tau_plots->templatesample("reg2mtau1b2jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b2jos","fake","Fake",kYellow,1);
-  			////tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
-  			////tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
-  		}
   		vector<TString> stacks;
-
   		//tau_plots->overlay("fake");
   		stacks.push_back("ztautau");
   		stacks.push_back("top");
@@ -362,10 +343,51 @@ void plot(int iNP)
   			stacks.push_back("fake0truth");
   		}
   		tau_plots->stackorder = stacks;
+  		//double integralerr = 0;
+  		//observable int1b3jssdata(integral(tau_plots->grabdatahist("reg2mtau1b3jss",0),-1,0.5,&integralerr),integralerr);
+  		//observable int1b3josdata(integral(tau_plots->grabdatahist("reg2mtau1b3jos",0),-1,0.5,&integralerr),integralerr);
+  		//observable int1b2jssdata(integral(tau_plots->grabdatahist("reg2mtau1b2jss",0),-1,0.5,&integralerr),integralerr);
+  		//observable int1b2josdata(integral(tau_plots->grabdatahist("reg2mtau1b2jos",0),-1,0.5,&integralerr),integralerr);
+  		//observable int1b3jssbkg(integral(tau_plots-> grabbkghist("reg2mtau1b3jss",0),-1,0.5,&integralerr),integralerr);
+  		//observable int1b3josbkg(integral(tau_plots-> grabbkghist("reg2mtau1b3jos",0),-1,0.5,&integralerr),integralerr);
+  		//observable int1b2jssbkg(integral(tau_plots-> grabbkghist("reg2mtau1b2jss",0),-1,0.5,&integralerr),integralerr);
+  		//observable int1b2josbkg(integral(tau_plots-> grabbkghist("reg2mtau1b2jos",0),-1,0.5,&integralerr),integralerr);
+  		//observable int2b3jssdata(integral(tau_plots->grabdatahist("reg2mtau2b3jss",0),-1,1,&integralerr),integralerr);
+  		//observable int2b3josdata(integral(tau_plots->grabdatahist("reg2mtau2b3jos",0),-1,1,&integralerr),integralerr);
+  		//observable int2b2jssdata(integral(tau_plots->grabdatahist("reg2mtau2b2jss",0),-1,1,&integralerr),integralerr);
+  		//observable int2b2josdata(integral(tau_plots->grabdatahist("reg2mtau2b2jos",0),-1,1,&integralerr),integralerr);
+  		//observable int2b3jssbkg (integral(tau_plots-> grabbkghist("reg2mtau2b3jss",0),-1,1,&integralerr),integralerr);
+  		//observable int2b3josbkg (integral(tau_plots-> grabbkghist("reg2mtau2b3jos",0),-1,1,&integralerr),integralerr);
+  		//observable int2b2jssbkg (integral(tau_plots-> grabbkghist("reg2mtau2b2jss",0),-1,1,&integralerr),integralerr);
+  		//observable int2b2josbkg (integral(tau_plots-> grabbkghist("reg2mtau2b2jos",0),-1,1,&integralerr),integralerr);
+  		//observable SF1b = ((int1b2josdata - int1b2josbkg + int1b3josdata - int1b3josbkg) / (int1b2jssdata - int1b2jssbkg + int1b3jssdata - int1b3jssbkg));
+  		//observable SF2b = ((int2b2josdata - int2b2josbkg + int2b3josdata - int2b3josbkg) / (int2b2jssdata - int2b2jssbkg + int2b3jssdata - int2b3jssbkg));
+  		//observable SF = ((int1b2josdata - int1b2josbkg + int1b3josdata - int1b3josbkg + int2b2josdata - int2b2josbkg + int2b3josdata - int2b3josbkg) 
+  		//	/ (int1b2jssdata - int1b2jssbkg + int1b3jssdata - int1b3jssbkg + int2b2jssdata - int2b2jssbkg + int2b3jssdata - int2b3jssbkg));
+  		//SF1b.print();
+  		//SF2b.print();
+  		//SF.print();
+
+		if(!fakeMC){
+  			tau_plots->templatesample("reg2mtau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b3jos","fakeSS","Fake",kYellow,0);
+  			tau_plots->templatesample("reg2mtau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b2jos","fakeSS","Fake",kYellow,0);
+  			tau_plots->templatesample("reg2mtau2b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b3jos","fakeSS","Fake",kYellow,1);
+  			tau_plots->templatesample("reg2mtau2b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b2jos","fakeSS","Fake",kYellow,1);
+  			//tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
+  			//tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
+	
+  			//tau_plots->templatesample("reg2mtau1b3jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b3jos","fake","Fake",kYellow,1);
+  			//tau_plots->templatesample("reg2mtau1b2jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b2jos","fake","Fake",kYellow,1);
+  			////tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
+  			////tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
+	
+  			//tau_plots->templatesample("reg2mtau1b3jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b3jos","fake","Fake",kYellow,1);
+  			//tau_plots->templatesample("reg2mtau1b2jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b2jos","fake","Fake",kYellow,1);
+  			////tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
+  			////tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
+  		}
   	}
-//	if(iNP == 0)
-		tau_plots->write_trexinput(NPnames[iNP],"recreate");
-//	else tau_plots->write_trexinput(NPnames[iNP],"update");
+	tau_plots->write_trexinput(NPnames[iNP],"update");
 	if(doPlots){
 		for (int i = samples.size()-6; i < samples.size(); ++i)
 		{
@@ -379,25 +401,28 @@ void plot(int iNP)
 
 int main(int argc, char const *argv[])
 {
-	struct winsize w; 
-	ioctl(0, TIOCGWINSZ, &w);
-	auto start = chrono::steady_clock::now();
-
-	for (int i = 0; i < 168; ++i)
+	int from = atoi(argv[1]);
+	int to = atoi(argv[2]);
+	for (int i = from; i <= to; ++i)
 	{
-		if (i == 1)
-		{
-			continue;
-		}
-		auto end = chrono::steady_clock::now();
-		stringstream ss;
-		ss<<"Elapsed time in seconds : "<< chrono::duration_cast<chrono::seconds>(end - start).count()
-		<< " sec";
-	
-		printf("%*s\n" , w.ws_col, ss.str().c_str());
+//	struct winsize w; 
+//	ioctl(0, TIOCGWINSZ, &w);
+//	auto start = chrono::steady_clock::now();
+//
+//	for (int i = 0; i < 168; ++i)
+//	{
+//		if (i == 1)
+//		{
+//			continue;
+//		}
+//		auto end = chrono::steady_clock::now();
+//		stringstream ss;
+//		ss<<"Elapsed time in seconds : "<< chrono::duration_cast<chrono::seconds>(end - start).count()
+//		<< " sec";
+//	
+//		printf("%*s\n" , w.ws_col, ss.str().c_str());
 		printf("=============================generating NP %d : %s=============================\n", i, NPnames[i].Data());
 		plot(i);
 	}
-	
 	return 0;
 }
