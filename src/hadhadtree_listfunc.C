@@ -297,7 +297,7 @@ void hadhadtree::definejets(){
   }
 }
 
-void hadhadtree::addWeightSys(){
+bool hadhadtree::addWeightSys(){
   
   weights->push_back(PRW_DATASF_1up_pileup_combined_weight/NOMINAL_pileup_combined_weight);
   weights->push_back(PRW_DATASF_1down_pileup_combined_weight/NOMINAL_pileup_combined_weight);
@@ -585,8 +585,12 @@ void hadhadtree::addWeightSys(){
   //weights->push_back(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT);
   //weights->push_back(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT);
   for(int i = 0; i < weights->size(); i++){
-    if(weights->at(i)!=weights->at(i)) printf("weight is nan, eventNumber: %llu, n_weight: %d\n", event_number, i);
+    if(weights->at(i)!=weights->at(i)) {
+      printf("weight is nan, eventNumber: %llu, n_weight: %d\n", event_number, i);
+      return 0;
+    }
   }
+  return 1;
 }
 
 void hadhadtree::Init(TTree *tree)

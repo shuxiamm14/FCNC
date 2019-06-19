@@ -390,7 +390,6 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
       if (iter->second == 1) {
         if(debug) printf("fill region: %s\n", iter->first.Data());
-        float savewt = 1;
         if(reduce == 1){
           weights->clear();
           if(!isData){
@@ -427,47 +426,48 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
               }
             }
             weight *= lepton_SF*trig_SF;
-          }
-          weights->push_back(weight); //nominal
-          if(faketau >=0){
-            double faketauSF = 1;
-            double faketauSFNP[2][3] = {{1,1,1},{1,1,1}};
-            for (int ifaketau = 0; ifaketau < 2; ++ifaketau){
-              if(faketau < 2 && ifaketau!=faketau) continue; 
-              int prongbin = taus_n_charged_tracks->at(ifaketau) == 3;
-              int ptbin;
-              double faketaupt = taus_p4->at(ifaketau)->Pt();
-              if(prongbin == 0) {
-                if(faketaupt<45) ptbin = 0;
-                else if(faketaupt < 70) ptbin = 1;
-                else ptbin = 2;
-              }else{
-                if(faketaupt<50) ptbin = 0;
-                else if(faketaupt < 75) ptbin = 1;
-                else ptbin = 2;
+            weights->push_back(weight); //nominal
+            if(faketau >=0){
+              double faketauSF = 1;
+              double faketauSFNP[2][3] = {{1,1,1},{1,1,1}};
+              for (int ifaketau = 0; ifaketau < 2; ++ifaketau){
+                if(faketau < 2 && ifaketau!=faketau) continue; 
+                int prongbin = taus_n_charged_tracks->at(ifaketau) == 3;
+                int ptbin;
+                double faketaupt = taus_p4->at(ifaketau)->Pt();
+                if(prongbin == 0) {
+                  if(faketaupt<45) ptbin = 0;
+                  else if(faketaupt < 70) ptbin = 1;
+                  else ptbin = 2;
+                }else{
+                  if(faketaupt<50) ptbin = 0;
+                  else if(faketaupt < 75) ptbin = 1;
+                  else ptbin = 2;
+                }
+                faketauSF *= fakeSFML[prongbin][ptbin];
+                if(nominaltree) faketauSFNP[prongbin][ptbin] *= fakeSFMLNP[prongbin][ptbin]/fakeSFML[prongbin][ptbin] + 1;
               }
-              faketauSF *= fakeSFML[prongbin][ptbin];
-              if(nominaltree) faketauSFNP[prongbin][ptbin] *= fakeSFMLNP[prongbin][ptbin]/fakeSFML[prongbin][ptbin] + 1;
-            }
-            weights->push_back(faketauSF);
-            if(nominaltree) {
-              for (int inpprongbin = 0; inpprongbin < 2; ++inpprongbin)
-              {
-                for (int inpptbin = 0; inpptbin < 3; ++inpptbin)
+              weights->push_back(faketauSF);
+              if(nominaltree) {
+                for (int inpprongbin = 0; inpprongbin < 2; ++inpprongbin)
                 {
-                  weights->push_back(faketauSFNP[inpprongbin][inpptbin]);
+                  for (int inpptbin = 0; inpptbin < 3; ++inpptbin)
+                  {
+                    weights->push_back(faketauSFNP[inpprongbin][inpptbin]);
+                  }
                 }
               }
+            }else{
+              weights->push_back(1);
+              if(nominaltree) for (int i = 0 ; i < 6 ; ++i) weights->push_back(1);
+            } //fake SF, need to be multiplied by weight
+  
+            if(nominaltree){
+              if(!addWeightSys()) continue;
             }
           }else{
             weights->push_back(1);
-            if(nominaltree) for (int i = 0 ; i < 6 ; ++i) weights->push_back(1);
-          } //fake SF, need to be multiplied by weight
-
-          if(nominaltree){
-            addWeightSys();
           }
-
         }
         if (writetree){
           if(outputtree.find(iter->first) != outputtree.end()){
