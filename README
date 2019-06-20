@@ -1,0 +1,44 @@
+Author: Boyang Li
+
+email: boyang.li@cern.ch
+
+Project git: https://gitlab.cern.ch/boyang/ttH_fakes
+
+This project analyse n-tuples generated from 2 frameworks: xTauFramework(hadhad+jets channel); ttHML framework(channels involve leptons)
+
+the list of Datasets is in datafiles/
+
+To run this project, you need
+
+	somewhere/plotTools
+		https://gitlab.cern.ch/boyang/plotTools (need compile for shared libraries)
+
+	somewhere/tools/
+		frugally-deep (and the required projected for this one: eigen): https://github.com/Dobiasd/frugally-deep.git (header library, dont need compile)
+
+Compile:
+	
+	set TOOLDIR in the CMakeList.txt to somewhere/tools
+	set PLOTTOOLDIR in the CMakeList.txt to somewhere/plotTools
+
+	mkdir build
+	cd build
+	cmake ..
+	make
+	cd ..
+
+source env.sh every time you come back to analysis
+
+For "hadhad+jets channel":
+
+	run scripts/hadhadpreparejobs.sh to get the address of the rootfiles
+	run xtfw_reduce*_run to reduce n-tuples
+	run tth_trainBDT to train the BDT
+	run xtfw_fcnc_analysis_run to analyse the histograms
+
+For "lepton channels":
+
+	run tth_reduce*_run to reduce n-tuples (only available on nersc.gov)
+	run tth_trainBDT to train the BDT
+	run tth__fcnc_analysis_run to analyse the histograms
+	
