@@ -186,7 +186,6 @@ void nominal::plot(){
     if(ele) {
       if(debug) printf("write fcnc plots\n");
       ele->write();
-      deletepointer(ele);
     }
   if(fake_notau_plots) {
     if(debug) printf("write fake_notau_plots\n");
