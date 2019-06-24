@@ -66,10 +66,22 @@ public :
    vector<TLorentzVector*>  *jets_p4;
    vector<TLorentzVector*>  *jets_wztruth_p4;
 
-   UInt_t          HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I;
+   UInt_t          HLT_tau35_loose1_tracktwo_tau25_loose1_tracktwo;
+   UInt_t          HLT_tau35_medium1_tracktwoEF_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;
    UInt_t          HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I_J25;
-   UInt_t          HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1DR_TAU20ITAU12I;
    UInt_t          HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1DR_TAU20ITAU12I_J25;
+   UInt_t          HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;
+   UInt_t          HLT_tau40_medium1_tracktwoEF_tau35_medium1_tracktwoEF;
+   UInt_t          HLT_tau40_medium1_tracktwo_tau35_medium1_tracktwo;
+   UInt_t          HLT_tau40_mediumRNN_tracktwoMVA_tau35_mediumRNN_tracktwoMVA;
+   UInt_t          HLT_tau80_medium1_TAU60_tau50_medium1_L1TAU12;
+   UInt_t          HLT_tau80_medium1_tracktwoEF_L1TAU60_tau35_medium1_tracktwoEF_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I;
+   UInt_t          HLT_tau80_medium1_tracktwoEF_L1TAU60_tau60_medium1_tracktwoEF_L1TAU40;
+   UInt_t          HLT_tau80_medium1_tracktwo_L1TAU60_tau35_medium1_tracktwo_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I;
+   UInt_t          HLT_tau80_medium1_tracktwo_L1TAU60_tau50_medium1_tracktwo_L1TAU12;
+   UInt_t          HLT_tau80_medium1_tracktwo_L1TAU60_tau60_medium1_tracktwo_L1TAU40;
+   UInt_t          HLT_tau80_mediumRNN_tracktwoMVA_L1TAU60_tau35_mediumRNN_tracktwoMVA_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I;
+   UInt_t          HLT_tau80_mediumRNN_tracktwoMVA_L1TAU60_tau60_mediumRNN_tracktwoMVA_L1TAU40;
    Int_t           HTXS_Njets_pTjet25;
    Int_t           HTXS_Njets_pTjet30;
    Int_t           HTXS_Stage0_Category;
@@ -86,11 +98,8 @@ public :
    Int_t           boson_0_truth_pdgId;
    Float_t         boson_0_truth_q;
    Int_t           boson_0_truth_status;
-   Float_t         dijet_deta;
-   Float_t         dijet_dphi;
-   Float_t         dijet_m;
-   Double_t        dijet_prod_eta;
-   Float_t         dijet_pt;
+   Int_t           channel_index;
+   TLorentzVector  *dijet_p4;
    Int_t           ditau_coll_approx;
    Float_t         ditau_coll_approx_m;
    Float_t         ditau_coll_approx_x0;
@@ -138,6 +147,66 @@ public :
    Float_t         ditau_scal_sum_pt;
    UInt_t          event_clean_EC_TightBad;
    ULong64_t       event_number;
+   UInt_t          higgs;
+   UInt_t          higgs_child1;
+   Int_t           higgs_child1_classifierParticleOrigin;
+   Int_t           higgs_child1_classifierParticleType;
+   Int_t           higgs_child1_mother_pdgId;
+   Int_t           higgs_child1_mother_status;
+   Int_t           higgs_child1_origin;
+   TLorentzVector  *higgs_child1_p4;
+   Int_t           higgs_child1_pdgId;
+   Float_t         higgs_child1_pz;
+   Float_t         higgs_child1_q;
+   Int_t           higgs_child1_status;
+   Int_t           higgs_child1_type;
+   UInt_t          higgs_child2;
+   Int_t           higgs_child2_classifierParticleOrigin;
+   Int_t           higgs_child2_classifierParticleType;
+   Int_t           higgs_child2_mother_pdgId;
+   Int_t           higgs_child2_mother_status;
+   Int_t           higgs_child2_origin;
+   TLorentzVector  *higgs_child2_p4;
+   Int_t           higgs_child2_pdgId;
+   Float_t         higgs_child2_pz;
+   Float_t         higgs_child2_q;
+   Int_t           higgs_child2_status;
+   Int_t           higgs_child2_type;
+   UInt_t          higgs_child3;
+   Int_t           higgs_child3_classifierParticleOrigin;
+   Int_t           higgs_child3_classifierParticleType;
+   Int_t           higgs_child3_mother_pdgId;
+   Int_t           higgs_child3_mother_status;
+   Int_t           higgs_child3_origin;
+   TLorentzVector  *higgs_child3_p4;
+   Int_t           higgs_child3_pdgId;
+   Float_t         higgs_child3_pz;
+   Float_t         higgs_child3_q;
+   Int_t           higgs_child3_status;
+   Int_t           higgs_child3_type;
+   UInt_t          higgs_child4;
+   Int_t           higgs_child4_classifierParticleOrigin;
+   Int_t           higgs_child4_classifierParticleType;
+   Int_t           higgs_child4_mother_pdgId;
+   Int_t           higgs_child4_mother_status;
+   Int_t           higgs_child4_origin;
+   TLorentzVector  *higgs_child4_p4;
+   Int_t           higgs_child4_pdgId;
+   Float_t         higgs_child4_pz;
+   Float_t         higgs_child4_q;
+   Int_t           higgs_child4_status;
+   Int_t           higgs_child4_type;
+   Int_t           higgs_classifierParticleOrigin;
+   Int_t           higgs_classifierParticleType;
+   Int_t           higgs_mother_pdgId;
+   Int_t           higgs_mother_status;
+   Int_t           higgs_origin;
+   TLorentzVector  *higgs_p4;
+   Int_t           higgs_pdgId;
+   Float_t         higgs_pz;
+   Float_t         higgs_q;
+   Int_t           higgs_status;
+   Int_t           higgs_type;
    UInt_t          is_dijet_centrality;
    Int_t           jet_0_b_tagged;
    Float_t         jet_0_fjvt;
@@ -369,7 +438,7 @@ public :
    Float_t         met_sumet;
    TLorentzVector  *met_truth_p4;
    Float_t         met_truth_sumet;
-   Double_t        mva_RRN;
+   Double_t        mva_random_number;
    Float_t         n_actual_int;
    Float_t         n_actual_int_cor;
    Float_t         n_avg_int;
@@ -416,9 +485,37 @@ public :
    Float_t         tau_0_NOMINAL_TauEffSF_JetBDTloose;
    Float_t         tau_0_NOMINAL_TauEffSF_JetBDTmedium;
    Float_t         tau_0_NOMINAL_TauEffSF_JetBDTtight;
+   Float_t         tau_0_NOMINAL_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_0_NOMINAL_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_0_NOMINAL_TauEffSF_MediumEleBDTPlusVeto_electron;
+   Float_t         tau_0_NOMINAL_TauEffSF_MediumEleBDT_electron;
    Float_t         tau_0_NOMINAL_TauEffSF_VeryLooseLlhEleOLR_electron;
    Float_t         tau_0_NOMINAL_TauEffSF_reco;
    Float_t         tau_0_NOMINAL_TauEffSF_selection;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDTPlusVeto_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDT_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDTPlusVeto_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDT_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDTPlusVeto_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDT_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDTPlusVeto_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDT_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDTPlusVeto_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDT_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDTPlusVeto_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDT_electron;
    Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_VeryLooseLlhEleOLR_electron;
    Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_selection;
    Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1up_TauEffSF_VeryLooseLlhEleOLR_electron;
@@ -703,9 +800,37 @@ public :
    Float_t         tau_1_NOMINAL_TauEffSF_JetBDTloose;
    Float_t         tau_1_NOMINAL_TauEffSF_JetBDTmedium;
    Float_t         tau_1_NOMINAL_TauEffSF_JetBDTtight;
+   Float_t         tau_1_NOMINAL_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_1_NOMINAL_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_1_NOMINAL_TauEffSF_MediumEleBDTPlusVeto_electron;
+   Float_t         tau_1_NOMINAL_TauEffSF_MediumEleBDT_electron;
    Float_t         tau_1_NOMINAL_TauEffSF_VeryLooseLlhEleOLR_electron;
    Float_t         tau_1_NOMINAL_TauEffSF_reco;
    Float_t         tau_1_NOMINAL_TauEffSF_selection;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDTPlusVeto_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDT_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDTPlusVeto_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDT_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDTPlusVeto_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDT_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDTPlusVeto_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDT_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDTPlusVeto_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDT_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDTPlusVeto_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDT_electron;
    Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_VeryLooseLlhEleOLR_electron;
    Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_selection;
    Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1up_TauEffSF_VeryLooseLlhEleOLR_electron;
@@ -980,21 +1105,122 @@ public :
    UInt_t          tau_1_trig_trigger_matched;
    Int_t           tau_1_type;
    Float_t         tau_eta_centrality;
-   Float_t         theory_weights_CT14_pdfset;
-   Float_t         theory_weights_MMHT_pdfset;
-   Double_t        theory_weights_PDF_central_value;
-   Double_t        theory_weights_PDF_error_down;
-   Double_t        theory_weights_PDF_error_up;
-   Float_t         theory_weights_alphaS_down;
-   Float_t         theory_weights_alphaS_up;
+   UInt_t          tb;
+   UInt_t          tb_childq;
+   Int_t           tb_childq_classifierParticleOrigin;
+   Int_t           tb_childq_classifierParticleType;
+   Int_t           tb_childq_mother_pdgId;
+   Int_t           tb_childq_mother_status;
+   Int_t           tb_childq_origin;
+   TLorentzVector  *tb_childq_p4;
+   Int_t           tb_childq_pdgId;
+   Float_t         tb_childq_pz;
+   Float_t         tb_childq_q;
+   Int_t           tb_childq_status;
+   Int_t           tb_childq_type;
+   Int_t           tb_classifierParticleOrigin;
+   Int_t           tb_classifierParticleType;
+   Int_t           tb_mother_pdgId;
+   Int_t           tb_mother_status;
+   Int_t           tb_origin;
+   TLorentzVector  *tb_p4;
+   Int_t           tb_pdgId;
+   Float_t         tb_pz;
+   Float_t         tb_q;
+   Int_t           tb_status;
+   Int_t           tb_type;
+   UInt_t          top;
+   UInt_t          top_childq;
+   Int_t           top_childq_classifierParticleOrigin;
+   Int_t           top_childq_classifierParticleType;
+   Int_t           top_childq_mother_pdgId;
+   Int_t           top_childq_mother_status;
+   Int_t           top_childq_origin;
+   TLorentzVector  *top_childq_p4;
+   Int_t           top_childq_pdgId;
+   Float_t         top_childq_pz;
+   Float_t         top_childq_q;
+   Int_t           top_childq_status;
+   Int_t           top_childq_type;
+   Int_t           top_classifierParticleOrigin;
+   Int_t           top_classifierParticleType;
+   Int_t           top_mother_pdgId;
+   Int_t           top_mother_status;
+   Int_t           top_origin;
+   TLorentzVector  *top_p4;
+   Int_t           top_pdgId;
+   Float_t         top_pz;
+   Float_t         top_q;
+   Int_t           top_status;
+   Int_t           top_type;
    UInt_t          truth_passedVBFFilter;
    Double_t        weight_mc;
+   UInt_t          wm_childq1;
+   Int_t           wm_childq1_classifierParticleOrigin;
+   Int_t           wm_childq1_classifierParticleType;
+   Int_t           wm_childq1_mother_pdgId;
+   Int_t           wm_childq1_mother_status;
+   Int_t           wm_childq1_origin;
+   TLorentzVector  *wm_childq1_p4;
+   Int_t           wm_childq1_pdgId;
+   Float_t         wm_childq1_pz;
+   Float_t         wm_childq1_q;
+   Int_t           wm_childq1_status;
+   Int_t           wm_childq1_type;
+   UInt_t          wm_childq2;
+   Int_t           wm_childq2_classifierParticleOrigin;
+   Int_t           wm_childq2_classifierParticleType;
+   Int_t           wm_childq2_mother_pdgId;
+   Int_t           wm_childq2_mother_status;
+   Int_t           wm_childq2_origin;
+   TLorentzVector  *wm_childq2_p4;
+   Int_t           wm_childq2_pdgId;
+   Float_t         wm_childq2_pz;
+   Float_t         wm_childq2_q;
+   Int_t           wm_childq2_status;
+   Int_t           wm_childq2_type;
+   UInt_t          wp_childq1;
+   Int_t           wp_childq1_classifierParticleOrigin;
+   Int_t           wp_childq1_classifierParticleType;
+   Int_t           wp_childq1_mother_pdgId;
+   Int_t           wp_childq1_mother_status;
+   Int_t           wp_childq1_origin;
+   TLorentzVector  *wp_childq1_p4;
+   Int_t           wp_childq1_pdgId;
+   Float_t         wp_childq1_pz;
+   Float_t         wp_childq1_q;
+   Int_t           wp_childq1_status;
+   Int_t           wp_childq1_type;
+   UInt_t          wp_childq2;
+   Int_t           wp_childq2_classifierParticleOrigin;
+   Int_t           wp_childq2_classifierParticleType;
+   Int_t           wp_childq2_mother_pdgId;
+   Int_t           wp_childq2_mother_status;
+   Int_t           wp_childq2_origin;
+   TLorentzVector  *wp_childq2_p4;
+   Int_t           wp_childq2_pdgId;
+   Float_t         wp_childq2_pz;
+   Float_t         wp_childq2_q;
+   Int_t           wp_childq2_status;
+   Int_t           wp_childq2_type;
 
    // List of branches
-   TBranch        *b_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I;   //!
+   TBranch        *b_HLT_tau35_loose1_tracktwo_tau25_loose1_tracktwo;   //!
+   TBranch        *b_HLT_tau35_medium1_tracktwoEF_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;   //!
    TBranch        *b_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I_J25;   //!
-   TBranch        *b_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1DR_TAU20ITAU12I;   //!
    TBranch        *b_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_HLT_tau40_medium1_tracktwoEF_tau35_medium1_tracktwoEF;   //!
+   TBranch        *b_HLT_tau40_medium1_tracktwo_tau35_medium1_tracktwo;   //!
+   TBranch        *b_HLT_tau40_mediumRNN_tracktwoMVA_tau35_mediumRNN_tracktwoMVA;   //!
+   TBranch        *b_HLT_tau80_medium1_TAU60_tau50_medium1_L1TAU12;   //!
+   TBranch        *b_HLT_tau80_medium1_tracktwoEF_L1TAU60_tau35_medium1_tracktwoEF_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I;   //!
+   TBranch        *b_HLT_tau80_medium1_tracktwoEF_L1TAU60_tau60_medium1_tracktwoEF_L1TAU40;   //!
+   TBranch        *b_HLT_tau80_medium1_tracktwo_L1TAU60_tau35_medium1_tracktwo_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I;   //!
+   TBranch        *b_HLT_tau80_medium1_tracktwo_L1TAU60_tau50_medium1_tracktwo_L1TAU12;   //!
+   TBranch        *b_HLT_tau80_medium1_tracktwo_L1TAU60_tau60_medium1_tracktwo_L1TAU40;   //!
+   TBranch        *b_HLT_tau80_mediumRNN_tracktwoMVA_L1TAU60_tau35_mediumRNN_tracktwoMVA_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I;   //!
+   TBranch        *b_HLT_tau80_mediumRNN_tracktwoMVA_L1TAU60_tau60_mediumRNN_tracktwoMVA_L1TAU40;   //!
    TBranch        *b_HTXS_Njets_pTjet25;   //!
    TBranch        *b_HTXS_Njets_pTjet30;   //!
    TBranch        *b_HTXS_Stage0_Category;   //!
@@ -1011,11 +1237,8 @@ public :
    TBranch        *b_boson_0_truth_pdgId;   //!
    TBranch        *b_boson_0_truth_q;   //!
    TBranch        *b_boson_0_truth_status;   //!
-   TBranch        *b_dijet_deta;   //!
-   TBranch        *b_dijet_dphi;   //!
-   TBranch        *b_dijet_m;   //!
-   TBranch        *b_dijet_prod_eta;   //!
-   TBranch        *b_dijet_pt;   //!
+   TBranch        *b_channel_index;   //!
+   TBranch        *b_dijet_p4;   //!
    TBranch        *b_ditau_coll_approx;   //!
    TBranch        *b_ditau_coll_approx_m;   //!
    TBranch        *b_ditau_coll_approx_x0;   //!
@@ -1063,6 +1286,66 @@ public :
    TBranch        *b_ditau_scal_sum_pt;   //!
    TBranch        *b_event_clean_EC_TightBad;   //!
    TBranch        *b_event_number;   //!
+   TBranch        *b_higgs;   //!
+   TBranch        *b_higgs_child1;   //!
+   TBranch        *b_higgs_child1_classifierParticleOrigin;   //!
+   TBranch        *b_higgs_child1_classifierParticleType;   //!
+   TBranch        *b_higgs_child1_mother_pdgId;   //!
+   TBranch        *b_higgs_child1_mother_status;   //!
+   TBranch        *b_higgs_child1_origin;   //!
+   TBranch        *b_higgs_child1_p4;   //!
+   TBranch        *b_higgs_child1_pdgId;   //!
+   TBranch        *b_higgs_child1_pz;   //!
+   TBranch        *b_higgs_child1_q;   //!
+   TBranch        *b_higgs_child1_status;   //!
+   TBranch        *b_higgs_child1_type;   //!
+   TBranch        *b_higgs_child2;   //!
+   TBranch        *b_higgs_child2_classifierParticleOrigin;   //!
+   TBranch        *b_higgs_child2_classifierParticleType;   //!
+   TBranch        *b_higgs_child2_mother_pdgId;   //!
+   TBranch        *b_higgs_child2_mother_status;   //!
+   TBranch        *b_higgs_child2_origin;   //!
+   TBranch        *b_higgs_child2_p4;   //!
+   TBranch        *b_higgs_child2_pdgId;   //!
+   TBranch        *b_higgs_child2_pz;   //!
+   TBranch        *b_higgs_child2_q;   //!
+   TBranch        *b_higgs_child2_status;   //!
+   TBranch        *b_higgs_child2_type;   //!
+   TBranch        *b_higgs_child3;   //!
+   TBranch        *b_higgs_child3_classifierParticleOrigin;   //!
+   TBranch        *b_higgs_child3_classifierParticleType;   //!
+   TBranch        *b_higgs_child3_mother_pdgId;   //!
+   TBranch        *b_higgs_child3_mother_status;   //!
+   TBranch        *b_higgs_child3_origin;   //!
+   TBranch        *b_higgs_child3_p4;   //!
+   TBranch        *b_higgs_child3_pdgId;   //!
+   TBranch        *b_higgs_child3_pz;   //!
+   TBranch        *b_higgs_child3_q;   //!
+   TBranch        *b_higgs_child3_status;   //!
+   TBranch        *b_higgs_child3_type;   //!
+   TBranch        *b_higgs_child4;   //!
+   TBranch        *b_higgs_child4_classifierParticleOrigin;   //!
+   TBranch        *b_higgs_child4_classifierParticleType;   //!
+   TBranch        *b_higgs_child4_mother_pdgId;   //!
+   TBranch        *b_higgs_child4_mother_status;   //!
+   TBranch        *b_higgs_child4_origin;   //!
+   TBranch        *b_higgs_child4_p4;   //!
+   TBranch        *b_higgs_child4_pdgId;   //!
+   TBranch        *b_higgs_child4_pz;   //!
+   TBranch        *b_higgs_child4_q;   //!
+   TBranch        *b_higgs_child4_status;   //!
+   TBranch        *b_higgs_child4_type;   //!
+   TBranch        *b_higgs_classifierParticleOrigin;   //!
+   TBranch        *b_higgs_classifierParticleType;   //!
+   TBranch        *b_higgs_mother_pdgId;   //!
+   TBranch        *b_higgs_mother_status;   //!
+   TBranch        *b_higgs_origin;   //!
+   TBranch        *b_higgs_p4;   //!
+   TBranch        *b_higgs_pdgId;   //!
+   TBranch        *b_higgs_pz;   //!
+   TBranch        *b_higgs_q;   //!
+   TBranch        *b_higgs_status;   //!
+   TBranch        *b_higgs_type;   //!
    TBranch        *b_is_dijet_centrality;   //!
    TBranch        *b_jet_0_b_tagged;   //!
    TBranch        *b_jet_0_fjvt;   //!
@@ -1294,7 +1577,7 @@ public :
    TBranch        *b_met_sumet;   //!
    TBranch        *b_met_truth_p4;   //!
    TBranch        *b_met_truth_sumet;   //!
-   TBranch        *b_mva_RRN;   //!
+   TBranch        *b_mva_random_number;   //!
    TBranch        *b_n_actual_int;   //!
    TBranch        *b_n_actual_int_cor;   //!
    TBranch        *b_n_avg_int;   //!
@@ -1341,9 +1624,37 @@ public :
    TBranch        *b_tau_0_NOMINAL_TauEffSF_JetBDTloose;   //!
    TBranch        *b_tau_0_NOMINAL_TauEffSF_JetBDTmedium;   //!
    TBranch        *b_tau_0_NOMINAL_TauEffSF_JetBDTtight;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_MediumEleBDT_electron;   //!
    TBranch        *b_tau_0_NOMINAL_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
    TBranch        *b_tau_0_NOMINAL_TauEffSF_reco;   //!
    TBranch        *b_tau_0_NOMINAL_TauEffSF_selection;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDT_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDT_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDT_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDT_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDT_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDT_electron;   //!
    TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
    TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_selection;   //!
    TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1up_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
@@ -1628,9 +1939,37 @@ public :
    TBranch        *b_tau_1_NOMINAL_TauEffSF_JetBDTloose;   //!
    TBranch        *b_tau_1_NOMINAL_TauEffSF_JetBDTmedium;   //!
    TBranch        *b_tau_1_NOMINAL_TauEffSF_JetBDTtight;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_MediumEleBDT_electron;   //!
    TBranch        *b_tau_1_NOMINAL_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
    TBranch        *b_tau_1_NOMINAL_TauEffSF_reco;   //!
    TBranch        *b_tau_1_NOMINAL_TauEffSF_selection;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDT_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDT_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDT_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDT_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDT_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDT_electron;   //!
    TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
    TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_selection;   //!
    TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1up_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
@@ -1905,16 +2244,104 @@ public :
    TBranch        *b_tau_1_trig_trigger_matched;   //!
    TBranch        *b_tau_1_type;   //!
    TBranch        *b_tau_eta_centrality;   //!
-   TBranch        *b_theory_weights_CT14_pdfset;   //!
-   TBranch        *b_theory_weights_MMHT_pdfset;   //!
-   TBranch        *b_theory_weights_PDF_central_value;   //!
-   TBranch        *b_theory_weights_PDF_error_down;   //!
-   TBranch        *b_theory_weights_PDF_error_up;   //!
-   TBranch        *b_theory_weights_alphaS_down;   //!
-   TBranch        *b_theory_weights_alphaS_up;   //!
+   TBranch        *b_tb;   //!
+   TBranch        *b_tb_childq;   //!
+   TBranch        *b_tb_childq_classifierParticleOrigin;   //!
+   TBranch        *b_tb_childq_classifierParticleType;   //!
+   TBranch        *b_tb_childq_mother_pdgId;   //!
+   TBranch        *b_tb_childq_mother_status;   //!
+   TBranch        *b_tb_childq_origin;   //!
+   TBranch        *b_tb_childq_p4;   //!
+   TBranch        *b_tb_childq_pdgId;   //!
+   TBranch        *b_tb_childq_pz;   //!
+   TBranch        *b_tb_childq_q;   //!
+   TBranch        *b_tb_childq_status;   //!
+   TBranch        *b_tb_childq_type;   //!
+   TBranch        *b_tb_classifierParticleOrigin;   //!
+   TBranch        *b_tb_classifierParticleType;   //!
+   TBranch        *b_tb_mother_pdgId;   //!
+   TBranch        *b_tb_mother_status;   //!
+   TBranch        *b_tb_origin;   //!
+   TBranch        *b_tb_p4;   //!
+   TBranch        *b_tb_pdgId;   //!
+   TBranch        *b_tb_pz;   //!
+   TBranch        *b_tb_q;   //!
+   TBranch        *b_tb_status;   //!
+   TBranch        *b_tb_type;   //!
+   TBranch        *b_top;   //!
+   TBranch        *b_top_childq;   //!
+   TBranch        *b_top_childq_classifierParticleOrigin;   //!
+   TBranch        *b_top_childq_classifierParticleType;   //!
+   TBranch        *b_top_childq_mother_pdgId;   //!
+   TBranch        *b_top_childq_mother_status;   //!
+   TBranch        *b_top_childq_origin;   //!
+   TBranch        *b_top_childq_p4;   //!
+   TBranch        *b_top_childq_pdgId;   //!
+   TBranch        *b_top_childq_pz;   //!
+   TBranch        *b_top_childq_q;   //!
+   TBranch        *b_top_childq_status;   //!
+   TBranch        *b_top_childq_type;   //!
+   TBranch        *b_top_classifierParticleOrigin;   //!
+   TBranch        *b_top_classifierParticleType;   //!
+   TBranch        *b_top_mother_pdgId;   //!
+   TBranch        *b_top_mother_status;   //!
+   TBranch        *b_top_origin;   //!
+   TBranch        *b_top_p4;   //!
+   TBranch        *b_top_pdgId;   //!
+   TBranch        *b_top_pz;   //!
+   TBranch        *b_top_q;   //!
+   TBranch        *b_top_status;   //!
+   TBranch        *b_top_type;   //!
    TBranch        *b_truth_passedVBFFilter;   //!
-   TBranch        *b_weight_total;   //!
    TBranch        *b_weight_mc;   //!
+   TBranch        *b_wm_childq1;   //!
+   TBranch        *b_wm_childq1_classifierParticleOrigin;   //!
+   TBranch        *b_wm_childq1_classifierParticleType;   //!
+   TBranch        *b_wm_childq1_mother_pdgId;   //!
+   TBranch        *b_wm_childq1_mother_status;   //!
+   TBranch        *b_wm_childq1_origin;   //!
+   TBranch        *b_wm_childq1_p4;   //!
+   TBranch        *b_wm_childq1_pdgId;   //!
+   TBranch        *b_wm_childq1_pz;   //!
+   TBranch        *b_wm_childq1_q;   //!
+   TBranch        *b_wm_childq1_status;   //!
+   TBranch        *b_wm_childq1_type;   //!
+   TBranch        *b_wm_childq2;   //!
+   TBranch        *b_wm_childq2_classifierParticleOrigin;   //!
+   TBranch        *b_wm_childq2_classifierParticleType;   //!
+   TBranch        *b_wm_childq2_mother_pdgId;   //!
+   TBranch        *b_wm_childq2_mother_status;   //!
+   TBranch        *b_wm_childq2_origin;   //!
+   TBranch        *b_wm_childq2_p4;   //!
+   TBranch        *b_wm_childq2_pdgId;   //!
+   TBranch        *b_wm_childq2_pz;   //!
+   TBranch        *b_wm_childq2_q;   //!
+   TBranch        *b_wm_childq2_status;   //!
+   TBranch        *b_wm_childq2_type;   //!
+   TBranch        *b_wp_childq1;   //!
+   TBranch        *b_wp_childq1_classifierParticleOrigin;   //!
+   TBranch        *b_wp_childq1_classifierParticleType;   //!
+   TBranch        *b_wp_childq1_mother_pdgId;   //!
+   TBranch        *b_wp_childq1_mother_status;   //!
+   TBranch        *b_wp_childq1_origin;   //!
+   TBranch        *b_wp_childq1_p4;   //!
+   TBranch        *b_wp_childq1_pdgId;   //!
+   TBranch        *b_wp_childq1_pz;   //!
+   TBranch        *b_wp_childq1_q;   //!
+   TBranch        *b_wp_childq1_status;   //!
+   TBranch        *b_wp_childq1_type;   //!
+   TBranch        *b_wp_childq2;   //!
+   TBranch        *b_wp_childq2_classifierParticleOrigin;   //!
+   TBranch        *b_wp_childq2_classifierParticleType;   //!
+   TBranch        *b_wp_childq2_mother_pdgId;   //!
+   TBranch        *b_wp_childq2_mother_status;   //!
+   TBranch        *b_wp_childq2_origin;   //!
+   TBranch        *b_wp_childq2_p4;   //!
+   TBranch        *b_wp_childq2_pdgId;   //!
+   TBranch        *b_wp_childq2_pz;   //!
+   TBranch        *b_wp_childq2_q;   //!
+   TBranch        *b_wp_childq2_status;   //!
+   TBranch        *b_wp_childq2_type;   //!
 
 };
 #endif // #ifdef hadhadtree_cxx

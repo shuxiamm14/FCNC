@@ -188,6 +188,7 @@ void plot(int iNP)
 	tau_plots->debug = 0;
 	bool calibfake = 1;
 	bool fakeMC = 0;
+	bool doTrex = 0;
 	tau_plots->sensitivevariable = "BDTG_test";
 	tau_plots->add("BDT discriminant","BDTG_test","",5);
 	tau_plots->add("BDT discriminant","BDTG_train","",5);
@@ -290,26 +291,26 @@ void plot(int iNP)
 				{
 					tau_plots->read_sample( "fake1truth", samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), "Fake MC, 1 truth #tau", kMagenta, norm[j]);
 				}
-				if(origin[i] == "real"){
-					if(j == samples.size()-4){
-						tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-						tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-						tau_plots->read_sample( samples[j], TString("fcnc_prod_ch") + "_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-					}else if(j == samples.size()-1){
-						tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-						tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-						tau_plots->read_sample( samples[j], TString("fcnc_prod_uh") + "_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-					}else if(j == samples.size()-3){
-						tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-						tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-					}else if(j == samples.size()-6){
-						tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-						tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-					}else{
-						tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-					}
+				
+				if(samples[j] == "tcH"){
+					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_prod_ch") + "_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+				}else if(samples[j] == "tuH"){
+					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_prod_uh") + "_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+				}else if(samples[j] == "fcnc_uh"){
+					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+				}else if(samples[j] == "fcnc_ch"){
+					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+				}else if(origin[i] == "real"){
+					tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}
-				else if(!fakeMC && calibfake){
+				
+				if(origin[i] != "real" && !fakeMC && calibfake){
 					tau_plots->read_sample( "fake", samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), "MC Fake #tau", kTeal, norm[j]);
 				}
 				
@@ -369,8 +370,8 @@ void plot(int iNP)
   		//SF.print();
 
 		if(!fakeMC){
-  			tau_plots->templatesample("reg2mtau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b3jos","fakeSS","Fake",kYellow,0);
-  			tau_plots->templatesample("reg2mtau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b2jos","fakeSS","Fake",kYellow,0);
+  			tau_plots->templatesample("reg2mtau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b3jos","fakeSS","Fake",kYellow,0,1.31597);
+  			tau_plots->templatesample("reg2mtau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b2jos","fakeSS","Fake",kYellow,0,1.31597);
   			tau_plots->templatesample("reg2mtau2b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b3jos","fakeSS","Fake",kYellow,1);
   			tau_plots->templatesample("reg2mtau2b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b2jos","fakeSS","Fake",kYellow,1);
   			//tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
@@ -387,7 +388,10 @@ void plot(int iNP)
   			////tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
   		}
   	}
-	tau_plots->write_trexinput(NPnames[iNP],"update");
+  	tau_plots->printyield("reg2mtau1b3jos");
+  	tau_plots->printyield("reg2mtau1b2jos");
+	if(doTrex)
+		tau_plots->write_trexinput(NPnames[iNP],"update");
 	if(doPlots){
 		for (int i = samples.size()-6; i < samples.size(); ++i)
 		{
@@ -396,7 +400,7 @@ void plot(int iNP)
 		}
 		
 	}
-	deletepointer(tau_plots);
+	//deletepointer(tau_plots);
 }
 
 int main(int argc, char const *argv[])

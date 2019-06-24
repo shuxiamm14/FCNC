@@ -180,7 +180,6 @@ void nominal::plot(){
   if(fake_plots) {
     if(debug) printf("write fake_plots\n");
     fake_plots->write();
-    deletepointer(fake_plots);
   }
   for(auto& ele : fcnc_plots) 
     if(ele) {
@@ -190,7 +189,6 @@ void nominal::plot(){
   if(fake_notau_plots) {
     if(debug) printf("write fake_notau_plots\n");
     fake_notau_plots->write();
-    deletepointer(fake_notau_plots);
   }
 }
 
