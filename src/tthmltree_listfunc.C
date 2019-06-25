@@ -529,6 +529,7 @@ void tthmltree::Init(TTree*tree) {
 
   if (reduce >= 2 && fcnc) {
     tree->SetBranchAddress("neutrino_pt", & neutrino_pt);
+    tree->SetBranchAddress("chi2", & chi2);
     tree->SetBranchAddress("mc_channel_number", & mc_channel_number);
     tree->SetBranchAddress("neutrino_eta", & neutrino_eta);
     tree->SetBranchAddress("neutrino_phi", & neutrino_phi);

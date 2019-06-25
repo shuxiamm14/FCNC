@@ -86,6 +86,7 @@ void hadhadtree::init_hist(TString histfilename){
     //fcnc_plots[iNP]->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,false,"GeV");
     fcnc_plots[iNP]->add(100,0.,1.,"E_{vis-#tau,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
     fcnc_plots[iNP]->add(100,0.,1.,"E_{vis-#tau,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
+    fcnc_plots[iNP]->add(100,0.,15.,"#chi^2","chi2",&chi2,false,"");
     //fcnc_plots[iNP]->add(100,0.,5.,"#eta_{#tau,max}","etamax",&etamax,false,"");
     //fcnc_plots[iNP]->add(100,0.,5.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
     for (int j = 0; j < fcnc_regions.size(); ++j)
@@ -328,6 +329,12 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       arglist[1] = 0;
       double val[6],err[6];
       gM->mnexcm("MIGRADE", arglist, 2, ierflg);
+
+      Double_t fmin,edm,errdef;
+      Int_t nvpar,nparx,icstat;
+      gMinuit->mnstat(fmin,edm,errdef,nvpar,nparx,icstat);
+
+      chi2 = fmin;
       for (int i = 0; i < 6; ++i) gM->GetParameter(i, val[i], err[i]);
   
       TLorentzVector tauv1_v,tauv2_v;

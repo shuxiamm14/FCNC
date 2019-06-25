@@ -265,6 +265,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         if(reduce<2 || !fcnc) definetree(outputtree[fcnc_regions[i]]);
       }
       if(reduce==2 ){
+        outputtree[fcnc_regions[i]]->Branch("chi2",&chi2);
         outputtree[fcnc_regions[i]]->Branch("t1mass",&t1mass);
         outputtree[fcnc_regions[i]]->Branch("tautaumass",&tautaumass);
         outputtree[fcnc_regions[i]]->Branch("wmass",&wmass);
@@ -729,6 +730,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           Double_t fmin, fedm, errdef;
           Int_t npari, nparx, istat;
           gM->mnstat(fmin, fedm, errdef, npari, nparx, istat);
+          chi2 = fmin;
           TLorentzVector tauv1_v;
           if(nTaus_OR_Pt25 >= 2) tauv1_v.SetPtEtaPhiM(val[0]*taus_v[0].Pt(), taus_v[0].Eta(), taus_v[0].Phi(), nJets_OR_T >= 2 ? 0 : val[2]);
           else tauv1_v.SetPtEtaPhiM(val[0],val[1],val[2],val[6]);

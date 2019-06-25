@@ -77,6 +77,7 @@ void hadhadtree::definetree(TTree * tree) {
     return;
   }
   if(reduce == 2){
+    tree->Branch("chi2",&chi2);
     tree->Branch("taus_b_tagged",&taus_b_tagged);
     tree->Branch("taus_n_charged_tracks",&taus_n_charged_tracks);
     tree->Branch("tauabspdg",&tauabspdg);
@@ -605,6 +606,7 @@ void hadhadtree::Init(TTree *tree)
 
   // Set object pointer
   if(reduce == 2){
+   tree->SetBranchAddress("chi2",&chi2);
    tree->SetBranchAddress("taus_b_tagged",&taus_b_tagged);
    tree->SetBranchAddress("taus_n_charged_tracks",&taus_n_charged_tracks);
    tree->SetBranchAddress("tauabspdg",&tauabspdg);
