@@ -171,6 +171,11 @@ void tthmltree::init_hist(TString outputfilename){
     fcnc_plots[iNP]->debug = !!debug;
     if(reduce == 3) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG_train",&BDTG_train,false,"");
     if(reduce == 3) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG_test",&BDTG_test,false,"");
+    if(reduce >= 2) {
+      fcnc_plots[iNP]->add(100,5.,55.,"#chi^2","chi2",&chi2,false,"");
+      fcnc_plots[iNP]->add(500,0.,1000.,"m_{all}","allmass",&allmass,true,"GeV");
+      fcnc_plots[iNP]->add(500,0.,1000.,"P_{z,all}","allpz",&allpz,true,"GeV");
+    }
     fcnc_plots[iNP]->add(10,25.,125.,"p_{T,#tau}","taupt_0",&tau_pt_0,true,"GeV");
     fcnc_plots[iNP]->add(10,25.,125.,"p_{T,#tau}","taupt_1",&tau_pt_1,true,"GeV");
     fcnc_plots[iNP]->add(10,25.,125.,"p_{T,SS#tau}","tauptss",&tau_pt_ss,true,"GeV");
@@ -266,6 +271,8 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
       }
       if(reduce==2 ){
         outputtree[fcnc_regions[i]]->Branch("chi2",&chi2);
+        outputtree[fcnc_regions[i]]->Branch("allmass", &allmass);
+        outputtree[fcnc_regions[i]]->Branch("allpz", &allpz);
         outputtree[fcnc_regions[i]]->Branch("t1mass",&t1mass);
         outputtree[fcnc_regions[i]]->Branch("tautaumass",&tautaumass);
         outputtree[fcnc_regions[i]]->Branch("wmass",&wmass);
@@ -649,8 +656,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
             printf("wmass: %f, t1mass: %f, cjet %d, wjet1 %d\n", wmass, t1mass, ljet_indice[0], ljet_indice[1]);
           }
           if(ljets_v.size()==2){
-            wmass = 0;
-            t1mass = 0;
+            wmass = (ljets_v[0] + ljets_v[1]).M();
+            t1mass = (ljets_v[0] + ljets_v[1] + bjet_v).M();
           }else{
             wmass = (ljets_v[1] + ljets_v[2]).M();
             t1mass = (ljets_v[1] + ljets_v[2] + bjet_v).M();
@@ -764,6 +771,9 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           }
           t2mass = (tauv2_v + taus_v[0] + tauv1_v + taus_v[1] + cjet_v).M();
           tautaumass = (tauv2_v + taus_v[0] + tauv1_v + taus_v[1]).M();
+          TLorentzVector all = tauv2_v + taus_v[0] + tauv1_v + taus_v[1] + cjet_v + bjet_v + (nJets_OR_T==3? ljets_v[ljet_indice[1]] : ljets_v[ljet_indice[1]] + ljets_v[ljet_indice[2]]);
+          allmass = all.M();
+          allpz = all.Pz();
         }
 
         if (nTaus_OR_Pt25 >= 2) {

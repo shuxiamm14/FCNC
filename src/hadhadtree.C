@@ -86,7 +86,9 @@ void hadhadtree::init_hist(TString histfilename){
     //fcnc_plots[iNP]->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,false,"GeV");
     fcnc_plots[iNP]->add(100,0.,1.,"E_{vis-#tau,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
     fcnc_plots[iNP]->add(100,0.,1.,"E_{vis-#tau,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
-    fcnc_plots[iNP]->add(100,0.,15.,"#chi^2","chi2",&chi2,false,"");
+    fcnc_plots[iNP]->add(100,-15.,15.,"#chi^2","chi2",&chi2,false,"");
+    fcnc_plots[iNP]->add(500,0.,1000.,"m_{all}","allmass",&allmass,false,"GeV");
+    fcnc_plots[iNP]->add(500,0.,1000.,"P_{z,all}","allpz",&allpz,false,"GeV");
     //fcnc_plots[iNP]->add(100,0.,5.,"#eta_{#tau,max}","etamax",&etamax,false,"");
     //fcnc_plots[iNP]->add(100,0.,5.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
     for (int j = 0; j < fcnc_regions.size(); ++j)
@@ -349,7 +351,9 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       }
       t2mass = (*(jets_p4->at(ljet_indice[0])) + *(taus_p4->at(0)) + *(taus_p4->at(1)) + tauv1_v + tauv2_v).M();
       tautaumass = (*(taus_p4->at(0)) + *(taus_p4->at(1)) + tauv1_v + tauv2_v).M();
-  
+      TLorentzVector all = *(jets_p4->at(ljet_indice[0])) + *(taus_p4->at(0)) + *(taus_p4->at(1)) + tauv1_v + tauv2_v + ( jets_p4->size() == 2? *(jets_p4->at(ljet_indice[1])) : *(jets_p4->at(ljet_indice[1])) + *(jets_p4->at(ljet_indice[2])) );
+      allmass = all.M();
+      allpz = all.Pz();
       x1fit = 1 - tauv1_v.E() / (*(taus_p4->at(0)) + tauv1_v).E();
       x2fit = 1 - tauv2_v.E() / (*(taus_p4->at(1)) + tauv2_v).E();
   
