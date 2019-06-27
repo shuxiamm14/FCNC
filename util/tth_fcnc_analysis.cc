@@ -10,6 +10,7 @@ void plot()
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
 	tau_plots->inputfilename = "hists";
 	tau_plots->debug = 0;
+	bool deriveSSOSSF = 1;
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
 	int fakeMC = 2; // 0 use DD, 1 include fake in each bkg, 2 show fakes in the plots
 	tau_plots->sensitivevariable = "BDTG_test";
@@ -18,7 +19,9 @@ void plot()
   	//tau_plots->add("p_{T,SS#tau}","tauptss","GeV",1);
   	//tau_plots->add("p_{T,OS#tau}","tauptos","GeV",1);
     //tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
-    //tau_plots->add("#DeltaR(l,b-jet)","drtaub","",3);
+    //tau_plots->add("#chi^{2}","chi2","",5);
+    //tau_plots->add("M_{all}","allmass","",5);
+    //tau_plots->add("p_{Z,all}","allpz","",5);
     //tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
   	//tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
   	//tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
@@ -64,10 +67,8 @@ void plot()
 	    }
 	tau_plots->muteregion("35_veto");
 	tau_plots->muteregion("prong");
-	tau_plots->muteregion("2j");
-	tau_plots->muteregion("3j");
 	vector<TString> samples;
-	samples.push_back("Other");
+	samples.push_back("other");
 	samples.push_back("Vjets");
 	samples.push_back("diboson");
 	samples.push_back("ttH");
@@ -81,7 +82,7 @@ void plot()
 	samples.push_back("tcH");
 	double norm[] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
 	vector<TString> sampletitle;
-	sampletitle.push_back("Other");
+	sampletitle.push_back("other");
 	sampletitle.push_back("V+jets");
 	sampletitle.push_back("Diboson");
 	sampletitle.push_back("#bar{t}tH");
@@ -117,18 +118,18 @@ void plot()
 		for (int j = 0; j < samples.size(); ++j){
 			if(j < 6) tau_plots->stackorder.push_back(samples[j]);
 			if(j == samples.size()-4){
-					tau_plots->read_sample( samples[j], "fcnc_uh_" + origin[6] + "_NP2", sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], "fcnc_prod_uh_" + origin[6] + "_NP2", sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], "fcnc_uh_" + origin[6] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], "fcnc_prod_uh_" + origin[6] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
 			}else if(j == samples.size()-1){
-					tau_plots->read_sample( samples[j], "fcnc_ch_" + origin[6] + "_NP2", sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], "fcnc_prod_ch_" + origin[6] + "_NP2", sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], "fcnc_ch_" + origin[6] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], "fcnc_prod_ch_" + origin[6] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
 			}else{
 				for (int i = 0; i < 6; ++i)
 				{
-					if(fakeMC == 1) tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP2", sampletitle[j], (enum EColor)colors[j], norm[j]);
-					else if(fakeMC == 2) tau_plots->read_sample( "fake", samples[j] + "_" + origin[i] + "_NP2", "Fake MC", kYellow, norm[j]);
+					if(fakeMC == 1) tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+					else if(fakeMC == 2) tau_plots->read_sample( "fake", samples[j] + "_" + origin[i] + "_NP0", "Fake MC", kYellow, norm[j]);
 				}
-				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[6] + "_NP2", sampletitle[j], (enum EColor)colors[j], norm[j]);
+				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[6] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
 			}
 		}
 		if(fakeMC) tau_plots->stackorder.push_back("fake");
@@ -143,26 +144,63 @@ void plot()
 		}
 	}
 
-	for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau1b2j_ss_veto" + bwps[i],"reg1l1tau1b3j_ss_veto" + bwps[i],"reg1l1tau1b_ss_veto" + bwps[i]);
-	for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau1b2j_os_veto" + bwps[i],"reg1l1tau1b3j_os_veto" + bwps[i],"reg1l1tau1b_os_veto" + bwps[i]);
+	if(deriveSSOSSF){
+		for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau1b2j_ss_veto" + bwps[i],"reg1l1tau1b3j_ss_veto" + bwps[i],"reg1l1tau1b_ss_veto" + bwps[i]);
+		for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau1b2j_os_veto" + bwps[i],"reg1l1tau1b3j_os_veto" + bwps[i],"reg1l1tau1b_os_veto" + bwps[i]);
+		for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau2b2j_ss_veto" + bwps[i],"reg1l1tau2b3j_ss_veto" + bwps[i],"reg1l1tau2b_ss_veto" + bwps[i]);
+		for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau2b2j_os_veto" + bwps[i],"reg1l1tau2b3j_os_veto" + bwps[i],"reg1l1tau2b_os_veto" + bwps[i]);
+		double SSOSSF[5] = {1,1,1,1,1};
+		printf("grabhistdata\n");
+		TH1D *datal1tau1b_ss = (TH1D*)tau_plots->grabhist("data","reg1l1tau1b_ss_vetobtagwp70","njet")->Clone();
+		TH1D *datal1tau1b_os = (TH1D*)tau_plots->grabhist("data","reg1l1tau1b_os_vetobtagwp70","njet")->Clone();
+		TH1D *datal1tau2b_ss = (TH1D*)tau_plots->grabhist("data","reg1l1tau2b_ss_vetobtagwp70","njet")->Clone();
+		TH1D *datal1tau2b_os = (TH1D*)tau_plots->grabhist("data","reg1l1tau2b_os_vetobtagwp70","njet")->Clone();
+		for (int i = 0; i < 6; ++i)
+		{
+			datal1tau1b_ss->Add(tau_plots->grabhist(samples[i],"reg1l1tau1b_ss_vetobtagwp70","njet"),-1);
+			datal1tau1b_os->Add(tau_plots->grabhist(samples[i],"reg1l1tau1b_os_vetobtagwp70","njet"),-1);
+			datal1tau2b_ss->Add(tau_plots->grabhist(samples[i],"reg1l1tau2b_ss_vetobtagwp70","njet"),-1);
+			datal1tau2b_os->Add(tau_plots->grabhist(samples[i],"reg1l1tau2b_os_vetobtagwp70","njet"),-1);
+		}
+		printf("grabhistfake\n");
+		TH1D *fakel1tau1b_ss = tau_plots->grabhist("fake","reg1l1tau1b_ss_vetobtagwp70","njet");
+		TH1D *fakel1tau1b_os = tau_plots->grabhist("fake","reg1l1tau1b_os_vetobtagwp70","njet");
+		TH1D *fakel1tau2b_ss = tau_plots->grabhist("fake","reg1l1tau2b_ss_vetobtagwp70","njet");
+		TH1D *fakel1tau2b_os = tau_plots->grabhist("fake","reg1l1tau2b_os_vetobtagwp70","njet");
 
-	for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau2b2j_ss_veto" + bwps[i],"reg1l1tau2b3j_ss_veto" + bwps[i],"reg1l1tau2b_ss_veto" + bwps[i]);
-	for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau2b2j_os_veto" + bwps[i],"reg1l1tau2b3j_os_veto" + bwps[i],"reg1l1tau2b_os_veto" + bwps[i]);
+		int nbin = datal1tau1b_ss->GetNbinsX();
+		printf("calculate SF\n");
+		for (int i = 3; i <= 7; ++i)
+		{
+			if(i<7){
+				if(datal1tau1b_ss->GetBinContent(i)) SSOSSF[i-3] *= fakel1tau1b_ss->GetBinContent(i)/datal1tau1b_ss->GetBinContent(i);
+				if(datal1tau2b_ss->GetBinContent(i)) SSOSSF[i-3] /= fakel1tau2b_ss->GetBinContent(i)/datal1tau2b_ss->GetBinContent(i);
+				if(datal1tau2b_os->GetBinContent(i)) SSOSSF[i-3] *= fakel1tau2b_os->GetBinContent(i)/datal1tau2b_os->GetBinContent(i);
+			}else{
+				if(datal1tau1b_ss->Integral(i,nbin)) SSOSSF[i-3] *= fakel1tau1b_ss->Integral(i,nbin)/datal1tau1b_ss->Integral(i,nbin);
+				if(datal1tau2b_ss->Integral(i,nbin)) SSOSSF[i-3] /= fakel1tau2b_ss->Integral(i,nbin)/datal1tau2b_ss->Integral(i,nbin);
+				if(datal1tau2b_os->Integral(i,nbin)) SSOSSF[i-3] *= fakel1tau2b_os->Integral(i,nbin)/datal1tau2b_os->Integral(i,nbin);
+			}
+			if(i==4) printf("%f, %f, %f\n", fakel1tau1b_ss->GetBinContent(i)/datal1tau1b_ss->GetBinContent(i), fakel1tau2b_ss->GetBinContent(i)/datal1tau2b_ss->GetBinContent(i), fakel1tau2b_os->GetBinContent(i)/datal1tau2b_os->GetBinContent(i));
+		}
+		printf("SSOSSF: %f, %f, %f, %f, %f\n", SSOSSF[0],SSOSSF[1],SSOSSF[2],SSOSSF[3],SSOSSF[4]);
+	}
 
 	if(plot_option == 2){
 		if(!fakeMC){
   			//tau_plots->templatesample("reg2mtau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b3jos","fake","Fake",kYellow,1);
   			//tau_plots->templatesample("reg2mtau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b2jos","fake","Fake",kYellow,1);
-			tau_plots->templatesample("reg1l2tau1bnj_ss_vetobtagwp70","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l2tau1bnj_os_vetobtagwp70","fake","Fake",kYellow,1);
-			tau_plots->templatesample("reg1l1tau1b2j_ss_vetobtagwp70","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b2j_os_vetobtagwp70","fake","Fake",kYellow,1);
-			tau_plots->templatesample("reg1l1tau1b3j_ss_vetobtagwp70","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b3j_os_vetobtagwp70","fake","Fake",kYellow,1);
+			tau_plots->templatesample("reg1l2tau1bnj_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l2tau1bnj_os_vetobtagwp70","fake","Fake",kYellow,1);
+			tau_plots->templatesample("reg1l1tau1b2j_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b2j_os_vetobtagwp70","fake","Fake",kYellow,1);
+			tau_plots->templatesample("reg1l1tau1b3j_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b3j_os_vetobtagwp70","fake","Fake",kYellow,1);
 
-			tau_plots->templatesample("reg1l2tau2bnj_ss_vetobtagwp70","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l2tau2bnj_os_vetobtagwp70","fake","Fake",kYellow,1);
-			tau_plots->templatesample("reg1l1tau2b2j_ss_vetobtagwp70","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau2b2j_os_vetobtagwp70","fake","Fake",kYellow,1);
-			tau_plots->templatesample("reg1l1tau2b3j_ss_vetobtagwp70","1 data -1 Other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau2b3j_os_vetobtagwp70","fake","Fake",kYellow,1);
+			tau_plots->templatesample("reg1l2tau2bnj_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l2tau2bnj_os_vetobtagwp70","fake","Fake",kYellow,1);
+			tau_plots->templatesample("reg1l1tau2b2j_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau2b2j_os_vetobtagwp70","fake","Fake",kYellow,1);
+			tau_plots->templatesample("reg1l1tau2b3j_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau2b3j_os_vetobtagwp70","fake","Fake",kYellow,1);
 			tau_plots->stackorder.push_back("fake");
   		}
   	}
+
 
 	if(doPlots){
 		for (int i = 6; i < 12; ++i)
