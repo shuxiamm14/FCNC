@@ -17,32 +17,33 @@ void plot()
 
   	//tau_plots->add("p_{T,SS#tau}","tauptss","GeV",1);
   	//tau_plots->add("p_{T,OS#tau}","tauptos","GeV",1);
-    tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
-    tau_plots->add("#DeltaR(l,b-jet)","drtaub","",3);
-    tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
-  	tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
-  	tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
-  	tau_plots->add("m_{t,SM}","t1mass","GeV",5);
-  	tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
-  	tau_plots->add("m_{W}","wmass","GeV",5);
-  	tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
-  	tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",10);
-  	tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
-  	tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
-  	tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
-  	tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
-  	tau_plots->add("m^{T}_{W}","mtw","GeV",10);
-  	tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",15);
-  	tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",5);
-  	tau_plots->add("#eta_{#tau,max}","etamax","",10);
-  	tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
-  	tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
-  	tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
-  	tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-  	tau_plots->add("M(#tau#tau#light-jet,min)","mtaujmin","",5);
-  	tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
-    tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
-    tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
+    //tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
+    //tau_plots->add("#DeltaR(l,b-jet)","drtaub","",3);
+    //tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
+  	//tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
+  	//tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
+  	//tau_plots->add("m_{t,SM}","t1mass","GeV",5);
+  	//tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
+  	//tau_plots->add("m_{W}","wmass","GeV",5);
+  	//tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
+  	//tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",10);
+  	//tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
+  	//tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
+  	//tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
+  	//tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
+  	//tau_plots->add("m^{T}_{W}","mtw","GeV",10);
+  	//tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",15);
+  	//tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",5);
+  	//tau_plots->add("#eta_{#tau,max}","etamax","",10);
+  	//tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
+  	//tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
+  	//tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
+  	//tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
+  	//tau_plots->add("M(#tau#tau#light-jet,min)","mtaujmin","",5);
+  	//tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
+    //tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
+    //tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
+  	tau_plots->add("N_{l-jet}","njet","",1);
 
     gErrorIgnoreLevel = kWarning;
   	tau_plots->blinding = 2;
@@ -63,6 +64,8 @@ void plot()
 	    }
 	tau_plots->muteregion("35_veto");
 	tau_plots->muteregion("prong");
+	tau_plots->muteregion("2j");
+	tau_plots->muteregion("3j");
 	vector<TString> samples;
 	samples.push_back("Other");
 	samples.push_back("Vjets");
@@ -139,6 +142,12 @@ void plot()
 			tau_plots->merge_regions(regions[j] + "_" + nprong[0] + "_veto" + bwps[i], regions[j] + "_" + nprong[1] + "_veto" + bwps[i],regions[j] + "_veto" + bwps[i]);
 		}
 	}
+
+	for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau1b2j_ss_veto" + bwps[i],"reg1l1tau1b3j_ss_veto" + bwps[i],"reg1l1tau1b_ss_veto" + bwps[i]);
+	for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau1b2j_os_veto" + bwps[i],"reg1l1tau1b3j_os_veto" + bwps[i],"reg1l1tau1b_os_veto" + bwps[i]);
+
+	for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau2b2j_ss_veto" + bwps[i],"reg1l1tau2b3j_ss_veto" + bwps[i],"reg1l1tau2b_ss_veto" + bwps[i]);
+	for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau2b2j_os_veto" + bwps[i],"reg1l1tau2b3j_os_veto" + bwps[i],"reg1l1tau2b_os_veto" + bwps[i]);
 
 	if(plot_option == 2){
 		if(!fakeMC){

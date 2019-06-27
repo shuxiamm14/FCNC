@@ -637,7 +637,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
               if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(j)] < btag70wt && i!=j){
                 TLorentzVector tmpljet_v1;
                 tmpljet_v1.SetPtEtaPhiE((*m_jet_pt)[selected_jets_T->at(j)], (*m_jet_eta)[selected_jets_T->at(j)], (*m_jet_phi)[selected_jets_T->at(j)], (*m_jet_E)[selected_jets_T->at(j)]);
-                double tmpmjj = tmpljet_v1.DeltaR(tmpljet_v);
+                double tmpmjj = (tmpljet_v1+tmpljet_v).M();
                 if(mjjmin > tmpmjj || mjjmin==0) mjjmin = tmpmjj;
               }
             }
