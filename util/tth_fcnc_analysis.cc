@@ -17,6 +17,9 @@ void plot()
 
   	//tau_plots->add("p_{T,SS#tau}","tauptss","GeV",1);
   	//tau_plots->add("p_{T,OS#tau}","tauptos","GeV",1);
+    tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
+    tau_plots->add("#DeltaR(l,b-jet)","drtaub","",3);
+    tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
   	tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
   	tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
   	tau_plots->add("m_{t,SM}","t1mass","GeV",5);
@@ -36,10 +39,11 @@ void plot()
   	tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
   	tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
   	tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-//
+  	tau_plots->add("M(#tau#tau#light-jet,min)","mtaujmin","",5);
   	tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
     tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
     tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
+
     gErrorIgnoreLevel = kWarning;
   	tau_plots->blinding = 2;
 	TString regions[] = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os",
@@ -91,7 +95,7 @@ void plot()
 	ss<<"(BR=" << 0.2*norm[6] << "%)";
 	TString tmp;
 	ss>>tmp;
-	sampletitle[6]+=tmp;
+	for(int i = 6; i<12 ; ++i) sampletitle[i]+=tmp;
 	TString origin[] = {"b", "c", "g", "j", "lep", "nomatch", "real", "data"};
 	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "real #tau"};
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kRed, kRed, kRed, kRed, kRed};

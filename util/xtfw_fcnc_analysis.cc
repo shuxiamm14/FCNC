@@ -178,11 +178,11 @@ TString NPnames[] = {
 
 void plot(int iNP)
 {
-	bool doPlots = 0;
+	bool doPlots = 1;
 	int plot_option = 2;
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
-	tau_plots->doROC = 1;
+	tau_plots->doROC = 0;
 	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
 	tau_plots->inputfilename = "hists"+to_string(iNP);
 	tau_plots->debug = 0;
@@ -206,9 +206,9 @@ void plot(int iNP)
   	tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
   	tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
   	tau_plots->add("E^{T}_{miss}","etmiss","GeV",5);
-  	tau_plots->add("#chi^2","chi2","",5);
+  	//tau_plots->add("#chi^2","chi2","",5);
   	gErrorIgnoreLevel = kWarning;
-  	tau_plots->blinding = 3;
+  	tau_plots->blinding = 1;
 	vector<TString> regions;
 	regions.push_back("reg2mtau1b2jss");
 	regions.push_back("reg2mtau1b2jos");
@@ -272,7 +272,7 @@ void plot(int iNP)
 	ss<<"(BR=" << norm[6] << "%)";
 	TString tmp;
 	ss>>tmp;
-	sampletitle[6]+=tmp;
+	for(int i = 6; i<12 ; ++i) sampletitle[i]+=tmp;
 	TString origin[] = {"b", "c", "g", "j", "lep", "nomatch", "real", "data","doublefake"};
 	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "real #tau"};
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kRed, kRed, kRed, kRed, kRed, kMagenta, kSpring, kTeal, kAzure};

@@ -14,7 +14,7 @@ To run this project, you need
 		https://gitlab.cern.ch/boyang/plotTools (need compile for shared libraries)
 
 	somewhere/tools/
-		frugally-deep (and the required projected for this one: eigen): https://github.com/Dobiasd/frugally-deep.git (header library, dont need compile)
+		frugally-deep (and the required project for this one: eigen): https://github.com/Dobiasd/frugally-deep.git (header library, dont need compile)
 
 Compile:
 	
@@ -33,12 +33,12 @@ For "hadhad+jets channel":
 
 	run scripts/hadhadpreparejobs.sh to get the address of the rootfiles
 	run xtfw_reduce*_run to reduce n-tuples
-	run tth_trainBDT to train the BDT
+	run trainBDT to train the BDT
 	run xtfw_fcnc_analysis_run to analyse the histograms
 
 For "lepton channels":
 
 	run tth_reduce*_run to reduce n-tuples (only available on nersc.gov)
-	run tth_trainBDT to train the BDT
-	run tth__fcnc_analysis_run to analyse the histograms
+	run trainBDT to train the BDT
+	run tth_fcnc_analysis_run to analyse the histograms
 	
