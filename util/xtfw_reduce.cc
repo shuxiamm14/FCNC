@@ -193,6 +193,7 @@ int main(int argc, char const *argv[])
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		inputfile.Close();
 	}
+	analysis->outputtreefile->cd();
 	cutflow->Write();
 	cutflowraw->Write();
 	analysis->finalise_sample();

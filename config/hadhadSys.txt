@@ -83,3 +83,4 @@ JET_TILECORR_Uncertainty_1up
 MET_SoftTrk_ResoPara
 MET_SoftTrk_ResoPerp
 MET_SoftTrk_ScaleDown
+MET_SoftTrk_ScaleUp

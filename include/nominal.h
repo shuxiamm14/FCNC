@@ -107,7 +107,10 @@ public :
   float etmiss = 0;
   float dphitauetmiss = 0;
   float phicent = 0;
-
+  double chi2;
+  double allmass = 0;
+  double allpz = 0;
+  int nljet = 0;
   TFile *outputtreefile;
   vector<histSaver*> fcnc_plots;
   histSaver *fake_plots;

@@ -11,12 +11,15 @@ void plot()
 	tau_plots->inputfilename = "hists";
 	tau_plots->debug = 0;
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
-	bool fakeMC = 1;
+	int fakeMC = 2; // 0 use DD, 1 include fake in each bkg, 2 show fakes in the plots
 	tau_plots->sensitivevariable = "BDTG_test";
 	tau_plots->add("BDT discriminant","BDTG_test","",10);
 
   	//tau_plots->add("p_{T,SS#tau}","tauptss","GeV",1);
   	//tau_plots->add("p_{T,OS#tau}","tauptos","GeV",1);
+    tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
+    tau_plots->add("#DeltaR(l,b-jet)","drtaub","",3);
+    tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
   	tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
   	tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
   	tau_plots->add("m_{t,SM}","t1mass","GeV",5);
@@ -36,10 +39,11 @@ void plot()
   	tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
   	tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
   	tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-//
+  	tau_plots->add("M(#tau#tau#light-jet,min)","mtaujmin","",5);
   	tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
     tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
     tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
+
     gErrorIgnoreLevel = kWarning;
   	tau_plots->blinding = 2;
 	TString regions[] = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os",
@@ -91,7 +95,7 @@ void plot()
 	ss<<"(BR=" << 0.2*norm[6] << "%)";
 	TString tmp;
 	ss>>tmp;
-	sampletitle[6]+=tmp;
+	for(int i = 6; i<12 ; ++i) sampletitle[i]+=tmp;
 	TString origin[] = {"b", "c", "g", "j", "lep", "nomatch", "real", "data"};
 	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "real #tau"};
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kRed, kRed, kRed, kRed, kRed};
@@ -109,18 +113,22 @@ void plot()
 	else if(plot_option == 2){
 		for (int j = 0; j < samples.size(); ++j){
 			if(j < 6) tau_plots->stackorder.push_back(samples[j]);
-			for (int i = fakeMC? 0:6; i < 7; ++i){
-				if(j == samples.size()-4){
-						tau_plots->read_sample( samples[j], "fcnc_uh_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
-						tau_plots->read_sample( samples[j], "fcnc_prod_uh_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
-				}else if(j == samples.size()-1){
-						tau_plots->read_sample( samples[j], "fcnc_ch_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
-						tau_plots->read_sample( samples[j], "fcnc_prod_ch_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
-				}else{
-					tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+			if(j == samples.size()-4){
+					tau_plots->read_sample( samples[j], "fcnc_uh_" + origin[6] + "_NP2", sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], "fcnc_prod_uh_" + origin[6] + "_NP2", sampletitle[j], (enum EColor)colors[j], norm[j]);
+			}else if(j == samples.size()-1){
+					tau_plots->read_sample( samples[j], "fcnc_ch_" + origin[6] + "_NP2", sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], "fcnc_prod_ch_" + origin[6] + "_NP2", sampletitle[j], (enum EColor)colors[j], norm[j]);
+			}else{
+				for (int i = 0; i < 6; ++i)
+				{
+					if(fakeMC == 1) tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP2", sampletitle[j], (enum EColor)colors[j], norm[j]);
+					else if(fakeMC == 2) tau_plots->read_sample( "fake", samples[j] + "_" + origin[i] + "_NP2", "Fake MC", kYellow, norm[j]);
 				}
+				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[6] + "_NP2", sampletitle[j], (enum EColor)colors[j], norm[j]);
 			}
 		}
+		if(fakeMC) tau_plots->stackorder.push_back("fake");
 	}
 	for (int j = 0; j < nregions; ++j){
 		for (int i = 1; i < 2; i+=2){
@@ -149,6 +157,7 @@ void plot()
 
 	if(doPlots){
 		for (int i = 6; i < 12; ++i)
+		//for (int i = 8; i < 9; ++i)
 		{
 			printf("plot signal: %s\n", samples[i].Data());
   			tau_plots->overlay(samples[i]);
