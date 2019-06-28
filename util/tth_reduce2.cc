@@ -48,12 +48,12 @@ int main(int argc, char const *argv[])
 		analysis->fake_regions_notau = regions1;
 	}
 	regions.insert(regions.end(),regions1.begin(),regions1.end());
-	analysis->plotNPs.push_back(2);
+	analysis->plotNPs.push_back(0);
 	//if(!dofake) analysis->plotNPs.push_back(1);
 	analysis->debug = 0;
 	analysis->writetree = 1;
 	analysis->fcnc = 1;
-	analysis->reduce = 2;
+	analysis->reduce = 3;
 	analysis->dumptruth = 0;
 	//analysis->readTFmeanstd("meanstddevs.txt");
 

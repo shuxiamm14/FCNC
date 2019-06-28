@@ -635,7 +635,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
               if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(j)] < btag70wt && i!=j){
                 TLorentzVector tmpljet_v1;
                 tmpljet_v1.SetPtEtaPhiE((*m_jet_pt)[selected_jets_T->at(j)], (*m_jet_eta)[selected_jets_T->at(j)], (*m_jet_phi)[selected_jets_T->at(j)], (*m_jet_E)[selected_jets_T->at(j)]);
-                double tmpmjj = tmpljet_v1.DeltaR(tmpljet_v);
+                double tmpmjj = (tmpljet_v1+tmpljet_v).M();
                 if(mjjmin > tmpmjj || mjjmin==0) mjjmin = tmpmjj;
               }
             }
@@ -936,26 +936,42 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
         //  }
         //  weights->push_back(valNP);
         //}
-        double tmpfakeSFML = 1;
-        for (int i = 0; i < 2; ++i)
-        {
-          if(origintag[i] != -1){
-                int prongbin = (i==0?tau_numTrack_0:tau_numTrack_1) == 3;
-                int ptbin;
-                double faketaupt = (i==0?tau_pt_0:tau_pt_1) / GeV;
-                if(prongbin == 0) {
-                  if(faketaupt<45) ptbin = 0;
-                  else if(faketaupt < 70) ptbin = 1;
-                  else ptbin = 2;
-                }else{
-                  if(faketaupt<50) ptbin = 0;
-                  else if(faketaupt < 75) ptbin = 1;
-                  else ptbin = 2;
-                }
-                tmpfakeSFML *= fakeSFML[prongbin][ptbin];
+
+        if(origintag[0] >=0 || origintag[1] >= 0){
+          double faketauSF = 1;
+          double faketauSFNP[2][3] = {{1,1,1},{1,1,1}};
+          for (int ifaketau = 0; ifaketau < 2; ++ifaketau){
+
+            if( origintag[ifaketau] < 0) continue; 
+            int prongbin = (ifaketau==0?tau_numTrack_0:tau_numTrack_1)  == 3;
+            int ptbin;
+            double faketaupt = (ifaketau==0?tau_pt_0:tau_pt_1) / GeV;
+            if(prongbin == 0) {
+              if(faketaupt<45) ptbin = 0;
+              else if(faketaupt < 70) ptbin = 1;
+              else ptbin = 2;
+            }else{
+              if(faketaupt<50) ptbin = 0;
+              else if(faketaupt < 75) ptbin = 1;
+              else ptbin = 2;
+            }
+            faketauSF *= fakeSFML[prongbin][ptbin];
+            if(nominaltree) faketauSFNP[prongbin][ptbin] *= fakeSFMLNP[prongbin][ptbin]/fakeSFML[prongbin][ptbin] + 1;
           }
-        }
-        weights->push_back(weight*tmpfakeSFML);
+          weights->push_back(faketauSF);
+          if(nominaltree) {
+            for (int inpprongbin = 0; inpprongbin < 2; ++inpprongbin)
+            {
+              for (int inpptbin = 0; inpptbin < 3; ++inpptbin)
+              {
+                weights->push_back(faketauSFNP[inpprongbin][inpptbin]);
+              }
+            }
+          }
+        }else{
+          weights->push_back(1);
+          if(nominaltree) for (int i = 0 ; i < 6 ; ++i) weights->push_back(1);
+        } //fake SF, need to be multiplied by weight
       }
     }
 

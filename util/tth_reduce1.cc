@@ -16,6 +16,7 @@ int main(int argc, char const *argv[])
 	char inputline[100];
 
 	tthmltree *analysis = new tthmltree();
+	analysis->nominaltree = 1;
 	analysis->fcnc_regions.push_back("reg1l1tau1b2j_os");
 	analysis->fcnc_regions.push_back("reg1l1tau1b3j_os");
 	analysis->fcnc_regions.push_back("reg1l1tau2b2j_os");

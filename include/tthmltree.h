@@ -21,7 +21,7 @@ public:
    double mjjmin;
    double drlb;
    double drtaub;
-
+   bool nominaltree = 0;
    cutflow tthcutflow;
    bool dofit1l2tau = 0;
    bool applyfakeSF = 0;
