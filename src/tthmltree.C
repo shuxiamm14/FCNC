@@ -614,6 +614,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       drtaujmin = 10;
       mtaujmin = 0;
       mjjmin = 0;
+      ljets_v.clear();
       if (nJets_OR_T != selected_jets_T->size()) {
         printf("ERROR: nJets_OR_T,%d != selected_jets_T->size(),%lu; Entry: %lld\n", nJets_OR_T, selected_jets_T->size(), jentry);
         continue;
