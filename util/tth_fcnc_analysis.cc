@@ -1,55 +1,72 @@
 #include "histSaver.h"
 #include "TH1D.h"
 
-void plot()
+
+TString NPnames[] = {
+	"NOMINAL",
+	"fakeSFOrig",
+	"fakeSF",
+	"fakeSFNP1",
+	"fakeSFNP2",
+	"fakeSFNP3",
+	"fakeSFNP4",
+	"fakeSFNP5",
+	"fakeSFNP6"
+};
+
+void plot(int iNP)
 {
 	bool doPlots = 1;
+	bool deriveSSOSSF = 0;
+	bool doTrex = 0;
 
 	int plot_option = 2;
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
+	//tau_plots->inputfilename = "hists"+to_string(iNP);
 	tau_plots->inputfilename = "hists";
 	tau_plots->debug = 0;
-	bool deriveSSOSSF = 1;
+  	tau_plots->blinding = 2;
+	tau_plots->muteregion("35_veto");
+	tau_plots->muteregion("prong");
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
 	int fakeMC = 2; // 0 use DD, 1 include fake in each bkg, 2 show fakes in the plots
 	tau_plots->sensitivevariable = "BDTG_test";
 	tau_plots->add("BDT discriminant","BDTG_test","",10);
 
-  	//tau_plots->add("p_{T,SS#tau}","tauptss","GeV",1);
-  	//tau_plots->add("p_{T,OS#tau}","tauptos","GeV",1);
-    //tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
-    //tau_plots->add("#chi^{2}","chi2","",5);
-    //tau_plots->add("M_{all}","allmass","",5);
-    //tau_plots->add("p_{Z,all}","allpz","",5);
-    //tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
-  	//tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
-  	//tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
-  	//tau_plots->add("m_{t,SM}","t1mass","GeV",5);
-  	//tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
-  	//tau_plots->add("m_{W}","wmass","GeV",5);
-  	//tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
-  	//tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",10);
-  	//tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
-  	//tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
-  	//tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
-  	//tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
-  	//tau_plots->add("m^{T}_{W}","mtw","GeV",10);
-  	//tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",15);
-  	//tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",5);
-  	//tau_plots->add("#eta_{#tau,max}","etamax","",10);
-  	//tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
-  	//tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
-  	//tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
-  	//tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-  	//tau_plots->add("M(#tau#tau#light-jet,min)","mtaujmin","",5);
-  	//tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
-    //tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
-    //tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
+  	tau_plots->add("p_{T,SS#tau}","tauptss","GeV",1);
+  	tau_plots->add("p_{T,OS#tau}","tauptos","GeV",1);
+    tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
+    tau_plots->add("#chi^{2}","chi2","",5);
+    tau_plots->add("M_{all}","allmass","",5);
+    tau_plots->add("p_{Z,all}","allpz","",5);
+    tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
+  	tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
+  	tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
+  	tau_plots->add("m_{t,SM}","t1mass","GeV",5);
+  	tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
+  	tau_plots->add("m_{W}","wmass","GeV",5);
+  	tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
+  	tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",10);
+  	tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
+  	tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
+  	tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
+  	tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
+  	tau_plots->add("m^{T}_{W}","mtw","GeV",10);
+  	tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",15);
+  	tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",5);
+  	tau_plots->add("#eta_{#tau,max}","etamax","",10);
+  	tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
+  	tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
+  	tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
+  	tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
+  	tau_plots->add("M(#tau#tau#light-jet,min)","mtaujmin","",5);
+  	tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
+    tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
+    tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
   	tau_plots->add("N_{l-jet}","njet","",1);
 
     gErrorIgnoreLevel = kWarning;
-  	tau_plots->blinding = 2;
 	TString regions[] = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os",
 						"reg1l2tau2bnj_ss","reg1l2tau2bnj_os","reg1l1tau2b2j_ss","reg1l1tau2b2j_os","reg1l1tau2b3j_ss","reg1l1tau2b3j_os"};
 //	TString regions[] = {"reg1l2tau1bnj_os"};
@@ -65,8 +82,6 @@ void plot()
 	    	tau_plots->add_region(regions[j] + "_" + nprong[k] + "_above35_veto" + bwps[i]);
 	    	tau_plots->add_region(regions[j] + "_" + nprong[k] + "_below35_veto" + bwps[i]);
 	    }
-	tau_plots->muteregion("35_veto");
-	tau_plots->muteregion("prong");
 	vector<TString> samples;
 	samples.push_back("other");
 	samples.push_back("Vjets");
@@ -118,18 +133,18 @@ void plot()
 		for (int j = 0; j < samples.size(); ++j){
 			if(j < 6) tau_plots->stackorder.push_back(samples[j]);
 			if(j == samples.size()-4){
-					tau_plots->read_sample( samples[j], "fcnc_uh_" + origin[6] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], "fcnc_prod_uh_" + origin[6] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], "fcnc_uh_" + origin[6] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], "fcnc_prod_uh_" + origin[6] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 			}else if(j == samples.size()-1){
-					tau_plots->read_sample( samples[j], "fcnc_ch_" + origin[6] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], "fcnc_prod_ch_" + origin[6] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], "fcnc_ch_" + origin[6] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], "fcnc_prod_ch_" + origin[6] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 			}else{
 				for (int i = 0; i < 6; ++i)
 				{
-					if(fakeMC == 1) tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
-					else if(fakeMC == 2) tau_plots->read_sample( "fake", samples[j] + "_" + origin[i] + "_NP0", "Fake MC", kYellow, norm[j]);
+					if(fakeMC == 1) tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					else if(fakeMC == 2) tau_plots->read_sample( "fake", samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), "Fake MC", kYellow, norm[j]);
 				}
-				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[6] + "_NP0", sampletitle[j], (enum EColor)colors[j], norm[j]);
+				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[6] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 			}
 		}
 		if(fakeMC) tau_plots->stackorder.push_back("fake");
@@ -201,6 +216,13 @@ void plot()
   		}
   	}
 
+  	tau_plots->printyield("reg1l2tau1bnj_os_vetobtagwp70");
+  	tau_plots->printyield("reg1l1tau1b2j_os_vetobtagwp70");
+  	tau_plots->printyield("reg1l1tau1b3j_os_vetobtagwp70");
+
+	if(doTrex)
+		tau_plots->write_trexinput(NPnames[iNP],"update");
+
 
 	if(doPlots){
 		for (int i = 6; i < 12; ++i)
@@ -214,6 +236,11 @@ void plot()
 }
 int main(int argc, char const *argv[])
 {
-	plot();
+	//for (int i = 0; i < 9; ++i)
+	//{
+	//	if(i == 1 || i == 2) continue;
+	//	plot(i);
+	//}
+	plot(0);
 	return 0;
 }
