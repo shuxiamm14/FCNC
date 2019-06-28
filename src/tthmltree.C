@@ -795,7 +795,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           t2mass = (tauv2_v + taus_v[0] + tauv1_v + taus_v[1] + cjet_v).M();
           tautaumass = (tauv2_v + taus_v[0] + tauv1_v + taus_v[1]).M();
           TLorentzVector all = taus_v[0]+ taus_v[1] + bjet_v;
-          for (int i = 0; i < ljets_v.size(); ++i)
+          for (int i = 0; i < ljet_indice.size(); ++i)
           {
             all+=ljets_v[ljet_indice[i]];
           }
@@ -821,7 +821,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
             printv(lep_v);
           }
           TLorentzVector all = taus_v[0]+ taus_v[1] + bjet_v;
-          for (int i = 0; i < ljets_v.size(); ++i)
+          for (int i = 0; i < ljet_indice.size(); ++i)
           {
             all+=ljets_v[ljet_indice[i]];
           }
