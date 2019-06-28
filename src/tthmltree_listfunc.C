@@ -531,6 +531,8 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("nljet",&nljet);
     tree->SetBranchAddress("neutrino_pt", & neutrino_pt);
     tree->SetBranchAddress("chi2", &chi2);
+    tree->SetBranchAddress("drlb", &drlb);
+    tree->SetBranchAddress("drtaub", &drtaub);
     tree->SetBranchAddress("mjjmin", &mjjmin);
     tree->SetBranchAddress("allmass", &allmass);
     tree->SetBranchAddress("allpz", &allpz);
