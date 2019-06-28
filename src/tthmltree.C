@@ -131,8 +131,8 @@ void tthmltree::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_
   neutrino[1].SetPtEtaPhiM(par[3],par[4],par[5],0);
   Float_t prob1(0), prob2(0);
 
-  prob1 = getLepTauProb(vectors[tau1].DeltaR(neutrino[0]),neutrino[0].M(),(vectors[tau1]+neutrino[0]).P());
-  prob2 = getHadTauProb(vectors[tau2].DeltaR(neutrino[1]),(vectors[tau2]+neutrino[1]).P());
+  prob1 = getLepTauProb(vectors[tau1].DeltaR(neutrino[0]),neutrino[0].M()/GeV,(vectors[tau1]+neutrino[0]).P()/GeV);
+  prob2 = getHadTauProb(vectors[tau2].DeltaR(neutrino[1]),(vectors[tau2]+neutrino[1]).P()/GeV);
 
   Float_t mass1 = (vectors[tau1]+neutrino[0]).M();
   Float_t mass2 = (vectors[tau2]+neutrino[1]).M();
@@ -173,7 +173,7 @@ void tthmltree::init_hist(TString outputfilename){
     if(reduce == 3) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG_test",&BDTG_test,false,"");
     if(reduce >= 2) {
       fcnc_plots[iNP]->add(100,5.,55.,"#chi^2","chi2",&chi2,false,"");
-      fcnc_plots[iNP]->add(500,0.,1000.,"m_{all}","allmass",&allmass,true,"GeV");
+      fcnc_plots[iNP]->add(500,200.,1200.,"m_{all}","allmass",&allmass,true,"GeV");
       fcnc_plots[iNP]->add(500,0.,1000.,"P_{z,all}","allpz",&allpz,true,"GeV");
     }
     fcnc_plots[iNP]->add(10,25.,125.,"p_{T,#tau}","taupt_0",&tau_pt_0,true,"GeV");
@@ -791,7 +791,11 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           }
           t2mass = (tauv2_v + taus_v[0] + tauv1_v + taus_v[1] + cjet_v).M();
           tautaumass = (tauv2_v + taus_v[0] + tauv1_v + taus_v[1]).M();
-          TLorentzVector all = tauv2_v + taus_v[0] + tauv1_v + taus_v[1] + cjet_v + bjet_v + (ljets_v.size()==2? ljets_v[ljet_indice[1]] : ljets_v[ljet_indice[1]] + ljets_v[ljet_indice[2]]);
+          TLorentzVector all = taus_v[0]+ taus_v[1] + bjet_v;
+          for (int i = 0; i < ljets_v.size(); ++i)
+          {
+            all+=ljets_v[ljet_indice[i]];
+          }
           allmass = all.M();
           allpz = all.Pz();
         }
@@ -813,6 +817,13 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
             printv(taus_v[1]);
             printv(lep_v);
           }
+          TLorentzVector all = taus_v[0]+ taus_v[1] + bjet_v;
+          for (int i = 0; i < ljets_v.size(); ++i)
+          {
+            all+=ljets_v[ljet_indice[i]];
+          }
+          allmass = all.M();
+          allpz = all.Pz();
           phicent = 0;
         } else {
           tau_pt_1 = lep_Pt_0;
