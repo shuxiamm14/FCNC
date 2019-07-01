@@ -16,6 +16,7 @@ int main(int argc, char const *argv[])
 	bool doplot = 0;
 	char inputline[100];
 	bool dofake = 0;
+
 	vector<TString> regions,regions1;
 	if(dofake){
 		regions.push_back("reg1e1mu1tau1b");
@@ -55,6 +56,7 @@ int main(int argc, char const *argv[])
 	regions.insert(regions.end(),regions1.begin(),regions1.end());
 	analysis->plotNPs.push_back(0);
 	//if(!dofake) analysis->plotNPs.push_back(1);
+	analysis->SystematicsName = argv[3];
 	analysis->debug = 0;
 	analysis->writetree = 1;
 	analysis->fcnc = 1;

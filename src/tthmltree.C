@@ -261,18 +261,17 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
   fake_nregions_notau = fake_regions_notau.size();
 
   if(writetree){
-    outputtreefile = new TFile(sample + "_tree.root","update");
+    gSystem->mkdir(TString(PACKAGE_DIR) + "/data/tthmlreduce" + char('0' + reduce));
+    gSystem->mkdir(TString(PACKAGE_DIR) + "/data/tthmlreduce" + char('0' + reduce) + "/" + SystematicsName);
+    printf("create outputfile: %s\n", (TString(PACKAGE_DIR) + "/data/tthmlreduce" + char('0' + reduce) + "/" + SystematicsName + "/" + sample + "_tree.root").Data());
+    outputtreefile = new TFile(TString(PACKAGE_DIR) + "/data/tthmlreduce" + char('0' + reduce) + "/" + SystematicsName + "/" + sample + "_tree.root","recreate");
+
     map<TString, TTree*>::iterator iter;
     for (int i = 0; i < fcnc_nregions; ++i)
     {
       if(debug) printf("init sample:: get region: %s\n",fcnc_regions[i].Data());
-      if (outputtreefile->Get(fcnc_regions[i])) {
-        outputtree[fcnc_regions[i]] = (TTree*)(outputtreefile->Get(fcnc_regions[i]));
-        Init(outputtree[fcnc_regions[i]]);
-      }else{
-        outputtree[fcnc_regions[i]] = new TTree(fcnc_regions[i],fcnc_regions[i]);
-        if(reduce<2 || !fcnc) definetree(outputtree[fcnc_regions[i]]);
-      }
+      outputtree[fcnc_regions[i]] = new TTree(fcnc_regions[i],fcnc_regions[i]);
+      if(reduce<2 || !fcnc) definetree(outputtree[fcnc_regions[i]]);
       if(reduce==2 ){
         outputtree[fcnc_regions[i]]->Branch("chi2",&chi2);
         outputtree[fcnc_regions[i]]->Branch("allmass", &allmass);
@@ -385,6 +384,8 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
 
 
 void tthmltree::Loop(TTree* inputtree, TString samplename) {
+  if(SystematicsName == "nominal") nominaltree = 1;
+  else nominaltree = 0;
   nonfcncmatched = 0;
   fcncmatched = 0;
   leptonicw = 0;

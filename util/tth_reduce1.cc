@@ -21,18 +21,18 @@ int main(int argc, char const *argv[])
 
 	tthmltree *analysis = new tthmltree();
 	analysis->nominaltree = 1;
-	//analysis->fcnc_regions.push_back("reg1l1tau1b2j_os");
-	//analysis->fcnc_regions.push_back("reg1l1tau1b3j_os");
-	//analysis->fcnc_regions.push_back("reg1l1tau2b2j_os");
-	//analysis->fcnc_regions.push_back("reg1l1tau2b3j_os");
-	//analysis->fcnc_regions.push_back("reg1l1tau1b2j_ss");
-	//analysis->fcnc_regions.push_back("reg1l1tau1b3j_ss");
-	//analysis->fcnc_regions.push_back("reg1l1tau2b2j_ss");
-	//analysis->fcnc_regions.push_back("reg1l1tau2b3j_ss");
-	//analysis->fcnc_regions.push_back("reg1l2tau1bnj_os");
-	//analysis->fcnc_regions.push_back("reg1l2tau1bnj_ss");
-	//analysis->fcnc_regions.push_back("reg1l2tau2bnj_os");
-	//analysis->fcnc_regions.push_back("reg1l2tau2bnj_ss");
+	analysis->fcnc_regions.push_back("reg1l1tau1b2j_os");
+	analysis->fcnc_regions.push_back("reg1l1tau1b3j_os");
+	analysis->fcnc_regions.push_back("reg1l1tau2b2j_os");
+	analysis->fcnc_regions.push_back("reg1l1tau2b3j_os");
+	analysis->fcnc_regions.push_back("reg1l1tau1b2j_ss");
+	analysis->fcnc_regions.push_back("reg1l1tau1b3j_ss");
+	analysis->fcnc_regions.push_back("reg1l1tau2b2j_ss");
+	analysis->fcnc_regions.push_back("reg1l1tau2b3j_ss");
+	analysis->fcnc_regions.push_back("reg1l2tau1bnj_os");
+	analysis->fcnc_regions.push_back("reg1l2tau1bnj_ss");
+	analysis->fcnc_regions.push_back("reg1l2tau2bnj_os");
+	analysis->fcnc_regions.push_back("reg1l2tau2bnj_ss");
 	analysis->fake_regions.push_back("reg1e1mu1tau2b");
 	analysis->fake_regions.push_back("reg1l1tau2b1j_os");
 	analysis->fake_regions.push_back("reg1l1tau2b1j_ss");
@@ -42,6 +42,8 @@ int main(int argc, char const *argv[])
 	analysis->fake_regions_notau.push_back("reg1e1mu2bnj");
 	analysis->fake_regions_notau.push_back("reg1l2b2j");
 	analysis->fake_regions_notau.push_back("reg1e1mu2b");
+
+	analysis->SystematicsName = argv[2];
 	analysis->reduce = 1;
 	analysis->debug = 0;
 	analysis->dumptruth = 0;
@@ -65,7 +67,7 @@ int main(int argc, char const *argv[])
 		if(inputline[0]=='#') continue;
 		printf("reading Root file: %s\n", (prefix1 + inputline).Data());
 		TFile inputfile(prefix1 + inputline);
-		analysis->Loop( (TTree*)inputfile.Get(argv[3]), cate);
+		analysis->Loop( (TTree*)inputfile.Get(argv[2]), cate);
 		inputfile.Close();
 	}
 	analysis->finalise_sample();
