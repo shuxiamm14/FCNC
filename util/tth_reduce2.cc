@@ -89,7 +89,7 @@ int main(int argc, char const *argv[])
 	if(doplot) analysis->init_hist(cate);
 	analysis->version = version;
 	analysis->init_sample(cate, title);
-	TString rootfilename = prefix + "/data/reduce" + char(analysis->reduce - 1 + '0') + "/" + argv[3] + "/" + cate + "_tree.root";
+	TString rootfilename = prefix + "/data/tthmlreduce" + char(analysis->reduce - 1 + '0') + "/" + argv[3] + "/" + cate + "_tree.root";
 	printf("reading Root file: %s\n", rootfilename.Data());
 	TFile inputfile(rootfilename);
 	for (auto i : regions)
