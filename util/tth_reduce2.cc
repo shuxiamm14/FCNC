@@ -2,15 +2,21 @@
 
 int main(int argc, char const *argv[])
 {
+	if (argc != 4)
+	{
+		printf("please input reduce scheme, sample.txt, sysname\nFor example: >$tth_reduce2_run 2 fcnc_prod_chd.txt nominal");
+	}
+
 	TString prefix = PACKAGE_DIR;
-	ifstream fn(argv[1]);
+	ifstream fn(argv[2]);
 	if(!fn) {
-	  fprintf(stderr,"Error: can't open file: %s\n",argv[1]);
+	  fprintf(stderr,"Error: can't open file: %s\n",argv[2]);
 	  return 1;
 	}
 	bool doplot = 0;
 	char inputline[100];
 	bool dofake = 0;
+
 	vector<TString> regions,regions1;
 	if(dofake){
 		regions.push_back("reg1e1mu1tau1b");
@@ -50,10 +56,11 @@ int main(int argc, char const *argv[])
 	regions.insert(regions.end(),regions1.begin(),regions1.end());
 	analysis->plotNPs.push_back(0);
 	//if(!dofake) analysis->plotNPs.push_back(1);
+	analysis->SystematicsName = argv[3];
 	analysis->debug = 0;
 	analysis->writetree = 1;
 	analysis->fcnc = 1;
-	analysis->reduce = 3;
+	analysis->reduce = *argv[1]-'0';
 	analysis->dumptruth = 0;
 	//analysis->readTFmeanstd("meanstddevs.txt");
 
@@ -67,7 +74,7 @@ int main(int argc, char const *argv[])
 		doplot = 1;
 	}
 
-	if(analysis->reduce == 3) {
+	if(doplot) {
 		if(TString(cate).Contains("data")){
 			analysis->plotNPs.clear();
 			analysis->plotNPs.push_back(0);
@@ -76,7 +83,7 @@ int main(int argc, char const *argv[])
 	if(doplot) analysis->init_hist(cate);
 	analysis->version = version;
 	analysis->init_sample(cate, title);
-	TString rootfilename = prefix + "/data/reduce" + char(analysis->reduce - 1 + '0') + "/" + cate + "_tree.root";
+	TString rootfilename = prefix + "/data/reduce" + char(analysis->reduce - 1 + '0') + "/" + argv[3] + "/" + cate + "_tree.root";
 	printf("reading Root file: %s\n", rootfilename.Data());
 	TFile inputfile(rootfilename);
 	for (auto i : regions)

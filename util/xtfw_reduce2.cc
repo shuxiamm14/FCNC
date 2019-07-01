@@ -46,6 +46,7 @@ int main(int argc, char const *argv[])
 		analysis->plotNPs.push_back(i);
 	}
 	analysis->reduce = *argv[1]-'0';
+	analysis->SystematicsName = argv[3];
 	analysis->debug = debug;
 	analysis->writetree = analysis->reduce == 2 ? 1 : 0;
 	bool doplot = analysis->reduce == 2 ? 0 : 1;

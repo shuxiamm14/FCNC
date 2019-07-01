@@ -2,6 +2,10 @@
 #include <thread>
 int main(int argc, char const *argv[])
 {
+	if (argc != 3)
+	{
+		printf("please input reduce scheme, sample.txt, sysname\nFor example: >$tth_reduce2_run fcnc_prod_chd.txt nominal");
+	}
 
 	bool doplot = 0;
 	TString prefix1;
@@ -38,6 +42,8 @@ int main(int argc, char const *argv[])
 	analysis->fake_regions_notau.push_back("reg1e1mu2bnj");
 	analysis->fake_regions_notau.push_back("reg1l2b2j");
 	analysis->fake_regions_notau.push_back("reg1e1mu2b");
+
+	analysis->SystematicsName = argv[2];
 	analysis->reduce = 1;
 	analysis->debug = 0;
 	analysis->dumptruth = 0;
@@ -62,7 +68,7 @@ int main(int argc, char const *argv[])
 		if(inputline[0]=='#') continue;
 		printf("reading Root file: %s\n", (prefix1 + inputline).Data());
 		TFile inputfile(prefix1 + inputline);
-		analysis->Loop( (TTree*)inputfile.Get("nominal"), cate);
+		analysis->Loop( (TTree*)inputfile.Get(argv[2]), cate);
 		inputfile.Close();
 	}
 	analysis->finalise_sample();
