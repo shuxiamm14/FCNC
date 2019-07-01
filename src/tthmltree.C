@@ -159,9 +159,9 @@ void tthmltree::init_hist(TString outputfilename){
   TString nprong[] = {"1prong","3prong"};
   
   if(reduce == 3){
-    initMVA("reg1l2tau1bnj");
-    initMVA("reg1l1tau1b2j");
-    initMVA("reg1l1tau1b3j");
+    initMVA("reg1l2tau1bnj_os");
+    initMVA("reg1l1tau1b2j_os");
+    initMVA("reg1l1tau1b3j_os");
   }
 
   for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
