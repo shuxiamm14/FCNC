@@ -7,7 +7,7 @@ void nominal::initMVA(TString fcnc_region){
   doBDT = 1;
 
   reader[fcnc_region] = new TMVA::Reader( "!Color:!Silent" );
-  
+
   reader[fcnc_region]->AddVariable("tau_pt_0",&tau_pt_0);
   reader[fcnc_region]->AddVariable("tau_pt_1",&tau_pt_1);
   reader[fcnc_region]->AddVariable("drtautau",&drtautau);
@@ -41,8 +41,6 @@ void nominal::initMVA(TString fcnc_region){
      reader[fcnc_region]->AddVariable("drlbditau",&drlbditau);
      reader[fcnc_region]->AddVariable("tautauvispt",&tautauvispt);
      reader[fcnc_region]->AddVariable("t2vismass",&t2vismass);
-     reader[fcnc_region]->AddVariable("allpz",&allpz);
-     reader[fcnc_region]->AddVariable("allmass",&allmass);
   }
 
   reader[fcnc_region]->AddVariable("ttvismass",&ttvismass);
