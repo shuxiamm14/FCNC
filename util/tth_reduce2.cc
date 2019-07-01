@@ -55,6 +55,12 @@ int main(int argc, char const *argv[])
 	}
 	regions.insert(regions.end(),regions1.begin(),regions1.end());
 	analysis->plotNPs.push_back(0);
+	analysis->plotNPs.push_back(3);
+	analysis->plotNPs.push_back(4);
+	analysis->plotNPs.push_back(5);
+	analysis->plotNPs.push_back(6);
+	analysis->plotNPs.push_back(7);
+	analysis->plotNPs.push_back(8);
 	//if(!dofake) analysis->plotNPs.push_back(1);
 	analysis->SystematicsName = argv[3];
 	analysis->debug = 0;
