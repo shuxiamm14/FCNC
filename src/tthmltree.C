@@ -881,13 +881,13 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       allpz = fabs(allpz);
       if(debug) printf("eval BDTG\n");
 
-      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"]) BDTG_test = reader["reg1l2tau1bnj"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
-      if(ifregions["reg1l1tau1b2j_ss"] || ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau2b2j_ss"] || ifregions["reg1l1tau2b2j_os"]) BDTG_test = reader["reg1l1tau1b2j"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
-      if(ifregions["reg1l1tau1b3j_ss"] || ifregions["reg1l1tau1b3j_os"] || ifregions["reg1l1tau2b3j_ss"] || ifregions["reg1l1tau2b3j_os"]) BDTG_test = reader["reg1l1tau1b3j"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
-      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"]) BDTG_train = reader["reg1l2tau1bnj"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
-      if(ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau1b2j_ss"] || ifregions["reg1l1tau2b2j_os"] || ifregions["reg1l1tau2b2j_ss"]) BDTG_train = reader["reg1l1tau1b2j"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
-      if(ifregions["reg1l1tau1b3j_os"] || ifregions["reg1l1tau1b3j_ss"] || ifregions["reg1l1tau2b3j_os"] || ifregions["reg1l1tau2b3j_ss"]) BDTG_train = reader["reg1l1tau1b3j"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
-      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau1b3j_os"]) if(samplename.Contains("fcnc") && BDTG_test > 0.5)signalevtnb<<mc_channel_number<<" "<<eventNumber<<endl;
+      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"]) BDTG_test = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+      if(ifregions["reg1l1tau1b2j_ss"] || ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau2b2j_ss"] || ifregions["reg1l1tau2b2j_os"]) BDTG_test = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+      if(ifregions["reg1l1tau1b3j_ss"] || ifregions["reg1l1tau1b3j_os"] || ifregions["reg1l1tau2b3j_ss"] || ifregions["reg1l1tau2b3j_os"]) BDTG_test = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"]) BDTG_train = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+      if(ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau1b2j_ss"] || ifregions["reg1l1tau2b2j_os"] || ifregions["reg1l1tau2b2j_ss"]) BDTG_train = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+      if(ifregions["reg1l1tau1b3j_os"] || ifregions["reg1l1tau1b3j_ss"] || ifregions["reg1l1tau2b3j_os"] || ifregions["reg1l1tau2b3j_ss"]) BDTG_train = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau1b3j_os"]) if(samplename.Contains("fcnc") && BDTG_test > 0.5) signalevtnb<<mc_channel_number<<" "<<eventNumber<<endl;
 
     }
       //===============================fill histograms, fill tree===============================
