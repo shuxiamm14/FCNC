@@ -7,48 +7,46 @@ void nominal::initMVA(TString fcnc_region){
   doBDT = 1;
 
   reader[fcnc_region] = new TMVA::Reader( "!Color:!Silent" );
+  
   reader[fcnc_region]->AddVariable("tau_pt_0",&tau_pt_0);
   reader[fcnc_region]->AddVariable("tau_pt_1",&tau_pt_1);
+  reader[fcnc_region]->AddVariable("drtautau",&drtautau);
+  if(fcnc_region.Contains("2j") || fcnc_region.Contains("3j")){
+     reader[fcnc_region]->AddVariable("etmiss",&etmiss);
+     reader[fcnc_region]->AddVariable("dphitauetmiss",&dphitauetmiss);
+     reader[fcnc_region]->AddVariable("phicent",&phicent);
+     reader[fcnc_region]->AddVariable("tautaumass",&tautaumass);
+     reader[fcnc_region]->AddVariable("t2mass",&t2mass);
+     reader[fcnc_region]->AddVariable("x1fit",&x1fit);
+     reader[fcnc_region]->AddVariable("x2fit",&x2fit);
+     if(fcnc_region.Contains("1l1tau")){
+        reader[fcnc_region]->AddVariable("drlb",&drlb);
+        reader[fcnc_region]->AddVariable("drtaub",&drtaub);
+        reader[fcnc_region]->AddVariable("mjjmin",&mjjmin);
+     }
+     if(fcnc_region != "reg1l1tau1b2j"){
+        reader[fcnc_region]->AddVariable("wmass",&wmass);
+        reader[fcnc_region]->AddVariable("t1mass",&t1mass);
+     }
+     if(fcnc_region.Contains("1l1tau1b2j")){
+        reader[fcnc_region]->AddVariable("allpz",&allpz);
+        reader[fcnc_region]->AddVariable("allmass",&allmass);
+     }
+  }else if(fcnc_region.Contains("1l2tau1")){
+     reader[fcnc_region]->AddVariable("t1vismass",&t1vismass);
+     reader[fcnc_region]->AddVariable("mtaujmin",&mtaujmin);
+     reader[fcnc_region]->AddVariable("drltau",&drltau);
+     reader[fcnc_region]->AddVariable("etamax",&etamax);
+     reader[fcnc_region]->AddVariable("mtw",&mtw);
+     reader[fcnc_region]->AddVariable("drlbditau",&drlbditau);
+     reader[fcnc_region]->AddVariable("tautauvispt",&tautauvispt);
+     reader[fcnc_region]->AddVariable("t2vismass",&t2vismass);
+     reader[fcnc_region]->AddVariable("allpz",&allpz);
+     reader[fcnc_region]->AddVariable("allmass",&allmass);
+  }
 
-   reader[fcnc_region]->AddVariable("tau_pt_0",&tau_pt_0);
-   reader[fcnc_region]->AddVariable("tau_pt_1",&tau_pt_1);
-   reader[fcnc_region]->AddVariable("drtautau",&drtautau);
-   if(fcnc_region.Contains("2j") || fcnc_region.Contains("3j")){
-      reader[fcnc_region]->AddVariable("etmiss",&etmiss);
-      reader[fcnc_region]->AddVariable("dphitauetmiss",&dphitauetmiss);
-      reader[fcnc_region]->AddVariable("phicent",&phicent);
-      reader[fcnc_region]->AddVariable("tautaumass",&tautaumass);
-      reader[fcnc_region]->AddVariable("t2mass",&t2mass);
-      reader[fcnc_region]->AddVariable("x1fit",&x1fit);
-      reader[fcnc_region]->AddVariable("x2fit",&x2fit);
-      if(fcnc_region.Contains("1l1tau")){
-         reader[fcnc_region]->AddVariable("drlb",&drlb);
-         reader[fcnc_region]->AddVariable("drtaub",&drtaub);
-         reader[fcnc_region]->AddVariable("mjjmin",&mjjmin);
-      }
-      if(fcnc_region != "reg1l1tau1b2j"){
-         reader[fcnc_region]->AddVariable("wmass",&wmass);
-         reader[fcnc_region]->AddVariable("t1mass",&t1mass);
-      }
-      if(fcnc_region.Contains("1l1tau1b2j")){
-         reader[fcnc_region]->AddVariable("allpz",&allpz);
-         reader[fcnc_region]->AddVariable("allmass",&allmass);
-      }
-   }else if(fcnc_region.Contains("1l2tau1")){
-      reader[fcnc_region]->AddVariable("t1vismass",&t1vismass);
-      reader[fcnc_region]->AddVariable("mtaujmin",&mtaujmin);
-      reader[fcnc_region]->AddVariable("drltau",&drltau);
-      reader[fcnc_region]->AddVariable("etamax",&etamax);
-      reader[fcnc_region]->AddVariable("mtw",&mtw);
-      reader[fcnc_region]->AddVariable("drlbditau",&drlbditau);
-      reader[fcnc_region]->AddVariable("tautauvispt",&tautauvispt);
-      reader[fcnc_region]->AddVariable("t2vismass",&t2vismass);
-      reader[fcnc_region]->AddVariable("allpz",&allpz);
-      reader[fcnc_region]->AddVariable("allmass",&allmass);
-   }
-
-   reader[fcnc_region]->AddVariable("ttvismass",&ttvismass);
-   reader[fcnc_region]->AddVariable("drtaujmin",&drtaujmin);
+  reader[fcnc_region]->AddVariable("ttvismass",&ttvismass);
+  reader[fcnc_region]->AddVariable("drtaujmin",&drtaujmin);
 
   reader[fcnc_region]->BookMVA( "BDTG_1" , TString(PACKAGE_DIR) + "/config/weights/" + fcnc_region + "TMVAClassification_1_BDTG.weights.xml" );
   reader[fcnc_region]->BookMVA( "BDTG_2" , TString(PACKAGE_DIR) + "/config/weights/" + fcnc_region + "TMVAClassification_2_BDTG.weights.xml" );
