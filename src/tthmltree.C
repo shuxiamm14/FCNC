@@ -610,6 +610,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       }
       nljet = nJets_OR_T - nJets_OR_T_MV2c10_70;
       leading_b = -1;
+      int subleading_b = -1;
       leading_ljet = -1;
       pt_b = 0;
       pt_ljet = 0;
@@ -632,6 +633,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
             pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
             bjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b], (*m_jet_eta)[leading_b], (*m_jet_phi)[leading_b], (*m_jet_E)[leading_b]);
           }else{
+            subleading_b = selected_jets_T->at(i);
             subbjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b], (*m_jet_eta)[leading_b], (*m_jet_phi)[leading_b], (*m_jet_E)[leading_b]);
           }
         }
@@ -659,10 +661,15 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           }
         }
       }
+      if(subleading_b<1 && nJets_OR_T_MV2c10_70 >=2){
+        printf("ERROR: bjet not found\n");
+        continue;
+      }
       if (leading_b == -1) {
         printf("ERROR: bjet not found\n");
         for (iter = ifregions.begin(); iter != ifregions.end(); iter++)
           if(iter->second) printf("region: %s\n", iter->first.Data());
+        continue;
       }
       if (debug == 2) printf("kine fcnc\n");
       if (triggeredfcnc) {
