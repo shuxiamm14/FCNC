@@ -16,9 +16,9 @@ TString NPnames[] = {
 
 void plot(int iNP)
 {
-	bool doPlots = 1;
+	bool doPlots = 0;
 	bool deriveSSOSSF = 0;
-	bool doTrex = 0;
+	bool doTrex = 1;
 
 	int plot_option = 2;
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
@@ -34,38 +34,38 @@ void plot(int iNP)
 	tau_plots->sensitivevariable = "BDTG_test";
 	tau_plots->add("BDT discriminant","BDTG_test","",10);
 
-  	tau_plots->add("p_{T,SS#tau}","tauptss","GeV",1);
-  	tau_plots->add("p_{T,OS#tau}","tauptos","GeV",1);
-    tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
-    tau_plots->add("#chi^{2}","chi2","",5);
-    tau_plots->add("M_{all}","allmass","",5);
-    tau_plots->add("p_{Z,all}","allpz","",5);
-    tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
+  	//tau_plots->add("p_{T,SS#tau}","tauptss","GeV",1);
+  	//tau_plots->add("p_{T,OS#tau}","tauptos","GeV",1);
+    //tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
+    //tau_plots->add("#chi^{2}","chi2","",5);
+    //tau_plots->add("M_{all}","allmass","",5);
+    //tau_plots->add("p_{Z,all}","allpz","",5);
+    //tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
+  	//tau_plots->add("m_{t,SM}","t1mass","GeV",5);
+  	//tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
+  	//tau_plots->add("m_{W}","wmass","GeV",5);
+  	//tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
+  	//tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",10);
+  	//tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
+  	//tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
+  	//tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
+  	//tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
+  	//tau_plots->add("m^{T}_{W}","mtw","GeV",10);
+  	//tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",15);
+  	//tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",5);
+  	//tau_plots->add("#eta_{#tau,max}","etamax","",10);
+  	//tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
+  	//tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
+  	//tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
+  	//tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
+  	//tau_plots->add("M(#tau#tau#light-jet,min)","mtaujmin","",5);
+  	//tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
+    //tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
+    //tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
+  	//tau_plots->add("N_{l-jet}","njet","",1);
+
   	tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
   	tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
-  	tau_plots->add("m_{t,SM}","t1mass","GeV",5);
-  	tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
-  	tau_plots->add("m_{W}","wmass","GeV",5);
-  	tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
-  	tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",10);
-  	tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
-  	tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
-  	tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
-  	tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
-  	tau_plots->add("m^{T}_{W}","mtw","GeV",10);
-  	tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",15);
-  	tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",5);
-  	tau_plots->add("#eta_{#tau,max}","etamax","",10);
-  	tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
-  	tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
-  	tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
-  	tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-  	tau_plots->add("M(#tau#tau#light-jet,min)","mtaujmin","",5);
-  	tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
-    tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
-    tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
-  	tau_plots->add("N_{l-jet}","njet","",1);
-
     gErrorIgnoreLevel = kWarning;
 	TString regions[] = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os",
 						"reg1l2tau2bnj_ss","reg1l2tau2bnj_os","reg1l1tau2b2j_ss","reg1l1tau2b2j_os","reg1l1tau2b3j_ss","reg1l1tau2b3j_os"};
@@ -236,11 +236,11 @@ void plot(int iNP)
 }
 int main(int argc, char const *argv[])
 {
-	//for (int i = 0; i < 9; ++i)
-	//{
-	//	if(i == 1 || i == 2) continue;
-	//	plot(i);
-	//}
-	plot(0);
+	for (int i = 0; i < 9; ++i)
+	{
+		if(i == 1 || i == 2) continue;
+		plot(i);
+	}
+	//plot(0);
 	return 0;
 }
