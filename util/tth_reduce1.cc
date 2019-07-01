@@ -2,6 +2,10 @@
 #include <thread>
 int main(int argc, char const *argv[])
 {
+	if (argc != 3)
+	{
+		printf("please input reduce scheme, sample.txt, sysname\nFor example: >$tth_reduce2_run fcnc_prod_chd.txt nominal");
+	}
 
 	bool doplot = 0;
 	TString prefix1;
@@ -61,7 +65,7 @@ int main(int argc, char const *argv[])
 		if(inputline[0]=='#') continue;
 		printf("reading Root file: %s\n", (prefix1 + inputline).Data());
 		TFile inputfile(prefix1 + inputline);
-		analysis->Loop( (TTree*)inputfile.Get("nominal"), cate);
+		analysis->Loop( (TTree*)inputfile.Get(argv[3]), cate);
 		inputfile.Close();
 	}
 	analysis->finalise_sample();
