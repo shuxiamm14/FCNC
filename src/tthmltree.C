@@ -518,8 +518,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       if(SLtrig_match && onelep_type && (!tightLep || SelectTLepid(0)) && nTaus_OR_Pt25 && (tau_passEleBDT_0 && tau_passMuonOLR_0)){
         ifregions["reg1l1tau1b2j_os"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
         ifregions["reg1l1tau1b3j_os"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
-        ifregions["reg1l1tau2b2j_os"] = nJets_OR_T == 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
-        ifregions["reg1l1tau2b3j_os"] = nJets_OR_T >= 5 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l1tau2b2j_os"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l1tau2b3j_os"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
         ifregions["reg1l1tau1b2j_ss"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
         ifregions["reg1l1tau1b3j_ss"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
         ifregions["reg1l1tau2b2j_ss"] = nJets_OR_T == 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
@@ -615,6 +615,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       mtaujmin = 0;
       mjjmin = 0;
       ljets_v.clear();
+      TLorentzVector subbjet_v;
       if (nJets_OR_T != selected_jets_T->size()) {
         printf("ERROR: nJets_OR_T,%d != selected_jets_T->size(),%lu; Entry: %lld\n", nJets_OR_T, selected_jets_T->size(), jentry);
         continue;
@@ -622,10 +623,14 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       if (debug == 2) printf("Loop jets\n");
       for (int i = 0; i < nJets_OR_T; ++i) {
         if(debug == 2) printf("%dth jet btag: %f\n", i,(*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)]);
-        if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > btag70wt && leading_b == -1) {
-          leading_b = selected_jets_T->at(i);
-          pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
-          bjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b], (*m_jet_eta)[leading_b], (*m_jet_phi)[leading_b], (*m_jet_E)[leading_b]);
+        if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > btag70wt) {
+          if(leading_b == -1){
+            leading_b = selected_jets_T->at(i);
+            pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
+            bjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b], (*m_jet_eta)[leading_b], (*m_jet_phi)[leading_b], (*m_jet_E)[leading_b]);
+          }else{
+            subbjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b], (*m_jet_eta)[leading_b], (*m_jet_phi)[leading_b], (*m_jet_E)[leading_b]);
+          }
         }
         if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] <= btag70wt) {
           TLorentzVector tmpljet_v;
@@ -662,24 +667,25 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
         if (nTaus_OR_Pt25 == 2 && tau_MV2c10_1 > btagwpCut[1]) continue;
         tthcutflow.fill();
         if (nTaus_OR_Pt25 >= 2) {
-          if (nJets_OR_T - nJets_OR_T_MV2c10_70 > 1)
+          if (nljet > 1)
             //ljet_indice = findcjetML("lep2tau",ljets_v,bjet_v,lep_v,taus_v,eventNumber%2);
             ljet_indice = findcjet("lep2tau",ljets_v,bjet_v,lep_v,taus_v);
-          else if(nJets_OR_T - nJets_OR_T_MV2c10_70 == 1) ljet_indice.push_back(0);
+          else if(nljet == 1) ljet_indice.push_back(0);
         } else {
-          if (nJets_OR_T - nJets_OR_T_MV2c10_70 > 1){
-            //ljet_indice = findcjetML("lephad",ljets_v,bjet_v,lep_v,taus_v,eventNumber%2);
-            ljet_indice = findcjet("lephad",ljets_v,bjet_v,lep_v,taus_v);
-            if (debug) {
-              printf("wmass: %f, t1mass: %f, cjet %d, wjet1 %d\n", wmass, t1mass, ljet_indice[0], ljet_indice[1]);
-            }
-            if(ljets_v.size()==2){
-              wmass = (ljets_v[0] + ljets_v[1]).M();
-              t1mass = (ljets_v[0] + ljets_v[1] + bjet_v).M();
-            }else{
-              wmass = (ljets_v[ljet_indice[1]] + ljets_v[ljet_indice[2]]).M();
-              t1mass = (ljets_v[ljet_indice[1]] + ljets_v[ljet_indice[2]] + bjet_v).M();
-            }
+          if(nJets_OR_T_MV2c10_70 == 2) {
+            ljets_v.push_back(subbjet_v);
+          }
+          //ljet_indice = findcjetML("lephad",ljets_v,bjet_v,lep_v,taus_v,eventNumber%2);
+          ljet_indice = findcjet("lephad",ljets_v,bjet_v,lep_v,taus_v);
+          if (debug) {
+            printf("wmass: %f, t1mass: %f, cjet %d, wjet1 %d\n", wmass, t1mass, ljet_indice[0], ljet_indice[1]);
+          }
+          if(ljets_v.size()==2){
+            wmass = (ljets_v[0] + ljets_v[1]).M();
+            t1mass = (ljets_v[0] + ljets_v[1] + bjet_v).M();
+          }else{
+            wmass = (ljets_v[ljet_indice[1]] + ljets_v[ljet_indice[2]]).M();
+            t1mass = (ljets_v[ljet_indice[1]] + ljets_v[ljet_indice[2]] + bjet_v).M();
           }
         }
         if (nJets_OR_T >= 2) cjet_v = ljets_v[ljet_indice[0]];
@@ -845,7 +851,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
         drtautau = taus_v[0].DeltaR(taus_v[1]);
         drtauj = nJets_OR_T >= 2 ? (taus_v[0] + taus_v[1]).DeltaR(cjet_v) : 0;
 
-      } else if (nJets_OR_T - nJets_OR_T_MV2c10_70) {
+      } else if (nljet) {
         if (ifregions["reg1l1tau2b1j_os"] || ifregions["reg1l1tau2b1j_ss"]) {
           if(nJets_OR_T != 3) continue;
           taulmass = (taus_v[1] + ljets_v[0]).M();
