@@ -19,8 +19,9 @@ void plot(int iNP)
 	bool doPlots = 1;
 	bool deriveSSOSSF = 0;
 	bool doTrex = 0;
-	bool plotnj = 1;
+	bool plotnj = 0;
 	int plot_option = 2;
+	int fakeMC = 0; // 0 use DD, 1 include fake in each bkg, 2 show fakes in the plots
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
 	//tau_plots->inputfilename = "hists"+to_string(iNP);
@@ -30,7 +31,6 @@ void plot(int iNP)
 	tau_plots->muteregion("35_veto");
 	tau_plots->muteregion("prong");
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
-	int fakeMC = 2; // 0 use DD, 1 include fake in each bkg, 2 show fakes in the plots
 	if(plotnj){
   		tau_plots->add("N_{l-jet}","njet","",1);
 		tau_plots->muteregion("3j");
@@ -210,15 +210,14 @@ void plot(int iNP)
 
 	if(plot_option == 2){
 		if(!fakeMC){
-  			//tau_plots->templatesample("reg2mtau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b3jos","fake","Fake",kYellow,1);
-  			//tau_plots->templatesample("reg2mtau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg2mtau1b2jos","fake","Fake",kYellow,1);
-			tau_plots->templatesample("reg1l2tau1bnj_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l2tau1bnj_os_vetobtagwp70","fake","Fake",kYellow,1);
-			tau_plots->templatesample("reg1l1tau1b2j_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b2j_os_vetobtagwp70","fake","Fake",kYellow,1);
-			tau_plots->templatesample("reg1l1tau1b3j_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b3j_os_vetobtagwp70","fake","Fake",kYellow,1);
-
-			tau_plots->templatesample("reg1l2tau2bnj_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l2tau2bnj_os_vetobtagwp70","fake","Fake",kYellow,1);
-			tau_plots->templatesample("reg1l1tau2b2j_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau2b2j_os_vetobtagwp70","fake","Fake",kYellow,1);
-			tau_plots->templatesample("reg1l1tau2b3j_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau2b3j_os_vetobtagwp70","fake","Fake",kYellow,1);
+			//tau_plots->templatesample("reg1l2tau1bnj_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l2tau1bnj_os_vetobtagwp70","fake","Fake",kYellow,1);
+			//tau_plots->templatesample("reg1l1tau1b2j_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b2j_os_vetobtagwp70","fake","Fake",kYellow,1);
+			//tau_plots->templatesample("reg1l1tau1b3j_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b3j_os_vetobtagwp70","fake","Fake",kYellow,1);
+			//tau_plots->templatesample("reg1l2tau2bnj_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l2tau2bnj_os_vetobtagwp70","fake","Fake",kYellow,1);
+			//tau_plots->templatesample("reg1l1tau2b2j_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau2b2j_os_vetobtagwp70","fake","Fake",kYellow,1);
+			//tau_plots->templatesample("reg1l1tau2b3j_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau2b3j_os_vetobtagwp70","fake","Fake",kYellow,1);
+			tau_plots->templatesample("reg1l1tau2b2j_os_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b2j_os_vetobtagwp70","fake","Fake",kYellow,1);
+			tau_plots->templatesample("reg1l1tau2b3j_os_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b3j_os_vetobtagwp70","fake","Fake",kYellow,1);
 			tau_plots->stackorder.push_back("fake");
   		}
   	}

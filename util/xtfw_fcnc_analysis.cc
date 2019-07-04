@@ -187,7 +187,7 @@ void plot(int iNP)
 	tau_plots->inputfilename = "hists"+to_string(iNP);
 	tau_plots->debug = 0;
 	bool calibfake = 1;
-	bool fakeMC = 0;
+	bool fakeMC = 1;
 	bool doTrex = 0;
 	tau_plots->sensitivevariable = "BDTG_test";
 	tau_plots->add("BDT discriminant","BDTG_test","",5);
