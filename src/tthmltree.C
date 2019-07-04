@@ -523,8 +523,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
         ifregions["reg1l1tau2b3j_os"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
         ifregions["reg1l1tau1b2j_ss"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
         ifregions["reg1l1tau1b3j_ss"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-        ifregions["reg1l1tau2b2j_ss"] = nJets_OR_T == 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-        ifregions["reg1l1tau2b3j_ss"] = nJets_OR_T >= 5 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+        ifregions["reg1l1tau2b2j_ss"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+        ifregions["reg1l1tau2b3j_ss"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
         ifregions["reg1l2tau1bnj_os"] = nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 < 0;
         ifregions["reg1l2tau1bnj_ss"] = nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 > 0;
         ifregions["reg1l2tau2bnj_os"] = nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 < 0;
@@ -607,8 +607,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
         }
       }
       nljet = nJets_OR_T - nJets_OR_T_MV2c10_70;
-      leading_b = -1;
-      int subleading_b = -1;
+      int highscore_b = -1;
+      int subhighscore_b = -1;
       leading_ljet = -1;
       pt_b = 0;
       pt_ljet = 0;
@@ -626,13 +626,21 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       for (int i = 0; i < nJets_OR_T; ++i) {
         if(debug == 2) printf("%dth jet btag: %f\n", i,(*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)]);
         if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > btag70wt) {
-          if(leading_b == -1){
-            leading_b = selected_jets_T->at(i);
+          if(highscore_b == -1){
+            highscore_b = selected_jets_T->at(i);
             pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
-            bjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b], (*m_jet_eta)[leading_b], (*m_jet_phi)[leading_b], (*m_jet_E)[leading_b]);
+            bjet_v.SetPtEtaPhiE((*m_jet_pt)[highscore_b], (*m_jet_eta)[highscore_b], (*m_jet_phi)[highscore_b], (*m_jet_E)[highscore_b]);
           }else{
-            subleading_b = selected_jets_T->at(i);
-            subbjet_v.SetPtEtaPhiE((*m_jet_pt)[leading_b], (*m_jet_eta)[leading_b], (*m_jet_phi)[leading_b], (*m_jet_E)[leading_b]);
+            if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)]<(*m_jet_flavor_weight_MV2c10)[highscore_b]){
+              subhighscore_b = selected_jets_T->at(i);
+              subbjet_v.SetPtEtaPhiE((*m_jet_pt)[highscore_b], (*m_jet_eta)[highscore_b], (*m_jet_phi)[highscore_b], (*m_jet_E)[highscore_b]);
+            }else{
+              subhighscore_b = highscore_b;
+              subbjet_v = bjet_v;
+              highscore_b = selected_jets_T->at(i);
+              pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
+              bjet_v.SetPtEtaPhiE((*m_jet_pt)[highscore_b], (*m_jet_eta)[highscore_b], (*m_jet_phi)[highscore_b], (*m_jet_E)[highscore_b]);
+            }
           }
         }
         if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] <= btag70wt) {
@@ -659,11 +667,11 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           }
         }
       }
-      if(subleading_b<1 && nJets_OR_T_MV2c10_70 >=2){
+      if(subhighscore_b<1 && nJets_OR_T_MV2c10_70 >=2){
         printf("ERROR: bjet not found\n");
         continue;
       }
-      if (leading_b == -1) {
+      if (highscore_b == -1) {
         printf("ERROR: bjet not found\n");
         for (iter = ifregions.begin(); iter != ifregions.end(); iter++)
           if(iter->second) printf("region: %s\n", iter->first.Data());

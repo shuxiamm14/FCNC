@@ -187,7 +187,7 @@ void plot(int iNP)
 	tau_plots->inputfilename = "hists"+to_string(iNP);
 	tau_plots->debug = 0;
 	bool calibfake = 1;
-	bool fakeMC = 0;
+	bool fakeMC = 1;
 	bool doTrex = 0;
 	tau_plots->sensitivevariable = "BDTG_test";
 	tau_plots->add("BDT discriminant","BDTG_test","",5);
@@ -389,8 +389,8 @@ void plot(int iNP)
   			////tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
   		}
   	}
-  	tau_plots->printyield("reg2mtau1b3jos");
-  	tau_plots->printyield("reg2mtau1b2jos");
+  	//tau_plots->printyield("reg2mtau1b3jos");
+  	//tau_plots->printyield("reg2mtau1b2jos");
 	if(doTrex)
 		tau_plots->write_trexinput(NPnames[iNP],"update");
 	if(doPlots){
