@@ -669,7 +669,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           }
         }
       }
-      if(subhighscore_b<1 && nJets_OR_T_MV2c10_70 >=2){
+      if(subhighscore_b<0 && nJets_OR_T_MV2c10_70 >=2){
         printf("ERROR: bjet not found\n");
         continue;
       }
