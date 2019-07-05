@@ -705,6 +705,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           if (debug) {
             printf("wmass: %f, t1mass: %f, cjet %d, wjet1 %d\n", wmass, t1mass, ljet_indice[0], ljet_indice[1]);
           }
+          if(debug) printf("nljets: %d\n", ljets_v.size());
           if(ljets_v.size()==2){
             wmass = (ljets_v[0] + ljets_v[1]).M();
             t1mass = (ljets_v[0] + ljets_v[1] + bjet_v).M();
