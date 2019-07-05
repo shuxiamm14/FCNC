@@ -61,14 +61,12 @@ void hadhadtree::definetree(TTree * tree) {
   
     if(!isData) {
       tree->Branch("taus_matched_p4",taus_matched_p4);
+      tree->Branch("taus_matched_pdgId",taus_matched_pdgId);
       if(nominaltree){
-        tree->Branch("bjets_wztruth_p4",bjets_wztruth_p4);
-        tree->Branch("bjets_wztruth_pdgid",bjets_wztruth_pdgid);
         tree->Branch("met_truth_p4", &met_truth_p4);
         tree->Branch("met_truth_sumet", &met_truth_sumet);
         tree->Branch("taus_matched_mother_pdgId",taus_matched_mother_pdgId);
         tree->Branch("taus_matched_mother_status",taus_matched_mother_status);
-        tree->Branch("taus_matched_pdgId",taus_matched_pdgId);
         tree->Branch("taus_matched_vis_p4",taus_matched_vis_p4);
         tree->Branch("jets_wztruth_p4",jets_wztruth_p4);
         tree->Branch("jets_wztruth_pdgid",jets_wztruth_pdgid);
@@ -714,17 +712,17 @@ void hadhadtree::Init(TTree *tree)
     tree->SetBranchAddress("taus_id", &taus_id);
     tree->SetBranchAddress("taus_b_tagged", &taus_b_tagged);
     tree->SetBranchAddress("taus_decay_mode", &taus_decay_mode);
-    tree->SetBranchAddress("bjets_wztruth_p4", &bjets_wztruth_p4);
-    tree->SetBranchAddress("bjets_wztruth_pdgid", &bjets_wztruth_pdgid);
-    tree->SetBranchAddress("met_truth_p4", &met_truth_p4);
-    tree->SetBranchAddress("met_truth_sumet", &met_truth_sumet);
-    tree->SetBranchAddress("taus_matched_mother_pdgId", &taus_matched_mother_pdgId);
-    tree->SetBranchAddress("taus_matched_mother_status", &taus_matched_mother_status);
+    if(nominaltree){
+        tree->SetBranchAddress("met_truth_p4", &met_truth_p4);
+        tree->SetBranchAddress("met_truth_sumet", &met_truth_sumet);
+        tree->SetBranchAddress("taus_matched_mother_pdgId",taus_matched_mother_pdgId);
+        tree->SetBranchAddress("taus_matched_mother_status",taus_matched_mother_status);
+        tree->SetBranchAddress("taus_matched_vis_p4",taus_matched_vis_p4);
+        tree->SetBranchAddress("jets_wztruth_p4",jets_wztruth_p4);
+        tree->SetBranchAddress("jets_wztruth_pdgid",jets_wztruth_pdgid);
+    }
     tree->SetBranchAddress("taus_matched_p4", &taus_matched_p4);
     tree->SetBranchAddress("taus_matched_pdgId", &taus_matched_pdgId);
-    tree->SetBranchAddress("taus_matched_vis_p4", &taus_matched_vis_p4);
-    tree->SetBranchAddress("jets_wztruth_p4", &jets_wztruth_p4);
-    tree->SetBranchAddress("jets_wztruth_pdgid", &jets_wztruth_pdgid);
     tree->SetBranchAddress("taus_n_charged_tracks", &taus_n_charged_tracks);
     tree->SetBranchAddress("taus_p4", &taus_p4);
     tree->SetBranchAddress("taus_q", &taus_q);
