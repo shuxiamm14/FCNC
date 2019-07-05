@@ -674,6 +674,10 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
             mtaujmin = tmpm;
           }
         }
+        if(drtaujmin<0.4) {
+          printf("drtaujmin<0.4\n");
+          continue;
+        }
       }
       if(subhighscore_b<0 && nJets_OR_T_MV2c10_70 >=2){
         printf("ERROR: bjet not found\n");
