@@ -636,6 +636,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
             if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)]<(*m_jet_flavor_weight_MV2c10)[highscore_b]){
               subhighscore_b = selected_jets_T->at(i);
               subbjet_v.SetPtEtaPhiE((*m_jet_pt)[highscore_b], (*m_jet_eta)[highscore_b], (*m_jet_phi)[highscore_b], (*m_jet_E)[highscore_b]);
+              if (triggeredfcnc) { ljets_v.push_back(subbjet_v); }
             }else{
               subhighscore_b = highscore_b;
               subbjet_v = bjet_v;
