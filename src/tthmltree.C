@@ -676,7 +676,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           }
         }
         if(drtaujmin<0.4) {
-          printf("drtaujmin<0.4\n");
+          if(debug) printf("drtaujmin<0.4\n");
           continue;
         }
       }
