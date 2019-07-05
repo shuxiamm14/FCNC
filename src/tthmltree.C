@@ -625,7 +625,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       if (debug == 2) printf("Loop jets\n");
       for (int i = 0; i < nJets_OR_T; ++i) {
         if(debug == 2) printf("%dth jet btag: %f\n", i,(*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)]);
-        if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > btag70wt) {
+        if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > btagwpCut[1]) {
           if(highscore_b == -1){
             highscore_b = selected_jets_T->at(i);
             pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
@@ -644,7 +644,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
             }
           }
         }
-        if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] <= btag70wt) {
+        if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] <= btagwpCut[1]) {
           TLorentzVector tmpljet_v;
           tmpljet_v.SetPtEtaPhiE((*m_jet_pt)[selected_jets_T->at(i)], (*m_jet_eta)[selected_jets_T->at(i)], (*m_jet_phi)[selected_jets_T->at(i)], (*m_jet_E)[selected_jets_T->at(i)]);
           ljets_v.push_back(tmpljet_v);
