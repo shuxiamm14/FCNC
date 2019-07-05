@@ -642,6 +642,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
               highscore_b = selected_jets_T->at(i);
               pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
               bjet_v.SetPtEtaPhiE((*m_jet_pt)[highscore_b], (*m_jet_eta)[highscore_b], (*m_jet_phi)[highscore_b], (*m_jet_E)[highscore_b]);
+              if (triggeredfcnc) { ljets_v.push_back(subbjet_v); }
             }
           }
         }
@@ -649,23 +650,28 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           TLorentzVector tmpljet_v;
           tmpljet_v.SetPtEtaPhiE((*m_jet_pt)[selected_jets_T->at(i)], (*m_jet_eta)[selected_jets_T->at(i)], (*m_jet_phi)[selected_jets_T->at(i)], (*m_jet_E)[selected_jets_T->at(i)]);
           ljets_v.push_back(tmpljet_v);
-          if (triggeredfcnc) {
-            for (int j = 0; j < nJets_OR_T; ++j) {
-              if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(j)] < btag70wt && i!=j){
-                TLorentzVector tmpljet_v1;
-                tmpljet_v1.SetPtEtaPhiE((*m_jet_pt)[selected_jets_T->at(j)], (*m_jet_eta)[selected_jets_T->at(j)], (*m_jet_phi)[selected_jets_T->at(j)], (*m_jet_E)[selected_jets_T->at(j)]);
-                double tmpmjj = (tmpljet_v1+tmpljet_v).M();
-                if(mjjmin > tmpmjj || mjjmin==0) mjjmin = tmpmjj;
-              }
-            }
-            double tmpdr = min(taus_v[0].DeltaR(tmpljet_v), taus_v[1].DeltaR(tmpljet_v));
-            if (drtaujmin > tmpdr) {
-              drtaujmin = tmpdr;
-              mtaujmin = (tmpljet_v + taus_v[1] + taus_v[0]).M();
-            }
-          } else if (reloop) {
+          if (reloop && !triggeredfcnc) {
             pt_ljet = (*m_jet_pt)[selected_jets_T->at(i)];
             reloop = 0;
+          }
+        }
+      }
+      if (triggeredfcnc) {
+        double tmpdr;
+        double tmpm;
+        for (auto lj1:ljets_v) {
+          for(auto lj2:ljets_v){
+            if (!(lj1==lj2)){
+              double tmpmjj = (lj1+lj2).M();
+              if(mjjmin > tmpmjj || mjjmin==0) mjjmin = tmpmjj;
+            }
+          }
+          tmpdr = min(taus_v[0].DeltaR(lj1), taus_v[1].DeltaR(lj1));
+          tmpm = min((taus_v[0]+lj1).M(), (taus_v[1]+lj1).M());
+          if (drtaujmin > tmpdr) {
+            drtaujmin = tmpdr;
+          }if(mtaujmin > tmpm){
+            mtaujmin = tmpm;
           }
         }
       }
@@ -690,9 +696,6 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
             ljet_indice = findcjet("lep2tau",ljets_v,bjet_v,lep_v,taus_v);
           else if(nljet == 1) ljet_indice.push_back(0);
         } else {
-          if(nJets_OR_T_MV2c10_70 == 2) {
-            ljets_v.push_back(subbjet_v);
-          }
           //ljet_indice = findcjetML("lephad",ljets_v,bjet_v,lep_v,taus_v,eventNumber%2);
           ljet_indice = findcjet("lephad",ljets_v,bjet_v,lep_v,taus_v);
           if (debug) {
