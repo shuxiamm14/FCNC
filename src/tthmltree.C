@@ -468,7 +468,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       if(namestring.Contains("2tau")) fcncreg = "1l2tau";
       else if(namestring.Contains("2j")) fcncreg = "lh3j";
       else if(namestring.Contains("3j")) fcncreg = "lh4j";
-      if(namestring.Contains("85")) defaultbtagwp = btagwpCut[0];
+      if(namestring.Contains("85")) defaultbtagwp = btagwpCut[3];
     }
   }
   float ngluon = 0;
@@ -691,7 +691,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
         }
         tthcutflow.fill();
       }
-      if(subhighscore_b<0 && nJets_OR_T_MV2c10_70 >=2){
+      if(subhighscore_b<0 && (defaultbtagwp == btagwpCut[1] ? nJets_OR_T_MV2c10_70 >=2 : nJets_OR_T_MV2c10_85 >=2)){
         printf("ERROR: bjet not found\n");
         continue;
       }
