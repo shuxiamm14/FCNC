@@ -458,9 +458,18 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
   }
   int nloop = debug ? 1000 : nentries;
   bool triggeredfcnc = 0;
+  TString fcncreg = "";
+  double defaultbtagwp = btagwpCut[1];
   if(reduce > 1) {
-    triggeredfcnc = ((TString)inputtree->GetName()).Contains("reg1l1tau1b2j")|| ((TString)inputtree->GetName()).Contains("reg1l1tau1b3j") || ((TString)inputtree->GetName()).Contains("reg1l2tau1bnj");
-    triggeredfcnc = triggeredfcnc || ((TString)inputtree->GetName()).Contains("reg1l1tau2b2j")|| ((TString)inputtree->GetName()).Contains("reg1l1tau2b3j") || ((TString)inputtree->GetName()).Contains("reg1l2tau2bnj");
+    TString namestring = ((TString)inputtree->GetName());
+    triggeredfcnc = namestring.Contains("1l1tau1b2j")|| namestring.Contains("1l1tau1b3j") || namestring.Contains("1l2tau1bnj");
+    triggeredfcnc = triggeredfcnc || namestring.Contains("1l1tau2b2j")|| namestring.Contains("1l1tau2b3j") || namestring.Contains("1l2tau2bnj");
+    if(triggeredfcnc){
+      if(namestring.Contains("2tau")) fcncreg = "1l2tau";
+      else if(namestring.Contains("2j")) fcncreg = "lh3j";
+      else if(namestring.Contains("3j")) fcncreg = "lh4j";
+      if(namestring.Contains("85")) defaultbtagwp = btagwpCut[0];
+    }
   }
   float ngluon = 0;
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
@@ -520,19 +529,20 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       if(SLtrig_match && onelep_type && (!tightLep || SelectTLepid(0)) && nTaus_OR_Pt25 && (tau_passEleBDT_0 && tau_passMuonOLR_0)){
         ifregions["reg1l1tau1b2j_os"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
         ifregions["reg1l1tau1b3j_os"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
-        ifregions["reg1l1tau2b2j_os"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
-        ifregions["reg1l1tau2b3j_os"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
         ifregions["reg1l1tau1b2j_ss"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
         ifregions["reg1l1tau1b3j_ss"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-        ifregions["reg1l1tau2b2j_ss"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-        ifregions["reg1l1tau2b3j_ss"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+        ifregions["reg1l1tau2b2j_os_70"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l1tau2b3j_os_70"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l1tau2b2j_ss_70"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+        ifregions["reg1l1tau2b3j_ss_70"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+        ifregions["reg1l1tau2b2j_os_85"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l1tau2b3j_os_85"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l1tau2b2j_ss_85"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+        ifregions["reg1l1tau2b3j_ss_85"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
         ifregions["reg1l2tau1bnj_os"] = nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 < 0;
         ifregions["reg1l2tau1bnj_ss"] = nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 > 0;
         ifregions["reg1l2tau2bnj_os"] = nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 < 0;
         ifregions["reg1l2tau2bnj_ss"] = nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 > 0;
-        if (ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau1b3j_os"] || ifregions["reg1l1tau2b2j_os"] || ifregions["reg1l1tau2b3j_os"] || ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau2bnj_os"]
-          ||ifregions["reg1l1tau1b2j_ss"] || ifregions["reg1l1tau1b3j_ss"] || ifregions["reg1l1tau2b2j_ss"] || ifregions["reg1l1tau2b3j_ss"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_ss"])
-          triggeredfcnc = 1;
         ifregions["reg1l2b2j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 0;
         ifregions["reg1l1tau2b1j_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 3 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
         ifregions["reg1l1tau2b1j_ss"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 3 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
@@ -627,7 +637,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       if (debug == 2) printf("Loop jets\n");
       for (int i = 0; i < nJets_OR_T; ++i) {
         if(debug == 2) printf("%dth jet btag: %f\n", i,(*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)]);
-        if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > btagwpCut[1]) {
+        if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > defaultbtagwp) {
           if(highscore_b == -1){
             highscore_b = selected_jets_T->at(i);
             pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
@@ -899,12 +909,12 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       allpz = fabs(allpz);
       if(debug) printf("eval BDTG\n");
 
-      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"]) BDTG_test = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
-      if(ifregions["reg1l1tau1b2j_ss"] || ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau2b2j_ss"] || ifregions["reg1l1tau2b2j_os"]) BDTG_test = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
-      if(ifregions["reg1l1tau1b3j_ss"] || ifregions["reg1l1tau1b3j_os"] || ifregions["reg1l1tau2b3j_ss"] || ifregions["reg1l1tau2b3j_os"]) BDTG_test = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
-      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"]) BDTG_train = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
-      if(ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau1b2j_ss"] || ifregions["reg1l1tau2b2j_os"] || ifregions["reg1l1tau2b2j_ss"]) BDTG_train = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
-      if(ifregions["reg1l1tau1b3j_os"] || ifregions["reg1l1tau1b3j_ss"] || ifregions["reg1l1tau2b3j_os"] || ifregions["reg1l1tau2b3j_ss"]) BDTG_train = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+      if(fcncreg=="1l2tau") BDTG_test  = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+      if(fcncreg=="lh3j"  ) BDTG_test  = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+      if(fcncreg=="lh4j"  ) BDTG_test  = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+      if(fcncreg=="1l2tau") BDTG_train = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+      if(fcncreg=="lh3j"  ) BDTG_train = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+      if(fcncreg=="lh4j"  ) BDTG_train = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
       if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau1b3j_os"]) if(samplename.Contains("fcnc") && BDTG_test > 0.5) signalevtnb<<mc_channel_number<<" "<<eventNumber<<endl;
 
     }
