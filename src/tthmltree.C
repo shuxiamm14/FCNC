@@ -264,7 +264,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
     gSystem->mkdir(TString(PACKAGE_DIR) + "/data/tthmlreduce" + char('0' + reduce));
     gSystem->mkdir(TString(PACKAGE_DIR) + "/data/tthmlreduce" + char('0' + reduce) + "/" + SystematicsName);
     printf("create outputfile: %s\n", (TString(PACKAGE_DIR) + "/data/tthmlreduce" + char('0' + reduce) + "/" + SystematicsName + "/" + sample + "_tree.root").Data());
-    outputtreefile = new TFile(TString(PACKAGE_DIR) + "/data/tthmlreduce" + char('0' + reduce) + "/" + SystematicsName + "/" + sample + "_tree.root","recreate");
+    outputtreefile = new TFile(TString(PACKAGE_DIR) + "/data/tthmlreduce" + char('0' + reduce) + "/" + SystematicsName + "/" + sample + "_tree.root","update");
 
     map<TString, TTree*>::iterator iter;
     for (int i = 0; i < fcnc_nregions; ++i)
