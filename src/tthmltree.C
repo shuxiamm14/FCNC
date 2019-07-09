@@ -498,9 +498,10 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
         (RunYear >= 2016 && (( lep_Pt_0/GeV>27 && HLT_mu26_ivarmedium ) || ( lep_Pt_0/GeV>51 && HLT_mu50 ) || ( lep_Pt_0/GeV>27 && HLT_e26_lhtight_nod0_ivarloose ) || ( lep_Pt_0/GeV>61 && HLT_e60_lhmedium_nod0) || ( lep_Pt_0/GeV>141 && HLT_e140_lhloose_nod0))) ||
         (RunYear >= 2016 && (HLT_2e17_lhvloose_nod0 || HLT_e17_lhloose_nod0_mu14 || HLT_mu22_mu8noL1));
 
-      if (nTaus_OR_Pt25 >= 1) basic_selection = basic_selection && (tau_numTrack_0 == 1 || tau_numTrack_0 == 3); // assuming triggers for 2017 is same for 2016 
+      if(nTaus_OR_Pt25) basic_selection = basic_selection && (tau_numTrack_0 == 1 || tau_numTrack_0 == 3); // assuming triggers for 2017 is same for 2016 
       weight = mc_channel_number > 0 ? mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight: 1.0;
       if( mc_channel_number > 0) weight*=tightLep?lepSFObjLoose:lepSFIDLoose*lepSFTrigLoose;
+      if(nTaus_OR_Pt25 &&  mc_channel_number >0) weight*=tightTau?tauSFTight:tauSFLoose;
       tthcutflow.fill();
       if (!basic_selection) continue;
       tthcutflow.fill();
@@ -607,7 +608,6 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
         continue;
       }
       tthcutflow.fill();
-      if(reduce <= 2 && nTaus_OR_Pt25 &&  mc_channel_number > 0 ) weight*=tightTau?tauSFTight:tauSFLoose;
       if(  mc_channel_number <= 0 ) weight = 1;
 
       if (reduce != 1){
