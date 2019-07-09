@@ -3150,6 +3150,9 @@ void MytthAnaFakes::Loop()
       // if (Cut(ientry) < 0) continue;
       if(debug||(jentry%10000==0))std::cout<<" I am here event "<<jentry<<" Event "<<EventNumber<<" Run "<<
        			    RunNumber<<" ismc "<<mc_channel_number<<std::endl;
+      // wmy
+      //if(EventNumber!=9043114&&RunNumber!=284500)continue;
+      //debug = 1; 
       bool basic_selection = passEventCleaning;
       // merging tt vs ttgamma; Vjets vs Vgamma; then they can be merged:
       if(_outhist.Contains("ttbargamma"))basic_selection &=m_hasMEphoton_DRgt02_nonhad;
@@ -3179,6 +3182,7 @@ void MytthAnaFakes::Loop()
       //		  (mc_channel_number>0?(tau_truth_0+tau_truth_1)>1:1)+(!quadlep_type&&!onelep_type));
       //study the conversion data vs mc from Z->mumu gamma trilep_type==2
       if(basic_selection){
+	if(debug)std::cout<<" I am here event basic selection "<<jentry<<" Event "<<EventNumber<<" Run "<<RunNumber<<std::endl;
 	if(trig_match&&trilep_type==2&&!nTaus_OR_Pt25&&abs(total_charge)==1&&lep_Pt_0>20e3&&lep_Pt_1>20e3&&lep_Pt_2>20e3&&lep_promptLeptonVeto_TagWeight_0<-0.5&&SelectTLepid(0)){ //met<30 GeV ? ttbar vs z+bb: 
 	  if(abs(lep_ID_1)==11&&lep_promptLeptonVeto_TagWeight_2<-0.5&&SelectTLepid(2)){
 	    hmet->Fill(MET_RefFinal_et/GeV, wt); 
@@ -5168,6 +5172,7 @@ void MytthAnaFakes::Loop()
 	  }
 	}
 	if(onelep_type&&SLtrig_match){
+	  if(debug)std::cout<<" I am here event onelep_type SLtrig_match "<<jentry<<" Event "<<EventNumber<<" Run "<<RunNumber<<std::endl;
 	  bool ptcut = RunYear==2015?((abs(lep_ID_0)==11&&lep_Pt_0/GeV>25)||(abs(lep_ID_0)==13&&lep_Pt_0/GeV>21)):lep_Pt_0/GeV>27;
 	  //
 	  //check qcd 
@@ -6660,7 +6665,9 @@ void MytthAnaFakes::Loop()
 	  } // control regions
 	  // fill l2tau ntuples here and l1tau+loose tau 
 	  //((abs(lep_ID_0)==11&&lep_promptLeptonVeto_TagWeight_0<-0.7)||(abs(lep_ID_0)==13&&lep_promptLeptonVeto_TagWeight_0<-0.5))
+	  if(debug)std::cout<<"I am here start 1l2tau "<<nJets_OR_T<<" "<<ptcut<<" "<<SelectTLepid(0)<<" "<<nJets_OR_T_MV2c10_70<<" "<<nTaus_OR_Pt25<<std::endl;
 	  if(ptcut&&SelectTLepid(0)&&(nJets_OR_T_MV2c10_70>0)&&(nTaus_OR_Pt25>0)){
+	    if(debug)std::cout<<"I am here 1l2tau "<<nJets_OR_T<<std::endl;
 	    TLorentzVector p4lep;
 	    p4lep.SetPtEtaPhiE(lep_Pt_0,lep_Eta_0, lep_Phi_0,lep_E_0);
 	    tnp_plv = lep_promptLeptonVeto_TagWeight_0; 
@@ -6801,140 +6808,141 @@ void MytthAnaFakes::Loop()
 	      tnp->Fill();
 	    }
 	    else if(nTaus_OR_Pt25==1){
-	      int ican = FindLooseTau();
-	      if(ican>-1){
-		int njetmax = nJets_OR_T>7?7:nJets_OR_T;
-		int njetx(0);
-		double nbjetx(0);
-		double ljmin(99.);
-		double jjmin(99.);
-		double taujmin(99999.);
-		double drtaujmin(99.);
-		double sumjets(0.);
-		double sumbjets(0.);
-		double lbmin(99999.);
-		TLorentzVector p4jet[10];
-		TLorentzVector p4lb;
-		for(int i = 0; i<njetmax; ++i){
-		  double phi1 = m_jet_phi->at(selected_jets_T->at(i));
-		  double eta1 = m_jet_eta->at(selected_jets_T->at(i));		  
-		  if(DrEtaPhi(m_tau_eta->at(ican), m_tau_phi->at(ican), eta1, phi1)>0.4){
-		    sumjets +=m_jet_pt->at(selected_jets_T->at(i));
-		    p4jet[njetx].SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)),m_jet_eta->at(selected_jets_T->at(i)),m_jet_phi->at(selected_jets_T->at(i)),
-						m_jet_E->at(selected_jets_T->at(i)));
-                    if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))>0.83){
-		      sumbjets +=m_jet_pt->at(selected_jets_T->at(i));
-		      double rx = (p4lep+p4jet[i]).M()/GeV;
-		      if(rx<lbmin){
-			lbmin = rx;
-			p4lb = p4lep+p4jet[i];
-		      }
-                      ++nbjetx;
-                    }
-
-		    double dr= DrEtaPhi(lep_Eta_0, lep_Phi_0, eta1, phi1);
-		    if(dr<ljmin)ljmin = dr;
-		    //dr= DrEtaPhi(tau_eta_0, tau_phi_0, eta1, phi1)>DrEtaPhi(m_tau_eta->at(ican), m_tau_phi->at(ican), eta1, phi1)?
-		    //  DrEtaPhi(m_tau_eta->at(ican), m_tau_phi->at(ican), eta1, phi1):DrEtaPhi(tau_eta_0, tau_phi_0, eta1, phi1);
-		    //if(dr<taujmin)taujmin = dr;
-		    ++njetx;
-		    for(int j =i+1; j<njetmax; ++j){
-		      double phi2 = m_jet_phi->at(selected_jets_T->at(j));
-		      double eta2 = m_jet_eta->at(selected_jets_T->at(j));
-		      if(DrEtaPhi(m_tau_eta->at(ican), m_tau_phi->at(ican),eta2, phi2)>0.4){
-			dr = DrEtaPhi(eta1, phi1, eta2, phi2);
-			if(dr<jjmin)jjmin = dr;
-		      }
-		    }
+	      //int ican = FindLooseTau();
+	      //if(ican>-1){
+	      int njetmax = nJets_OR_T>7?7:nJets_OR_T;
+	      int njetx(0);
+	      double nbjetx(0);
+	      double ljmin(99.);
+	      double jjmin(99.);
+	      double taujmin(99999.);
+	      double drtaujmin(99.);
+	      double sumjets(0.);
+	      double sumbjets(0.);
+	      double lbmin(99999.);
+	      TLorentzVector p4jet[10];
+	      TLorentzVector p4lb;
+	      for(int i = 0; i<njetmax; ++i){
+		double phi1 = m_jet_phi->at(selected_jets_T->at(i));
+		double eta1 = m_jet_eta->at(selected_jets_T->at(i));		  
+		//if(DrEtaPhi(m_tau_eta->at(ican), m_tau_phi->at(ican), eta1, phi1)>0.4){
+		sumjets +=m_jet_pt->at(selected_jets_T->at(i));
+		p4jet[njetx].SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)),m_jet_eta->at(selected_jets_T->at(i)),m_jet_phi->at(selected_jets_T->at(i)),
+					  m_jet_E->at(selected_jets_T->at(i)));
+		if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))>0.83){
+		  sumbjets +=m_jet_pt->at(selected_jets_T->at(i));
+		  double rx = (p4lep+p4jet[i]).M()/GeV;
+		  if(rx<lbmin){
+		    lbmin = rx;
+		    p4lb = p4lep+p4jet[i];
 		  }
-                }
-		TLorentzVector p4tau[2];
-		p4tau[0].SetPtEtaPhiE(tau_pt_0,tau_eta_0, tau_phi_0,tau_E_0);
-		p4tau[1].SetPtEtaPhiE(m_tau_pt->at(ican),m_tau_eta->at(ican), m_tau_phi->at(ican),m_tau_E->at(ican));
-		for(int i = 0; i<njetx; ++i){
-		  double rm = (p4tau[0]+p4tau[1]+p4jet[i]).M()/GeV;
-		  if(rm<taujmin)taujmin = rm;
-		  double dr = p4tau[0].DeltaR(p4jet[i]);
-		  if(dr<drtaujmin)drtaujmin = dr;
-		  //rm = (p4tau[1]+p4jet[i]).M()/GeV;
-		  //if(rm<taujmin)taujmin = rm;
-		  dr = p4tau[0].DeltaR(p4jet[i]);
-		  if(dr<drtaujmin)drtaujmin = dr;
+		  ++nbjetx;
 		}
-		tnp_event =EventNumber;
-		tnp_run = RunNumber;
-		tnp_evtclass = nTaus_OR_Pt25;
-		tnp_weight = wt*(mc_channel_number>0?lepSFObjLoose/lepSFObjTight:1.0); // using lepSFObjLoose for 1l2tau only
-		tnp_weightt = wtt*(mc_channel_number>0?lepSFObjLoose/lepSFObjTight:1.0); // using lepSFObjLoose for 1l2tau only
-		tnp_njets =njetx;
-		tnp_nbjets = nbjetx; 
-		tnp_met = MET_RefFinal_et/GeV;
-		tnp_lept =lep_Pt_0/GeV*(lep_ID_0>0?-1:1); // signed with charge
-		tnp_mtw = 2*lep_Pt_0/GeV*MET_RefFinal_et/GeV*(1-cos(MET_RefFinal_phi-lep_Phi_0)); 
-		tnp_mtw = tnp_mtw>0?sqrt(tnp_mtw):0.; 
-		tnp_htjets =sumjets;
-		tnp_leadtaupt = tau_pt_0/GeV;
-		tnp_subtaupt = m_tau_pt->at(ican)/GeV;
-		tnp_leadtaueta = tau_eta_0;
-		tnp_subtaueta = m_tau_eta->at(ican);
-		tnp_leadtautight =tau_JetBDTSigTight_0;
-		tnp_subtautight = m_tau_JetBDTSigTight->at(ican);
-		tnp_leadtauntrk = tau_numTrack_0;
-		tnp_subtauntrk = m_tau_numTrack->at(ican);
-		tnp_leadtaubdtjetscore = tau_BDTJetScoreSigTrans_0;
-		tnp_subtaubdtjetscore = m_tau_BDTJetScoreSigTrans->at(ican);
-		tnp_mtautau = (p4tau[0]+p4tau[1]).M()/GeV;
-		tnp_ljdr = ljmin;
-		tnp_jjdr = jjmin;
-		tnp_drtautau = p4tau[0].DeltaR(p4tau[1]);
-		tnp_pttautau = (p4tau[0]+p4tau[1]).Pt()/GeV;
-		tnp_drltautau = p4lep.DeltaR(p4tau[0]+p4tau[1]);
-		tnp_leadtaubtag = tau_MV2c10_0; // new
-		tnp_subtaubtag = m_tau_MV2c10->at(ican); // new
-		tnp_leadtaubtagBin = tau_tagWeightBin_0; // new 6-28
-		tnp_subtaubtagBin = m_tau_tagWeightBin->at(ican); // new 6-28
-		tnp_leadtauptv = tau_promptTauVeto_0; // new
-		tnp_subtauptv = m_tau_PromptTauVeto->at(ican); // new
-		tnp_leadtautruth = tau_truthType_0==10?10:tau_truthJetFlavour_0; // new
-		tnp_subtautruth = m_tau_truthType->at(ican)==10?10:m_tau_truthJetFlavour->at(ican); //new
-		tnp_leadtauch = tau_charge_0; // new
-		tnp_subtauch = m_tau_charge->at(ican); // new
-		tnp_etamax =fabs(tau_eta_0)>fabs(m_tau_eta->at(ican))?fabs(tau_eta_0):fabs(m_tau_eta->at(ican));
-		tnp_leadfrompv = tau_fromPV_0;
-		tnp_subfrompv = m_tau_fromPV->at(ican);
-                tnp_leadmuolr = tau_passMuonOLR_0;
-                tnp_submuolr = m_tau_passMuonOLR->at(ican);
-		tnp_leadelebdt = tau_passEleBDT_0;
-		tnp_subelebdt = m_tau_passEleBDT->at(ican);
-		// BDT
-		tmva1l2tau_njets25 = njetx<6?njetx:5; // cap njets
-		tmva1l2tau_nbjets25 = nbjetx<4?nbjetx:3; // cap nbjets
-		tmva1l2tau_htjets = tnp_htjets;
-		tmva1l2tau_leadtaupt = tnp_leadtaupt;
-		tmva1l2tau_subtaupt= tnp_subtaupt;
-		tmva1l2tau_mtautau = tnp_mtautau;
-		tmva1l2tau_jjdr = tnp_jjdr;
-		double myBDT = reader_tth1l2tau->EvaluateMVA("BDT_tth1l2tau");
-		if(fabs(myBDT)>=1.0)myBDT=0.999*myBDT/fabs(myBDT);
-		tnp_bdt = myBDT;
-		tnp_drltau = DrEtaPhi(lep_Eta_0, lep_Phi_0, tau_eta_0, tau_phi_0)>DrEtaPhi(lep_Eta_0, lep_Phi_0, m_tau_eta->at(ican), m_tau_phi->at(ican))?DrEtaPhi(lep_Eta_0, lep_Phi_0, m_tau_eta->at(ican), m_tau_phi->at(ican)):DrEtaPhi(lep_Eta_0, lep_Phi_0, tau_eta_0, tau_phi_0);// which mini ?
-		tnp_drtauj = drtaujmin;
-		tnp_mtauj = taujmin;
-		double dphix = fabs(MET_RefFinal_et - (p4tau[0]+p4tau[1]).Phi());
-		if(dphix>TMath::Pi())dphix = 2*TMath::Pi()-dphix;
-		tnp_drmetditau = dphix;
-		tnp_htbjets = sumbjets; // new 10/30
-		tnp_lbmin = lbmin; // new
-		tnp_drlbditau = p4lb.DeltaR(p4tau[0]+p4tau[1]); //new
-		tnp->Fill();
+		  
+		double dr= DrEtaPhi(lep_Eta_0, lep_Phi_0, eta1, phi1);
+		if(dr<ljmin)ljmin = dr;
+		//dr= DrEtaPhi(tau_eta_0, tau_phi_0, eta1, phi1)>DrEtaPhi(m_tau_eta->at(ican), m_tau_phi->at(ican), eta1, phi1)?
+		//  DrEtaPhi(m_tau_eta->at(ican), m_tau_phi->at(ican), eta1, phi1):DrEtaPhi(tau_eta_0, tau_phi_0, eta1, phi1);
+		//if(dr<taujmin)taujmin = dr;
+		++njetx;
+		for(int j =i+1; j<njetmax; ++j){
+		  double phi2 = m_jet_phi->at(selected_jets_T->at(j));
+		  double eta2 = m_jet_eta->at(selected_jets_T->at(j));
+		  //if(DrEtaPhi(m_tau_eta->at(ican), m_tau_phi->at(ican),eta2, phi2)>0.4){
+		  dr = DrEtaPhi(eta1, phi1, eta2, phi2);
+		  if(dr<jjmin)jjmin = dr;
+		  //}
+		}
+		//}
 	      }
+	      TLorentzVector p4tau[2];
+	      p4tau[0].SetPtEtaPhiE(tau_pt_0,tau_eta_0, tau_phi_0,tau_E_0);
+	      //	p4tau[1].SetPtEtaPhiE(m_tau_pt->at(ican),m_tau_eta->at(ican), m_tau_phi->at(ican),m_tau_E->at(ican));
+	      for(int i = 0; i<njetx; ++i){
+		double rm = (p4tau[0]+p4jet[i]).M()/GeV;
+		if(rm<taujmin)taujmin = rm;
+		double dr = p4tau[0].DeltaR(p4jet[i]);
+		if(dr<drtaujmin)drtaujmin = dr;
+		//rm = (p4tau[1]+p4jet[i]).M()/GeV;
+		//if(rm<taujmin)taujmin = rm;
+		//dr = p4tau[1].DeltaR(p4jet[i]);
+		//if(dr<drtaujmin)drtaujmin = dr;
+	      }
+	      tnp_event =EventNumber;
+	      tnp_run = RunNumber;
+	      tnp_evtclass = nTaus_OR_Pt25;
+	      tnp_weight = wt*(mc_channel_number>0?lepSFObjLoose/lepSFObjTight:1.0); // using lepSFObjLoose for 1l2tau only
+	      tnp_weightt = wtt*(mc_channel_number>0?lepSFObjLoose/lepSFObjTight:1.0); // using lepSFObjLoose for 1l2tau only
+	      tnp_njets =njetx;
+	      tnp_nbjets = nbjetx; 
+	      tnp_met = MET_RefFinal_et/GeV;
+	      tnp_lept =lep_Pt_0/GeV*(lep_ID_0>0?-1:1); // signed with charge
+	      tnp_mtw = 2*lep_Pt_0/GeV*MET_RefFinal_et/GeV*(1-cos(MET_RefFinal_phi-lep_Phi_0)); 
+	      tnp_mtw = tnp_mtw>0?sqrt(tnp_mtw):0.; 
+	      tnp_htjets =sumjets;
+	      tnp_leadtaupt = tau_pt_0/GeV;
+	      //	tnp_subtaupt = m_tau_pt->at(ican)/GeV;
+	      tnp_leadtaueta = tau_eta_0;
+	      //tnp_subtaueta = m_tau_eta->at(ican);
+	      tnp_leadtautight =tau_JetBDTSigTight_0;
+	      //tnp_subtautight = m_tau_JetBDTSigTight->at(ican);
+	      tnp_leadtauntrk = tau_numTrack_0;
+	      //tnp_subtauntrk = m_tau_numTrack->at(ican);
+	      tnp_leadtaubdtjetscore = tau_BDTJetScoreSigTrans_0;
+	      //tnp_subtaubdtjetscore = m_tau_BDTJetScoreSigTrans->at(ican);
+	      //tnp_mtautau = (p4tau[0]+p4tau[1]).M()/GeV;
+	      tnp_ljdr = ljmin;
+	      tnp_jjdr = jjmin;
+	      //tnp_drtautau = p4tau[0].DeltaR(p4tau[1]);
+	      //tnp_pttautau = (p4tau[0]+p4tau[1]).Pt()/GeV;
+	      //tnp_drltautau = p4lep.DeltaR(p4tau[0]+p4tau[1]);
+	      tnp_leadtaubtag = tau_MV2c10_0; // new
+	      //tnp_subtaubtag = m_tau_MV2c10->at(ican); // new
+	      tnp_leadtaubtagBin = tau_tagWeightBin_0; // new 6-28
+	      //tnp_subtaubtagBin = m_tau_tagWeightBin->at(ican); // new 6-28
+	      tnp_leadtauptv = tau_promptTauVeto_0; // new
+	      //tnp_subtauptv = m_tau_PromptTauVeto->at(ican); // new
+	      tnp_leadtautruth = tau_truthType_0==10?10:tau_truthJetFlavour_0; // new
+	      //tnp_subtautruth = m_tau_truthType->at(ican)==10?10:m_tau_truthJetFlavour->at(ican); //new
+	      tnp_leadtauch = tau_charge_0; // new
+	      //tnp_subtauch = m_tau_charge->at(ican); // new
+	      //tnp_etamax =fabs(tau_eta_0)>fabs(m_tau_eta->at(ican))?fabs(tau_eta_0):fabs(m_tau_eta->at(ican));
+	      tnp_leadfrompv = tau_fromPV_0;
+	      //tnp_subfrompv = m_tau_fromPV->at(ican);
+	      tnp_leadmuolr = tau_passMuonOLR_0;
+	      //tnp_submuolr = m_tau_passMuonOLR->at(ican);
+	      tnp_leadelebdt = tau_passEleBDT_0;
+	      //tnp_subelebdt = m_tau_passEleBDT->at(ican);
+	      // BDT
+	      //tmva1l2tau_njets25 = njetx<6?njetx:5; // cap njets
+	      //tmva1l2tau_nbjets25 = nbjetx<4?nbjetx:3; // cap nbjets
+	      //tmva1l2tau_htjets = tnp_htjets;
+	      //tmva1l2tau_leadtaupt = tnp_leadtaupt;
+	      //tmva1l2tau_subtaupt= tnp_subtaupt;
+	      //tmva1l2tau_mtautau = tnp_mtautau;
+	      //tmva1l2tau_jjdr = tnp_jjdr;
+	      //double myBDT = reader_tth1l2tau->EvaluateMVA("BDT_tth1l2tau");
+	      //if(fabs(myBDT)>=1.0)myBDT=0.999*myBDT/fabs(myBDT);
+	      //tnp_bdt = myBDT;
+	      tnp_drltau = DrEtaPhi(lep_Eta_0, lep_Phi_0, tau_eta_0, tau_phi_0);
+	      //>DrEtaPhi(lep_Eta_0, lep_Phi_0, m_tau_eta->at(ican), m_tau_phi->at(ican))?DrEtaPhi(lep_Eta_0, lep_Phi_0, m_tau_eta->at(ican), m_tau_phi->at(ican)):DrEtaPhi(lep_Eta_0, lep_Phi_0, tau_eta_0, tau_phi_0);// which mini ?
+	      tnp_drtauj = drtaujmin;
+	      tnp_mtauj = taujmin;
+	      double dphix = fabs(MET_RefFinal_et - (p4tau[0]).Phi());
+	      if(dphix>TMath::Pi())dphix = 2*TMath::Pi()-dphix;
+	      tnp_drmetditau = dphix;
+	      tnp_htbjets = sumbjets; // new 10/30
+	      tnp_lbmin = lbmin; // new
+	      tnp_drlbditau = p4lb.DeltaR(p4tau[0]); //new
+	      tnp->Fill();
+	      //}
 	    }
 	  } // 
 	} // one_lepton
 	// try to fill 2l2tau events here
 	if(trig_match&&dilep_type&&lep_Pt_0>20e3&&lep_Pt_1>20e3&&SelectTLepid(0)&&SelectTLepid(1)){
 	  if(nJets_OR_T>=0&&nTaus_OR_Pt25==2){
-	    if(debug)std::cout<<"I am here "<<nJets_OR_T<<std::endl;
+	    if(debug)std::cout<<"I am here 2l2tau "<<nJets_OR_T<<std::endl;
 	    TLorentzVector p4lep[2];
             p4lep[0].SetPtEtaPhiE(lep_Pt_0,lep_Eta_0, lep_Phi_0,lep_E_0);
             p4lep[1].SetPtEtaPhiE(lep_Pt_1,lep_Eta_1, lep_Phi_1,lep_E_1);
@@ -7055,6 +7063,374 @@ void MytthAnaFakes::Loop()
 	  }
 	}	    
 	/////////// 11/8
+	// fcnc 11/26
+	if(trig_match&&dilep_type&&abs(total_charge)==2&&lep_Pt_0>20e3&&lep_Pt_1>20e3&&SelectTLepid(0)&&SelectTLepid(1)&&nTaus_OR_Pt25==0){
+	  // save all lepton, bjets, light-jets, met, and two combinations of kinematic 
+	    TLorentzVector p4lep[2];
+	    tnpfcnc_run = RunNumber;
+            tnpfcnc_event = EventNumber;
+	    tnpfcnc_weight = wt; 
+	    tnpfcnc_met = MET_RefFinal_et;
+	    tnpfcnc_metphi = MET_RefFinal_phi;
+            p4lep[0].SetPtEtaPhiE(lep_Pt_0,lep_Eta_0, lep_Phi_0,lep_E_0);
+            p4lep[1].SetPtEtaPhiE(lep_Pt_1,lep_Eta_1, lep_Phi_1,lep_E_1);
+	    tnpfcnc_class = 1;
+	    tnpfcnc_type = dilep_type; 
+	    tnpfcnc_nlep = 2; 
+	    //
+	    tnpfcnc_lepId.clear(); 
+	    tnpfcnc_lepPt.clear(); 
+	    tnpfcnc_lepEta.clear();
+	    tnpfcnc_lepPhi.clear();
+	    tnpfcnc_lepE.clear();
+	    tnpfcnc_lepTrig.clear();
+	    tnpfcnc_lepTruth.clear();
+	    tnpfcnc_lepPlv.clear();
+	    tnpfcnc_lepQmis.clear();
+	    tnpfcnc_lepFake.clear();
+	    tnpfcnc_lepChargedID.clear();
+	    tnpfcnc_lepAmb.clear(); 	    
+	    // first lep
+	    tnpfcnc_lepId.push_back(lep_ID_0); 
+	    tnpfcnc_lepPt.push_back(lep_Pt_0); 
+	    tnpfcnc_lepEta.push_back(lep_Eta_0);
+	    tnpfcnc_lepPhi.push_back(lep_Phi_0);
+	    tnpfcnc_lepE.push_back(lep_E_0);
+	    tnpfcnc_lepTrig.push_back(lep_isTrigMatch_0+10*lep_isTrigMatchDLT_0);
+	    tnpfcnc_lepTruth.push_back(lep_truthType_0 + 100*lep_truthOrigin_0);
+	    tnpfcnc_lepPlv.push_back(lep_promptLeptonVeto_TagWeight_0);
+	    tnpfcnc_lepQmis.push_back(lep_isQMisID_0);
+	    tnpfcnc_lepFake.push_back(lep_isPrompt_0+10*lep_isFakeLep_0+100*lep_isExtConvPh_0+1000*lep_isIntConvPh_0);
+	    tnpfcnc_lepChargedID.push_back(lep_chargeIDBDTTight_0);
+	    tnpfcnc_lepAmb.push_back(lep_ambiguityType_0); 
+	    // second lep 
+	    tnpfcnc_lepId.push_back(lep_ID_1); 
+	    tnpfcnc_lepPt.push_back(lep_Pt_1); 
+	    tnpfcnc_lepEta.push_back(lep_Eta_1);
+	    tnpfcnc_lepPhi.push_back(lep_Phi_1);
+	    tnpfcnc_lepE.push_back(lep_E_1);
+	    tnpfcnc_lepTrig.push_back(lep_isTrigMatch_1+10*lep_isTrigMatchDLT_1);
+	    tnpfcnc_lepTruth.push_back(lep_truthType_1 + 100*lep_truthOrigin_1);
+	    tnpfcnc_lepPlv.push_back(lep_promptLeptonVeto_TagWeight_1);
+	    tnpfcnc_lepQmis.push_back(lep_isQMisID_1); 
+            tnpfcnc_lepFake.push_back(lep_isPrompt_1+10*lep_isFakeLep_1+100*lep_isExtConvPh_1+1000*lep_isIntConvPh_1);
+            tnpfcnc_lepChargedID.push_back(lep_chargeIDBDTTight_1);
+	    tnpfcnc_lepAmb.push_back(lep_ambiguityType_1); 
+	    //	    
+	    tnpfcnc_mll01 = Mll01;
+            tnpfcnc_mll02 = 0;
+            tnpfcnc_mlll012 = 0; 
+	    int njetx = nJets_OR_T>7?7:nJets_OR_T;
+	    int nljetx(0);
+	    int indexbj(-1);
+	    double sumljets(0.);
+	    TLorentzVector p4jet[10];
+	    TLorentzVector p4bjet;
+	    tnpfcnc_jetPt.clear(); 
+	    tnpfcnc_jetEta.clear();
+	    tnpfcnc_jetPhi.clear();
+	    tnpfcnc_jetE.clear();
+	    tnpfcnc_jetTag.clear();
+	    tnpfcnc_jetLabel.clear();
+	    tnpfcnc_jetGhost.clear();	    
+	    for(int i = 0; i<njetx; ++i){
+	      tnpfcnc_jetPt.push_back(m_jet_pt->at(selected_jets_T->at(i))); 
+	      tnpfcnc_jetEta.push_back(m_jet_eta->at(selected_jets_T->at(i)));
+	      tnpfcnc_jetPhi.push_back(m_jet_phi->at(selected_jets_T->at(i)));
+	      tnpfcnc_jetE.push_back(m_jet_E->at(selected_jets_T->at(i)));
+	      tnpfcnc_jetTag.push_back(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i)));
+	      tnpfcnc_jetLabel.push_back(m_jet_flavor_truth_label->at(selected_jets_T->at(i)));
+	      tnpfcnc_jetGhost.push_back(m_jet_flavor_truth_label_ghost->at(selected_jets_T->at(i)));
+	      // jet label or ghost 
+	      if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))>0.83&&indexbj==-1){
+		p4bjet.SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)),m_jet_eta->at(selected_jets_T->at(i)),m_jet_phi->at(selected_jets_T->at(i)),m_jet_E->at(selected_jets_T->at(i)));
+		indexbj = i; 		
+	      }
+	      else{
+		 sumljets +=m_jet_pt->at(selected_jets_T->at(i));
+		 p4jet[nljetx].SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)),m_jet_eta->at(selected_jets_T->at(i)),m_jet_phi->at(selected_jets_T->at(i)),m_jet_E->at(selected_jets_T->at(i)));
+		 ++nljetx;
+	      }
+	    }
+	    tnpfcnc_njetx = njetx; 
+	    tnpfcnc_nljetx = nljetx;
+	    tnpfcnc_nbjetx = nJets_OR_T_MV2c10_70;
+	    tnpfcnc_indexbj = indexbj; 
+	    tnpfcnc_sumljets = sumljets;
+	    // find lepton with closet jets in dPhi: try to reconstruct the ttbar candidates. 
+	    int ilh = -1; 
+	    int iwj = -1; 
+	    int ilt = -1; 
+	    int ib = nJets_OR_T_MV2c10_70>0?0:-1; // take the leading b-jet 
+	    double dphimin(999.);
+	    double dphix(0.); 
+	    double mblt(0.);
+	    double ptblt(0.);
+	    double mwlh(0.); 
+	    double ptwlh(0);
+	    double mwlhq(0.); // minimum mass up to 3jets.
+	    double ptwlhq(0.);
+	    double ttdphi(0);
+	    double dm(0.);
+	    for(int i = 0; i<2; ++i){
+	      for(int j = 0; j<nljetx; ++j){ 
+		double dphi = fabs(p4lep[i].DeltaPhi(p4jet[j])); // [-pi pi]  
+		if(dphi<dphimin){ 
+		  dphimin = dphi; 
+		  ilh = i; 
+		  iwj = j;
+		}
+	      }
+	    }
+	    if(iwj>-1&&ib>-1){ // found extra jet 
+	      ilt = ilh==0?1:0;
+	      dphix = fabs(p4lep[ilt].DeltaPhi(p4jet[iwj])); 
+	      mblt =(p4bjet+p4lep[ilt]).M()/GeV;
+	      ptblt =(p4bjet+p4lep[ilt]).Pt()/GeV;
+	      mwlh =(p4jet[iwj]+p4lep[ilh]).M()/GeV;
+	      ptwlh =(p4jet[iwj]+p4lep[ilh]).Pt()/GeV;
+	      if(nljetx>3){
+		mwlhq = 999999.;
+		for(int i = 0; i<nljetx; ++i){ 
+		  for(int j =i+1; j<nljetx; ++j){ 
+		    if(i!=iwj&&j!=iwj){ 
+		      double rm = (p4jet[iwj]+p4lep[ilh]+p4jet[i]+p4jet[j]).M()/GeV; 
+		      if(rm<mwlhq){ 
+			mwlhq = rm; 
+			ptwlhq = (p4jet[iwj]+p4lep[ilh]+p4jet[i]+p4jet[j]).Pt()/GeV;
+			ttdphi = fabs((p4bjet+p4lep[ilt]).DeltaPhi(p4jet[iwj]+p4lep[ilh]+p4jet[i]+p4jet[j]));
+			dm = mwlhq - (p4jet[iwj]+p4lep[ilh]+p4jet[j]).M()/GeV;
+		      }
+		    }
+		  }
+		}
+	      }
+	      else if(nljetx==3){
+		for(int i = 0; i<nljetx; ++i){
+                  for(int j =i+1; j<nljetx; ++j){
+		    if(i!=iwj&&j!=iwj){
+		      mwlhq = (p4jet[iwj]+p4lep[ilh]+p4jet[i]+p4jet[j]).M()/GeV; 
+		      ptwlhq =(p4jet[iwj]+p4lep[ilh]+p4jet[i]+p4jet[j]).Pt()/GeV;
+		      ttdphi = fabs((p4bjet+p4lep[ilt]).DeltaPhi(p4jet[iwj]+p4lep[ilh]+p4jet[i]+p4jet[j]));
+		      dm = mwlhq - (p4jet[iwj]+p4lep[ilh]+p4jet[j]).M()/GeV;
+		    }
+		  }
+		}
+	      }
+	      else if(nljetx==2){
+		for(int i = 0; i<nljetx; ++i){
+		  if(i!=iwj){
+		    mwlhq = (p4jet[iwj]+p4lep[ilh]+p4jet[i]).M()/GeV; 
+		    ptwlhq =(p4jet[iwj]+p4lep[ilh]+p4jet[i]).Pt()/GeV;
+		    ttdphi = fabs((p4bjet+p4lep[ilt]).DeltaPhi(p4jet[iwj]+p4lep[ilh]+p4jet[i]));
+		    dm = mwlhq - (p4jet[iwj]+p4lep[ilh]).M()/GeV;
+		  }
+		}
+	      }
+	      else{ 
+		mwlhq = mwlh; 
+		ptwlhq = ptwlh; 
+		ttdphi = fabs((p4bjet+p4lep[ilt]).DeltaPhi(p4jet[iwj]+p4lep[ilh]));
+		dm = 0.;
+	      }
+	    }
+	    tnpfcnc_ilh = ilh; 
+	    tnpfcnc_iwj = iwj; 
+	    tnpfcnc_ilt = ilt; 
+	    tnpfcnc_dphimin= dphimin;
+	    tnpfcnc_dphix =  dphix; 
+	    tnpfcnc_mblt = mblt;
+	    tnpfcnc_ptblt = ptblt;
+	    tnpfcnc_mwlh = mwlh; 
+	    tnpfcnc_ptwlh = ptwlh;
+	    tnpfcnc_mwlhq = mwlhq; 
+	    tnpfcnc_ptwlhq = ptwlhq;
+	    tnpfcnc_ttdphi = ttdphi;
+	    tnpfcnc_dm = dm;
+	    tnpfcnc->Fill();
+	}
+	// for triplep here 
+	if(trig_match&&trilep_type&&abs(total_charge)==1&&lep_Pt_1>15e3&&lep_Pt_2>15e3&&SelectTLepid(0)&&SelectTLepid(1)&&SelectTLepid(2)&&nTaus_OR_Pt25==0){
+	  // save all lepton, bjets, light-jets, met, and two combinations of kinematic 
+	    TLorentzVector p4lep[3];
+            tnpfcnc_run = RunNumber;
+            tnpfcnc_event = EventNumber;
+            tnpfcnc_weight = wt;
+            tnpfcnc_met = MET_RefFinal_et;
+            tnpfcnc_metphi = MET_RefFinal_phi;
+            p4lep[0].SetPtEtaPhiE(lep_Pt_0,lep_Eta_0, lep_Phi_0,lep_E_0);
+            p4lep[1].SetPtEtaPhiE(lep_Pt_1,lep_Eta_1, lep_Phi_1,lep_E_1);
+            p4lep[2].SetPtEtaPhiE(lep_Pt_2,lep_Eta_2, lep_Phi_2,lep_E_2);
+	    tnpfcnc_class = 2;
+	    tnpfcnc_type = trilep_type; 
+	    tnpfcnc_nlep = 3; 
+	    //
+	    tnpfcnc_lepId.clear(); 
+	    tnpfcnc_lepPt.clear(); 
+	    tnpfcnc_lepEta.clear();
+	    tnpfcnc_lepPhi.clear();
+	    tnpfcnc_lepE.clear();
+	    tnpfcnc_lepTrig.clear();
+	    tnpfcnc_lepTruth.clear();
+	    tnpfcnc_lepPlv.clear();
+	    tnpfcnc_lepQmis.clear(); 
+            tnpfcnc_lepFake.clear();
+            tnpfcnc_lepChargedID.clear();
+	    tnpfcnc_lepAmb.clear(); 	    
+	    // first lep
+	    tnpfcnc_lepId.push_back(lep_ID_0); 
+	    tnpfcnc_lepPt.push_back(lep_Pt_0); 
+	    tnpfcnc_lepEta.push_back(lep_Eta_0);
+	    tnpfcnc_lepPhi.push_back(lep_Phi_0);
+	    tnpfcnc_lepE.push_back(lep_E_0);
+	    tnpfcnc_lepTrig.push_back(lep_isTrigMatch_0+10*lep_isTrigMatchDLT_0);
+	    tnpfcnc_lepTruth.push_back(lep_truthType_0 + 100*lep_truthOrigin_0);
+	    tnpfcnc_lepPlv.push_back(lep_promptLeptonVeto_TagWeight_0);
+	    tnpfcnc_lepQmis.push_back(lep_isQMisID_0); 
+            tnpfcnc_lepFake.push_back(lep_isPrompt_0+10*lep_isFakeLep_0+100*lep_isExtConvPh_0+1000*lep_isIntConvPh_0);
+            tnpfcnc_lepChargedID.push_back(lep_chargeIDBDTTight_0);
+	    tnpfcnc_lepAmb.push_back(lep_ambiguityType_0); 
+	    // second lep 
+	    tnpfcnc_lepId.push_back(lep_ID_1); 
+	    tnpfcnc_lepPt.push_back(lep_Pt_1); 
+	    tnpfcnc_lepEta.push_back(lep_Eta_1);
+	    tnpfcnc_lepPhi.push_back(lep_Phi_1);
+	    tnpfcnc_lepE.push_back(lep_E_1);
+	    tnpfcnc_lepTrig.push_back(lep_isTrigMatch_1+10*lep_isTrigMatchDLT_1);
+	    tnpfcnc_lepTruth.push_back(lep_truthType_1 + 100*lep_truthOrigin_1);
+	    tnpfcnc_lepPlv.push_back(lep_promptLeptonVeto_TagWeight_1);
+	    tnpfcnc_lepQmis.push_back(lep_isQMisID_1); 
+            tnpfcnc_lepFake.push_back(lep_isPrompt_1+10*lep_isFakeLep_1+100*lep_isExtConvPh_1+1000*lep_isIntConvPh_1);
+            tnpfcnc_lepChargedID.push_back(lep_chargeIDBDTTight_1);
+	    tnpfcnc_lepAmb.push_back(lep_ambiguityType_1); 
+	    // third lep 
+            tnpfcnc_lepId.push_back(lep_ID_2);
+            tnpfcnc_lepPt.push_back(lep_Pt_2);
+            tnpfcnc_lepEta.push_back(lep_Eta_2);
+            tnpfcnc_lepPhi.push_back(lep_Phi_2);
+            tnpfcnc_lepE.push_back(lep_E_2);
+            tnpfcnc_lepTrig.push_back(lep_isTrigMatch_2+10*lep_isTrigMatchDLT_2);
+            tnpfcnc_lepTruth.push_back(lep_truthType_2 + 100*lep_truthOrigin_2);
+            tnpfcnc_lepPlv.push_back(lep_promptLeptonVeto_TagWeight_2);
+            tnpfcnc_lepQmis.push_back(lep_isQMisID_2);
+            tnpfcnc_lepFake.push_back(lep_isPrompt_2+10*lep_isFakeLep_2+100*lep_isExtConvPh_2+1000*lep_isIntConvPh_2);
+            tnpfcnc_lepChargedID.push_back(lep_chargeIDBDTTight_2);
+            tnpfcnc_lepAmb.push_back(lep_ambiguityType_2);
+	    //	    
+	    tnpfcnc_mll01 = Mll01; 
+            tnpfcnc_mll02 = Mll02;
+            tnpfcnc_mlll012 = Mlll012;
+	    int njetx = nJets_OR_T>7?7:nJets_OR_T;
+	    int nljetx(0);
+	    int indexbj(-1);
+	    double sumljets(0.);
+	    TLorentzVector p4jet[10];
+	    TLorentzVector p4bjet;
+	    tnpfcnc_jetPt.clear(); 
+	    tnpfcnc_jetEta.clear();
+	    tnpfcnc_jetPhi.clear();
+	    tnpfcnc_jetE.clear();
+	    tnpfcnc_jetTag.clear();
+	    tnpfcnc_jetLabel.clear();
+	    tnpfcnc_jetGhost.clear();	    
+	    for(int i = 0; i<njetx; ++i){
+	      tnpfcnc_jetPt.push_back(m_jet_pt->at(selected_jets_T->at(i))); 
+	      tnpfcnc_jetEta.push_back(m_jet_eta->at(selected_jets_T->at(i)));
+	      tnpfcnc_jetPhi.push_back(m_jet_phi->at(selected_jets_T->at(i)));
+	      tnpfcnc_jetE.push_back(m_jet_E->at(selected_jets_T->at(i)));
+	      tnpfcnc_jetTag.push_back(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i)));
+	      tnpfcnc_jetLabel.push_back(m_jet_flavor_truth_label->at(selected_jets_T->at(i)));
+	      tnpfcnc_jetGhost.push_back(m_jet_flavor_truth_label_ghost->at(selected_jets_T->at(i)));
+	      // jet label or ghost 
+	      if(m_jet_flavor_weight_MV2c10->at(selected_jets_T->at(i))>0.83&&indexbj==-1){
+		p4bjet.SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)),m_jet_eta->at(selected_jets_T->at(i)),m_jet_phi->at(selected_jets_T->at(i)),m_jet_E->at(selected_jets_T->at(i)));
+		indexbj = i; 		
+	      }
+	      else{
+		 sumljets +=m_jet_pt->at(selected_jets_T->at(i));
+		 p4jet[nljetx].SetPtEtaPhiE(m_jet_pt->at(selected_jets_T->at(i)),m_jet_eta->at(selected_jets_T->at(i)),m_jet_phi->at(selected_jets_T->at(i)),m_jet_E->at(selected_jets_T->at(i)));
+		 ++nljetx;
+	      }
+	    }
+	    tnpfcnc_njetx = njetx; 
+	    tnpfcnc_nljetx = nljetx;
+	    tnpfcnc_nbjetx = nJets_OR_T_MV2c10_70;
+	    tnpfcnc_indexbj = indexbj; 
+	    tnpfcnc_sumljets = sumljets;
+	    // find lepton with closet jets in dPhi: try to reconstruct the ttbar candidates. 
+	    int ilh = -1; 
+	    int iwj = -1; // second w from h->ww
+	    int ilt = -1; 
+	    int ib = nJets_OR_T_MV2c10_70>0?0:-1; // take the leading b-jet 
+	    double dphimin(999.);
+	    double dphix(0.); 
+	    double mblt(0.);
+	    double ptblt(0.);
+	    double mwlh(0.); 
+	    double ptwlh(0);
+	    double mwlhq(0.); // minimum mass up to 3jets.
+	    double ptwlhq(0.);
+	    double ttdphi(0); 
+	    double dm(0);
+	    iwj = 0; 
+	    for(int i = 0; i<3; ++i){
+	      if(i!=iwj){
+		double dphi = fabs(p4lep[iwj].DeltaPhi(p4lep[i])); // [-pi pi]  
+		if(dphi<dphimin){ 
+		  dphimin = dphi; 
+		  ilh = i; 
+		}
+	      }
+	    }
+	    if(iwj>-1&&ib>-1){ // found extra jet 
+	      ilt = ilh==1?2:1;
+	      dphix = fabs(p4lep[ilt].DeltaPhi(p4lep[iwj])); 
+	      mblt =(p4bjet+p4lep[ilt]).M()/GeV;
+	      ptblt =(p4bjet+p4lep[ilt]).Pt()/GeV;
+	      mwlh =(p4lep[iwj]+p4lep[ilh]).M()/GeV;
+	      ptwlh =(p4lep[iwj]+p4lep[ilh]).Pt()/GeV;
+	      if(nljetx>1){
+		mwlhq = 999999.;
+		for(int i = 0; i<nljetx; ++i){ 
+		  double rm = (p4lep[iwj]+p4lep[ilh]+p4jet[i]).M()/GeV; 
+		  if(rm<mwlhq){ 
+		    mwlhq = rm; 
+		    ptwlhq = (p4lep[iwj]+p4lep[ilh]+p4jet[i]).Pt()/GeV;
+		    ttdphi = fabs((p4bjet+p4lep[ilt]).DeltaPhi(p4jet[i]+p4lep[ilh]+p4lep[iwj]));
+		    dm = mwlhq-mwlh;
+		  }
+		}
+	      }
+	      else if(nljetx==1){
+		mwlhq = (p4jet[0]+p4lep[ilh]+p4lep[iwj]).M()/GeV; 
+		ptwlhq =(p4jet[0]+p4lep[ilh]+p4lep[iwj]).Pt()/GeV;
+		ttdphi = fabs((p4bjet+p4lep[ilt]).DeltaPhi(p4jet[0]+p4lep[ilh]+p4lep[iwj]));
+		dm = mwlhq - mwlh;
+	      }
+	      else{ 
+		mwlhq = mwlh; 
+		ptwlhq = ptwlh; 
+		ttdphi = fabs((p4bjet+p4lep[ilt]).DeltaPhi(p4lep[iwj]+p4lep[ilh]));
+		dm =0;
+	      }
+	    }
+	    tnpfcnc_ilh = ilh; 
+	    tnpfcnc_iwj = iwj; 
+	    tnpfcnc_ilt = ilt; 
+	    tnpfcnc_dphimin= dphimin;
+	    tnpfcnc_dphix =  dphix; 
+	    tnpfcnc_mblt = mblt;
+	    tnpfcnc_ptblt = ptblt;
+	    tnpfcnc_mwlh = mwlh; 
+	    tnpfcnc_ptwlh = ptwlh;
+	    tnpfcnc_mwlhq = mwlhq; 
+	    tnpfcnc_ptwlhq = ptwlhq;
+	    tnpfcnc_ttdphi = ttdphi;
+	    tnpfcnc_dm = dm;
+	    tnpfcnc->Fill();
+	}
+	// 
+	//
       } // trig
    }// loop over events 
    // end for now.
