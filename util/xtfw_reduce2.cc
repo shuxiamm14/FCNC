@@ -44,7 +44,7 @@ int main(int argc, char const *argv[])
 	analysis->reduce = *argv[1]-'0';
 	analysis->SystematicsName = argv[3];
 	if(analysis->SystematicsName == "NOMINAL")
-		for(int i = 0; i < 168; ++i) {
+		for(int i = 0; i < 124; ++i) {
 			if(i == 1) continue;
 			analysis->plotNPs.push_back(i);
 		}
