@@ -50,8 +50,8 @@ JET_Flavor_Composition_1up
 JET_Flavor_Composition_1down
 JET_Flavor_Response_1up
 JET_Flavor_Response_1down
-JET_JER_DataVsMC_1up
-JET_JER_DataVsMC_1down
+JET_JER_DataVsMC_MC16_1up
+JET_JER_DataVsMC_MC16_1down
 JET_JER_EffectiveNP_1_1up
 JET_JER_EffectiveNP_1_1down
 JET_JER_EffectiveNP_2_1up

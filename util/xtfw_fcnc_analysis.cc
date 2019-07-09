@@ -18,92 +18,48 @@ TString NPnames[] = {
 	"PRW_DATASF_1down_pileup_combined_weight",
 	"jet_FT_EFF_Eigen_B_0_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_0_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_0_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_0_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_1_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_1_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_1_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_1_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_2_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_2_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_2_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_3_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_3_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_3_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_3_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_4_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_4_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_4_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_4_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_5_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_5_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_5_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_5_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_6_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_6_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_6_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_6_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_7_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_7_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_7_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_7_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_8_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_B_8_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_8_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_B_8_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_C_0_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_C_0_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_C_0_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_C_0_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_C_1_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_C_1_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_C_1_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_C_1_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_C_2_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_C_2_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_C_2_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_C_2_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_C_3_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_C_3_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_C_3_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_C_3_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_Light_0_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_Light_0_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_Light_0_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_Light_0_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_Light_1_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_Light_1_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_Light_1_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_Light_1_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_Light_2_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_Light_2_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_Light_2_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_Light_2_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_Light_3_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_Light_3_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_Light_3_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_Light_3_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_Eigen_Light_4_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_Eigen_Light_4_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_Eigen_Light_4_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_Eigen_Light_4_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_extrapolation_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_extrapolation_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_extrapolation_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_extrapolation_1down_global_ineffSF_MV2c10",
 	"jet_FT_EFF_extrapolation_from_charm_1up_global_effSF_MV2c10",
 	"jet_FT_EFF_extrapolation_from_charm_1down_global_effSF_MV2c10",
-	"jet_FT_EFF_extrapolation_from_charm_1up_global_ineffSF_MV2c10",
-	"jet_FT_EFF_extrapolation_from_charm_1down_global_ineffSF_MV2c10",
 	"jet_JET_JvtEfficiency_1up_central_jets_global_effSF_JVT",
 	"jet_JET_JvtEfficiency_1down_central_jets_global_effSF_JVT",
-	"jet_JET_JvtEfficiency_1up_central_jets_global_ineffSF_JVT",
-	"jet_JET_JvtEfficiency_1down_central_jets_global_ineffSF_JVT",
 	"jet_JET_fJvtEfficiency_1up_forward_jets_global_effSF_JVT",
 	"jet_JET_fJvtEfficiency_1down_forward_jets_global_effSF_JVT",
-	"jet_JET_fJvtEfficiency_1up_forward_jets_global_ineffSF_JVT",
-	"jet_JET_fJvtEfficiency_1down_forward_jets_global_ineffSF_JVT",
 	"TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1up_TauEffSF_selection",
 	"TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_selection",
 	"TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1up_TauEffSF_selection",
@@ -173,12 +129,101 @@ TString NPnames[] = {
 	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
 	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
 	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
-	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM"
+	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+
+	"TAUS_TRUEHADTAU_SME_TES_DETECTOR_1down",
+	"TAUS_TRUEHADTAU_SME_TES_DETECTOR_1up",
+	"TAUS_TRUEHADTAU_SME_TES_INSITU_1down",
+	"TAUS_TRUEHADTAU_SME_TES_INSITU_1up",
+	"TAUS_TRUEHADTAU_SME_TES_MODEL_1down",
+	"TAUS_TRUEHADTAU_SME_TES_MODEL_1up",
+	"JET_BJES_Response_1up",
+	"JET_BJES_Response_1down",
+	"JET_EffectiveNP_Detector1_1up",
+	"JET_EffectiveNP_Detector1_1down",
+	"JET_EffectiveNP_Detector2_1up",
+	"JET_EffectiveNP_Detector2_1down",
+	"JET_EffectiveNP_Mixed1_1up",
+	"JET_EffectiveNP_Mixed1_1down",
+	"JET_EffectiveNP_Mixed2_1up",
+	"JET_EffectiveNP_Mixed2_1down",
+	"JET_EffectiveNP_Mixed3_1up",
+	"JET_EffectiveNP_Mixed3_1down",
+	"JET_EffectiveNP_Modelling1_1up",
+	"JET_EffectiveNP_Modelling1_1down",
+	"JET_EffectiveNP_Modelling2_1up",
+	"JET_EffectiveNP_Modelling2_1down",
+	"JET_EffectiveNP_Modelling3_1up",
+	"JET_EffectiveNP_Modelling3_1down",
+	"JET_EffectiveNP_Modelling4_1up",
+	"JET_EffectiveNP_Modelling4_1down",
+	"JET_EffectiveNP_Statistical1_1up",
+	"JET_EffectiveNP_Statistical1_1down",
+	"JET_EffectiveNP_Statistical2_1up",
+	"JET_EffectiveNP_Statistical2_1down",
+	"JET_EffectiveNP_Statistical3_1up",
+	"JET_EffectiveNP_Statistical3_1down",
+	"JET_EffectiveNP_Statistical4_1up",
+	"JET_EffectiveNP_Statistical4_1down",
+	"JET_EffectiveNP_Statistical5_1up",
+	"JET_EffectiveNP_Statistical5_1down",
+	"JET_EffectiveNP_Statistical6_1up",
+	"JET_EffectiveNP_Statistical6_1down",
+	"JET_EtaIntercalibration_Modelling_1up",
+	"JET_EtaIntercalibration_Modelling_1down",
+	"JET_EtaIntercalibration_NonClosure_highE_1up",
+	"JET_EtaIntercalibration_NonClosure_highE_1down",
+	"JET_EtaIntercalibration_NonClosure_negEta_1up",
+	"JET_EtaIntercalibration_NonClosure_negEta_1down",
+	"JET_EtaIntercalibration_NonClosure_posEta_1up",
+	"JET_EtaIntercalibration_NonClosure_posEta_1down",
+	"JET_EtaIntercalibration_TotalStat_1up",
+	"JET_EtaIntercalibration_TotalStat_1down",
+	"JET_Flavor_Composition_1up",
+	"JET_Flavor_Composition_1down",
+	"JET_Flavor_Response_1up",
+	"JET_Flavor_Response_1down",
+	"JET_JER_DataVsMC_MC16_1up",
+	"JET_JER_DataVsMC_MC16_1down",
+	"JET_JER_EffectiveNP_1_1up",
+	"JET_JER_EffectiveNP_1_1down",
+	"JET_JER_EffectiveNP_2_1up",
+	"JET_JER_EffectiveNP_2_1down",
+	"JET_JER_EffectiveNP_3_1up",
+	"JET_JER_EffectiveNP_3_1down",
+	"JET_JER_EffectiveNP_4_1up",
+	"JET_JER_EffectiveNP_4_1down",
+	"JET_JER_EffectiveNP_5_1up",
+	"JET_JER_EffectiveNP_5_1down",
+	"JET_JER_EffectiveNP_6_1up",
+	"JET_JER_EffectiveNP_6_1down",
+	"JET_JER_EffectiveNP_7restTerm_1up",
+	"JET_JER_EffectiveNP_7restTerm_1down",
+	"JET_Pileup_OffsetMu_1up",
+	"JET_Pileup_OffsetMu_1down",
+	"JET_Pileup_OffsetNPV_1up",
+	"JET_Pileup_OffsetNPV_1down",
+	"JET_Pileup_PtTerm_1up",
+	"JET_Pileup_PtTerm_1down",
+	"JET_Pileup_RhoTopology_1up",
+	"JET_Pileup_RhoTopology_1down",
+	"JET_PunchThrough_MC16_1up",
+	"JET_PunchThrough_MC16_1down",
+	"JET_SingleParticle_HighPt_1up",
+	"JET_SingleParticle_HighPt_1down",
+	"JET_TILECORR_Uncertainty_1down",
+	"JET_TILECORR_Uncertainty_1up",
+	"MET_SoftTrk_ResoPara",
+	"MET_SoftTrk_ResoPerp",
+	"MET_SoftTrk_ScaleDown",
+	"MET_SoftTrk_ScaleUp"
 };
 
 void plot(int iNP)
 {
-	bool doPlots = 1;
+	int histoiNP = 0;
+	if(iNP < 167) histoiNP = iNP;
+	bool doPlots = 0;
 	int plot_option = 2;
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
@@ -187,25 +232,25 @@ void plot(int iNP)
 	tau_plots->inputfilename = "hists"+to_string(iNP);
 	tau_plots->debug = 0;
 	bool calibfake = 1;
-	bool fakeMC = 1;
-	bool doTrex = 0;
+	bool fakeMC = 0;
+	bool doTrex = 1;
 	tau_plots->sensitivevariable = "BDTG_test";
 	tau_plots->add("BDT discriminant","BDTG_test","",5);
-	tau_plots->add("BDT discriminant","BDTG_train","",5);
-  	tau_plots->add("p_{T,lead-#tau}","tau_0_pt","GeV",5);
-  	tau_plots->add("p_{T,sublead-#tau}","tau_1_pt","GeV",5);
-  	tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",5);
-  	tau_plots->add("m_{#tau#tau,vis}","ttvismass","",5);
-  	tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",5);
-  	tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-  	tau_plots->add("E^{T}_{miss} centrality","phicent","",5);
-  	tau_plots->add("m_{t,SM}","t1mass","GeV",20);
-  	tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
-  	tau_plots->add("m_{W}","wmass","GeV",5);
-  	tau_plots->add("m_{t,FCNC}","t2mass","GeV",20);
-  	tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
-  	tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
-  	tau_plots->add("E^{T}_{miss}","etmiss","GeV",5);
+	//tau_plots->add("BDT discriminant","BDTG_train","",5);
+  	//tau_plots->add("p_{T,lead-#tau}","tau_0_pt","GeV",5);
+  	//tau_plots->add("p_{T,sublead-#tau}","tau_1_pt","GeV",5);
+  	//tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",5);
+  	//tau_plots->add("m_{#tau#tau,vis}","ttvismass","",5);
+  	//tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",5);
+  	//tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
+  	//tau_plots->add("E^{T}_{miss} centrality","phicent","",5);
+  	//tau_plots->add("m_{t,SM}","t1mass","GeV",20);
+  	//tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
+  	//tau_plots->add("m_{W}","wmass","GeV",5);
+  	//tau_plots->add("m_{t,FCNC}","t2mass","GeV",20);
+  	//tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
+  	//tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
+  	//tau_plots->add("E^{T}_{miss}","etmiss","GeV",5);
   	//tau_plots->add("#chi^2","chi2","",5);
   	gErrorIgnoreLevel = kWarning;
   	tau_plots->blinding = 1;
@@ -215,10 +260,11 @@ void plot(int iNP)
 	regions.push_back("reg2mtau1b3jss");
 	regions.push_back("reg2mtau1b3jos");
 
-	regions.push_back("reg2mtau2b2jss");
-	regions.push_back("reg2mtau2b2jos");
-	regions.push_back("reg2mtau2b3jss");
-	regions.push_back("reg2mtau2b3jos");
+	//regions.push_back("reg2mtau2b2jss");
+	//regions.push_back("reg2mtau2b2jos");
+	//regions.push_back("reg2mtau2b3jss");
+	//regions.push_back("reg2mtau2b3jos");
+
 	//regions.push_back("reg1mtau1ltau1b2jss");
 	//regions.push_back("reg2ltau1b2jss");
 	//regions.push_back("reg1mtau1ltau1b3jss");
@@ -276,7 +322,9 @@ void plot(int iNP)
 	TString origin[] = {"b", "c", "g", "j", "lep", "nomatch", "real", "data","doublefake"};
 	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "real #tau"};
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kRed, kRed, kRed, kRed, kRed, kMagenta, kSpring, kTeal, kAzure};
-	tau_plots->read_sample("data","data","data",kBlack, 1);
+
+	TFile *datafile = new TFile("hists0.root");
+	tau_plots->read_sample("data","data","data",kBlack, 1, datafile);
 //============================ merge_sample============================
 	if(plot_option == 1){
 		for (int j = 0; j < samples.size(); ++j)
@@ -290,33 +338,33 @@ void plot(int iNP)
 			for (int i = 0; i < 7; i++){
 				if (fakeMC && origin[i] != "real")
 				{
-					tau_plots->read_sample( "fake1truth", samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), "Fake MC, 1 truth #tau", kMagenta, norm[j]);
+					tau_plots->read_sample( "fake1truth", samples[j] + "_" + origin[i] + "_NP" + to_string(histoiNP), "Fake MC, 1 truth #tau", kMagenta, norm[j]);
 				}
 				
 				if(samples[j] == "tcH"){
-					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_prod_ch") + "_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_prod_ch") + "_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}else if(samples[j] == "tuH"){
-					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_prod_uh") + "_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_prod_uh") + "_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}else if(samples[j] == "fcnc_uh"){
-					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}else if(samples[j] == "fcnc_ch"){
-					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}else if(origin[i] == "real"){
-					tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}
 				
 				if(origin[i] != "real" && !fakeMC && calibfake){
-					tau_plots->read_sample( "fake", samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), "MC Fake #tau", kTeal, norm[j]);
+					tau_plots->read_sample( "fake", samples[j] + "_" + origin[i] + "_NP" + to_string(histoiNP), "MC Fake #tau", kTeal, norm[j]);
 				}
 				
 			}
-			if(fakeMC && j != samples.size()-1) tau_plots->read_sample( "fake0truth", samples[j] + "_" + origin[8] + "_NP" + to_string(iNP), "fake, 0 truth #tau", kTeal, norm[j]);
+			if(fakeMC && j != samples.size()-1) tau_plots->read_sample( "fake0truth", samples[j] + "_" + origin[8] + "_NP" + to_string(histoiNP), "fake, 0 truth #tau", kTeal, norm[j]);
 		}
 
 	}
@@ -373,8 +421,9 @@ void plot(int iNP)
 		if(!fakeMC){
   			tau_plots->templatesample("reg2mtau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b3jos","fakeSS","Fake",kYellow,0,1.31597);
   			tau_plots->templatesample("reg2mtau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b2jos","fakeSS","Fake",kYellow,0,1.31597);
-  			tau_plots->templatesample("reg2mtau2b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b3jos","fakeSS","Fake",kYellow,1);
-  			tau_plots->templatesample("reg2mtau2b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b2jos","fakeSS","Fake",kYellow,1);
+  			//tau_plots->templatesample("reg2mtau2b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b3jos","fakeSS","Fake",kYellow,1);
+  			//tau_plots->templatesample("reg2mtau2b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b2jos","fakeSS","Fake",kYellow,1);
+
   			//tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
   			//tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
 	
