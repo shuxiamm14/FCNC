@@ -21,7 +21,7 @@ void plot(int iNP)
 	bool doTrex = 0;
 	bool plotnj = 0;
 	int plot_option = 2;
-	int fakeMC = 0; // 0 use DD, 1 include fake in each bkg, 2 show fakes in the plots
+	int fakeMC = 1; // 0 use DD, 1 include fake in each bkg, 2 show fakes in the plots
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
 	//tau_plots->inputfilename = "hists"+to_string(iNP);
@@ -216,8 +216,9 @@ void plot(int iNP)
 			//tau_plots->templatesample("reg1l2tau2bnj_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l2tau2bnj_os_vetobtagwp70","fake","Fake",kYellow,1);
 			//tau_plots->templatesample("reg1l1tau2b2j_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau2b2j_os_vetobtagwp70","fake","Fake",kYellow,1);
 			//tau_plots->templatesample("reg1l1tau2b3j_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau2b3j_os_vetobtagwp70","fake","Fake",kYellow,1);
-			tau_plots->templatesample("reg1l1tau2b2j_os_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b2j_os_vetobtagwp70","fake","Fake",kYellow,1);
-			tau_plots->templatesample("reg1l1tau2b3j_os_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b3j_os_vetobtagwp70","fake","Fake",kYellow,1);
+
+			//tau_plots->templatesample("reg1l1tau2b2j_os_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b2j_os_vetobtagwp70","fake","Fake",kYellow,1); //di-b fake estimate
+			//tau_plots->templatesample("reg1l1tau2b3j_os_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l1tau1b3j_os_vetobtagwp70","fake","Fake",kYellow,1);
 			tau_plots->stackorder.push_back("fake");
   		}
   	}
@@ -242,6 +243,10 @@ void plot(int iNP)
 }
 int main(int argc, char const *argv[])
 {
+	if(argc == 1){
+		plot(0);
+		return 0;
+	}
 	for (int i = *argv[1]-'0'; i <= *argv[2]-'0'; ++i)
 	{
 		if(i == 1 || i == 2) continue;

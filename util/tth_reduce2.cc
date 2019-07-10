@@ -55,6 +55,8 @@ int main(int argc, char const *argv[])
 	}
 	regions.insert(regions.end(),regions1.begin(),regions1.end());
 	analysis->plotNPs.push_back(0);
+	analysis->plotNPs.push_back(1);
+	analysis->plotNPs.push_back(2);
 	analysis->plotNPs.push_back(3);
 	analysis->plotNPs.push_back(4);
 	analysis->plotNPs.push_back(5);
