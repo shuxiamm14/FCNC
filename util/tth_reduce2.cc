@@ -36,10 +36,10 @@ int main(int argc, char const *argv[])
 		regions.push_back("reg1l1tau1b3j_ss");
 		regions.push_back("reg1l2tau2bnj_os");
 		regions.push_back("reg1l2tau2bnj_ss");
-		regions.push_back("reg1l1tau2b2j_os");
-		regions.push_back("reg1l1tau2b2j_ss");
-		regions.push_back("reg1l1tau2b3j_os");
-		regions.push_back("reg1l1tau2b3j_ss");
+		regions.push_back("reg1l1tau2b2j_os_85");
+		regions.push_back("reg1l1tau2b2j_ss_85");
+		regions.push_back("reg1l1tau2b3j_os_85");
+		regions.push_back("reg1l1tau2b3j_ss_85");
 	}
 	tthmltree *analysis = new tthmltree();
 	if(!dofake) {
