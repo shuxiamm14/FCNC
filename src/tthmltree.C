@@ -969,7 +969,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       weights->clear();
       weights->push_back(weight);
       if(triggeredfcnc && mc_channel_number){
-        weights->push_back(weight*fakeSF);
+        weights->push_back(fakeSF);
         //for (int iNP = 0; iNP < 8; ++iNP)
         //{
         //  double valNP = weight;
@@ -1036,7 +1036,9 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
           {
             if(iNP != 0 && tauorigin.Contains("data")) continue;
-            weight = weights->at(0) * (tauorigin.Contains("data")?1:weights->at(2)) * ((plotNPs[iNP]==0 || plotNPs[iNP]==2)? 1:weights->at(plotNPs[iNP]));
+            if(plotNPs[iNP]==1) weight = weights->at(1);
+            else
+              weight = weights->at(0) * ((tauorigin.Contains("data")||plotNPs[iNP]!=0)?1:weights->at(2)) * ((plotNPs[iNP]==0 || plotNPs[iNP]==2)? 1:weights->at(plotNPs[iNP]));
             if (iter->first.Contains("tau")) {
               if (triggeredfcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, iNP);
               else if (!sample.Contains("fcnc")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);

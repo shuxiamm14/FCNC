@@ -222,7 +222,7 @@ TString NPnames[] = {
 void plot(int iNP)
 {
 	int histoiNP = 0;
-	if(iNP < 167) histoiNP = iNP;
+	if(iNP < 124) histoiNP = iNP;
 	bool doPlots = 0;
 	int plot_option = 2;
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
@@ -323,7 +323,7 @@ void plot(int iNP)
 	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "real #tau"};
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kRed, kRed, kRed, kRed, kRed, kMagenta, kSpring, kTeal, kAzure};
 
-	TFile *datafile = new TFile("hists0.root");
+	TFile *datafile = new TFile("histsdata.root");
 	tau_plots->read_sample("data","data","data",kBlack, 1, datafile);
 //============================ merge_sample============================
 	if(plot_option == 1){

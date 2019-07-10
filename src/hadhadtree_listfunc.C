@@ -541,6 +541,16 @@ bool hadhadtree::addWeightSys(){
   //weights->push_back(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT);
   //weights->push_back(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT);
   //weights->push_back(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT);
+
+  weights->push_back(theory_weights_LHE3Weight_muR_05_muF_05/weight_mc*theoryUncertainty[0]/theoryUncertainty[1]);
+  weights->push_back(theory_weights_LHE3Weight_muR_05_muF_10/weight_mc*theoryUncertainty[0]/theoryUncertainty[2]);
+  weights->push_back(theory_weights_LHE3Weight_muR_05_muF_20/weight_mc*theoryUncertainty[0]/theoryUncertainty[3]);
+  weights->push_back(theory_weights_LHE3Weight_muR_10_muF_05/weight_mc*theoryUncertainty[0]/theoryUncertainty[4]);
+  weights->push_back(theory_weights_LHE3Weight_muR_10_muF_20/weight_mc*theoryUncertainty[0]/theoryUncertainty[5]);
+  weights->push_back(theory_weights_LHE3Weight_muR_20_muF_05/weight_mc*theoryUncertainty[0]/theoryUncertainty[6]);
+  weights->push_back(theory_weights_LHE3Weight_muR_20_muF_10/weight_mc*theoryUncertainty[0]/theoryUncertainty[7]);
+  weights->push_back(theory_weights_LHE3Weight_muR_20_muF_20/weight_mc*theoryUncertainty[0]/theoryUncertainty[8]);
+
   for(int i = 0; i < weights->size(); i++){
     if(weights->at(i)!=weights->at(i)) {
       printf("weight is nan, eventNumber: %llu, n_weight: %d\n", event_number, i);
@@ -1090,6 +1100,14 @@ void hadhadtree::Init(TTree *tree)
     tree->SetBranchAddress("tau_0_NOMINAL_TauEffSF_reco", &tau_0_NOMINAL_TauEffSF_reco, &b_tau_0_NOMINAL_TauEffSF_reco);
     tree->SetBranchAddress("tau_0_NOMINAL_TauEffSF_selection", &tau_0_NOMINAL_TauEffSF_selection, &b_tau_0_NOMINAL_TauEffSF_selection);
     if(nominaltree){
+      tree->SetBranchAddress("theory_weights_LHE3Weight_muR=05,muF=05", &theory_weights_LHE3Weight_muR_05_muF_05, &b_theory_weights_LHE3Weight_muR_05_muF_05);
+      tree->SetBranchAddress("theory_weights_LHE3Weight_muR=05,muF=10", &theory_weights_LHE3Weight_muR_05_muF_10, &b_theory_weights_LHE3Weight_muR_05_muF_10);
+      tree->SetBranchAddress("theory_weights_LHE3Weight_muR=05,muF=20", &theory_weights_LHE3Weight_muR_05_muF_20, &b_theory_weights_LHE3Weight_muR_05_muF_20);
+      tree->SetBranchAddress("theory_weights_LHE3Weight_muR=10,muF=05", &theory_weights_LHE3Weight_muR_10_muF_05, &b_theory_weights_LHE3Weight_muR_10_muF_05);
+      tree->SetBranchAddress("theory_weights_LHE3Weight_muR=10,muF=20", &theory_weights_LHE3Weight_muR_10_muF_20, &b_theory_weights_LHE3Weight_muR_10_muF_20);
+      tree->SetBranchAddress("theory_weights_LHE3Weight_muR=20,muF=05", &theory_weights_LHE3Weight_muR_20_muF_05, &b_theory_weights_LHE3Weight_muR_20_muF_05);
+      tree->SetBranchAddress("theory_weights_LHE3Weight_muR=20,muF=10", &theory_weights_LHE3Weight_muR_20_muF_10, &b_theory_weights_LHE3Weight_muR_20_muF_10);
+      tree->SetBranchAddress("theory_weights_LHE3Weight_muR=20,muF=20", &theory_weights_LHE3Weight_muR_20_muF_20, &b_theory_weights_LHE3Weight_muR_20_muF_20);
       tree->SetBranchAddress("higgs", &higgs, &b_higgs);
       tree->SetBranchAddress("higgs_child1", &higgs_child1, &b_higgs_child1);
       tree->SetBranchAddress("higgs_child1_classifierParticleOrigin", &higgs_child1_classifierParticleOrigin, &b_higgs_child1_classifierParticleOrigin);

@@ -228,6 +228,8 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       hadcutflow.fill();
       if((tau_1_allTrk_n!=1 && tau_1_allTrk_n!=3) || (tau_0_allTrk_n!=1 && tau_0_allTrk_n!=3)) continue;
       hadcutflow.fill();
+      if(!tau_0_ele_bdt_medium_retuned || !tau_0_ele_bdt_medium_retuned) continue;
+      hadcutflow.fill();
       if(weight > 5) continue;
       lepton_SF = 
         tau_0_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
