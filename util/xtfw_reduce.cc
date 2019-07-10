@@ -87,6 +87,7 @@ int main(int argc, char const *argv[])
 	if(doplot) analysis->init_hist(inputconfig);
 	analysis->init_sample(inputconfig,inputconfig);
 	map<int,double> totgenweighted;
+	map<int,double[8]> totgenweighted_muRmuF;
 	map<int,double> totgenraw;
 	map<int,long> nDAODraw;
 	double totgenWeighted = 0;
@@ -97,7 +98,7 @@ int main(int argc, char const *argv[])
 	double totgenWeightederr = 0;
 	double totDAODWeightederr = 0;
 
-	printf("Reading bin 8\n");
+	printf("Reading bin 8 and theory muRmuF total weights\n");
 	while(!fn.eof()){
 		fn.getline(inputline,500);
 		if(strlen(inputline)==0) continue;
@@ -113,8 +114,15 @@ int main(int argc, char const *argv[])
 			exit(1);
 		}
 		if(!isData){
-			if(totgenweighted.find(dsid) == totgenweighted.end()) totgenweighted[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
-			else totgenweighted[dsid] += ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
+			if(totgenweighted.find(dsid) == totgenweighted.end()) {
+				totgenweighted[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
+				for (int i = 0; i < 8; ++i) totgenweighted_muRmuF[dsid][i] = ((TH1*)inputfile.Get("h_metadata_theory_weights"))->GetBinContent(33+i);
+			}
+			else{
+				totgenweighted[dsid] += ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
+				for (int i = 0; i < 8; ++i) totgenweighted_muRmuF[dsid][i] += ((TH1*)inputfile.Get("h_metadata_theory_weights"))->GetBinContent(33+i);
+			}
+
 			if(totgenraw.find(dsid) == totgenraw.end()) totgenraw[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(7);
 			else totgenraw[dsid] += ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(7);
 			if(nDAODraw.find(dsid) == nDAODraw.end()) nDAODraw[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(10);
@@ -189,7 +197,12 @@ int main(int argc, char const *argv[])
 			cutflowraw->Fill(i+1,inputcutflow->GetBinContent(i)/(isData?1:87));
 			cutflowraw->SetBinError(i+2, sqrt(pow(error,2) + pow(inputcutflow->GetBinError(i)/(isData?1:sqrt(87)),2)));
 		}
-		analysis->Loop( (TTree*)inputfile.Get(argv[2]), inputconfig, isData ? 1 : xsecs[dsid]*luminosity/totgenweighted[dsid]);
+		if(isData) analysis->Loop( (TTree*)inputfile.Get(argv[2]), inputconfig, 1.);
+		else {
+			analysis->theoryUncertainty[0] = totgenweighted[dsid];
+			for (int i = 1; i < 9; ++i) analysis->theoryUncertainty[i]=totgenweighted_muRmuF[dsid][i-1];
+			analysis->Loop( (TTree*)inputfile.Get(argv[2]), inputconfig, xsecs[dsid]*luminosity/totgenweighted[dsid]);
+		}
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		inputfile.Close();
 	}

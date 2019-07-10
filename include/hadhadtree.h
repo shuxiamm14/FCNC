@@ -1203,6 +1203,14 @@ public :
    Float_t         wp_childq2_q;
    Int_t           wp_childq2_status;
    Int_t           wp_childq2_type;
+   Float_t         theory_weights_LHE3Weight_muR_05_muF_05;
+   Float_t         theory_weights_LHE3Weight_muR_05_muF_10;
+   Float_t         theory_weights_LHE3Weight_muR_05_muF_20;
+   Float_t         theory_weights_LHE3Weight_muR_10_muF_05;
+   Float_t         theory_weights_LHE3Weight_muR_10_muF_20;
+   Float_t         theory_weights_LHE3Weight_muR_20_muF_05;
+   Float_t         theory_weights_LHE3Weight_muR_20_muF_10;
+   Float_t         theory_weights_LHE3Weight_muR_20_muF_20;
 
    // List of branches
    TBranch        *b_HLT_tau35_loose1_tracktwo_tau25_loose1_tracktwo;   //!
@@ -2342,6 +2350,14 @@ public :
    TBranch        *b_wp_childq2_q;   //!
    TBranch        *b_wp_childq2_status;   //!
    TBranch        *b_wp_childq2_type;   //!
+   TBranch        *b_theory_weights_LHE3Weight_muR_05_muF_05;
+   TBranch        *b_theory_weights_LHE3Weight_muR_05_muF_10;
+   TBranch        *b_theory_weights_LHE3Weight_muR_05_muF_20;
+   TBranch        *b_theory_weights_LHE3Weight_muR_10_muF_05;
+   TBranch        *b_theory_weights_LHE3Weight_muR_10_muF_20;
+   TBranch        *b_theory_weights_LHE3Weight_muR_20_muF_05;
+   TBranch        *b_theory_weights_LHE3Weight_muR_20_muF_10;
+   TBranch        *b_theory_weights_LHE3Weight_muR_20_muF_20;
 
 };
 #endif // #ifdef hadhadtree_cxx
