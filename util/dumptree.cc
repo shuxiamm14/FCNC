@@ -3,7 +3,7 @@
 
 int main(int argc, char const *argv[])
 {
-	if(argc!=3){
+	if(argc!=4){
 		printf("please feed the file and the tree, branch name\n");
 		exit(0);
 	}
