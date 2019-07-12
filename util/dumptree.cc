@@ -9,7 +9,7 @@ int main(int argc, char const *argv[])
 	}
 	TFile readthefile(argv[1]);
 	TTree *readtree = (TTree*)readthefile.Get(argv[2]);
-	long var;
+	ULong64_t var;
 	readtree->SetBranchAddress(argv[3],&var);
 	long entries = readtree->GetEntries();
 	for (int i = 0; i < entries; ++i)
