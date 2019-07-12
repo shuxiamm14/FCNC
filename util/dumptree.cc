@@ -1,0 +1,21 @@
+#include "TTree.h"
+#include "TFile.h"
+
+int main(int argc, char const *argv[])
+{
+	if(argc!=3){
+		printf("please feed the file and the tree, branch name\n");
+		exit(0);
+	}
+	TFile readthefile(argv[1]);
+	TTree *readtree = (TTree*)readthefile.Get(argv[2]);
+	long var;
+	readtree->SetBranchAddress(argv[3],&var);
+	long entries = readtree->GetEntries();
+	for (int i = 0; i < entries; ++i)
+	{
+		readtree->GetEntry(i);
+		printf("%s = %ld\n", argv[3], var);
+	}
+	return 0;
+}
