@@ -428,8 +428,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
   if (samplename.Contains("ttbar")) sample = "ttbar";
   else if (!samplename.Contains("data")) sample.Remove(sample.Sizeof() - 2);
   gM = initgM();
-  fstream signalevtnb;
-  if(samplename.Contains("fcnc")) signalevtnb.open((samplename+"_evt.txt").Data(), fstream:: in | fstream::out | fstream::app);
+  fstream evtfile;
+  if(dumpeventnumber) evtfile.open((samplename+"_evt.txt").Data(), fstream:: in | fstream::out | fstream::app);
   if (dumptruth) {
     if(reduce > 1){
       if (TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) {
@@ -921,8 +921,12 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       if(fcncreg=="1l2tau") BDTG_train = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
       if(fcncreg=="lh3j"  ) BDTG_train = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
       if(fcncreg=="lh4j"  ) BDTG_train = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
-      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l1tau1b2j_os"] || ifregions["reg1l1tau1b3j_os"]) if(samplename.Contains("fcnc") && BDTG_test > 0.5) signalevtnb<<mc_channel_number<<" "<<eventNumber<<endl;
-
+      if(dumpeventnumber) {
+        if(mc_channel_number>0)
+          evtfile<<mc_channel_number<<" "<<eventNumber<<endl;
+        else
+          evtfile<<runNumber<<" "<<eventNumber<<endl;
+      }
     }
       //===============================fill histograms, fill tree===============================
     if(debug) printf("derive origin\n");
@@ -1039,6 +1043,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
     }
 
     if (dumptruth && triggeredfcnc && sample.Contains("fcnc")) dumpTruth(eventNumber % 2);
+
     for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
       if (iter->second == 1) {
         if (writetree) {
