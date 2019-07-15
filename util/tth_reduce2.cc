@@ -42,6 +42,7 @@ int main(int argc, char const *argv[])
 		regions.push_back("reg1l1tau2b3j_ss_85");
 	}
 	tthmltree *analysis = new tthmltree();
+	analysis->dumpeventnumber = 1;
 	if(!dofake) {
 		analysis->dovetobwp["btagwp70"] = 1;
 		analysis->fcnc_regions = regions;
