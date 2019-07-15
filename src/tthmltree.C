@@ -922,10 +922,12 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       if(fcncreg=="lh3j"  ) BDTG_train = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
       if(fcncreg=="lh4j"  ) BDTG_train = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
       if(dumpeventnumber) {
-        if(mc_channel_number>0)
-          evtfile<<mc_channel_number<<" "<<eventNumber<<endl;
-        else
-          evtfile<<runNumber<<" "<<eventNumber<<endl;
+        for(auto reg : ifregions){
+          if(reg.second == 0) continue;
+          if(mc_channel_number>0)
+            evtfile<<reg.first<<" "<<mc_channel_number<<" "<<eventNumber<<endl;
+          else
+            evtfile<<reg.first<<" "<<runNumber<<" "<<eventNumber<<endl;
       }
     }
       //===============================fill histograms, fill tree===============================
