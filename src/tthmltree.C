@@ -1066,6 +1066,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
   if(reduce > 1) printf("%s ", inputtree->GetName());
   tthcutflow.print();
   tthcutflow.clear();
+  evtfile.close()
   if (dumptruth) {
     if (TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) {
       filetruth[0][0].close();
