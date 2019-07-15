@@ -914,6 +914,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
             evtfile<<reg.first<<" "<<mc_channel_number<<" "<<eventNumber<<endl;
           else
             evtfile<<reg.first<<" "<<runNumber<<" "<<eventNumber<<endl;
+        }
       }
     }
       //===============================fill histograms, fill tree===============================
