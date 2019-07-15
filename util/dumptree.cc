@@ -15,7 +15,7 @@ int main(int argc, char const *argv[])
 	for (int i = 0; i < entries; ++i)
 	{
 		readtree->GetEntry(i);
-		printf("%s = %ld\n", argv[3], var);
+		printf("%s = %llu\n", argv[3], var);
 	}
 	return 0;
 }

@@ -21,7 +21,7 @@ class nominal {
 public :
   map<TString,bool> dobwp;
   map<TString,bool> dovetobwp;
-
+  bool dumpeventnumber;
   TString SystematicsName = "NOMINAL";
 // Fixed size dimensions of array or collections stored in the TTree if any.
   const double btagwpCut[4]={0.94,0.83,0.64,0.11};
