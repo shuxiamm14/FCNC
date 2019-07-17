@@ -678,11 +678,11 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
             mtaujmin = tmpm;
           }
         }
-        if(drtaujmin<0.4) {  // same olr for normal jet as b-jet
-          if(debug) printf("drtaujmin<0.4\n");
-          continue;
-        }
-        tthcutflow.fill();
+//        if(drtaujmin<0.4) {  // same olr for normal jet as b-jet
+//          if(debug) printf("drtaujmin<0.4\n");
+//          continue;
+//        }
+//        tthcutflow.fill();
       }
       if(subhighscore_b<0 && (defaultbtagwp == btagwpCut[1] ? nJets_OR_T_MV2c10_70 >=2 : nJets_OR_T_MV2c10_85 >=2)){
         printf("ERROR: bjet not found\n");
