@@ -114,7 +114,7 @@ public :
   float drlb;
   float drtaub;
   int nljet = 0;
-  double theoryUncertainty[9];
+  TH1D* theoryweightsum = 0;
   TFile *outputtreefile;
   vector<histSaver*> fcnc_plots;
   histSaver *fake_plots;

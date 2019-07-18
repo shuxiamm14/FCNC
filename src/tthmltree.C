@@ -1045,7 +1045,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
           {
             if(iNP != 0 && tauorigin.Contains("data")) continue;
-            if(plotNPs[iNP]==1) weight = weights->at(1);
+            if(plotNPs[iNP]==1) weight = weights->at(0) * weights->at(1);
             else
               weight = weights->at(0) * ((tauorigin.Contains("data")||plotNPs[iNP]==0)?1:weights->at(2)) * ((plotNPs[iNP]==0 || plotNPs[iNP]==2)? 1:weights->at(plotNPs[iNP]));
             if (iter->first.Contains("tau")) {

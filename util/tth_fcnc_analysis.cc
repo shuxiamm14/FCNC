@@ -249,7 +249,6 @@ int main(int argc, char const *argv[])
 	}
 	for (int i = *argv[1]-'0'; i <= *argv[2]-'0'; ++i)
 	{
-		if(i == 1 || i == 2) continue;
 		plot(i);
 	}
 	return 0;
