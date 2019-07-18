@@ -57,7 +57,7 @@ public :
    vector<Int_t>           *jets_type = 0;
    vector<Float_t>         *jets_width = 0;
    vector<Float_t>         *jets_wztruth_pdgid = 0;
-
+   vector<float>           *weight_mc_v;
    vector<TLorentzVector*>  *taus_matched_p4;
    vector<TLorentzVector*>  *taus_matched_vis_p4;
    vector<TLorentzVector*>  *taus_p4;
