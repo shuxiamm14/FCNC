@@ -232,13 +232,13 @@ void plot(int iNP)
 
 
 	if(doPlots){
+		gSystem->mkdir(("output_"+to_string(iNP)).c_str());
 		for (int i = 6; i < 12; ++i)
 		//for (int i = 8; i < 9; ++i)
 		{
-			printf("plot signal: %s\n", samples[i].Data());
   			tau_plots->overlay(samples[i]);
-			tau_plots->plot_stack("output/" + samples[i]);
 		}
+		tau_plots->plot_stack(("output_"+to_string(iNP)).c_str());
 	}
 }
 int main(int argc, char const *argv[])

@@ -216,12 +216,18 @@ TString NPnames[] = {
 	"MET_SoftTrk_ResoPara",
 	"MET_SoftTrk_ResoPerp",
 	"MET_SoftTrk_ScaleDown",
-	"MET_SoftTrk_ScaleUp"
+	"MET_SoftTrk_ScaleUp",
+	"ttbarsys_frag",
+	"ttbarsys_hscatter",
+	"ttbarsys_ISR"
 };
 
 void plot(int iNP)
 {
 	int histoiNP = 0;
+	bool calibfake = 1;
+	bool fakeMC = 0;
+	bool doTrex = 1;
 	if(iNP < 124) histoiNP = iNP;
 	bool doPlots = 0;
 	int plot_option = 2;
@@ -229,11 +235,44 @@ void plot(int iNP)
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
 	tau_plots->doROC = 0;
 	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
-	tau_plots->inputfilename = "hists"+to_string(iNP);
 	tau_plots->debug = 0;
-	bool calibfake = 1;
-	bool fakeMC = 0;
-	bool doTrex = 1;
+	vector<TString> samples;
+	samples.push_back("smhiggs");
+	samples.push_back("wjet");
+	samples.push_back("diboson");
+	samples.push_back("zll");
+	samples.push_back("ztautau");
+	samples.push_back("top");
+	samples.push_back("fcnc_ch");
+	samples.push_back("fcnc_prod_ch");
+	samples.push_back("tcH");
+	samples.push_back("fcnc_uh");
+	samples.push_back("fcnc_prod_uh");
+	samples.push_back("tuH");
+	double norm[] = {1,1,1,1,1,1,0.2,0.2,0.2,0.2,0.2,0.2};
+	vector<TString> sampletitle;
+	sampletitle.push_back("SM Higgs");
+	sampletitle.push_back("W+jets");
+	sampletitle.push_back("Diboson");
+	sampletitle.push_back("Z#rightarrowll");
+	sampletitle.push_back("Z#rightarrow#tau#tau");
+	sampletitle.push_back("Top production");
+	sampletitle.push_back("#bar{t}t#rightarrowbWcH");
+	sampletitle.push_back("ctH Prod Mode");
+	sampletitle.push_back("tcH merged signal");
+	sampletitle.push_back("#bar{t}t#rightarrowbWuH");
+	sampletitle.push_back("utH Prod Mode");
+	sampletitle.push_back("tuH merged signal");
+	TString samplesys = "";
+	for (auto samp : samples)
+	{
+		if(NPnames[iNP].Contains(samp)){
+			samplesys = samp;
+			break;
+		}
+	}
+	tau_plots->inputfilename = "hists"+to_string(samplesys!=""?iNP:0);
+
 	tau_plots->sensitivevariable = "BDTG_test";
 	tau_plots->add("BDT discriminant","BDTG_test","",5);
 	//tau_plots->add("BDT discriminant","BDTG_train","",5);
@@ -286,34 +325,6 @@ void plot(int iNP)
 	    	tau_plots->add_region(regions[j] + "_" + nprong[k] + "_below35_vetobtagwp70");
 	    }
 	tau_plots->muteregion("prong");
-	vector<TString> samples;
-	samples.push_back("smhiggs");
-	samples.push_back("wjet");
-	samples.push_back("diboson");
-	samples.push_back("zll");
-	samples.push_back("ztautau");
-	samples.push_back("top");
-	samples.push_back("fcnc_ch");
-	samples.push_back("fcnc_prod_ch");
-	samples.push_back("tcH");
-	samples.push_back("fcnc_uh");
-	samples.push_back("fcnc_prod_uh");
-	samples.push_back("tuH");
-	double norm[] = {1,1,1,1,1,1,0.2,0.2,0.2,0.2,0.2,0.2};
-	vector<TString> sampletitle;
-	sampletitle.push_back("SM Higgs");
-	sampletitle.push_back("W+jets");
-	sampletitle.push_back("Diboson");
-	sampletitle.push_back("Z#rightarrowll");
-	sampletitle.push_back("Z#rightarrow#tau#tau");
-	sampletitle.push_back("Top production");
-	sampletitle.push_back("#bar{t}t#rightarrowbWcH");
-	sampletitle.push_back("ctH Prod Mode");
-	sampletitle.push_back("tcH merged signal");
-	sampletitle.push_back("#bar{t}t#rightarrowbWuH");
-	sampletitle.push_back("utH Prod Mode");
-	sampletitle.push_back("tuH merged signal");
-
 	stringstream ss;
 	ss<<"(BR=" << norm[6] << "%)";
 	TString tmp;
@@ -324,7 +335,7 @@ void plot(int iNP)
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kRed, kRed, kRed, kRed, kRed, kMagenta, kSpring, kTeal, kAzure};
 
 	TFile *datafile = new TFile("histsdata.root");
-	tau_plots->read_sample("data","data","data",kBlack, 1, datafile);
+	if(iNP == 0) tau_plots->read_sample("data","data","data",kBlack, 1, datafile);
 //============================ merge_sample============================
 	if(plot_option == 1){
 		for (int j = 0; j < samples.size(); ++j)
@@ -333,12 +344,12 @@ void plot(int iNP)
 	}
 //============================ merge_origin ============================
 	else if(plot_option == 2){
-  		tau_plots->overlay(samples[samples.size()-1]);
 		for (int j = 0; j < samples.size(); ++j){
 			for (int i = 0; i < 7; i++){
+				if(samplesys!="" && origin[i] == "real") continue;
 				if (fakeMC && origin[i] != "real")
 				{
-					tau_plots->read_sample( "fake1truth", samples[j] + "_" + origin[i] + "_NP" + to_string(histoiNP), "Fake MC, 1 truth #tau", kMagenta, norm[j]);
+					tau_plots->read_sample( "fake1truth", (samplesys==samples[j] ? NPnames[j] : samples[j]) + "_" + origin[i] + "_NP" + to_string(histoiNP), "Fake MC, 1 truth #tau", kMagenta, norm[j]);
 				}
 				
 				if(samples[j] == "tcH"){
@@ -356,15 +367,15 @@ void plot(int iNP)
 					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}else if(origin[i] == "real"){
-					tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], (samplesys==samples[j] ? NPnames[j] : samples[j]) + "_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}
 				
 				if(origin[i] != "real" && !fakeMC && calibfake){
-					tau_plots->read_sample( "fake", samples[j] + "_" + origin[i] + "_NP" + to_string(histoiNP), "MC Fake #tau", kTeal, norm[j]);
+					tau_plots->read_sample( "fake", (samplesys==samples[j] ? NPnames[j] : samples[j]) + "_" + origin[i] + "_NP" + to_string(histoiNP), "MC Fake #tau", kTeal, norm[j]);
 				}
 				
 			}
-			if(fakeMC && j != samples.size()-1) tau_plots->read_sample( "fake0truth", samples[j] + "_" + origin[8] + "_NP" + to_string(histoiNP), "fake, 0 truth #tau", kTeal, norm[j]);
+			if(fakeMC && j != samples.size()-1) tau_plots->read_sample( "fake0truth", (samplesys==samples[j] ? NPnames[j] : samples[j]) + "_" + origin[8] + "_NP" + to_string(histoiNP), "fake, 0 truth #tau", kTeal, norm[j]);
 		}
 
 	}
@@ -442,12 +453,14 @@ void plot(int iNP)
   	//tau_plots->printyield("reg2mtau1b2jos");
 	if(doTrex)
 		tau_plots->write_trexinput(NPnames[iNP],"update");
+
 	if(doPlots){
+		gSystem->mkdir(("output_"+to_string(iNP)).c_str());
 		for (int i = samples.size()-6; i < samples.size(); ++i)
 		{
   			tau_plots->overlay(samples[i]);
-			tau_plots  ->plot_stack("output/" + samples[i]);
 		}
+		tau_plots->plot_stack(("output_"+to_string(iNP)).c_str());
 		
 	}
 	//deletepointer(tau_plots);

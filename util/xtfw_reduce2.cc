@@ -43,7 +43,7 @@ int main(int argc, char const *argv[])
 	analysis->init_reduce2();
 	analysis->reduce = *argv[1]-'0';
 	analysis->SystematicsName = argv[3];
-	if(analysis->SystematicsName == "NOMINAL")
+	if(analysis->SystematicsName == "NOMINAL" && !TString(argv[2]).Contains("sys"))
 		for(int i = 0; i < 124; ++i) {
 			if(i == 1) continue;
 			analysis->plotNPs.push_back(i);

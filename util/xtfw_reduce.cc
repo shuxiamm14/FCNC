@@ -20,7 +20,10 @@ int main(int argc, char const *argv[])
 	  	return 1;
 	  }
 	}
-
+	if(TString(argv[1]).Contains("sys") && TString(argv[2]) == "NOMINAL") {
+		printf("sys sample doesnt have the systematic trees\n");
+		return 0;
+	}
 	vector<TString> regions;
 	regions.push_back("reg2mtau1b2jss");
 	regions.push_back("reg2mtau1b3jss");
@@ -78,7 +81,7 @@ int main(int argc, char const *argv[])
 	if(!debug) gErrorIgnoreLevel=kError;
 	hadhadtree *analysis = new hadhadtree();
 	analysis->SystematicsName = argv[2];
-	analysis->nominaltree = TString(argv[2]) == "NOMINAL";
+	analysis->nominaltree = inputconfig.Contains("sys")? 0 : analysis->SystematicsName == "NOMINAL";
 	analysis->init_reduce1();
 	analysis->reduce = 1;
 	analysis->debug = debug;
