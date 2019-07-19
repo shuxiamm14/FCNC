@@ -20,7 +20,7 @@ int main(int argc, char const *argv[])
 	  	return 1;
 	  }
 	}
-	if(TString(argv[1]).Contains("sys") && TString(argv[2]) == "NOMINAL") {
+	if(TString(argv[1]).Contains("sys") && TString(argv[2]) != "NOMINAL") {
 		printf("sys sample doesnt have the systematic trees\n");
 		return 0;
 	}
