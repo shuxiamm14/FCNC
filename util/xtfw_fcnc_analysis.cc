@@ -6,6 +6,7 @@
 #include <sys/ioctl.h>
 #include "observable.h"
 TString NPnames[] = {
+//============weight sys==================
 	"NOMINAL",
 	"fakeSF",
 	"fakeSFNP1",
@@ -130,7 +131,7 @@ TString NPnames[] = {
 	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
 	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
 	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
-
+//=================Sys tree===================
 	"TAUS_TRUEHADTAU_SME_TES_DETECTOR_1down",
 	"TAUS_TRUEHADTAU_SME_TES_DETECTOR_1up",
 	"TAUS_TRUEHADTAU_SME_TES_INSITU_1down",
@@ -217,6 +218,7 @@ TString NPnames[] = {
 	"MET_SoftTrk_ResoPerp",
 	"MET_SoftTrk_ScaleDown",
 	"MET_SoftTrk_ScaleUp",
+//==========Sys sample==============
 	"ttbarsys_frag",
 	"ttbarsys_hscatter",
 	"ttbarsys_ISR"

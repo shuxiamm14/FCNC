@@ -120,11 +120,11 @@ int main(int argc, char const *argv[])
 			TH1D *theoryhisttmp = ((TH1D*)inputfile.Get("h_metadata_theory_weights"));
 			if(totgenweighted.find(dsid) == totgenweighted.end()) {
 				totgenweighted[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
-				theoryweightsum[dsid] = (TH1D*)theoryhisttmp->Clone();
+				if(analysis->nominaltree) theoryweightsum[dsid] = (TH1D*)theoryhisttmp->Clone();
 			}
 			else{
 				totgenweighted[dsid] += ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
-				theoryweightsum[dsid]->Add(theoryhisttmp);
+				if(analysis->nominaltree) theoryweightsum[dsid]->Add(theoryhisttmp);
 			}
 
 			if(totgenraw.find(dsid) == totgenraw.end()) totgenraw[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(7);
@@ -203,7 +203,7 @@ int main(int argc, char const *argv[])
 		}
 		if(isData) analysis->Loop( (TTree*)inputfile.Get(argv[2]), inputconfig, 1.);
 		else {
-			analysis->theoryweightsum=theoryweightsum[dsid];
+			if(analysis->nominaltree) analysis->theoryweightsum=theoryweightsum[dsid];
 			analysis->Loop( (TTree*)inputfile.Get(argv[2]), inputconfig, xsecs[dsid]*luminosity/totgenweighted[dsid]);
 		}
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
