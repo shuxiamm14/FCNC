@@ -11,9 +11,9 @@ int main(int argc, char const *argv[])
 	bool doplot = 0;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
-	ifstream fn(prefix + "/datafiles/xTFW/run/" + argv[1]);
+	ifstream fn(prefix + "/datafiles/xTFW/v2/run/" + argv[1]);
 	if(!fn) {
-	  fprintf(stderr,"can't open file: %s, try %s\n",(prefix + "/datafiles/xTFW/run/" + argv[1]).Data(),argv[1]);
+	  fprintf(stderr,"can't open file: %s, try %s\n",(prefix + "/datafiles/xTFW/v2/run/" + argv[1]).Data(),argv[1]);
 	  fn.open(argv[1]);
 	  if(!fn){
 	  	fprintf(stderr,"can't open file: %s\n",argv[1]);
@@ -29,27 +29,26 @@ int main(int argc, char const *argv[])
 	regions.push_back("reg2mtau1b3jss");
 	regions.push_back("reg2mtau1b3jos");
 	regions.push_back("reg2mtau1b2jos");
-
 	regions.push_back("reg2mtau2b2jss");
 	regions.push_back("reg2mtau2b3jss");
 	regions.push_back("reg2mtau2b3jos");
 	regions.push_back("reg2mtau2b2jos");
-	//regions.push_back("reg1mtau1ltau1b2jss");
-	//regions.push_back("reg2ltau1b2jss");
-	//regions.push_back("reg2ttau1b2jss");
-	//regions.push_back("reg1ttau1mtau1b2jss");
-	//regions.push_back("reg1mtau1ltau1b3jss");
-	//regions.push_back("reg2ltau1b3jss");
-	//regions.push_back("reg2ttau1b3jss");
-	//regions.push_back("reg1ttau1mtau1b3jss");
-	//regions.push_back("reg1mtau1ltau1b2jos");
-	//regions.push_back("reg2ltau1b2jos");
-	//regions.push_back("reg1mtau1ltau1b3jos");
-	//regions.push_back("reg2ltau1b3jos");
-	//regions.push_back("reg2ttau1b2jos");
-	//regions.push_back("reg1ttau1mtau1b2jos");
-	//regions.push_back("reg2ttau1b3jos");
-	//regions.push_back("reg1ttau1mtau1b3jos");
+	regions.push_back("reg1mtau1ltau1b2jss");
+	regions.push_back("reg2ltau1b2jss");
+	regions.push_back("reg2ttau1b2jss");
+	regions.push_back("reg1ttau1mtau1b2jss");
+	regions.push_back("reg1mtau1ltau1b3jss");
+	regions.push_back("reg2ltau1b3jss");
+	regions.push_back("reg2ttau1b3jss");
+	regions.push_back("reg1ttau1mtau1b3jss");
+	regions.push_back("reg1mtau1ltau1b2jos");
+	regions.push_back("reg2ltau1b2jos");
+	regions.push_back("reg1mtau1ltau1b3jos");
+	regions.push_back("reg2ltau1b3jos");
+	regions.push_back("reg2ttau1b2jos");
+	regions.push_back("reg1ttau1mtau1b2jos");
+	regions.push_back("reg2ttau1b3jos");
+	regions.push_back("reg1ttau1mtau1b3jos");
 
 	TString inputconfig = argv[1];
 	inputconfig.Remove(inputconfig.Sizeof()-5,4); //remove ".txt"
