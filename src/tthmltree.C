@@ -438,12 +438,14 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           }
         }
     }else{
-      for (int i = 0; i < 3; ++i) {
-        filetruth[i][0].open(CharAppend("lephad", i + 2) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
-        filetruth[i][1].open(CharAppend("lephad", i + 2) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
-        filetruth[i][0].open(CharAppend("lep2tau", i + 1) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
-        filetruth[i][1].open(CharAppend("lep2tau", i + 1) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
-      }
+      printf("please dumptruth after reduce\n"); //not supported yet
+      exit(0);
+//      for (int i = 0; i < 3; ++i) {
+//        filetruth[i][0].open(CharAppend("lephad", i + 2) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
+//        filetruth[i][1].open(CharAppend("lephad", i + 2) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
+//        filetruth[i][0].open(CharAppend("lep2tau", i + 1) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
+//        filetruth[i][1].open(CharAppend("lep2tau", i + 1) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
+//      }
     }
   }
   int nloop = debug ? 1000 : nentries;
@@ -1097,13 +1099,12 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
 void tthmltree::dumpTruth(int ipart) {
   TLorentzVector wchild[2], fcncjet, wboson;
   stringstream outstream;
-  fstream*truthfile = & (filetruth[min(nJets_OR_T - (nTaus_OR_Pt25 == 1 ? 3 : 2), 2)][ipart]);
   fstream nonmatchedfile;
   nonmatchedfile.open("nonmatch.txt", fstream:: in | fstream::out | fstream::app);
   if (debug) printf("truth particles: %lu\n", m_truth_pdgId->size());
   bool foundcjet = 0;
   int foundw = 0;
-  bool iffcncmatched = 0;
+  int ifcncmatched = 0;
   bool foundhiggs = 0;
   if (debug) printf("find truth: mc channel: %d\n", mc_channel_number);
   for (int itruth = 0; itruth < m_truth_pdgId->size(); ++itruth) {
@@ -1165,6 +1166,15 @@ void tthmltree::dumpTruth(int ipart) {
   }
   int loopmax = min(nJets_OR_T, (nTaus_OR_Pt25 == 1 ? 3 : 2) + 2);
   int ijet = 0;
+  outstream << "bjet: " << bjet_v.Pt() << " " << bjet_v.Eta() << " " << bjet_v.Phi() << " " << bjet_v.E() << "\n";
+  for (int i = 0; i < 2; ++i) {
+    outstream << "taus: " << taus_v[i].Pt() << " " << taus_v[i].Eta() << " " << taus_v[i].Phi() << " " << taus_v[i].E() << "\n";
+  }
+  if (nTaus_OR_Pt25 >= 2) {
+    outstream << "leptons: " << lep_v.Pt() << " " << lep_v.Eta() << " " << lep_v.Phi() << " " << lep_v.E() << "\n";
+  }
+  int maxfile = min(nJets_OR_T - (nTaus_OR_Pt25 == 1 ? 3 : 2), 2);
+
   for (auto jetv : ljets_v) {
     ijet += 1;
     if(ijet >= loopmax) break;
@@ -1172,8 +1182,7 @@ void tthmltree::dumpTruth(int ipart) {
     bool wmatched = 0;
     if (jetv.DeltaR(fcncjet) < 0.4) {
       outstream << " 1 0 0\n";
-      iffcncmatched = 1;
-      continue;
+      ifcncmatched = ijet;
     } else if (nTaus_OR_Pt25 == 1) {
       for (int ichild = 0; ichild < 2; ++ichild) {
         if (jetv.DeltaR(wchild[ichild]) < 0.4) {
@@ -1183,17 +1192,12 @@ void tthmltree::dumpTruth(int ipart) {
         }
       }
     }
-    if (!wmatched) outstream << " 0 0 1\n";
+    if (!ifcncmatched && !wmatched) outstream << " 0 0 1\n";
+    if(ifcncmatched && ijet - ljets_v.size()+maxfile + 1 >= 0)
+      filetruth[ijet - ljets_v.size() + maxfile + 1][ipart] << outstream.rdbuf() << "eventweight: " << weight << " cjet_inv_mass_method: " << ljet_indice[0] << endl;
   }
-  outstream << "bjet: " << bjet_v.Pt() << " " << bjet_v.Eta() << " " << bjet_v.Phi() << " " << bjet_v.E() << "\n";
-  for (int i = 0; i < 2; ++i) {
-    outstream << "taus: " << taus_v[i].Pt() << " " << taus_v[i].Eta() << " " << taus_v[i].Phi() << " " << taus_v[i].E() << "\n";
-  }
-  if (nTaus_OR_Pt25 >= 2) {
-    outstream << "leptons: " << lep_v.Pt() << " " << lep_v.Eta() << " " << lep_v.Phi() << " " << lep_v.E() << "\n";
-  }
-  if (iffcncmatched) {
-    (*truthfile) << outstream.rdbuf() << "eventweight: " << weight << " cjet_inv_mass_method: " << ljet_indice[0] << endl;
+  
+  if (ifcncmatched) {
     fcncmatched += weight;
   } else {
     nonmatchedfile << outstream.rdbuf() << nonfcncmatched << endl;

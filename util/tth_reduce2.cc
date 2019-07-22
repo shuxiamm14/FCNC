@@ -93,7 +93,7 @@ int main(int argc, char const *argv[])
 	analysis->writetree = 1;
 	analysis->fcnc = 1;
 	analysis->reduce = *argv[1]-'0';
-	analysis->dumptruth = 0;
+	analysis->dumptruth = 1;
 	//analysis->readTFmeanstd("meanstddevs.txt");
 
 	fn.getline(inputline,200);
