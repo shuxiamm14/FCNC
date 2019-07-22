@@ -575,6 +575,8 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("phicent",&phicent);
     tree->SetBranchAddress("tautaumass", &tautaumass);
     tree->SetBranchAddress("wmass", &wmass);
+    tree->SetBranchAddress("tau_truthJetFlavour_0", & tau_truthJetFlavour_0);
+    tree->SetBranchAddress("nTaus_OR_Pt25", &nTaus_OR_Pt25);
     return;
   }
 

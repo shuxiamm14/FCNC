@@ -268,12 +268,12 @@ void plot(int iNP)
 	TString samplesys = "";
 	for (auto samp : samples)
 	{
-		if(NPnames[iNP].Contains(samp)){
-			samplesys = samp;
+		if(NPnames[iNP].Contains("ttbar")){
+			samplesys = "top";
 			break;
 		}
 	}
-	tau_plots->inputfilename = "hists"+to_string(samplesys!=""?iNP:0);
+	tau_plots->inputfilename = "hists"+to_string(samplesys==""?iNP:0);
 
 	tau_plots->sensitivevariable = "BDTG_test";
 	tau_plots->add("BDT discriminant","BDTG_test","",5);
@@ -337,7 +337,7 @@ void plot(int iNP)
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kRed, kRed, kRed, kRed, kRed, kMagenta, kSpring, kTeal, kAzure};
 
 	TFile *datafile = new TFile("histsdata.root");
-	if(iNP == 0) tau_plots->read_sample("data","data","data",kBlack, 1, datafile);
+	tau_plots->read_sample("data","data","data",kBlack, 1, datafile);
 //============================ merge_sample============================
 	if(plot_option == 1){
 		for (int j = 0; j < samples.size(); ++j)
@@ -348,10 +348,10 @@ void plot(int iNP)
 	else if(plot_option == 2){
 		for (int j = 0; j < samples.size(); ++j){
 			for (int i = 0; i < 7; i++){
-				if(samplesys!="" && origin[i] == "real") continue;
+				if(samplesys!=samples[j] && origin[i] == "real") continue;
 				if (fakeMC && origin[i] != "real")
 				{
-					tau_plots->read_sample( "fake1truth", (samplesys==samples[j] ? NPnames[j] : samples[j]) + "_" + origin[i] + "_NP" + to_string(histoiNP), "Fake MC, 1 truth #tau", kMagenta, norm[j]);
+					tau_plots->read_sample( "fake1truth", (samplesys==samples[j] ? NPnames[iNP] : samples[j]) + "_" + origin[i] + "_NP" + to_string(histoiNP), "Fake MC, 1 truth #tau", kMagenta, norm[j]);
 				}
 				
 				if(samples[j] == "tcH"){
@@ -369,15 +369,15 @@ void plot(int iNP)
 					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}else if(origin[i] == "real"){
-					tau_plots->read_sample( samples[j], (samplesys==samples[j] ? NPnames[j] : samples[j]) + "_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], (samplesys==samples[j] ? NPnames[iNP] : samples[j]) + "_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}
 				
 				if(origin[i] != "real" && !fakeMC && calibfake){
-					tau_plots->read_sample( "fake", (samplesys==samples[j] ? NPnames[j] : samples[j]) + "_" + origin[i] + "_NP" + to_string(histoiNP), "MC Fake #tau", kTeal, norm[j]);
+					tau_plots->read_sample( "fake", (samplesys==samples[j] ? NPnames[iNP] : samples[j]) + "_" + origin[i] + "_NP" + to_string(histoiNP), "MC Fake #tau", kTeal, norm[j]);
 				}
 				
 			}
-			if(fakeMC && j != samples.size()-1) tau_plots->read_sample( "fake0truth", (samplesys==samples[j] ? NPnames[j] : samples[j]) + "_" + origin[8] + "_NP" + to_string(histoiNP), "fake, 0 truth #tau", kTeal, norm[j]);
+			if(fakeMC && j != samples.size()-1) tau_plots->read_sample( "fake0truth", (samplesys==samples[j] ? NPnames[iNP] : samples[j]) + "_" + origin[8] + "_NP" + to_string(histoiNP), "fake, 0 truth #tau", kTeal, norm[j]);
 		}
 
 	}

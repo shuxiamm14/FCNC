@@ -19,8 +19,8 @@ void plot(int iNP)
 	bool doPlots = 1;
 	bool deriveSSOSSF = 0;
 	bool doTrex = 0;
-	bool plotnj = 0;
-	int plot_option = 2;
+	bool plotnj = 1;
+	int plot_option = 1;
 	int fakeMC = 1; // 0 use DD, 1 include fake in each bkg, 2 show fakes in the plots
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
@@ -126,7 +126,7 @@ void plot(int iNP)
 		for (int i = 0; i < 7; ++i){
 			tau_plots->stackorder.push_back(origin[i]);
 			for (int j = 0; j < 6; ++j)
-				tau_plots->read_sample( origin[i], samples[j] + "_" + origin[i], origintitle[i], (enum EColor)colors[i], norm[j]);
+				tau_plots->read_sample( origin[i], samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), origintitle[i], (enum EColor)colors[i], norm[j]);
 		}
 	}
 //============================ merge_origin ============================
@@ -232,13 +232,17 @@ void plot(int iNP)
 
 
 	if(doPlots){
-		gSystem->mkdir(("output_"+to_string(iNP)).c_str());
-		for (int i = 6; i < 12; ++i)
-		//for (int i = 8; i < 9; ++i)
-		{
-  			tau_plots->overlay(samples[i]);
+		if(plot_option == 2){
+			gSystem->mkdir(("output_"+to_string(iNP)).c_str());
+			for (int i = 6; i < 12; ++i)
+			//for (int i = 8; i < 9; ++i)
+			{
+  				tau_plots->overlay(samples[i]);
+			}
+			tau_plots->plot_stack(("output_"+to_string(iNP)).c_str());
 		}
-		tau_plots->plot_stack(("output_"+to_string(iNP)).c_str());
+		if(plot_option == 1)
+			tau_plots->plot_stack("fake_plots");
 	}
 }
 int main(int argc, char const *argv[])
