@@ -927,7 +927,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
     if (sample.Contains("data")) {
       tauorigin = "data";
       sample = "data";
-    } else if (nTaus_OR_Pt25 >= 1 || reduce == 3) {
+    } else if (nTaus_OR_Pt25 >= 1) {
       if (tau_truthType_0 == 10) tauorigin = sample + "_real";
       else if (tau_truthJetFlavour_0 < 0 && (tau_truthType_0 == 2 || tau_truthType_0 == 6)) tauorigin = sample + "_lep";
       else

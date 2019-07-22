@@ -11,42 +11,44 @@ int main(int argc, char const *argv[])
 	bool doplot = 0;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
-	ifstream fn(prefix + "/datafiles/xTFW/run/" + argv[1]);
+	ifstream fn(prefix + "/datafiles/xTFW/v2/run/" + argv[1]);
 	if(!fn) {
-	  fprintf(stderr,"can't open file: %s, try %s\n",(prefix + "/datafiles/xTFW/run/" + argv[1]).Data(),argv[1]);
+	  fprintf(stderr,"can't open file: %s, try %s\n",(prefix + "/datafiles/xTFW/v2/run/" + argv[1]).Data(),argv[1]);
 	  fn.open(argv[1]);
 	  if(!fn){
 	  	fprintf(stderr,"can't open file: %s\n",argv[1]);
 	  	return 1;
 	  }
 	}
-
+	if(TString(argv[1]).Contains("sys") && TString(argv[2]) != "NOMINAL") {
+		printf("sys sample doesnt have the systematic trees\n");
+		return 0;
+	}
 	vector<TString> regions;
 	regions.push_back("reg2mtau1b2jss");
 	regions.push_back("reg2mtau1b3jss");
 	regions.push_back("reg2mtau1b3jos");
 	regions.push_back("reg2mtau1b2jos");
-
 	regions.push_back("reg2mtau2b2jss");
 	regions.push_back("reg2mtau2b3jss");
 	regions.push_back("reg2mtau2b3jos");
 	regions.push_back("reg2mtau2b2jos");
-	//regions.push_back("reg1mtau1ltau1b2jss");
-	//regions.push_back("reg2ltau1b2jss");
-	//regions.push_back("reg2ttau1b2jss");
-	//regions.push_back("reg1ttau1mtau1b2jss");
-	//regions.push_back("reg1mtau1ltau1b3jss");
-	//regions.push_back("reg2ltau1b3jss");
-	//regions.push_back("reg2ttau1b3jss");
-	//regions.push_back("reg1ttau1mtau1b3jss");
-	//regions.push_back("reg1mtau1ltau1b2jos");
-	//regions.push_back("reg2ltau1b2jos");
-	//regions.push_back("reg1mtau1ltau1b3jos");
-	//regions.push_back("reg2ltau1b3jos");
-	//regions.push_back("reg2ttau1b2jos");
-	//regions.push_back("reg1ttau1mtau1b2jos");
-	//regions.push_back("reg2ttau1b3jos");
-	//regions.push_back("reg1ttau1mtau1b3jos");
+	regions.push_back("reg1mtau1ltau1b2jss");
+	regions.push_back("reg2ltau1b2jss");
+	regions.push_back("reg2ttau1b2jss");
+	regions.push_back("reg1ttau1mtau1b2jss");
+	regions.push_back("reg1mtau1ltau1b3jss");
+	regions.push_back("reg2ltau1b3jss");
+	regions.push_back("reg2ttau1b3jss");
+	regions.push_back("reg1ttau1mtau1b3jss");
+	regions.push_back("reg1mtau1ltau1b2jos");
+	regions.push_back("reg2ltau1b2jos");
+	regions.push_back("reg1mtau1ltau1b3jos");
+	regions.push_back("reg2ltau1b3jos");
+	regions.push_back("reg2ttau1b2jos");
+	regions.push_back("reg1ttau1mtau1b2jos");
+	regions.push_back("reg2ttau1b3jos");
+	regions.push_back("reg1ttau1mtau1b3jos");
 
 	TString inputconfig = argv[1];
 	inputconfig.Remove(inputconfig.Sizeof()-5,4); //remove ".txt"
@@ -78,7 +80,7 @@ int main(int argc, char const *argv[])
 	if(!debug) gErrorIgnoreLevel=kError;
 	hadhadtree *analysis = new hadhadtree();
 	analysis->SystematicsName = argv[2];
-	analysis->nominaltree = TString(argv[2]) == "NOMINAL";
+	analysis->nominaltree = inputconfig.Contains("sys")? 0 : analysis->SystematicsName == "NOMINAL";
 	analysis->init_reduce1();
 	analysis->reduce = 1;
 	analysis->debug = debug;
@@ -117,11 +119,11 @@ int main(int argc, char const *argv[])
 			TH1D *theoryhisttmp = ((TH1D*)inputfile.Get("h_metadata_theory_weights"));
 			if(totgenweighted.find(dsid) == totgenweighted.end()) {
 				totgenweighted[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
-				theoryweightsum[dsid] = (TH1D*)theoryhisttmp->Clone();
+				if(analysis->nominaltree) theoryweightsum[dsid] = (TH1D*)theoryhisttmp->Clone();
 			}
 			else{
 				totgenweighted[dsid] += ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
-				theoryweightsum[dsid]->Add(theoryhisttmp);
+				if(analysis->nominaltree) theoryweightsum[dsid]->Add(theoryhisttmp);
 			}
 
 			if(totgenraw.find(dsid) == totgenraw.end()) totgenraw[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(7);
@@ -200,7 +202,7 @@ int main(int argc, char const *argv[])
 		}
 		if(isData) analysis->Loop( (TTree*)inputfile.Get(argv[2]), inputconfig, 1.);
 		else {
-			analysis->theoryweightsum=theoryweightsum[dsid];
+			if(analysis->nominaltree) analysis->theoryweightsum=theoryweightsum[dsid];
 			analysis->Loop( (TTree*)inputfile.Get(argv[2]), inputconfig, xsecs[dsid]*luminosity/totgenweighted[dsid]);
 		}
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
