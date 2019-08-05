@@ -223,6 +223,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
         jet_NOMINAL_global_ineffSF_MV2c10;
       float weight_pileup = NOMINAL_pileup_combined_weight;
       weight = isData?1:weight_mc*weight_pileup*jetSFs*globalweight;
+      if(weight == 0) continue;
       hadcutflow.fill();
       if(!tau_0_trig_trigger_matched || !tau_1_trig_trigger_matched) continue;
       hadcutflow.fill();
