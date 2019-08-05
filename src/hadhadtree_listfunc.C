@@ -722,9 +722,6 @@ void hadhadtree::Init(TTree *tree)
   met_p4 = 0;
   met_truth_p4 = 0;
   primary_vertex_v = 0;
-  tau_0_matched_decay_charged_p4 = 0;
-  tau_0_matched_decay_neutral_p4 = 0;
-  tau_0_matched_decay_neutrino_p4 = 0;
   tau_0_matched_p4 = 0;
   tau_0_matched_p4_vis_charged_track0 = 0;
   tau_0_matched_p4_vis_charged_track1 = 0;
@@ -738,9 +735,6 @@ void hadhadtree::Init(TTree *tree)
   tau_0_track0_p4 = 0;
   tau_0_track1_p4 = 0;
   tau_0_track2_p4 = 0;
-  tau_1_matched_decay_charged_p4 = 0;
-  tau_1_matched_decay_neutral_p4 = 0;
-  tau_1_matched_decay_neutrino_p4 = 0;
   tau_1_matched_p4 = 0;
   tau_1_matched_p4_vis_charged_track0 = 0;
   tau_1_matched_p4_vis_charged_track1 = 0;
@@ -1454,10 +1448,7 @@ void hadhadtree::Init(TTree *tree)
       tree->SetBranchAddress("tau_0_matched", &tau_0_matched, &b_tau_0_matched);
       tree->SetBranchAddress("tau_0_matched_classifierParticleOrigin", &tau_0_matched_classifierParticleOrigin, &b_tau_0_matched_classifierParticleOrigin);
       tree->SetBranchAddress("tau_0_matched_classifierParticleType", &tau_0_matched_classifierParticleType, &b_tau_0_matched_classifierParticleType);
-      tree->SetBranchAddress("tau_0_matched_decay_charged_p4", &tau_0_matched_decay_charged_p4, &b_tau_0_matched_decay_charged_p4);
       tree->SetBranchAddress("tau_0_matched_decay_mode", &tau_0_matched_decay_mode, &b_tau_0_matched_decay_mode);
-      tree->SetBranchAddress("tau_0_matched_decay_neutral_p4", &tau_0_matched_decay_neutral_p4, &b_tau_0_matched_decay_neutral_p4);
-      tree->SetBranchAddress("tau_0_matched_decay_neutrino_p4", &tau_0_matched_decay_neutrino_p4, &b_tau_0_matched_decay_neutrino_p4);
       tree->SetBranchAddress("tau_0_matched_isEle", &tau_0_matched_isEle, &b_tau_0_matched_isEle);
       tree->SetBranchAddress("tau_0_matched_isHadTau", &tau_0_matched_isHadTau, &b_tau_0_matched_isHadTau);
       tree->SetBranchAddress("tau_0_matched_isJet", &tau_0_matched_isJet, &b_tau_0_matched_isJet);
@@ -1755,10 +1746,7 @@ void hadhadtree::Init(TTree *tree)
       tree->SetBranchAddress("tau_1_matched", &tau_1_matched, &b_tau_1_matched);
       tree->SetBranchAddress("tau_1_matched_classifierParticleOrigin", &tau_1_matched_classifierParticleOrigin, &b_tau_1_matched_classifierParticleOrigin);
       tree->SetBranchAddress("tau_1_matched_classifierParticleType", &tau_1_matched_classifierParticleType, &b_tau_1_matched_classifierParticleType);
-      tree->SetBranchAddress("tau_1_matched_decay_charged_p4", &tau_1_matched_decay_charged_p4, &b_tau_1_matched_decay_charged_p4);
       tree->SetBranchAddress("tau_1_matched_decay_mode", &tau_1_matched_decay_mode, &b_tau_1_matched_decay_mode);
-      tree->SetBranchAddress("tau_1_matched_decay_neutral_p4", &tau_1_matched_decay_neutral_p4, &b_tau_1_matched_decay_neutral_p4);
-      tree->SetBranchAddress("tau_1_matched_decay_neutrino_p4", &tau_1_matched_decay_neutrino_p4, &b_tau_1_matched_decay_neutrino_p4);
       tree->SetBranchAddress("tau_1_matched_isEle", &tau_1_matched_isEle, &b_tau_1_matched_isEle);
       tree->SetBranchAddress("tau_1_matched_isHadTau", &tau_1_matched_isHadTau, &b_tau_1_matched_isHadTau);
       tree->SetBranchAddress("tau_1_matched_isJet", &tau_1_matched_isJet, &b_tau_1_matched_isJet);
