@@ -541,12 +541,13 @@ bool hadhadtree::addWeightSys(){
   //weights->push_back(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT);
   //weights->push_back(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT);
   //weights->push_back(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT);
-
-  for (int i = 1; i <= theoryweightsum->GetNbinsX(); ++i)
-  {
-    if(theoryweightsum->GetXaxis()->GetBinLabel(i))
-      if((TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("muR") && TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("muF")) || TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("LHE3Weight_PDFset=260") )
-        weights->push_back(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i));
+  if(weight_mc_v){
+    for (int i = 1; i <= theoryweightsum->GetNbinsX(); ++i)
+    {
+      if(theoryweightsum->GetXaxis()->GetBinLabel(i))
+        if((TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("muR") && TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("muF")) || TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("LHE3Weight_PDFset=260") )
+          weights->push_back(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i));
+    }
   }
 
   for(int i = 0; i < weights->size(); i++){
