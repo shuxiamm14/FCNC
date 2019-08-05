@@ -731,10 +731,7 @@ public :
    UInt_t          tau_0_matched;
    Int_t           tau_0_matched_classifierParticleOrigin;
    Int_t           tau_0_matched_classifierParticleType;
-   TLorentzVector  *tau_0_matched_decay_charged_p4;
    Int_t           tau_0_matched_decay_mode;
-   TLorentzVector  *tau_0_matched_decay_neutral_p4;
-   TLorentzVector  *tau_0_matched_decay_neutrino_p4;
    UInt_t          tau_0_matched_isEle;
    UInt_t          tau_0_matched_isHadTau;
    UInt_t          tau_0_matched_isJet;
@@ -1046,10 +1043,7 @@ public :
    UInt_t          tau_1_matched;
    Int_t           tau_1_matched_classifierParticleOrigin;
    Int_t           tau_1_matched_classifierParticleType;
-   TLorentzVector  *tau_1_matched_decay_charged_p4;
    Int_t           tau_1_matched_decay_mode;
-   TLorentzVector  *tau_1_matched_decay_neutral_p4;
-   TLorentzVector  *tau_1_matched_decay_neutrino_p4;
    UInt_t          tau_1_matched_isEle;
    UInt_t          tau_1_matched_isHadTau;
    UInt_t          tau_1_matched_isJet;
@@ -1878,10 +1872,7 @@ public :
    TBranch        *b_tau_0_matched;   //!
    TBranch        *b_tau_0_matched_classifierParticleOrigin;   //!
    TBranch        *b_tau_0_matched_classifierParticleType;   //!
-   TBranch        *b_tau_0_matched_decay_charged_p4;   //!
    TBranch        *b_tau_0_matched_decay_mode;   //!
-   TBranch        *b_tau_0_matched_decay_neutral_p4;   //!
-   TBranch        *b_tau_0_matched_decay_neutrino_p4;   //!
    TBranch        *b_tau_0_matched_isEle;   //!
    TBranch        *b_tau_0_matched_isHadTau;   //!
    TBranch        *b_tau_0_matched_isJet;   //!
@@ -2193,10 +2184,7 @@ public :
    TBranch        *b_tau_1_matched;   //!
    TBranch        *b_tau_1_matched_classifierParticleOrigin;   //!
    TBranch        *b_tau_1_matched_classifierParticleType;   //!
-   TBranch        *b_tau_1_matched_decay_charged_p4;   //!
    TBranch        *b_tau_1_matched_decay_mode;   //!
-   TBranch        *b_tau_1_matched_decay_neutral_p4;   //!
-   TBranch        *b_tau_1_matched_decay_neutrino_p4;   //!
    TBranch        *b_tau_1_matched_isEle;   //!
    TBranch        *b_tau_1_matched_isHadTau;   //!
    TBranch        *b_tau_1_matched_isJet;   //!
