@@ -117,6 +117,7 @@ int main(int argc, char const *argv[])
 		}
 		if(!isData){
 			TH1D *theoryhisttmp = ((TH1D*)inputfile.Get("h_metadata_theory_weights"));
+			printf("reading theory weights sum: DSID = %d\n",dsid);
 			if(totgenweighted.find(dsid) == totgenweighted.end()) {
 				totgenweighted[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
 				if(analysis->nominaltree) theoryweightsum[dsid] = (TH1D*)theoryhisttmp->Clone();

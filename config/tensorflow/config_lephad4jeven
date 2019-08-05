@@ -1,7 +1,7 @@
 [DEFAULT]
 maxCombUnitpool = 2
 maxCombUnitwatcher = 3
-unitDim = 3
+unitDim = 4
 pool = 4
 watchers = 1,2
 outputcategory = 2

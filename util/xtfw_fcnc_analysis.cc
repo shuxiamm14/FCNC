@@ -237,7 +237,7 @@ void plot(int iNP)
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
 	tau_plots->doROC = 0;
 	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
-	tau_plots->debug = 0;
+	tau_plots->debug = 1;
 	vector<TString> samples;
 	samples.push_back("smhiggs");
 	samples.push_back("wjet");
@@ -251,7 +251,8 @@ void plot(int iNP)
 	samples.push_back("fcnc_uh");
 	samples.push_back("fcnc_prod_uh");
 	samples.push_back("tuH");
-	double norm[] = {1,1,1,1,1,1,0.2,0.2,0.2,0.2,0.2,0.2};
+//	double norm[] = {1,1,1,1,1,1,0.2,0.2,0.2,0.2,0.2,0.2};
+	double norm[20] = {1,};
 	vector<TString> sampletitle;
 	sampletitle.push_back("SM Higgs");
 	sampletitle.push_back("W+jets");
@@ -266,12 +267,8 @@ void plot(int iNP)
 	sampletitle.push_back("utH Prod Mode");
 	sampletitle.push_back("tuH merged signal");
 	TString samplesys = "";
-	for (auto samp : samples)
-	{
-		if(NPnames[iNP].Contains("ttbar")){
-			samplesys = "top";
-			break;
-		}
+	if(NPnames[iNP].Contains("ttbar")){
+		samplesys = "top";
 	}
 	tau_plots->inputfilename = "hists"+to_string(samplesys==""?iNP:0);
 
