@@ -24,8 +24,22 @@ do
 		done
 	done
 done
-#for files in `find $1/data/*/*`
-#do
-#	echo $files >> $ttH_fakes_DIR/datafiles/xTFW/run/data.txt
-#done
+for files in `find $1/data/*data15*/*`
+do
+	echo $files >> $ttH_fakes_DIR/datafiles/xTFW/v2/run/data1516.txt
+done
+
+for files in `find $1/data/*data16*/*`
+do
+	echo $files >> $ttH_fakes_DIR/datafiles/xTFW/v2/run/data1516.txt
+done
+for files in `find $1/data/*data17*/*`
+do
+	echo $files >> $ttH_fakes_DIR/datafiles/xTFW/v2/run/data17.txt
+done
+
+for files in `find $1/data/*data18*/*`
+do
+	echo $files >> $ttH_fakes_DIR/datafiles/xTFW/v2/run/data18.txt
+done
 fi
