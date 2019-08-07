@@ -226,7 +226,7 @@ TString NPnames[] = {
 
 void plot(int iNP)
 {
-	int histoiNP = 0;
+	int histoiNP = 1;
 	bool calibfake = 1;
 	bool fakeMC = 0;
 	bool doTrex = 0;
