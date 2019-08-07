@@ -7,8 +7,8 @@
 #include "observable.h"
 TString NPnames[] = {
 //============weight sys==================
+	"beforecorrection",
 	"NOMINAL",
-	"fakeSF",
 	"fakeSFNP1",
 	"fakeSFNP2",
 	"fakeSFNP3",
@@ -229,15 +229,15 @@ void plot(int iNP)
 	int histoiNP = 0;
 	bool calibfake = 1;
 	bool fakeMC = 0;
-	bool doTrex = 1;
+	bool doTrex = 0;
 	if(iNP < 124) histoiNP = iNP;
-	bool doPlots = 0;
+	bool doPlots = 1;
 	int plot_option = 2;
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
 	tau_plots->doROC = 0;
 	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
-	tau_plots->debug = 1;
+	tau_plots->debug = 0;
 	vector<TString> samples;
 	samples.push_back("smhiggs");
 	samples.push_back("wjet");
@@ -251,8 +251,8 @@ void plot(int iNP)
 	samples.push_back("fcnc_uh");
 	samples.push_back("fcnc_prod_uh");
 	samples.push_back("tuH");
-//	double norm[] = {1,1,1,1,1,1,0.2,0.2,0.2,0.2,0.2,0.2};
-	double norm[20] = {1,};
+	double norm[] = {1,1,1,1,1,1,0.2,0.2,0.2,0.2,0.2,0.2};
+//	double norm[20] = {1,};
 	vector<TString> sampletitle;
 	sampletitle.push_back("SM Higgs");
 	sampletitle.push_back("W+jets");
@@ -270,26 +270,26 @@ void plot(int iNP)
 	if(NPnames[iNP].Contains("ttbar")){
 		samplesys = "top";
 	}
-	tau_plots->inputfilename = "hists"+to_string(samplesys==""?iNP:0);
+	tau_plots->inputfilename = "hists"+to_string(samplesys==""?iNP:1);
 
 	tau_plots->sensitivevariable = "BDTG_test";
 	tau_plots->add("BDT discriminant","BDTG_test","",5);
-	//tau_plots->add("BDT discriminant","BDTG_train","",5);
-  	//tau_plots->add("p_{T,lead-#tau}","tau_0_pt","GeV",5);
-  	//tau_plots->add("p_{T,sublead-#tau}","tau_1_pt","GeV",5);
-  	//tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",5);
-  	//tau_plots->add("m_{#tau#tau,vis}","ttvismass","",5);
-  	//tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",5);
-  	//tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-  	//tau_plots->add("E^{T}_{miss} centrality","phicent","",5);
-  	//tau_plots->add("m_{t,SM}","t1mass","GeV",20);
-  	//tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
-  	//tau_plots->add("m_{W}","wmass","GeV",5);
-  	//tau_plots->add("m_{t,FCNC}","t2mass","GeV",20);
-  	//tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
-  	//tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
-  	//tau_plots->add("E^{T}_{miss}","etmiss","GeV",5);
-  	//tau_plots->add("#chi^2","chi2","",5);
+	tau_plots->add("BDT discriminant","BDTG_train","",5);
+  	tau_plots->add("p_{T,lead-#tau}","tau_0_pt","GeV",5);
+  	tau_plots->add("p_{T,sublead-#tau}","tau_1_pt","GeV",5);
+  	tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",5);
+  	tau_plots->add("m_{#tau#tau,vis}","ttvismass","",5);
+  	tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",5);
+  	tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
+  	tau_plots->add("E^{T}_{miss} centrality","phicent","",5);
+  	tau_plots->add("m_{t,SM}","t1mass","GeV",20);
+  	tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
+  	tau_plots->add("m_{W}","wmass","GeV",5);
+  	tau_plots->add("m_{t,FCNC}","t2mass","GeV",20);
+  	tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
+  	tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
+  	tau_plots->add("E^{T}_{miss}","etmiss","GeV",5);
+  	tau_plots->add("#chi^2","chi2","",5);
   	gErrorIgnoreLevel = kWarning;
   	tau_plots->blinding = 1;
 	vector<TString> regions;
@@ -298,10 +298,10 @@ void plot(int iNP)
 	regions.push_back("reg2mtau1b3jss");
 	regions.push_back("reg2mtau1b3jos");
 
-	//regions.push_back("reg2mtau2b2jss");
-	//regions.push_back("reg2mtau2b2jos");
-	//regions.push_back("reg2mtau2b3jss");
-	//regions.push_back("reg2mtau2b3jos");
+	regions.push_back("reg2mtau2b2jss");
+	regions.push_back("reg2mtau2b2jos");
+	regions.push_back("reg2mtau2b3jss");
+	regions.push_back("reg2mtau2b3jos");
 
 	//regions.push_back("reg1mtau1ltau1b2jss");
 	//regions.push_back("reg2ltau1b2jss");
@@ -345,7 +345,6 @@ void plot(int iNP)
 	else if(plot_option == 2){
 		for (int j = 0; j < samples.size(); ++j){
 			for (int i = 0; i < 7; i++){
-				if(samplesys!=samples[j] && origin[i] == "real") continue;
 				if (fakeMC && origin[i] != "real")
 				{
 					tau_plots->read_sample( "fake1truth", (samplesys==samples[j] ? NPnames[iNP] : samples[j]) + "_" + origin[i] + "_NP" + to_string(histoiNP), "Fake MC, 1 truth #tau", kMagenta, norm[j]);
