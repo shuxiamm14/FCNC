@@ -47,7 +47,7 @@ int main(int argc, char const *argv[])
 		for(int i = 0; i < 124; ++i) {
 			analysis->plotNPs.push_back(i);
 		}
-	else analysis->plotNPs.push_back(0);
+	else analysis->plotNPs.push_back(1);
 	analysis->debug = debug;
 	analysis->writetree = analysis->reduce == 2 ? 1 : 0;
 	bool doplot = analysis->reduce == 2 ? 0 : 1;

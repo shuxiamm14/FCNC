@@ -228,8 +228,8 @@ void plot(int iNP)
 {
 	int histoiNP = 0;
 	bool calibfake = 1;
-	bool fakeMC = 0;
-	bool doTrex = 1;
+	bool fakeMC = 1;
+	bool doTrex = 0;
 	if(iNP < 124) histoiNP = iNP;
 	bool doPlots = 0;
 	int plot_option = 2;
