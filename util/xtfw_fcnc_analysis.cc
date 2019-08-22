@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <sys/ioctl.h>
 #include "observable.h"
+#include "fcnc_include.h"
+using namespace std;
 TString NPnames[] = {
 //============weight sys==================
 	"beforecorrection",
@@ -131,6 +133,114 @@ TString NPnames[] = {
 	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
 	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
 	"TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM",
+	"LHE3Weight_muR=10,muF=20",
+	"LHE3Weight_muR=10,muF=05",
+	"LHE3Weight_muR=20,muF=10",
+	"LHE3Weight_muR=05,muF=10",
+	"LHE3Weight_muR=05,muF=05",
+	"LHE3Weight_muR=20,muF=20",
+	"LHE3Weight_muR=20,muF=05",
+	"LHE3Weight_muR=05,muF=20 ",
+	"LHE3Weight_PDFset=260001",
+	"LHE3Weight_PDFset=260002",
+	"LHE3Weight_PDFset=260003",
+	"LHE3Weight_PDFset=260004",
+	"LHE3Weight_PDFset=260005",
+	"LHE3Weight_PDFset=260006",
+	"LHE3Weight_PDFset=260007",
+	"LHE3Weight_PDFset=260008",
+	"LHE3Weight_PDFset=260009",
+	"LHE3Weight_PDFset=260010",
+	"LHE3Weight_PDFset=260011",
+	"LHE3Weight_PDFset=260012",
+	"LHE3Weight_PDFset=260013",
+	"LHE3Weight_PDFset=260014",
+	"LHE3Weight_PDFset=260015",
+	"LHE3Weight_PDFset=260016",
+	"LHE3Weight_PDFset=260017",
+	"LHE3Weight_PDFset=260018",
+	"LHE3Weight_PDFset=260019",
+	"LHE3Weight_PDFset=260020",
+	"LHE3Weight_PDFset=260021",
+	"LHE3Weight_PDFset=260022",
+	"LHE3Weight_PDFset=260023",
+	"LHE3Weight_PDFset=260024",
+	"LHE3Weight_PDFset=260025",
+	"LHE3Weight_PDFset=260026",
+	"LHE3Weight_PDFset=260027",
+	"LHE3Weight_PDFset=260028",
+	"LHE3Weight_PDFset=260029",
+	"LHE3Weight_PDFset=260030",
+	"LHE3Weight_PDFset=260031",
+	"LHE3Weight_PDFset=260032",
+	"LHE3Weight_PDFset=260033",
+	"LHE3Weight_PDFset=260034",
+	"LHE3Weight_PDFset=260035",
+	"LHE3Weight_PDFset=260036",
+	"LHE3Weight_PDFset=260037",
+	"LHE3Weight_PDFset=260038",
+	"LHE3Weight_PDFset=260039",
+	"LHE3Weight_PDFset=260040",
+	"LHE3Weight_PDFset=260041",
+	"LHE3Weight_PDFset=260042",
+	"LHE3Weight_PDFset=260043",
+	"LHE3Weight_PDFset=260044",
+	"LHE3Weight_PDFset=260045",
+	"LHE3Weight_PDFset=260046",
+	"LHE3Weight_PDFset=260047",
+	"LHE3Weight_PDFset=260048",
+	"LHE3Weight_PDFset=260049",
+	"LHE3Weight_PDFset=260050",
+	"LHE3Weight_PDFset=260051",
+	"LHE3Weight_PDFset=260052",
+	"LHE3Weight_PDFset=260053",
+	"LHE3Weight_PDFset=260054",
+	"LHE3Weight_PDFset=260055",
+	"LHE3Weight_PDFset=260056",
+	"LHE3Weight_PDFset=260057",
+	"LHE3Weight_PDFset=260058",
+	"LHE3Weight_PDFset=260059",
+	"LHE3Weight_PDFset=260060",
+	"LHE3Weight_PDFset=260061",
+	"LHE3Weight_PDFset=260062",
+	"LHE3Weight_PDFset=260063",
+	"LHE3Weight_PDFset=260064",
+	"LHE3Weight_PDFset=260065",
+	"LHE3Weight_PDFset=260066",
+	"LHE3Weight_PDFset=260067",
+	"LHE3Weight_PDFset=260068",
+	"LHE3Weight_PDFset=260069",
+	"LHE3Weight_PDFset=260070",
+	"LHE3Weight_PDFset=260071",
+	"LHE3Weight_PDFset=260072",
+	"LHE3Weight_PDFset=260073",
+	"LHE3Weight_PDFset=260074",
+	"LHE3Weight_PDFset=260075",
+	"LHE3Weight_PDFset=260076",
+	"LHE3Weight_PDFset=260077",
+	"LHE3Weight_PDFset=260078",
+	"LHE3Weight_PDFset=260079",
+	"LHE3Weight_PDFset=260080",
+	"LHE3Weight_PDFset=260081",
+	"LHE3Weight_PDFset=260082",
+	"LHE3Weight_PDFset=260083",
+	"LHE3Weight_PDFset=260084",
+	"LHE3Weight_PDFset=260085",
+	"LHE3Weight_PDFset=260086",
+	"LHE3Weight_PDFset=260087",
+	"LHE3Weight_PDFset=260088",
+	"LHE3Weight_PDFset=260089",
+	"LHE3Weight_PDFset=260090",
+	"LHE3Weight_PDFset=260091",
+	"LHE3Weight_PDFset=260092",
+	"LHE3Weight_PDFset=260093",
+	"LHE3Weight_PDFset=260094",
+	"LHE3Weight_PDFset=260095",
+	"LHE3Weight_PDFset=260096",
+	"LHE3Weight_PDFset=260097",
+	"LHE3Weight_PDFset=260098",
+	"LHE3Weight_PDFset=260099",
+	"LHE3Weight_PDFset=260100",
 //=================Sys tree===================
 	"TAUS_TRUEHADTAU_SME_TES_DETECTOR_1down",
 	"TAUS_TRUEHADTAU_SME_TES_DETECTOR_1up",
@@ -272,24 +382,24 @@ void plot(int iNP)
 	}
 	tau_plots->inputfilename = "hists"+to_string(samplesys==""?iNP:1);
 
-	tau_plots->sensitivevariable = "BDTG_test";
-	tau_plots->add("BDT discriminant","BDTG_test","",5);
-	tau_plots->add("BDT discriminant","BDTG_train","",5);
-  	tau_plots->add("p_{T,lead-#tau}","tau_0_pt","GeV",5);
-  	tau_plots->add("p_{T,sublead-#tau}","tau_1_pt","GeV",5);
-  	tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",5);
-  	tau_plots->add("m_{#tau#tau,vis}","ttvismass","",5);
-  	tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",5);
-  	tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-  	tau_plots->add("E^{T}_{miss} centrality","phicent","",5);
-  	tau_plots->add("m_{t,SM}","t1mass","GeV",20);
-  	tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
-  	tau_plots->add("m_{W}","wmass","GeV",5);
-  	tau_plots->add("m_{t,FCNC}","t2mass","GeV",20);
-  	tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
-  	tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
-  	tau_plots->add("E^{T}_{miss}","etmiss","GeV",5);
-  	tau_plots->add("#chi^2","chi2","",5);
+	//tau_plots->sensitivevariable = "BDTG_test";
+	//tau_plots->add("BDT discriminant","BDTG_test","",5);
+	//tau_plots->add("BDT discriminant","BDTG_train","",5);
+  	//tau_plots->add("p_{T,lead-#tau}","tau_0_pt","GeV",5);
+  	//tau_plots->add("p_{T,sublead-#tau}","tau_1_pt","GeV",5);
+  	//tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",5);
+  	//tau_plots->add("m_{#tau#tau,vis}","ttvismass","",5);
+  	//tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",5);
+  	//tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
+  	//tau_plots->add("E^{T}_{miss} centrality","phicent","",5);
+  	//tau_plots->add("m_{t,SM}","t1mass","GeV",20);
+  	//tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
+  	//tau_plots->add("m_{W}","wmass","GeV",5);
+  	//tau_plots->add("m_{t,FCNC}","t2mass","GeV",20);
+  	//tau_plots->add("E^{T}_{miss}","etmiss","GeV",5);
+  	//tau_plots->add("#chi^2","chi2","",5);
+  	tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
+  	tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
   	gErrorIgnoreLevel = kWarning;
   	tau_plots->blinding = 1;
 	vector<TString> regions;
@@ -366,9 +476,7 @@ void plot(int iNP)
 					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}else if(origin[i] == "real"){
 					tau_plots->read_sample( samples[j], (samplesys==samples[j] ? NPnames[iNP] : samples[j]) + "_" + origin[i] + "_NP" + to_string(histoiNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-				}
-				
-				if(origin[i] != "real" && !fakeMC && calibfake){
+				}else if(origin[i] != "real" && !fakeMC && calibfake){
 					tau_plots->read_sample( "fake", (samplesys==samples[j] ? NPnames[iNP] : samples[j]) + "_" + origin[i] + "_NP" + to_string(histoiNP), "MC Fake #tau", kTeal, norm[j]);
 				}
 				
@@ -449,9 +557,12 @@ void plot(int iNP)
   	}
   	//tau_plots->printyield("reg2mtau1b3jos");
   	//tau_plots->printyield("reg2mtau1b2jos");
-	if(doTrex)
+	if(doTrex){
+		if(NPnames[iNP].Contains("PDF")) tau_plots->trexdir = "PDF_trexinputs";
+		else if(NPnames[iNP].Contains("muR")) tau_plots->trexdir = "scale_trexinputs";
+		else tau_plots->trexdir = "trexinputs";
 		tau_plots->write_trexinput(NPnames[iNP],"update");
-
+	}
 	if(doPlots){
 		gSystem->mkdir(("output_"+to_string(iNP)).c_str());
 		for (int i = samples.size()-6; i < samples.size(); ++i)

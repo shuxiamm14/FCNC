@@ -1,5 +1,6 @@
 #include "tthmltree.h"
 #include <thread>
+#include "fcnc_include.h"
 int main(int argc, char const *argv[])
 {
 	if (argc != 3)

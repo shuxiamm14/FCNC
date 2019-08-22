@@ -1,4 +1,3 @@
-
 #define hadhadtree_cxx
 #include "hadhadtree.h"
 #include <TH2.h>

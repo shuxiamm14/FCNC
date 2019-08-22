@@ -1,6 +1,6 @@
 #include "histSaver.h"
 #include "TH1D.h"
-
+#include "fcnc_include.h"
 
 TString NPnames[] = {
 	"NOMINAL",
@@ -19,8 +19,8 @@ void plot(int iNP)
 	bool doPlots = 1;
 	bool deriveSSOSSF = 0;
 	bool doTrex = 0;
-	bool plotnj = 1;
-	int plot_option = 1;
+	bool plotnj = 0;
+	int plot_option = 2; // 1 plot tau origin, 2 standard plots
 	int fakeMC = 1; // 0 use DD, 1 include fake in each bkg, 2 show fakes in the plots
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
@@ -36,36 +36,36 @@ void plot(int iNP)
 		tau_plots->muteregion("3j");
 		tau_plots->muteregion("2j");
 	}else{
-		tau_plots->sensitivevariable = "BDTG_test";
-		tau_plots->add("BDT discriminant","BDTG_test","",10);
-    	tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
-    	tau_plots->add("#chi^{2}","chi2","",5);
-    	tau_plots->add("M_{all}","allmass","",5);
-    	tau_plots->add("p_{Z,all}","allpz","",5);
-    	tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
-  		tau_plots->add("m_{t,SM}","t1mass","GeV",5);
-  		tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
-  		tau_plots->add("m_{W}","wmass","GeV",5);
-  		tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
-  		tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",10);
-  		tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
-  		tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",1);
-  		tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",1);
-  		tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
-  		tau_plots->add("m^{T}_{W}","mtw","GeV",10);
-  		tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",15);
-  		tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",5);
-  		tau_plots->add("#eta_{#tau,max}","etamax","",10);
-  		tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
-  		tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
-  		tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
-  		tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-  		tau_plots->add("M(#tau#tau#light-jet,min)","mtaujmin","",5);
-  		tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
-    	tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
-    	tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
-  		tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
-  		tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
+		//tau_plots->sensitivevariable = "BDTG_test";
+		//tau_plots->add("BDT discriminant","BDTG_test","",10);
+    	//tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
+    	//tau_plots->add("#chi^{2}","chi2","",5);
+    	//tau_plots->add("M_{all}","allmass","",5);
+    	//tau_plots->add("p_{Z,all}","allpz","",5);
+    	//tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
+  		//tau_plots->add("m_{t,SM}","t1mass","GeV",5);
+  		//tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
+  		//tau_plots->add("m_{W}","wmass","GeV",5);
+  		//tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
+  		//tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",10);
+  		//tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
+  		//tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
+  		//tau_plots->add("m^{T}_{W}","mtw","GeV",10);
+  		//tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",15);
+  		//tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",5);
+  		//tau_plots->add("#eta_{#tau,max}","etamax","",10);
+  		//tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
+  		//tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
+  		//tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
+  		//tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
+  		//tau_plots->add("M(#tau#tau#light-jet,min)","mtaujmin","",5);
+  		//tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
+    	//tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
+    	//tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
+  		//tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
+  		//tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
+  		tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
+  		tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
   	}
     gErrorIgnoreLevel = kWarning;
 	TString regions[] = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os"};
@@ -166,48 +166,6 @@ void plot(int iNP)
 			tau_plots->merge_regions("reg1l1tau2b2j_ss_veto" + bwps[i], "reg1l1tau2b3j_ss_veto" + bwps[i], "reg1l1tau2b_ss_veto" + bwps[i]);
 			tau_plots->merge_regions("reg1l1tau2b2j_os_veto" + bwps[i], "reg1l1tau2b3j_os_veto" + bwps[i], "reg1l1tau2b_os_veto" + bwps[i]);
 		}
-	if(deriveSSOSSF){
-		for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau1b2j_ss_veto" + bwps[i],"reg1l1tau1b3j_ss_veto" + bwps[i],"reg1l1tau1b_ss_veto" + bwps[i]);
-		for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau1b2j_os_veto" + bwps[i],"reg1l1tau1b3j_os_veto" + bwps[i],"reg1l1tau1b_os_veto" + bwps[i]);
-		for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau2b2j_ss_veto" + bwps[i],"reg1l1tau2b3j_ss_veto" + bwps[i],"reg1l1tau2b_ss_veto" + bwps[i]);
-		for (int i = 1; i < 2; i+=2) tau_plots->merge_regions("reg1l1tau2b2j_os_veto" + bwps[i],"reg1l1tau2b3j_os_veto" + bwps[i],"reg1l1tau2b_os_veto" + bwps[i]);
-		double SSOSSF[5] = {1,1,1,1,1};
-		printf("grabhistdata\n");
-		TH1D *datal1tau1b_ss = (TH1D*)tau_plots->grabhist("data","reg1l1tau1b_ss_vetobtagwp70","njet")->Clone();
-		TH1D *datal1tau1b_os = (TH1D*)tau_plots->grabhist("data","reg1l1tau1b_os_vetobtagwp70","njet")->Clone();
-		TH1D *datal1tau2b_ss = (TH1D*)tau_plots->grabhist("data","reg1l1tau2b_ss_vetobtagwp70","njet")->Clone();
-		TH1D *datal1tau2b_os = (TH1D*)tau_plots->grabhist("data","reg1l1tau2b_os_vetobtagwp70","njet")->Clone();
-		for (int i = 0; i < 6; ++i)
-		{
-			datal1tau1b_ss->Add(tau_plots->grabhist(samples[i],"reg1l1tau1b_ss_vetobtagwp70","njet"),-1);
-			datal1tau1b_os->Add(tau_plots->grabhist(samples[i],"reg1l1tau1b_os_vetobtagwp70","njet"),-1);
-			datal1tau2b_ss->Add(tau_plots->grabhist(samples[i],"reg1l1tau2b_ss_vetobtagwp70","njet"),-1);
-			datal1tau2b_os->Add(tau_plots->grabhist(samples[i],"reg1l1tau2b_os_vetobtagwp70","njet"),-1);
-		}
-		printf("grabhistfake\n");
-		TH1D *fakel1tau1b_ss = tau_plots->grabhist("fake","reg1l1tau1b_ss_vetobtagwp70","njet");
-		TH1D *fakel1tau1b_os = tau_plots->grabhist("fake","reg1l1tau1b_os_vetobtagwp70","njet");
-		TH1D *fakel1tau2b_ss = tau_plots->grabhist("fake","reg1l1tau2b_ss_vetobtagwp70","njet");
-		TH1D *fakel1tau2b_os = tau_plots->grabhist("fake","reg1l1tau2b_os_vetobtagwp70","njet");
-
-		int nbin = datal1tau1b_ss->GetNbinsX();
-		printf("calculate SF\n");
-		for (int i = 3; i <= 7; ++i)
-		{
-			if(i<7){
-				if(datal1tau1b_ss->GetBinContent(i)) SSOSSF[i-3] *= fakel1tau1b_ss->GetBinContent(i)/datal1tau1b_ss->GetBinContent(i);
-				if(datal1tau2b_ss->GetBinContent(i)) SSOSSF[i-3] /= fakel1tau2b_ss->GetBinContent(i)/datal1tau2b_ss->GetBinContent(i);
-				if(datal1tau2b_os->GetBinContent(i)) SSOSSF[i-3] *= fakel1tau2b_os->GetBinContent(i)/datal1tau2b_os->GetBinContent(i);
-			}else{
-				if(datal1tau1b_ss->Integral(i,nbin)) SSOSSF[i-3] *= fakel1tau1b_ss->Integral(i,nbin)/datal1tau1b_ss->Integral(i,nbin);
-				if(datal1tau2b_ss->Integral(i,nbin)) SSOSSF[i-3] /= fakel1tau2b_ss->Integral(i,nbin)/datal1tau2b_ss->Integral(i,nbin);
-				if(datal1tau2b_os->Integral(i,nbin)) SSOSSF[i-3] *= fakel1tau2b_os->Integral(i,nbin)/datal1tau2b_os->Integral(i,nbin);
-			}
-			if(i==4) printf("%f, %f, %f\n", fakel1tau1b_ss->GetBinContent(i)/datal1tau1b_ss->GetBinContent(i), fakel1tau2b_ss->GetBinContent(i)/datal1tau2b_ss->GetBinContent(i), fakel1tau2b_os->GetBinContent(i)/datal1tau2b_os->GetBinContent(i));
-		}
-		printf("SSOSSF: %f, %f, %f, %f, %f\n", SSOSSF[0],SSOSSF[1],SSOSSF[2],SSOSSF[3],SSOSSF[4]);
-	}
-
 	if(plot_option == 2){
 		if(!fakeMC){
 			//tau_plots->templatesample("reg1l2tau1bnj_ss_vetobtagwp70","1 data -1 other -1 Vjets -1 diboson -1 ttH -1 ttV -1 ttbar","reg1l2tau1bnj_os_vetobtagwp70","fake","Fake",kYellow,1);
@@ -227,15 +185,17 @@ void plot(int iNP)
   	//tau_plots->printyield("reg1l1tau1b2j_os_vetobtagwp70");
   	//tau_plots->printyield("reg1l1tau1b3j_os_vetobtagwp70");
 
-	if(doTrex)
+	if(doTrex){
+		if(NPnames[iNP].Contains("PDF")) tau_plots->trexdir = "PDF_trexinputs";
+		else if(NPnames[iNP].Contains("muR")) tau_plots->trexdir = "scale_trexinputs";
+		else tau_plots->trexdir = "trexinputs";
 		tau_plots->write_trexinput(NPnames[iNP],"update");
-
+	}
 
 	if(doPlots){
 		if(plot_option == 2){
 			gSystem->mkdir(("output_"+to_string(iNP)).c_str());
 			for (int i = 6; i < 12; ++i)
-			//for (int i = 8; i < 9; ++i)
 			{
   				tau_plots->overlay(samples[i]);
 			}

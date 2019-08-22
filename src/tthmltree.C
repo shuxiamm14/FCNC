@@ -5,7 +5,7 @@
 #include "TCanvas.h"
 #include "stdio.h"
 #include "stdlib.h"
-
+#include "fcnc_include.h"
 tthmltree::tthmltree():nominal::nominal(){
   defGeV(1000);
   dofit1l2tau = 0;
@@ -393,8 +393,6 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
   fcncmatched = 0;
   leptonicw = 0;
   TString cutflowregion = "";
-  bool tightLep = 1;
-  bool tightTau = 0;
   double cutflow[] = {
     0,
     0,
@@ -508,6 +506,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       weight = mc_channel_number > 0 ? mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight: 1.0;
       if( mc_channel_number > 0) weight*=tightLep?lepSFObjLoose:lepSFIDLoose*lepSFTrigLoose;
       if(nTaus_OR_Pt25 &&  mc_channel_number >0) weight*=tightTau?tauSFLoose:tauSFTight; // stupid and confusing but this is how it is.
+      if(weight == 0) continue;
       tthcutflow.fill();
       if (!basic_selection) continue;
       tthcutflow.fill();
@@ -995,23 +994,6 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       weights->clear();
       weights->push_back(weight);
       if(triggeredfcnc && mc_channel_number){
-        weights->push_back(fakeSF);
-        //for (int iNP = 0; iNP < 8; ++iNP)
-        //{
-        //  double valNP = weight;
-        //  for (int itau = 0; itau < nTaus_OR_Pt25; ++itau)
-        //  {
-        //    if(origintag[itau] >= 0 ){
-        //      if ( iNP < 4 && SFbin[itau] == 0 )
-        //         valNP *= fakeSFs[SFbin[itau]][origintag[itau]]+fakeSFsNPbase[SFbin[itau]][origintag[itau]][iNP]*sqrt(fakeSFsNPsSigma2[SFbin[itau]][iNP]);
-        //      else if (iNP >= 4 && iNP < 8 && SFbin[itau] == 1) {
-        //         valNP *= fakeSFs[SFbin[itau]][origintag[itau]]+fakeSFsNPbase[SFbin[itau]][origintag[itau]][iNP-4]*sqrt(fakeSFsNPsSigma2[SFbin[itau]][iNP-4]);
-        //      }
-        //    }
-        //  }
-        //  weights->push_back(valNP);
-        //}
-
         if(origintag[0] >=0 || origintag[1] >= 0){
           double faketauSF = 1;
           double faketauSFNP[2][3] = {{1,1,1},{1,1,1}};
@@ -1031,9 +1013,10 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
               else ptbin = 2;
             }
             faketauSF *= fakeSFML[prongbin][ptbin];
-            if(nominaltree) faketauSFNP[prongbin][ptbin] *= fakeSFMLNP[prongbin][ptbin]/fakeSFML[prongbin][ptbin] + 1;
+            if(nominaltree) faketauSFNP[prongbin][ptbin] *= fakeSFMLNP[prongbin][ptbin]/faketauSF + 1;
           }
-          weights->push_back(faketauSF);
+          weights->push_back(faketauSF*weights->at(0));
+          weights->push_back(fakeSF*weights->at(0));
           if(nominaltree) {
             for (int inpprongbin = 0; inpprongbin < 2; ++inpprongbin)
             {
@@ -1044,9 +1027,28 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
             }
           }
         }else{
-          weights->push_back(1);
+          weights->push_back(weights->at(0));
+          weights->push_back(weights->at(0));
           if(nominaltree) for (int i = 0 ; i < 6 ; ++i) weights->push_back(1);
         } //fake SF, need to be multiplied by weight
+        if(nominaltree){
+          for (int iNP = 0; iNP < 8; ++iNP)
+          {
+            double valNP = 1;
+            for (int itau = 0; itau < nTaus_OR_Pt25; ++itau)
+            {
+              if(origintag[itau] >= 0 ){
+                if ( iNP < 4 && SFbin[itau] == 0 )
+                   valNP *= fakeSFsNPbase[SFbin[itau]][origintag[itau]][iNP]*sqrt(fakeSFsNPsSigma2[SFbin[itau]][iNP])/fakeSFs[SFbin[itau]][origintag[itau]] + 1;
+                else if (iNP >= 4 && SFbin[itau] == 1) {
+                   valNP *= fakeSFsNPbase[SFbin[itau]][origintag[itau]][iNP-4]*sqrt(fakeSFsNPsSigma2[SFbin[itau]][iNP-4])/fakeSFs[SFbin[itau]][origintag[itau]] + 1;
+                }
+              }
+            }
+            weights->push_back(valNP);
+          }
+        if(!addWeightSys()) continue;
+        }
       }
     }
 
