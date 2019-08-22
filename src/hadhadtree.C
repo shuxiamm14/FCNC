@@ -1,4 +1,3 @@
-
 #define hadhadtree_cxx
 #include "hadhadtree.h"
 #include <TH2.h>
@@ -75,18 +74,18 @@ void hadhadtree::init_hist(TString histfilename){
     fcnc_plots[iNP]->add(60,0.,3.,"#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss",&dphitauetmiss,false);
     fcnc_plots[iNP]->add(80,50.,130.,"m_{#tau#tau,vis}","ttvismass",&ttvismass,false,"GeV");
     fcnc_plots[iNP]->add(100,0.4,3.4,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
-    fcnc_plots[iNP]->add(100,0.2,5.2,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
+    fcnc_plots[iNP]->add(80,0.2,4.2,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
     fcnc_plots[iNP]->add(60,-1.5,1.5,"E^{T}_{miss} centrality","phicent",&phicent,false,"");
     fcnc_plots[iNP]->add(900,100.,1000.,"m_{t,SM}","t1mass",&t1mass,false,"GeV");
-    fcnc_plots[iNP]->add(100,50.,150.,"m_{#tau,#tau}","tautaumass",&tautaumass,false,"GeV");
+    fcnc_plots[iNP]->add(100,70.,170.,"m_{#tau,#tau}","tautaumass",&tautaumass,false,"GeV");
     fcnc_plots[iNP]->add(100,30.,530.,"m_{W}","wmass",&wmass,false,"GeV");
-    fcnc_plots[iNP]->add(900,100.,1000.,"m_{t,FCNC}","t2mass",&t2mass,false,"GeV");
+    fcnc_plots[iNP]->add(400,100.,500.,"m_{t,FCNC}","t2mass",&t2mass,false,"GeV");
     //fcnc_plots[iNP]->add(100,50.,250.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,false,"GeV");
     //fcnc_plots[iNP]->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,false,"GeV");
-    //fcnc_plots[iNP]->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,false,"GeV");
-    fcnc_plots[iNP]->add(100,0.,1.,"E_{vis-#tau,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
-    fcnc_plots[iNP]->add(100,0.,1.,"E_{vis-#tau,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
-    fcnc_plots[iNP]->add(100,-15.,15.,"#chi^2","chi2",&chi2,false,"");
+    fcnc_plots[iNP]->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,false,"GeV");
+    fcnc_plots[iNP]->add(80,0.2,1.,"E_{vis-#tau,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
+    fcnc_plots[iNP]->add(80,0.2,1.,"E_{vis-#tau,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
+    fcnc_plots[iNP]->add(60,-13.,17.,"#chi^2","chi2",&chi2,false,"");
     fcnc_plots[iNP]->add(500,0.,1000.,"m_{all}","allmass",&allmass,false,"GeV");
     fcnc_plots[iNP]->add(500,0.,1000.,"P_{z,all}","allpz",&allpz,false,"GeV");
     //fcnc_plots[iNP]->add(100,0.,5.,"#eta_{#tau,max}","etamax",&etamax,false,"");
@@ -223,12 +222,13 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
         jet_NOMINAL_global_ineffSF_MV2c10;
       float weight_pileup = NOMINAL_pileup_combined_weight;
       weight = isData?1:weight_mc*weight_pileup*jetSFs*globalweight;
+      if(weight == 0) continue;
       hadcutflow.fill();
       if(!tau_0_trig_trigger_matched || !tau_1_trig_trigger_matched) continue;
       hadcutflow.fill();
       if((tau_1_allTrk_n!=1 && tau_1_allTrk_n!=3) || (tau_0_allTrk_n!=1 && tau_0_allTrk_n!=3)) continue;
       hadcutflow.fill();
-      if(!tau_0_ele_bdt_medium_retuned || !tau_0_ele_bdt_medium_retuned) continue;
+      if(!isData/*This is wrong but eveto is buggy for data, waiting for new n-tuples*/ && (!tau_0_ele_bdt_medium_retuned || !tau_0_ele_bdt_medium_retuned)) continue;
       hadcutflow.fill();
       if(weight > 5) continue;
       lepton_SF = 
@@ -271,6 +271,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           ifregions.erase(iter.first);
 
       if(!ifregions.size()) continue;
+      hadcutflow.fill();
       if(debug){
         printf("event: %llu\n",event_number);
         printf("weight_mc: %f\n",weight_mc);
@@ -498,8 +499,9 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           if(!isData)
             for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
             {
-              if(plotNPs[iNP] == 1) continue; //weights->at(1) is the fake factor, not NP
-              weight = weights->at(0) * weights->at(1) * (iNP == 0? 1: weights->at(plotNPs[iNP])); // weights->at(0) is the nominal weight
+              if(plotNPs[iNP] == 1) weight = weights->at(0) * weights->at(1); //weights->at(1) is the fake factor, not NP
+              else if(plotNPs[iNP] == 0) weight = weights->at(0);
+              else weight = weights->at(0) * weights->at(1) * (iNP == 0? 1: weights->at(plotNPs[iNP])); // weights->at(0) is the nominal weight
               fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_pt_1 > 35, taus_b_tagged->at(1),iNP);
             }
           else

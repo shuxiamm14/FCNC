@@ -1,16 +1,17 @@
 #include "applyTF.h"
 #include <TROOT.h>
 #include <TChain.h>
+#include "TString.h"
 #include "histSaver.h"
-
+#include "TMinuit.h"
 #include "RooRealVar.h"
 #include "RooGaussian.h"
 #include "RooLandau.h"
 #include "RooAddPdf.h"
-
-
+#include "TMVA/Reader.h"
+#include "TLorentzVector.h"
+#include "TVector3.h"
 // Header file for the classes stored in the TTree if any.
-#include <vector>
 
 #ifndef NO_TMINUIT
 TMinuit* gM = 0;
@@ -19,8 +20,8 @@ const double btag70wt = 0.8303;
 
 class nominal {
 public :
-  map<TString,bool> dobwp;
-  map<TString,bool> dovetobwp;
+  std::map<TString,bool> dobwp;
+  std::map<TString,bool> dovetobwp;
   bool dumpeventnumber;
   TString SystematicsName = "NOMINAL";
 // Fixed size dimensions of array or collections stored in the TTree if any.
@@ -59,7 +60,7 @@ public :
     {0.000436,0.000705,0.007718,0.250730}
   };
   
-  map<TString, TMVA::Reader*> reader;
+  std::map<TString, TMVA::Reader*> reader;
 
   static RooRealVar  _dR_;
   static RooRealVar  _m1_;
@@ -72,7 +73,7 @@ public :
   static RooAddPdf   _pdf_;
 
   static int GeV;
-  vector<int> plotNPs;
+  std::vector<int> plotNPs;
   Int_t ierflg;
   bool dumptruth;
   double nonfcncmatched;
@@ -116,40 +117,40 @@ public :
   int nljet = 0;
   TH1D* theoryweightsum = 0;
   TFile *outputtreefile;
-  vector<histSaver*> fcnc_plots;
+  std::vector<histSaver*> fcnc_plots;
   histSaver *fake_plots;
   histSaver *fake_notau_plots;
 
   applyTF m_applyTF;
-  vector < TLorentzVector > ljets_v;
-  vector < float > ljets_score;
-  fstream filetruth[6][2];
+  std::vector < TLorentzVector > ljets_v;
+  std::vector < float > ljets_score;
+  std::fstream filetruth[6][2];
   Double_t arglist[10];
-  vector<TString> fcnc_regions;
-  vector<TString> fake_regions;
-  vector<TString> fake_regions_notau;
+  std::vector<TString> fcnc_regions;
+  std::vector<TString> fake_regions;
+  std::vector<TString> fake_regions_notau;
   int fcnc_nregions;
   int fake_nregions;
   int fake_nregions_notau;
   bool writetree = 1;
   TString bwps[4] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
   TString ptbin[2] = {"below35","above35"};
-  map<TString, bool> ifregions;
+  std::map<TString, bool> ifregions;
   Double_t _lum = 80.;
   nominal();
   virtual ~nominal();
   void plot();
-  map<TString, TTree*> outputtree;
+  std::map<TString, TTree*> outputtree;
   void readTFmeanstd(TString filename);
   TMinuit* initgM();
   void initMVA(TString fcnc_region);
   void dumpTruth(int part);
-  TLorentzVector vectorPtEtaPhiE(vector<float> vec);
+  TLorentzVector vectorPtEtaPhiE(std::vector<float> vec);
   virtual void    Init(TTree *tree){};
   void definetree(TTree *tree){};
-  virtual vector<int> findcjet(TString channel, vector<TLorentzVector> ljet, TLorentzVector bjet, TLorentzVector lepton, vector<TLorentzVector> taus);
-  virtual vector<int> findcjetML(TString channel, vector<TLorentzVector> ljet, TLorentzVector bjet, TLorentzVector lepton, vector<TLorentzVector> taus, int part);
-  vector<int> findwpair(vector<TLorentzVector> lightjets, int cjet);
+  virtual std::vector<int> findcjet(TString channel, std::vector<TLorentzVector> ljet, TLorentzVector bjet, TLorentzVector lepton, std::vector<TLorentzVector> taus);
+  virtual std::vector<int> findcjetML(TString channel, std::vector<TLorentzVector> ljet, TLorentzVector bjet, TLorentzVector lepton, std::vector<TLorentzVector> taus, int part);
+  std::vector<int> findwpair(std::vector<TLorentzVector> lightjets, int cjet);
   static Float_t getHadTauProb(Float_t _dR, Float_t _p);
   Double_t phi_centrality(Double_t aPhi, Double_t bPhi, Double_t cPhi);
   void finalise_sample();
@@ -162,19 +163,19 @@ public :
   static void printv(TLorentzVector v);
   int leading_b = -1 ;
   int leading_ljet = -1 ;
-  vector<double>           *weights;
-  vector<int>    ljet_indice;
-  vector<float>  *neutrino_pt;
-  vector<float>  *neutrino_eta;
-  vector<float>  *neutrino_phi;
-  vector<float>  *neutrino_m;
-  vector<float>  *tau_pt;
-  vector<float>  *tau_eta;
-  vector<float>  *tau_phi;
-  vector<float>  *tau_charge;
+  std::vector<double>           *weights;
+  std::vector<int>    ljet_indice;
+  std::vector<float>  *neutrino_pt;
+  std::vector<float>  *neutrino_eta;
+  std::vector<float>  *neutrino_phi;
+  std::vector<float>  *neutrino_m;
+  std::vector<float>  *tau_pt;
+  std::vector<float>  *tau_eta;
+  std::vector<float>  *tau_phi;
+  std::vector<float>  *tau_charge;
   TLorentzVector bjet_v;
   TLorentzVector cjet_v;
-  vector<TLorentzVector> taus_v;
+  std::vector<TLorentzVector> taus_v;
   TLorentzVector lep_v;
   TVector3 mets;
   TVector3 truth_mets;

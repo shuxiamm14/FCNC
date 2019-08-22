@@ -2,7 +2,7 @@
 #include <regex> 
 #include <fdeep/fdeep.hpp>
 #include "applyTF.h"
-
+using namespace std;
 map<TString, fdeep::model*> models;
 
 vector<vector<float>> applyTF::predictEvent(TString modelname, vector<float> data[], int nparticle, int ndim, int npool, int nscore)

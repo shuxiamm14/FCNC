@@ -42,3 +42,10 @@ For "lepton channels":
 	run trainBDT to train the BDT
 	run tth_fcnc_analysis_run to analyse the histograms
 	
+In case you use TRexFitter (https://gitlab.cern.ch/TRExStats/TRExFitter), to produce the fitter input:
+
+	run *_fcnc_analysis_run and set doTrex in *_fcnc_analysis.cc to 1 and doPlot to 0
+
+For PDF systematics and scale systematics, you need to take the cover of the variations:
+
+	run take_variation_cover_run

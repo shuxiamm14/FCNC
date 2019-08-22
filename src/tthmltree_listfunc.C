@@ -1,5 +1,6 @@
 #define NO_TMINUIT
 #include "tthmltree.h"
+#include "TH2F.h"
 Float_t tthmltree::getLepTauProb(Float_t _dR, Float_t _minv, Float_t _p) {
   if(!prob_20_40 ||
      !prob_40_60 ||
@@ -261,6 +262,9 @@ Float_t eval(const Float_t x, const TH1F* h) {
   return (1-a)*z1 + a*z2;
 }
 
+bool tthmltree::addWeightSys(){
+  return 1;
+}
 
 void tthmltree::Init(TTree*tree) {
   printf("init tree: version %d\n", version);

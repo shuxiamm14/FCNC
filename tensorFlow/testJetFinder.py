@@ -5,14 +5,16 @@ import numpy as np
 import configparser
 import tensorflow as tf
 import sys
-from tensorflow.keras.layers import Input, Dense
-from tensorflow.keras.layers import Add, Concatenate, Lambda
-from tensorflow.keras.models import Model, load_model
-from tensorflow.keras.backend import int_shape
+from tensorflow import keras
+from keras.layers import Input, Dense
+from keras.layers import Add, Concatenate, Lambda
+from keras.models import Model, load_model
+from keras.backend import int_shape
 from itertools import permutations
 from itertools import combinations
-from tensorflow.keras.utils import plot_model
-from tensorflow.keras.callbacks import ReduceLROnPlateau
+from keras.utils import plot_model
+from keras.callbacks import ReduceLROnPlateau
+from keras.backend import int_shape
 
 def isfloat(value):
 	try:
@@ -72,6 +74,16 @@ for x in watchers:
 nwatcies = nobj
 nobj+=pool
 
+startpool = nwatcies
+endpool = nobj
+startwatcher = 0
+endwatcher = nwatcies
+
+#startpool = 0
+#endpool = pool
+#startwatcher = pool
+#endwatcher = nobj
+
 
 model = load_model(modelname+'.h5')
 model.compile(loss='mean_squared_error', optimizer="sgd")
@@ -85,24 +97,24 @@ inputdata = []
 datamean = []
 datastddev = []
 for idim in range(0,unitDim):
-	inputdata.append([x[idim+1] for x in rawdata])
+	inputdata.append([x[idim] for x in rawdata])
 	datamean.append(mean(inputdata[idim]))
 	datastddev.append(stddev(inputdata[idim]))
 
 trainweight = [rawdatatrain[x][0] for x in range(0,len(rawdatatrain)) if (x+1)%(nobj+1) == 0]
 trainweightlib = {i: trainweight[i] for i in range(0, len(trainweight))}
 
-traindatastd = [[(x[idim+1]-datamean[idim])/datastddev[idim] for idim in range(0,unitDim)] for x in datatrain]
-traininput = list(np.array([np.array(traindatastd[x:x+nobj]) for x in range(0, len(traindatastd), nobj)]).transpose((1,0,2)))
+traindatastd = [[(x[idim]-datamean[idim])/datastddev[idim] for idim in range(0,unitDim)] for x in datatrain]
+traininput = list(np.array([np.array(traindatastd[x+startpool:x+endpool] + traindatastd[x+startwatcher:x+endwatcher]) for x in range(0, len(traindatastd), nobj)]).transpose((1,0,2)))
 trainoutput = [[x[4],x[5]+x[6]] if len(x)==7 else [0,0] for x in datatrain]
-trainoutput = list(np.array([np.array(trainoutput[x:x+pool]) for x in range(0, len(trainoutput), nobj)]).transpose((1,0,2)))
+trainoutput = list(np.array([np.array(trainoutput[x+startpool:x+endpool]) for x in range(0, len(trainoutput), nobj)]).transpose((1,0,2)))
 
 testweight = [rawdatatest[x][0] for x in range(0,len(rawdatatest)) if (x+1)%(nobj+1) == 0]
 testweightlib = {i: testweight[i] for i in range(0, len(testweight))}
-testdatastd = [[(x[idim+1]-datamean[idim])/datastddev[idim] for idim in range(0,unitDim)] for x in datatest]
-testinput = list(np.array([np.array(testdatastd[x:x+nobj]) for x in range(0, len(testdatastd), nobj)]).transpose((1,0,2)))
+testdatastd = [[(x[idim]-datamean[idim])/datastddev[idim] for idim in range(0,unitDim)] for x in datatest]
+testinput = list(np.array([np.array(testdatastd[x+startpool:x+endpool] + testdatastd[x+startwatcher:x+endwatcher]) for x in range(0, len(testdatastd), nobj)]).transpose((1,0,2)))
 testoutput = [[x[4],x[5]+x[6]] if len(x)==7 else [0,0] for x in datatest]
-testoutput = list(np.array([np.array(testoutput[x:x+pool]) for x in range(0, len(testoutput), nobj)]).transpose((1,0,2)))
+testoutput = list(np.array([np.array(testoutput[x+startpool:x+endpool]) for x in range(0, len(testoutput), nobj)]).transpose((1,0,2)))
 invmassrec = [int(rawdatatest[x][1]) for x in range(0,len(rawdatatest)) if (x+1)%(nobj+1) == 0]
 
 predicted = np.array(model.predict(testinput)).transpose((1,0,2))

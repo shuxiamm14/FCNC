@@ -1,14 +1,14 @@
-#include "fcnc_include.h"
-
+#include "TString.h"
+#include <map>
 class applyTF
 {
 public:
 	applyTF(){}
 	~applyTF(){}
 	TString configfolder = "./";
-	map<TString,vector<float>> means;
-	map<TString,vector<float>> stddevs;
-	vector<vector<float>> predictEvent(TString modelname, vector<float>* data, int nparticle, int ndim, int npool, int nscore);
+	std::map<TString,std::vector<float>> means;
+	std::map<TString,std::vector<float>> stddevs;
+	std::vector<std::vector<float>> predictEvent(TString modelname, std::vector<float>* data, int nparticle, int ndim, int npool, int nscore);
 	void readmeanfile(TString filename);
-	vector<float> standardize(vector<float> data, TString modelname, int ndim);
+	std::vector<float> standardize(std::vector<float> data, TString modelname, int ndim);
 };

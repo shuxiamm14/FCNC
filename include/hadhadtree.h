@@ -33,38 +33,38 @@ public :
    int tauabspdg = 0;
    bool nominaltree = 0;
    cutflow hadcutflow;
-   vector<Int_t>           *taus_id = 0;
-   vector<Int_t>           *taus_b_tagged = 0;
-   vector<UInt_t>          *taus_decay_mode = 0;
-   vector<Int_t>           *taus_matched_mother_pdgId = 0;
-   vector<Int_t>           *taus_matched_mother_status = 0;
-   vector<Int_t>           *taus_matched_pdgId = 0;
-   vector<UInt_t>          *taus_n_charged_tracks = 0;
-   vector<Float_t>         *taus_q = 0;
-   vector<Float_t>         *bjets_fjvt = 0;
-   vector<Int_t>           *bjets_is_Jvt_HS = 0;
-   vector<Float_t>         *bjets_jvt = 0;
-   vector<Int_t>           *bjets_origin = 0;
-   vector<Float_t>         *bjets_q = 0;
-   vector<Int_t>           *bjets_type = 0;
-   vector<Float_t>         *bjets_width = 0;
-   vector<Float_t>         *bjets_wztruth_pdgid = 0;
-   vector<Float_t>         *jets_fjvt = 0;
-   vector<Int_t>           *jets_is_Jvt_HS = 0;
-   vector<Float_t>         *jets_jvt = 0;
-   vector<Int_t>           *jets_origin = 0;
-   vector<Float_t>         *jets_q = 0;
-   vector<Int_t>           *jets_type = 0;
-   vector<Float_t>         *jets_width = 0;
-   vector<Float_t>         *jets_wztruth_pdgid = 0;
-   vector<float>           *weight_mc_v;
-   vector<TLorentzVector*>  *taus_matched_p4;
-   vector<TLorentzVector*>  *taus_matched_vis_p4;
-   vector<TLorentzVector*>  *taus_p4;
-   vector<TLorentzVector*>  *bjets_p4;
-   vector<TLorentzVector*>  *bjets_wztruth_p4;
-   vector<TLorentzVector*>  *jets_p4;
-   vector<TLorentzVector*>  *jets_wztruth_p4;
+   std::vector<Int_t>           *taus_id = 0;
+   std::vector<Int_t>           *taus_b_tagged = 0;
+   std::vector<UInt_t>          *taus_decay_mode = 0;
+   std::vector<Int_t>           *taus_matched_mother_pdgId = 0;
+   std::vector<Int_t>           *taus_matched_mother_status = 0;
+   std::vector<Int_t>           *taus_matched_pdgId = 0;
+   std::vector<UInt_t>          *taus_n_charged_tracks = 0;
+   std::vector<Float_t>         *taus_q = 0;
+   std::vector<Float_t>         *bjets_fjvt = 0;
+   std::vector<Int_t>           *bjets_is_Jvt_HS = 0;
+   std::vector<Float_t>         *bjets_jvt = 0;
+   std::vector<Int_t>           *bjets_origin = 0;
+   std::vector<Float_t>         *bjets_q = 0;
+   std::vector<Int_t>           *bjets_type = 0;
+   std::vector<Float_t>         *bjets_width = 0;
+   std::vector<Float_t>         *bjets_wztruth_pdgid = 0;
+   std::vector<Float_t>         *jets_fjvt = 0;
+   std::vector<Int_t>           *jets_is_Jvt_HS = 0;
+   std::vector<Float_t>         *jets_jvt = 0;
+   std::vector<Int_t>           *jets_origin = 0;
+   std::vector<Float_t>         *jets_q = 0;
+   std::vector<Int_t>           *jets_type = 0;
+   std::vector<Float_t>         *jets_width = 0;
+   std::vector<Float_t>         *jets_wztruth_pdgid = 0;
+   std::vector<float>           *weight_mc_v;
+   std::vector<TLorentzVector*>  *taus_matched_p4;
+   std::vector<TLorentzVector*>  *taus_matched_vis_p4;
+   std::vector<TLorentzVector*>  *taus_p4;
+   std::vector<TLorentzVector*>  *bjets_p4;
+   std::vector<TLorentzVector*>  *bjets_wztruth_p4;
+   std::vector<TLorentzVector*>  *jets_p4;
+   std::vector<TLorentzVector*>  *jets_wztruth_p4;
 
    UInt_t          HLT_tau35_loose1_tracktwo_tau25_loose1_tracktwo;
    UInt_t          HLT_tau35_medium1_tracktwoEF_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;
@@ -731,10 +731,7 @@ public :
    UInt_t          tau_0_matched;
    Int_t           tau_0_matched_classifierParticleOrigin;
    Int_t           tau_0_matched_classifierParticleType;
-   TLorentzVector  *tau_0_matched_decay_charged_p4;
    Int_t           tau_0_matched_decay_mode;
-   TLorentzVector  *tau_0_matched_decay_neutral_p4;
-   TLorentzVector  *tau_0_matched_decay_neutrino_p4;
    UInt_t          tau_0_matched_isEle;
    UInt_t          tau_0_matched_isHadTau;
    UInt_t          tau_0_matched_isJet;
@@ -1046,10 +1043,7 @@ public :
    UInt_t          tau_1_matched;
    Int_t           tau_1_matched_classifierParticleOrigin;
    Int_t           tau_1_matched_classifierParticleType;
-   TLorentzVector  *tau_1_matched_decay_charged_p4;
    Int_t           tau_1_matched_decay_mode;
-   TLorentzVector  *tau_1_matched_decay_neutral_p4;
-   TLorentzVector  *tau_1_matched_decay_neutrino_p4;
    UInt_t          tau_1_matched_isEle;
    UInt_t          tau_1_matched_isHadTau;
    UInt_t          tau_1_matched_isJet;
@@ -1878,10 +1872,7 @@ public :
    TBranch        *b_tau_0_matched;   //!
    TBranch        *b_tau_0_matched_classifierParticleOrigin;   //!
    TBranch        *b_tau_0_matched_classifierParticleType;   //!
-   TBranch        *b_tau_0_matched_decay_charged_p4;   //!
    TBranch        *b_tau_0_matched_decay_mode;   //!
-   TBranch        *b_tau_0_matched_decay_neutral_p4;   //!
-   TBranch        *b_tau_0_matched_decay_neutrino_p4;   //!
    TBranch        *b_tau_0_matched_isEle;   //!
    TBranch        *b_tau_0_matched_isHadTau;   //!
    TBranch        *b_tau_0_matched_isJet;   //!
@@ -2193,10 +2184,7 @@ public :
    TBranch        *b_tau_1_matched;   //!
    TBranch        *b_tau_1_matched_classifierParticleOrigin;   //!
    TBranch        *b_tau_1_matched_classifierParticleType;   //!
-   TBranch        *b_tau_1_matched_decay_charged_p4;   //!
    TBranch        *b_tau_1_matched_decay_mode;   //!
-   TBranch        *b_tau_1_matched_decay_neutral_p4;   //!
-   TBranch        *b_tau_1_matched_decay_neutrino_p4;   //!
    TBranch        *b_tau_1_matched_isEle;   //!
    TBranch        *b_tau_1_matched_isHadTau;   //!
    TBranch        *b_tau_1_matched_isJet;   //!

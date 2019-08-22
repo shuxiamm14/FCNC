@@ -4,16 +4,21 @@
 import numpy as np
 import configparser
 import tensorflow as tf
-from tensorflow.keras import optimizers
-from tensorflow.keras.layers import Input, Dense
-from tensorflow.keras.layers import Add, Concatenate, Lambda
-from tensorflow.keras.models import Model
-from tensorflow.keras.backend import int_shape
+from tensorflow import keras
+from keras import optimizers
+from keras.layers import Input, Dense, Flatten
+from keras.layers import Add, Concatenate, Lambda
+from keras.models import Model
+from keras import backend as K
+from keras.utils import plot_model
+from keras.callbacks import EarlyStopping
+from keras.callbacks import ModelCheckpoint
+from keras.activations import softmax
+
 from itertools import permutations
 from itertools import combinations
-from tensorflow.keras.utils import plot_model
-from tensorflow.keras.callbacks import EarlyStopping
 import matplotlib.pyplot as plt
+
 import sys
 sys.path.insert(0, '/Users/Liby/work/tools/frugally-deep/keras_export')
 import convert_model
@@ -78,7 +83,6 @@ def commutation(ibaskets, baskets, pick, picksum, combotmp,combo):
 			commutation(ibaskets+1, baskets, pick, picksum, combotmp, combo)
 	else:
 		combo.append(combotmp.copy())
-
 #=========================================configs=========================================
 config = configparser.ConfigParser()
 if len(sys.argv) != 2:
@@ -92,13 +96,24 @@ pool = int(config['DEFAULT']['pool'])
 watchers = [int(x) for x in config['DEFAULT']['watchers'].split(',')]
 outputcategory = int(config['DEFAULT']['outputcategory'])
 modelname = config['DEFAULT']['modelname']
-
+depthpool = 3
+depthwatcher = 3
 #=========================================construct inputs=========================================
 nobj = 0
 for x in watchers:
 	nobj+=x
 nwatcies = nobj
 nobj+=pool
+
+startpool = nwatcies
+endpool = nobj
+startwatcher = 0
+endwatcher = nwatcies
+
+#startpool = 0
+#endpool = pool
+#startwatcher = pool
+#endwatcher = nobj
 
 watcherstartindex = []
 watcherstartindex.append(pool)
@@ -119,16 +134,21 @@ for i in range(0,len(watchers)):
 inputs = []
 for input in range(0,nobj):
 	inputs.append(Input(shape=(unitDim,)))
+
 nodepool = []
-nodepool1 = []
-nodepool2 = []
+for x in range(0,depthpool+2):
+	nodepool.append([])
+
 nodewatcher = []
-nodewatcher1 = []
-nodewatcher2 = []
+for x in range(0,depthwatcher+2):
+	nodewatcher.append([])
+
 for nnodepool in range(2,maxCombUnitpool+1):
-	nodepool.append(Dense(8,input_dim=unitDim, activation= 'sigmoid'))
-	nodepool1.append(Dense(8,input_dim=unitDim, activation='sigmoid'))
-	nodepool2.append(Dense(8,input_dim=unitDim, activation='sigmoid'))
+	nodepool[0].append(Dense(8,input_dim=unitDim, activation= 'sigmoid'))
+	for x in range(1,depthpool+1):
+		nodepool[x].append(Dense(8,input_dim=unitDim, activation= 'relu'))
+	nodepool[depthpool+1].append(Dense(8,input_dim=unitDim, activation='sigmoid'))
+
 poolarray = []
 poolarrayn= []
 watcherarray = []
@@ -147,13 +167,14 @@ for n in range(0,maxCombUnitpool-1):
 		for b in list(permutations(list(a))):
 			ncb = 1
 			if firstiter == 1:
-				ele = nodepool[n](Concatenate(1)([inputs[x] for x in b]))
+				ele = nodepool[0][n](Concatenate(1)([inputs[x] for x in b]))
 				firstiter = 0;
 			else:
-				ele = Add()([nodepool[n](Concatenate(1)([inputs[x] for x in b])), ele])
+				ele = Add()([nodepool[0][n](Concatenate(1)([inputs[x] for x in b])), ele])
 				ncb += 1
-
-		poolarrayn.append(nodepool2[n](nodepool1[n](ele)))
+		for x in range(1,depthpool+2):
+			ele = nodepool[x][n](ele)
+		poolarrayn.append(ele)
 	poolarray.append(poolarrayn.copy())
 	poolarrayn.clear()
 #=========================================first layer:input, watcher=========================================
@@ -183,9 +204,10 @@ for n in range(0,maxCombUnitwatcher-1):
 		fullcombotmp1 = []
 		watcherarraytmp = []
 		for concwatc in wtchcombo:
-			nodewatcher.append(Dense(7,input_dim=unitDim, activation= 'sigmoid'))
-			nodewatcher1.append(Dense(7,input_dim=unitDim, activation='sigmoid'))
-			nodewatcher2.append(Dense(7,input_dim=unitDim, activation='sigmoid'))
+			nodewatcher[0].append(Dense(7,input_dim=unitDim, activation= 'sigmoid'))
+			for x in range(1,depthwatcher+1):
+				nodewatcher[x].append(Dense(7,input_dim=unitDim, activation='relu'))
+			nodewatcher[depthwatcher+1].append(Dense(7,input_dim=unitDim, activation='sigmoid'))
 			for cinpool in list(combinations(list(range(0,pool)),ninpool)):
 				firstiter = 1;
 				for addwatc in concwatc:
@@ -193,13 +215,14 @@ for n in range(0,maxCombUnitwatcher-1):
 						fullcombotmp1.append(list(perminpool)+addwatc)
 						ncb = 1
 						if firstiter == 1:
-							ele = nodewatcher[-1](Concatenate(1)([inputs[x] for x in fullcombotmp1[-1]]))
+							ele = nodewatcher[0][-1](Concatenate(1)([inputs[x] for x in fullcombotmp1[-1]]))
 							firstiter = 0;
 						else:
-							ele = Add()([nodewatcher[-1](Concatenate(1)([inputs[x] for x in fullcombotmp1[-1]])), ele])
+							ele = Add()([nodewatcher[0][-1](Concatenate(1)([inputs[x] for x in fullcombotmp1[-1]])), ele])
 							ncb += 1
-
-				watcherarraytmp.append(nodewatcher2[-1](nodewatcher1[-1](ele)))
+				for x in range(1,depthwatcher+2):
+					ele = nodewatcher[x][-1](ele)
+				watcherarraytmp.append(ele)
 				fullcombotmp2.append(fullcombotmp1[0].copy())
 				fullcombotmp1.clear()
 			watcherarray.append(watcherarraytmp.copy())
@@ -243,9 +266,44 @@ outputlayernode = []
 for tensor in poolnode:
 	outputlayernode.append(outputlayeralgo(tensor))
 model = Model(inputs=inputs, outputs=outputlayernode)
+
+#=========================================norm using softmax=========================================
+#def mystack(outputlayernode):
+#	concoutlayer = K.stack(outputlayernode,axis=2)
+#	return concoutlayer
+#
+#def softMaxAxis(axis):
+#    def soft(x):
+#        return softmax(x,axis=axis)
+#    return soft
+#
+#normed = Dense(pool,activation = softMaxAxis(2))(Lambda(mystack)(outputlayernode))
+#print(normed)
+#output = []
+#
+#for x in range(0,pool):
+#	output.append(Dense(2,activation = 'softmax')(Flatten()(normed)))
+#for x in output:
+#	print(x)
+#model = Model(inputs=inputs, outputs=output)
+#=========================================norm using lambda=========================================
+#def norm(outputlayernode):
+#	concoutlayer = K.stack(outputlayernode,axis=2)
+#	concoutlayersum = K.sum(concoutlayer,axis=-1)
+#	print("conc", concoutlayer,concoutlayersum)
+#
+#	#for i in range(0,pool):
+#	#	print("iter",concoutlayer[:,:,i],K.stack([concoutlayersum[:,i] for x in range(0,outputcategory)],axis=1))
+#
+#	finaloutput = [concoutlayer[:,:,i]/K.stack([(concoutlayersum[:,x]*(1/(len(outputlayernode)-1) if x == 1 else 1)) for x in range(0,K.int_shape(outputlayernode[0])[1])],axis=1) for i in range(0,len(outputlayernode))]
+#	return finaloutput
+#model = Model(inputs=inputs, outputs=Lambda(norm)(outputlayernode))
+
+#=========================================compile model=========================================
 #sgd = optimizers.SGD(lr=1, decay=1e-6, momentum=0.9, nesterov=True)
 #model.compile(loss='mean_squared_error', optimizer="sgd")
-model.compile(loss='categorical_crossentropy', optimizer="sgd")
+#model.compile(loss='categorical_crossentropy', optimizer="sgd")
+model.compile(loss="categorical_crossentropy", optimizer="sgd")
 
 #=========================================training data=========================================
 
@@ -259,34 +317,36 @@ inputdata = []
 datamean = []
 datastddev = []
 for idim in range(0,unitDim):
-	inputdata.append([x[idim+1] for x in rawdata])
+	inputdata.append([x[idim] for x in rawdata])
 	datamean.append(mean(inputdata[idim]))
 	datastddev.append(stddev(inputdata[idim]))
+
+print("stddev: ", datastddev)
+print("mean: ", datamean)
 
 trainweight = [rawdatatrain[x][0] for x in range(0,len(rawdatatrain)) if (x+1)%(nobj+1) == 0]
 trainweightlib = {i: trainweight[i] for i in range(0, len(trainweight))}
 
-traindatastd = [[(x[idim+1]-datamean[idim])/datastddev[idim] for idim in range(0,unitDim)] for x in datatrain]
-traininput = list(np.array([np.array(traindatastd[x:x+nobj]) for x in range(0, len(traindatastd), nobj)]).transpose((1,0,2)))
+traindatastd = [[(x[idim]-datamean[idim])/datastddev[idim] for idim in range(0,unitDim)] for x in datatrain]
+traininput = list(np.array([np.array(traindatastd[x+startpool:x+endpool]+traindatastd[x+startwatcher:x+endwatcher]) for x in range(0, len(traindatastd), nobj)]).transpose((1,0,2)))
 trainoutput = [[x[4],x[5]+x[6]] if len(x)==7 else [0,0] for x in datatrain]
-trainoutput = list(np.array([np.array(trainoutput[x:x+pool]) for x in range(0, len(trainoutput), nobj)]).transpose((1,0,2)))
+trainoutput = list(np.array([np.array(trainoutput[x+startpool:x+endpool]) for x in range(0, len(trainoutput), nobj)]).transpose((1,0,2)))
 
 testweight = [rawdatatest[x][0] for x in range(0,len(rawdatatest)) if (x+1)%(nobj+1) == 0]
-testweightlib = {i: testweight[i] for i in range(0, len(testweight))}
-testdatastd = [[(x[idim+1]-datamean[idim])/datastddev[idim] for idim in range(0,unitDim)] for x in datatest]
-testinput = list(np.array([np.array(testdatastd[x:x+nobj]) for x in range(0, len(testdatastd), nobj)]).transpose((1,0,2)))
+#testweightlib = {i: testweight[i] for i in range(0, len(testweight))}
+testdatastd = [[(x[idim]-datamean[idim])/datastddev[idim] for idim in range(0,unitDim)] for x in datatest]
+testinput = list(np.array([np.array(testdatastd[x+startpool:x+endpool]+testdatastd[x+startwatcher:x+endwatcher]) for x in range(0, len(testdatastd), nobj)]).transpose((1,0,2)))
 testoutput = [[x[4],x[5]+x[6]] if len(x)==7 else [0,0] for x in datatest]
-testoutput = list(np.array([np.array(testoutput[x:x+pool]) for x in range(0, len(testoutput), nobj)]).transpose((1,0,2)))
+testoutput = list(np.array([np.array(testoutput[x+startpool:x+endpool]) for x in range(0, len(testoutput), nobj)]).transpose((1,0,2)))
 
-history = model.fit(traininput,trainoutput,class_weight=trainweightlib, validation_data = (testinput,testoutput,testweightlib), epochs=5000, batch_size = 64,
-			callbacks=[EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=30, verbose=0, mode='auto', baseline=None)])
-
+#=========================================fit model=========================================
+history = model.fit(traininput,trainoutput, validation_data = (testinput,testoutput), epochs=1000, batch_size = 64,
+			callbacks=[ModelCheckpoint(modelname+'.h5',save_best_only=True, monitor='val_loss', mode='min'),EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=30, verbose=0, mode='auto', baseline=None)])
+#class_weight=trainweightlib, sample_weight=None,,testweightlib
 #=========================================save model=========================================
-model.save(modelname+'.h5', include_optimizer=False)
-convert_model.convert(modelname+'.h5',modelname+'.json')
+#model.save(modelname+'.h5', include_optimizer=False)
+#convert_model.convert(modelname+'.h5',modelname+'.json')
 
-print("stddev: ", datastddev)
-print("mean: ", datamean)
 
 #=========================================plot history for loss=========================================
 plt.plot(history.history['loss'])

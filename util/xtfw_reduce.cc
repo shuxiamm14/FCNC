@@ -1,5 +1,5 @@
 #include "hadhadtree.h"
-
+using namespace std;
 int main(int argc, char const *argv[])
 {
 	if (argc != 3)
@@ -119,7 +119,10 @@ int main(int argc, char const *argv[])
 			TH1D *theoryhisttmp = ((TH1D*)inputfile.Get("h_metadata_theory_weights"));
 			if(totgenweighted.find(dsid) == totgenweighted.end()) {
 				totgenweighted[dsid] = ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
-				if(analysis->nominaltree) theoryweightsum[dsid] = (TH1D*)theoryhisttmp->Clone();
+				if(analysis->nominaltree) {
+					theoryweightsum[dsid] = (TH1D*)theoryhisttmp->Clone(("theory_" + to_string(dsid)).c_str());
+					theoryweightsum[dsid]->SetDirectory(gROOT);
+				}
 			}
 			else{
 				totgenweighted[dsid] += ((TH1*)inputfile.Get("h_metadata"))->GetBinContent(8);
