@@ -1,4 +1,6 @@
 #include "hadhadtree.h"
+#include "tthmltree.h"
+
 using namespace std;
 int main(int argc, char const *argv[])
 {
@@ -78,7 +80,7 @@ int main(int argc, char const *argv[])
 		}
 	}
 	if(!debug) gErrorIgnoreLevel=kError;
-	hadhadtree *analysis = new hadhadtree();
+	nominal *analysis = new hadhadtree();
 	analysis->SystematicsName = argv[2];
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : analysis->SystematicsName == "NOMINAL";
 	analysis->init_reduce1();
@@ -100,7 +102,7 @@ int main(int argc, char const *argv[])
 	double totgenWeightederr = 0;
 	double totDAODWeightederr = 0;
 
-	printf("Reading bin 8 and theory muRmuF total weights\n");
+	printf("Reading bin 8 and theory weight sum\n");
 	while(!fn.eof()){
 		fn.getline(inputline,500);
 		if(strlen(inputline)==0) continue;

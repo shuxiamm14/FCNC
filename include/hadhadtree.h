@@ -16,22 +16,21 @@ class hadhadtree : public nominal{
 public :
    // Declaration of leaf types
    hadhadtree();
-   void Loop(TTree*inputtree, TString samplename, float globalweight);
-   virtual void     Init(TTree *tree);
-   void init_sample(TString sample, TString sampletitle);
-   void init_hist(TString histfilename);
    void definetaus();
    void definejets();
-   void definetree(TTree * tree);
-   bool addWeightSys();
-   void fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag, int iNP);
-   static  void     fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
-   TMinuit* initgM();
    void init_reduce1();
    void init_reduce2();
+   void init_hist(TString histfilename);
+   void Loop(TTree*inputtree, TString samplename, float globalweight);
+   void     Init(TTree *tree);
+   void init_sample(TString sample, TString sampletitle);
+   static  void    fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
+   void fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag, int iNP);
+   void definetree(TTree *tree);
+   bool addWeightSys();
+   TMinuit* initgM();
    bool isData = 0;
    int tauabspdg = 0;
-   bool nominaltree = 0;
    cutflow hadcutflow;
    std::vector<Int_t>           *taus_id = 0;
    std::vector<Int_t>           *taus_b_tagged = 0;
