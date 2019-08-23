@@ -461,12 +461,14 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
   }
   int nloop = debug ? 1000 : nentries;
   bool triggeredfcnc = 0;
+  bool fcncsignalregion = 0;
   TString fcncreg = "";
   double defaultbtagwp = btagwpCut[1];
   if(reduce > 1) {
     TString namestring = ((TString)inputtree->GetName());
     triggeredfcnc = namestring.Contains("1l1tau1b2j")|| namestring.Contains("1l1tau1b3j") || namestring.Contains("1l2tau1bnj");
     triggeredfcnc = triggeredfcnc || namestring.Contains("1l1tau2b2j")|| namestring.Contains("1l1tau2b3j") || namestring.Contains("1l2tau2bnj");
+    fcncsignalregion = (namestring.Contains("1l1tau1b2j")|| namestring.Contains("1l1tau1b3j") || namestring.Contains("1l2tau1bnj")) && namestring.Contains("os");
     if(triggeredfcnc){
       if(namestring.Contains("2tau")) fcncreg = "1l2tau";
       else if(namestring.Contains("2j")) fcncreg = "lh3j";
@@ -534,6 +536,13 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       if(SLtrig_match && onelep_type && (!tightLep || SelectTLepid(0)) && nTaus_OR_Pt25 && (tau_passEleBDT_0 && tau_passMuonOLR_0)){
         ifregions["reg1l1tau1b2j_os"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
         ifregions["reg1l1tau1b3j_os"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l2tau1bnj_os"] = nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 < 0;
+        for(auto reg: ifregions){
+          if(reg.second == 1) {
+            fcncsignalregion = 1;
+            break;
+          }
+        }
         ifregions["reg1l1tau1b2j_ss"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
         ifregions["reg1l1tau1b3j_ss"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
         ifregions["reg1l1tau2b2j_os"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
@@ -544,7 +553,6 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
         ifregions["reg1l1tau2b3j_os_85"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
         ifregions["reg1l1tau2b2j_ss_85"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
         ifregions["reg1l1tau2b3j_ss_85"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-        ifregions["reg1l2tau1bnj_os"] = nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 < 0;
         ifregions["reg1l2tau1bnj_ss"] = nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 > 0;
         ifregions["reg1l2tau2bnj_os"] = nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 < 0;
         ifregions["reg1l2tau2bnj_ss"] = nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 > 0;
@@ -1120,7 +1128,7 @@ void tthmltree::dumpTruth(int ipart) {
   if (debug) printf("truth particles: %lu\n", m_truth_pdgId->size());
   bool foundcjet = 0;
   int foundw = 0;
-  int ifcncmatched = 0;
+  int ifcncmatched = -1;
   bool foundhiggs = 0;
   if (debug) printf("find truth: mc channel: %d\n", mc_channel_number);
   for (int itruth = 0; itruth < m_truth_pdgId->size(); ++itruth) {
@@ -1180,7 +1188,7 @@ void tthmltree::dumpTruth(int ipart) {
       if (debug) outstream << "wjet:\t" << wchild[1].Pt() << " " << wchild[1].Eta() << " " << wchild[1].Phi() << " " << wchild[1].E() << endl;
     }
   }
-  int loopmax = min(nJets_OR_T, (nTaus_OR_Pt25 == 1 ? 3 : 2) + 2);
+  int loopmax = (nTaus_OR_Pt25 == 1 ? 4 : 3);
   int ijet = 0;
   outstream << "bjet: " << bjet_v.Pt() << " " << bjet_v.Eta() << " " << bjet_v.Phi() << " " << bjet_v.E() << "\n";
   for (int i = 0; i < 2; ++i) {
@@ -1189,12 +1197,10 @@ void tthmltree::dumpTruth(int ipart) {
   if (nTaus_OR_Pt25 >= 2) {
     outstream << "leptons: " << lep_v.Pt() << " " << lep_v.Eta() << " " << lep_v.Phi() << " " << lep_v.E() << "\n";
   }
-  int maxfile = min(nJets_OR_T - (nTaus_OR_Pt25 == 1 ? 3 : 2), 2);
-
   for (auto jetv : ljets_v) {
     ijet += 1;
-    if(ijet >= loopmax) break;
-    outstream << "pool: " << jetv.Pt() << " " << jetv.Eta() << " " << jetv.Phi() << " " << jetv.E();
+    if(ijet > loopmax) break;
+    outstream << "pool" << ijet << ": " << jetv.Pt() << " " << jetv.Eta() << " " << jetv.Phi() << " " << jetv.E();
     bool wmatched = 0;
     if (jetv.DeltaR(fcncjet) < 0.4) {
       outstream << " 1 0 0\n";
@@ -1208,12 +1214,15 @@ void tthmltree::dumpTruth(int ipart) {
         }
       }
     }
-    if (!ifcncmatched && !wmatched) outstream << " 0 0 1\n";
-    if(ifcncmatched && ijet - ljets_v.size()+maxfile + 1 >= 0)
-      filetruth[ijet - ljets_v.size() + maxfile + 1][ipart] << outstream.rdbuf() << "eventweight: " << weight << " cjet_inv_mass_method: " << ljet_indice[0] << endl;
+    if (!(ifcncmatched==ijet) && !wmatched) outstream << " 0 0 1\n";
+    int ifile = ijet - (nTaus_OR_Pt25 == 1 ? 2 : 1);
+    if(ifcncmatched>=0 && ifile>=0 && ljet_indice[0]<ijet){
+      filetruth[ifile][ipart] << outstream.str() << "eventweight: " << weight << " cjet_inv_mass_method: " << ljet_indice[0] << endl;
+    }
   }
+  outstream.clear();
   
-  if (ifcncmatched) {
+  if (ifcncmatched>=0) {
     fcncmatched += weight;
   } else {
     nonmatchedfile << outstream.rdbuf() << nonfcncmatched << endl;

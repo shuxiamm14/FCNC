@@ -21,6 +21,27 @@ int main(int argc, char const *argv[])
 	char inputline[100];
 
 	tthmltree *analysis = new tthmltree();
+	analysis->tthcutflow.trackevent(100014948);
+	analysis->tthcutflow.trackevent(100029789);
+	analysis->tthcutflow.trackevent(100031531);
+	analysis->tthcutflow.trackevent(100047871);
+	analysis->tthcutflow.trackevent(100116996);
+	analysis->tthcutflow.trackevent(100154687);
+	analysis->tthcutflow.trackevent(10018238);
+	analysis->tthcutflow.trackevent(10019907);
+	analysis->tthcutflow.trackevent(100218491);
+	analysis->tthcutflow.trackevent(100236226);
+	analysis->tthcutflow.trackevent(100243268);
+	analysis->tthcutflow.trackevent(100266038);
+	analysis->tthcutflow.trackevent(100287328);
+	analysis->tthcutflow.trackevent(100321108);
+	analysis->tthcutflow.trackevent(100331291);
+	analysis->tthcutflow.trackevent(100370965);
+	analysis->tthcutflow.trackevent(10037521);
+	analysis->tthcutflow.trackevent(100385144);
+	analysis->tthcutflow.trackevent(100394007);
+	analysis->tthcutflow.trackevent(100428457);
+	analysis->tthcutflow.trackevent(100475254);
 	analysis->nominaltree = 1;
 	analysis->fcnc_regions.push_back("reg1l1tau1b2j_os");
 	analysis->fcnc_regions.push_back("reg1l1tau1b3j_os");

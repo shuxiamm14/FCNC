@@ -17,13 +17,21 @@ if [ -z ${ttH_fakes_DIR+x} ] ; then
 	alias tthmake='cd $ttH_fakes_DIR/build; make; cd -'
 fi
 
+Order(){
+  infile=$1
+  cat ${infile} | sort -n > "${infile}_sorted"
+  \rm ${infile}
+  mv "${infile}_sorted" $1
+}
+
+
 RemoveReplicateLines()
 {
 prlines=""
 Order $1
 cat $1 | while read lines
 do
-        if [[ $lines =~ $prlines ]]; then
+        if [[ $lines == $prlines ]]; then
                 continue
         fi
         prlines=$lines
