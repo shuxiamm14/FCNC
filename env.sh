@@ -16,3 +16,18 @@ if [ -z ${ttH_fakes_DIR+x} ] ; then
 	alias tth='cd $ttH_fakes_DIR'
 	alias tthmake='cd $ttH_fakes_DIR/build; make; cd -'
 fi
+
+RemoveReplicateLines()
+{
+prlines=""
+Order $1
+cat $1 | while read lines
+do
+        if [[ $lines =~ $prlines ]]; then
+                continue
+        fi
+        prlines=$lines
+        echo $lines >> $1_tmp
+done
+\mv $1_tmp $1
+}
