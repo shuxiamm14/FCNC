@@ -29,9 +29,9 @@ int main(int argc, char const *argv[])
 		regions1.push_back("reg1l2b2j");
 	}else{
 		regions.push_back("reg1l2tau1bnj_os");
-		regions.push_back("reg1l2tau1bnj_ss");
+		//regions.push_back("reg1l2tau1bnj_ss");
 		regions.push_back("reg1l1tau1b2j_os");
-		regions.push_back("reg1l1tau1b2j_ss");
+		//regions.push_back("reg1l1tau1b2j_ss");
 		regions.push_back("reg1l1tau1b3j_os");
 		regions.push_back("reg1l1tau1b3j_ss");
 		regions.push_back("reg1l2tau2bnj_os");
