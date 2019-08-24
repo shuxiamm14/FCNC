@@ -110,8 +110,8 @@ void hadhadtree::init_sample(TString sample, TString sampletitle){
   if(writetree){
     gSystem->mkdir(TString(PACKAGE_DIR) + "/data/xTFWreduce" + char('0' + reduce));
     gSystem->mkdir(TString(PACKAGE_DIR) + "/data/xTFWreduce" + char('0' + reduce) + "/" + SystematicsName);
-    printf("create outputfile: %s\n", (TString(PACKAGE_DIR) + "/data/hadhadreduce" + char('0' + reduce) + "/" + SystematicsName + "/" + sample + "_tree.root").Data());
-    outputtreefile = new TFile(TString(PACKAGE_DIR) + "/data/hadhadreduce" + char('0' + reduce) + "/" + SystematicsName + "/" + sample + "_tree.root","recreate");
+    printf("create outputfile: %s\n", (TString(PACKAGE_DIR) + "/data/xTFWreduce" + char('0' + reduce) + "/" + SystematicsName + "/" + sample + "_tree.root").Data());
+    outputtreefile = new TFile(TString(PACKAGE_DIR) + "/data/xTFWreduce" + char('0' + reduce) + "/" + SystematicsName + "/" + sample + "_tree.root","recreate");
     for (int i = 0; i < fcnc_regions.size(); ++i)
     {
       if(debug) printf("init sample:: get region: %s\n",fcnc_regions[i].Data());
