@@ -99,7 +99,10 @@ int main(int argc, char const *argv[])
 	analysis->fcnc_regions = regions;
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
 	analysis->writetree = reduce <= 2 ? 1:0;
-	if(framework == "xTFW" && reduce == 1) analysis->init_reduce1();
+	if(framework == "xTFW") {
+		if(reduce == 1) analysis->init_reduce1();
+		else analysis->init_reduce2();
+	}
 	if(framework == "tthML" && reduce <= 2) {
 		analysis->fake_regions = regions_fake;
 		analysis->fake_regions_notau = regions_notau;
