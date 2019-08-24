@@ -1,3 +1,5 @@
+#ifndef NOMINAL
+#define NOMINAL
 #include "applyTF.h"
 #include <TROOT.h>
 #include <TChain.h>
@@ -14,7 +16,7 @@
 // Header file for the classes stored in the TTree if any.
 
 #ifndef NO_TMINUIT
-TMinuit* gM = 0;
+static TMinuit* gM = 0;
 #endif
 const double btag70wt = 0.8303;
 
@@ -115,6 +117,7 @@ public :
   float drlb;
   float drtaub;
   int nljet = 0;
+  bool nominaltree = 1;
   TH1D* theoryweightsum = 0;
   TFile *outputtreefile;
   std::vector<histSaver*> fcnc_plots;
@@ -146,8 +149,6 @@ public :
   void initMVA(TString fcnc_region);
   void dumpTruth(int part);
   TLorentzVector vectorPtEtaPhiE(std::vector<float> vec);
-  virtual void    Init(TTree *tree){};
-  void definetree(TTree *tree){};
   virtual std::vector<int> findcjet(TString channel, std::vector<TLorentzVector> ljet, TLorentzVector bjet, TLorentzVector lepton, std::vector<TLorentzVector> taus);
   virtual std::vector<int> findcjetML(TString channel, std::vector<TLorentzVector> ljet, TLorentzVector bjet, TLorentzVector lepton, std::vector<TLorentzVector> taus, int part);
   std::vector<int> findwpair(std::vector<TLorentzVector> lightjets, int cjet);
@@ -155,11 +156,16 @@ public :
   Double_t phi_centrality(Double_t aPhi, Double_t bPhi, Double_t cPhi);
   void finalise_sample();
   static  void    fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
-  void fill_fake(TString region, int nprong, TString sample, int ptbin, float taubtag);
   void fill_fcnc(TString region, int nprong, TString sample, int ptbin, float taubtag, int iNP);
+  void fill_fake(TString region, int nprong, TString sample, int ptbin, float taubtag);
   void fill_notau(TString region, TString sample);
   bool SelectTLepid(int id);
   void defGeV(int _GeV);
+  virtual void init_reduce1(){ printf("WARNING: virtual function is used\n");};
+  virtual void init_reduce2(){ printf("WARNING: virtual function is used\n");};
+  virtual void init_hist(TString histfilename){ printf("WARNING: virtual function is used\n");};
+  virtual void Loop(TTree*inputtree, TString samplename, float globalweight){ printf("WARNING: virtual function is used\n");};
+  virtual void init_sample(TString sample, TString sampletitle){ printf("WARNING: virtual function is used\n");};
   static void printv(TLorentzVector v);
   int leading_b = -1 ;
   int leading_ljet = -1 ;
@@ -193,3 +199,4 @@ public :
   float      tau_pt_0;
   float      tau_pt_1;
 };
+#endif
