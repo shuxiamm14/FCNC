@@ -135,7 +135,7 @@ int main(int argc, char const *argv[])
 		}
 		analysis->init_sample(inputconfig,inputconfig);
 		gSystem->mkdir(prefix + "/data/" + framework + "reduce" + to_string(reduce-1));
-		TString inputfilename = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/" + inputconfig;
+		TString inputfilename = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/" + samplefile;
 		printf("reading file: %s\n", inputfilename.Data());
 		TFile inputfile(inputfilename);
 		for(auto reg : regions){
