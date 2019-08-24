@@ -1,6 +1,7 @@
 #include "hadhadtree.h"
 #include "tthmltree.h"
-
+#include "TROOT.h"
+#include "TSystem.h"
 using namespace std;
 int main(int argc, char const *argv[])
 {
@@ -86,7 +87,7 @@ int main(int argc, char const *argv[])
 	
 	TString inputconfig = samplefile;
 	inputconfig.Remove(inputconfig.Sizeof()-5,4); //remove ".txt"
-
+	gSystem->mkdir(prefix+"/data");
 	if(!debug) gErrorIgnoreLevel=kError;
 	nominal *analysis;
 	if(framework == "xTFW") analysis = new hadhadtree();
@@ -133,6 +134,7 @@ int main(int argc, char const *argv[])
 			}else  analysis->plotNPs.push_back(0);
 		}
 		analysis->init_sample(inputconfig,inputconfig);
+		gSystem->mkdir(prefix + "/data/" + framework + "reduce" + to_string(reduce-1));
 		TString inputfilename = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/" + inputconfig;
 		printf("reading file: %s\n", inputfilename.Data());
 		TFile inputfile(inputfilename);
