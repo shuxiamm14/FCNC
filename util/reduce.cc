@@ -15,7 +15,7 @@ int main(int argc, char const *argv[])
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	TString framework = argv[1];
-	int reduce = *argv[2];
+	int reduce = *argv[2]-'0';
 	doplot = reduce == 3 ? 1 : 0;
 	TString samplefile = argv[3];
 	TString systname = argv[4];
