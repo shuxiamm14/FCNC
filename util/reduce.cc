@@ -4,9 +4,9 @@
 using namespace std;
 int main(int argc, char const *argv[])
 {
-	if (argc != 3)
+	if (argc != 4)
 	{
-		printf("Usage: xtfw_reduce_run dataconfigfile (mc16a_wjet.txt) syst name\n");
+		printf("Usage: reduce_run framework(eg. xTFW) dataconfigfile(eg. mc16a_wjet.txt) systname(eg. NOMINAL)\n");
 		exit(1);
 	}
 	bool debug = 0;
