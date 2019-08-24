@@ -161,11 +161,11 @@ public :
   void fill_notau(TString region, TString sample);
   bool SelectTLepid(int id);
   void defGeV(int _GeV);
-  virtual void init_reduce1(){};
-  virtual void init_reduce2(){};
-  virtual void init_hist(TString histfilename){};
-  virtual void Loop(TTree*inputtree, TString samplename, float globalweight){};
-  virtual void init_sample(TString sample, TString sampletitle){};
+  virtual void init_reduce1(){ printf("WARNING: virtual function is used\n");};
+  virtual void init_reduce2(){ printf("WARNING: virtual function is used\n");};
+  virtual void init_hist(TString histfilename){ printf("WARNING: virtual function is used\n");};
+  virtual void Loop(TTree*inputtree, TString samplename, float globalweight){ printf("WARNING: virtual function is used\n");};
+  virtual void init_sample(TString sample, TString sampletitle){ printf("WARNING: virtual function is used\n");};
   static void printv(TLorentzVector v);
   int leading_b = -1 ;
   int leading_ljet = -1 ;

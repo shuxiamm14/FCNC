@@ -49,7 +49,7 @@ add_library(applyTF SHARED ${PROJECT_SOURCE_DIR}/src/applyTF.cc)
 target_link_libraries(applyTF ${ROOT_LIBRARIES})
 
 add_library(nominal SHARED ${PROJECT_SOURCE_DIR}/src/nominal.C ${PROJECT_SOURCE_DIR}/include/nominal.h ${PROJECT_SOURCE_DIR}/src/hadhadtree.C ${PROJECT_SOURCE_DIR}/src/hadhadtree_listfunc.C ${PROJECT_SOURCE_DIR}/include/hadhadtree.h ${PROJECT_SOURCE_DIR}/src/tthmltree.C ${PROJECT_SOURCE_DIR}/src/tthmltree_listfunc.C ${PROJECT_SOURCE_DIR}/include/tthmltree.h)
-target_link_libraries(nominal ${ROOT_LIBRARIES} applyTF ${PLOTTOOLLIB})
+target_link_libraries(nominal ${ROOT_LIBRARIES} applyTF ${PLOTTOOLLIB} dict)
 target_compile_definitions(nominal PRIVATE PACKAGE_DIR="${CMAKE_SOURCE_DIR}")
 
 file( GLOB APP_SOURCES RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/util/*reduce* )
