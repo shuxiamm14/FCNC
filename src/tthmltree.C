@@ -294,7 +294,6 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         outputtree[fcnc_regions[i]]->Branch("neutrino_phi", &neutrino_phi);
         outputtree[fcnc_regions[i]]->Branch("neutrino_m"  , &neutrino_m  );
         outputtree[fcnc_regions[i]]->Branch("weights",&weights);
-        outputtree[fcnc_regions[i]]->Branch("fakeSF",&fakeSF);
         outputtree[fcnc_regions[i]]->Branch("ljet_indice", &ljet_indice );
         outputtree[fcnc_regions[i]]->Branch("x1fit", &x1fit);
         outputtree[fcnc_regions[i]]->Branch("tau_pt_0", &tau_pt_0);
@@ -946,116 +945,63 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       //===============================fill histograms, fill tree===============================
     if(debug) printf("derive origin\n");
     TString tauorigin;
-    int SFbin[2] = {tau_pt_0 / GeV > 35, tau_pt_1 / GeV > 35};
-    fakeSF = 1;
-    int origintag[2] = {-1,-1};
+    std::vector<float> vtaupt;
+    std::vector<int> vtauprong;
+    vector<int> origintag;
     if (sample.Contains("data")) {
       tauorigin = "data";
       sample = "data";
     } else if (nTaus_OR_Pt25 >= 1) {
-      if (tau_truthType_0 == 10) tauorigin = sample + "_real";
-      else if (tau_truthJetFlavour_0 < 0 && (tau_truthType_0 == 2 || tau_truthType_0 == 6)) tauorigin = sample + "_lep";
+      vtaupt.push_back(tau_pt_0);
+      vtauprong.push_back(tau_numTrack_0);
+      if (tau_truthType_0 == 10) {tauorigin = sample + "_real"; origintag.push_back(-1);}
+      else if (tau_truthJetFlavour_0 < 0 && (tau_truthType_0 == 2 || tau_truthType_0 == 6)) {tauorigin = sample + "_lep"; origintag.push_back(-1);}
       else
         switch (tau_truthJetFlavour_0) {
         case 5:
           tauorigin = sample + "_b";
-          fakeSF = fakeSFs[SFbin[0]][0];
-          origintag[0] = 0;
+          origintag.push_back(0);
           break;
         case 4:
           tauorigin = sample + "_c";
-          fakeSF = fakeSFs[SFbin[0]][1];
-          origintag[0] = 1;
+          origintag.push_back(1);
           break;
         case 21:
           tauorigin = sample + "_g";
-          fakeSF = fakeSFs[SFbin[0]][2];
-          origintag[0] = 2;
+          origintag.push_back(2);
           break;
         default:
           tauorigin = sample + "_j";
-          fakeSF = fakeSFs[SFbin[0]][3];
-          origintag[0] = 3;
+          origintag.push_back(3);
         }
-      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"])
-        if (tau_truthType_1 != 10 && tau_truthType_1 !=2 && tau_truthType_1 !=6 && tau_truthJetFlavour_1 < 0)
+      if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"]){
+        vtaupt.push_back(tau_pt_1);
+        vtauprong.push_back(tau_numTrack_1);
+        if (tau_truthType_1 == 10 || (tau_truthJetFlavour_1 < 0 && (tau_truthType_1 == 2 || tau_truthType_1 == 6))) origintag.push_back(-1);
+        else
           switch (tau_truthJetFlavour_1) {
-          case 5:
-            fakeSF *= fakeSFs[SFbin[1]][0];
-            origintag[1] = 0;
-            break;
-          case 4:
-            fakeSF *= fakeSFs[SFbin[1]][1];
-            origintag[1] = 1;
-            break;
-          case 21:
-            fakeSF *= fakeSFs[SFbin[1]][2];
-            origintag[1] = 2;
-            break;
-          default:
-            fakeSF *= fakeSFs[SFbin[1]][3];
-            origintag[1] = 3;
+            case 5:
+              origintag.push_back(0);
+              break;
+            case 4:
+              origintag.push_back(1);
+              break;
+            case 21:
+              origintag.push_back(2);
+              break;
+            default:
+              origintag.push_back(3);
           }
+      }
     }
     if(debug) printf("calc SF\n");
     if(reduce == 1){
       weights->clear();
-      weights->push_back(weight);
+      addweights(weight,"NOMINAL");
       if(triggeredfcnc && mc_channel_number){
-        if(origintag[0] >=0 || origintag[1] >= 0){
-          double faketauSF = 1;
-          double faketauSFNP[2][3] = {{1,1,1},{1,1,1}};
-          for (int ifaketau = 0; ifaketau < 2; ++ifaketau){
-
-            if( origintag[ifaketau] < 0) continue; 
-            int prongbin = (ifaketau==0?tau_numTrack_0:tau_numTrack_1)  == 3;
-            int ptbin;
-            double faketaupt = (ifaketau==0?tau_pt_0:tau_pt_1) / GeV;
-            if(prongbin == 0) {
-              if(faketaupt<45) ptbin = 0;
-              else if(faketaupt < 70) ptbin = 1;
-              else ptbin = 2;
-            }else{
-              if(faketaupt<50) ptbin = 0;
-              else if(faketaupt < 75) ptbin = 1;
-              else ptbin = 2;
-            }
-            faketauSF *= fakeSFML[prongbin][ptbin];
-            if(nominaltree) faketauSFNP[prongbin][ptbin] *= fakeSFMLNP[prongbin][ptbin]/faketauSF + 1;
-          }
-          weights->push_back(faketauSF*weights->at(0));
-          weights->push_back(fakeSF*weights->at(0));
-          if(nominaltree) {
-            for (int inpprongbin = 0; inpprongbin < 2; ++inpprongbin)
-            {
-              for (int inpptbin = 0; inpptbin < 3; ++inpptbin)
-              {
-                weights->push_back(faketauSFNP[inpprongbin][inpptbin]);
-              }
-            }
-          }
-        }else{
-          weights->push_back(weights->at(0));
-          weights->push_back(weights->at(0));
-          if(nominaltree) for (int i = 0 ; i < 6 ; ++i) weights->push_back(1);
-        } //fake SF, need to be multiplied by weight
+        calcfakesf(origintag,vtaupt,vtauprong);
         if(nominaltree){
-          for (int iNP = 0; iNP < 8; ++iNP)
-          {
-            double valNP = 1;
-            for (int itau = 0; itau < nTaus_OR_Pt25; ++itau)
-            {
-              if(origintag[itau] >= 0 ){
-                if ( iNP < 4 && SFbin[itau] == 0 )
-                   valNP *= fakeSFsNPbase[SFbin[itau]][origintag[itau]][iNP]*sqrt(fakeSFsNPsSigma2[SFbin[itau]][iNP])/fakeSFs[SFbin[itau]][origintag[itau]] + 1;
-                else if (iNP >= 4 && SFbin[itau] == 1) {
-                   valNP *= fakeSFsNPbase[SFbin[itau]][origintag[itau]][iNP-4]*sqrt(fakeSFsNPsSigma2[SFbin[itau]][iNP-4])/fakeSFs[SFbin[itau]][origintag[itau]] + 1;
-                }
-              }
-            }
-            weights->push_back(valNP);
-          }
-        if(!addWeightSys()) continue;
+          if(!addWeightSys()) continue;
         }
       }
     }
@@ -1073,9 +1019,11 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
           for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
           {
             if(iNP != 0 && tauorigin.Contains("data")) continue;
-            if(plotNPs[iNP]==1) weight = weights->at(0) * weights->at(1);
+            if(plotNPs[iNP]<3) weight = weights->at(plotNPs[iNP]);
+            else if(plotNPs[iNP] > 8 && plotNPs[iNP] < 17)
+              weight = weights->at(2) * weights->at(plotNPs[iNP]);
             else
-              weight = weights->at(0) * ((tauorigin.Contains("data")||plotNPs[iNP]==0)?1:weights->at(2)) * ((plotNPs[iNP]==0 || plotNPs[iNP]==2)? 1:weights->at(plotNPs[iNP]));
+              weight = weights->at(1) * weights->at(plotNPs[iNP]);
             if (iter->first.Contains("tau")) {
               if (triggeredfcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, iNP);
               else if (!sample.Contains("fcnc")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
@@ -1091,6 +1039,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename) {
       neutrino_m->clear();
       ljets_v.clear();
     }
+    ifill ++;
   }
   if(reduce > 1) printf("%s ", inputtree->GetName());
   tthcutflow.print();

@@ -312,5 +312,6 @@ int main(int argc, char const *argv[])
 		cutflowraw->Write();
 	}
 	analysis->finalise_sample();
+	analysis->saveweightslist(prefix + "/config/hadhadweights.txt");
 	return 0;
 }

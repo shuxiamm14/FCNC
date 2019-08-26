@@ -194,6 +194,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   if(samplename.Contains("fcnc")) signalevtnb.open((samplename+"_evt.txt").Data(), fstream:: in | fstream::out | fstream::app);
   printf("nentries: %d\n", nloop);
   if(nentries == 0) return;
+  ifill = 0;
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     hadcutflow.newEvent();
     inputtree->GetEntry(jentry);
@@ -440,47 +441,22 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
               }
             }
             weight *= lepton_SF*trig_SF;
-            weights->push_back(weight); //nominal
-            if(faketau >=0){
-              double faketauSF = 1;
-              double faketauSFNP[2][3] = {{1,1,1},{1,1,1}};
-              for (int ifaketau = 0; ifaketau < 2; ++ifaketau){
-                if(faketau < 2 && ifaketau!=faketau) continue; 
-                int prongbin = taus_n_charged_tracks->at(ifaketau) == 3;
-                int ptbin;
-                double faketaupt = taus_p4->at(ifaketau)->Pt();
-                if(prongbin == 0) {
-                  if(faketaupt<45) ptbin = 0;
-                  else if(faketaupt < 70) ptbin = 1;
-                  else ptbin = 2;
-                }else{
-                  if(faketaupt<50) ptbin = 0;
-                  else if(faketaupt < 75) ptbin = 1;
-                  else ptbin = 2;
-                }
-                faketauSF *= fakeSFML[prongbin][ptbin];
-                if(nominaltree) faketauSFNP[prongbin][ptbin] *= fakeSFMLNP[prongbin][ptbin]/fakeSFML[prongbin][ptbin] + 1;
-              }
-              weights->push_back(faketauSF);
-              if(nominaltree) {
-                for (int inpprongbin = 0; inpprongbin < 2; ++inpprongbin)
-                {
-                  for (int inpptbin = 0; inpptbin < 3; ++inpptbin)
-                  {
-                    weights->push_back(faketauSFNP[inpprongbin][inpptbin]);
-                  }
-                }
-              }
-            }else{
-              weights->push_back(1);
-              if(nominaltree) for (int i = 0 ; i < 6 ; ++i) weights->push_back(1);
-            } //fake SF, need to be multiplied by weight
-  
+            addweights(weight,"NOMINAL");
+            vector<float> vtaupt;
+            vector<int> vtauprong;
+            vector<int> vtaupdg;
+            for (int i = 0; i < taus_p4->size(); ++i)
+            {
+              vtaupt.push_back(taus_p4->at(i)->Pt());
+              vtauprong.push_back(taus_n_charged_tracks->at(i));
+              vtaupdg.push_back(fabs(taus_matched_pdgId->at(i)));
+            }
+            calcfakesf_pdg(vtaupdg,vtaupt,vtauprong);
             if(nominaltree){
               if(!addWeightSys()) continue;
             }
           }else{
-            weights->push_back(1);
+            addweights(1,"NOMINAL");
           }
         }
         if (writetree){
@@ -499,9 +475,8 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           if(!isData)
             for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
             {
-              if(plotNPs[iNP] == 1) weight = weights->at(0) * weights->at(1); //weights->at(1) is the fake factor, not NP
-              else if(plotNPs[iNP] == 0) weight = weights->at(0);
-              else weight = weights->at(0) * weights->at(1) * (iNP == 0? 1: weights->at(plotNPs[iNP])); // weights->at(0) is the nominal weight
+              if(plotNPs[iNP] <= 1) weight = weights->at(plotNPs[iNP]);
+              else weight = weights->at(1) * weights->at(plotNPs[iNP]);
               fill_fcnc(iter->first, taus_n_charged_tracks->at(1), tauorigin, tau_pt_1 > 35, taus_b_tagged->at(1),iNP);
             }
           else
@@ -510,6 +485,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
         if(debug == 2) printf("finish hist\n");
       }
     }
+    ifill += 1;
   }
   if (writetree) {
     outputtreefile->cd();
