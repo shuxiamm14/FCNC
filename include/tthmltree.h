@@ -154,6 +154,8 @@ public:
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C1_down;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C2_up;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C2_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C3_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C3_down;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_up;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_down;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_up;
@@ -162,6 +164,8 @@ public:
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_down;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_up;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_down;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_up;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up;
@@ -2005,6 +2009,8 @@ public:
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C1_down;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C2_up;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C2_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C3_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C3_down;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_up;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_down;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_up;
@@ -2013,6 +2019,8 @@ public:
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_down;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_up;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_down;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_up;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up;

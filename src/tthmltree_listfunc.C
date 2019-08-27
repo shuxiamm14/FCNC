@@ -347,13 +347,13 @@ bool tthmltree::addWeightSys(){
     {
       if(theoryweightsum->GetXaxis()->GetBinLabel(i))
         if((TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("LHE3Weight_muR=") && TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("muF=")) || TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("LHE3Weight_PDFset=260") )
-          addweights(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),theoryweightsum->GetXaxis()->GetBinLabel(i));
+          addweights(weight_mc_v->at(i-1)/mcWeightOrg*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),theoryweightsum->GetXaxis()->GetBinLabel(i));
     }
   }
 
   for(int i = 0; i < weights->size(); i++){
     if(weights->at(i)!=weights->at(i)) {
-      printf("weight is nan, eventNumber: %llu, n_weight: %d\n", event_number, i);
+      printf("weight is nan, eventNumber: %llu, n_weight: %d\n", eventNumber, i);
       return 0;
     }
   }
@@ -374,7 +374,7 @@ void tthmltree::Init(TTree*tree) {
   tau_eta = 0;
   tau_phi = 0;
   tau_charge = 0;
-  weight_mc_v; = 0;
+  weight_mc_v = 0;
   m_truth_m = 0;
   m_truth_pt = 0;
   m_truth_eta = 0;
@@ -805,6 +805,8 @@ void tthmltree::Init(TTree*tree) {
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_C1_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_C1_down);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_C2_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_C2_up);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_C2_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_C2_down);
+      tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_C3_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_C3_up);
+      tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_C3_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_C3_down);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_up);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_down);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_up);
@@ -813,6 +815,8 @@ void tthmltree::Init(TTree*tree) {
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_down);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_up);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_down);
+      tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_up);
+      tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_down);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_up);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up);
@@ -2559,6 +2563,8 @@ void tthmltree::definetree(TTree*tree) {
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_C1_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_C1_down, "bTagSF_weight_MV2c10_FixedCutBEff_70_C1_down/F");
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_C2_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_C2_up, "bTagSF_weight_MV2c10_FixedCutBEff_70_C2_up/F");
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_C2_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_C2_down, "bTagSF_weight_MV2c10_FixedCutBEff_70_C2_down/F");
+      tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_C3_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_C3_up, "bTagSF_weight_MV2c10_FixedCutBEff_70_C3_up/F");
+      tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_C3_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_C3_down, "bTagSF_weight_MV2c10_FixedCutBEff_70_C3_down/F");
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_up, "bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_up/F");
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_down, "bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_down/F");
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_up, "bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_up/F");
@@ -2567,6 +2573,8 @@ void tthmltree::definetree(TTree*tree) {
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_down, "bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_down/F");
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_up, "bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_up/F");
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_down, "bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_down/F");
+      tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_up, "bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_up/F");
+      tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_down, "bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_down/F");
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_up, "bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_up/F");
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down, "bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down/F");
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up, "bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up/F");
