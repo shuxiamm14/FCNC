@@ -91,7 +91,10 @@ int main(int argc, char const *argv[])
 	if(!debug) gErrorIgnoreLevel=kError;
 	nominal *analysis;
 	if(framework == "xTFW") analysis = new hadhadtree();
-	else if(framework == "tthML") analysis = new tthmltree();
+	else if(framework == "tthML") {
+		analysis = new tthmltree();
+		analysis->version = 7;
+	}
 	analysis->SystematicsName = systname;
 	analysis->dumptruth = 0;
 	analysis->reduce = reduce;
