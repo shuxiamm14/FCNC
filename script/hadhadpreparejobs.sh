@@ -5,7 +5,7 @@ if test $# -lt 1; then
 
 else
 mkdir -p $ttH_fakes_DIR/datafiles/xTFW/v2/run
-rm $ttH_fakes_DIR/datafiles/xTFW/v2/run/mc16*
+rm $ttH_fakes_DIR/datafiles/xTFW/v2/run/*
 for samplefiles in `find "$ttH_fakes_DIR/datafiles/xTFW/v2/" -name *.txt`
 do
 	for lines in `cat $samplefiles`

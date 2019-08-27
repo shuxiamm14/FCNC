@@ -127,7 +127,6 @@ int main(int argc, char const *argv[])
 			regions.insert(regions.end(),regions_notau.begin(),regions_notau.end());
 		}
 		if(doplot) {
-			analysis->init_hist(inputconfig);
 			if(!inputconfig.Contains("data")){
 				if(analysis->nominaltree == 1 )
 					for(int i = 0; i < 124; ++i) {
@@ -136,6 +135,7 @@ int main(int argc, char const *argv[])
 				else analysis->plotNPs.push_back(1);
 			}else  analysis->plotNPs.push_back(0);
 		}
+		analysis->init_hist(inputconfig);
 		analysis->init_sample(inputconfig,inputconfig);
 		TString inputfilename = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/" + analysis->SystematicsName + "/" + inputconfig + "_tree.root";
 		printf("reading file: %s\n", inputfilename.Data());
