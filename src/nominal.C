@@ -377,6 +377,102 @@ vector<int> nominal::findcjetML(TString channel, vector<TLorentzVector> pool, TL
   return output;
 }
 
+void nominal::calcfakesf(std::vector<int> origin, std::vector<float> pt, std::vector<int> prong){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
+  if(origin.size()!=pt.size() || pt.size()!=prong.size()) {
+    printf("nominal::calcfakesf(): ERROR: origin, pt, prong vector size are not equal.\n");
+    exit(0);
+  }
+  int ntau = origin.size();
+  float fakeSF_origin = 1;
+  float fakeSF_origin_NP[2][4] = {{1,1,1,1},{1,1,1,1}};
+  float fakeSF_tthML = 1;
+  float fakeSF_tthML_NP[2][3] = {{1,1,1},{1,1,1}};
+  int ptbin;
+  for (int i = 0; i < ntau; ++i)
+  {
+    if(origin[i]<0) continue;
+    pt[i] = pt[i]/GeV;
+    fakeSF_origin*=fakeSFs[ pt[i]>35 ][origin[i]];
+    int prongbin = prong[i] == 3;
+    if(prongbin == 0) {
+      if(pt[i]<45) ptbin = 0;
+      else if(pt[i] < 70) ptbin = 1;
+      else ptbin = 2;
+    }else{
+      if(pt[i]<50) ptbin = 0;
+      else if(pt[i] < 75) ptbin = 1;
+      else ptbin = 2;
+    }
+    fakeSF_tthML *= fakeSFML[prongbin][ptbin];
+    if(nominaltree) fakeSF_tthML_NP[prongbin][ptbin] *= fakeSFMLNP[prongbin][ptbin]/fakeSF_tthML + 1;
+  }
+  addweights(fakeSF_tthML*weights->at(0),"fakeSF_tthML");
+  addweights(fakeSF_origin*weights->at(0),"fakeSF_origin");
+
+  if(nominaltree) {
+    for (int inpprongbin = 0; inpprongbin < 2; ++inpprongbin)
+    {
+      for (int inpptbin = 0; inpptbin < 3; ++inpptbin)
+      {
+        addweights(fakeSF_tthML_NP[inpprongbin][inpptbin],TString("fakeSFNP_tthML_ptbin" + to_string(inpptbin) + "_prongbin" + to_string(inpprongbin)));
+      }
+    }
+    for (int iNP = 0; iNP < 8; ++iNP)
+    {
+      double valNP = 1;
+      for (int itau = 0; itau < ntau; ++itau)
+      {
+        if(origin[itau] >= 0 ){
+          if ( iNP < 4 && pt[itau]>35 == 0 )
+             valNP *= fakeSFsNPbase[pt[itau]>35][origin[itau]][iNP]*sqrt(fakeSFsNPsSigma2[pt[itau]>35][iNP])/fakeSFs[pt[itau]>35][origin[itau]] + 1;
+          else if (iNP >= 4 && pt[itau]>35 == 1) {
+             valNP *= fakeSFsNPbase[pt[itau]>35][origin[itau]][iNP-4]*sqrt(fakeSFsNPsSigma2[pt[itau]>35][iNP-4])/fakeSFs[pt[itau]>35][origin[itau]] + 1;
+          }
+        }
+      }
+      addweights(valNP, TString("fakeSFNP_origin_" + to_string(iNP)));
+    }
+  }
+
+}
+
+void nominal::calcfakesf_pdg(std::vector<int> originpdg, std::vector<float> pt, std::vector<int> prong){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
+  std::vector<int> origin;
+  for (int i = 0; i < originpdg.size(); ++i)
+  {
+    switch(originpdg[i]){
+      case 11: case 13: case 15:
+      origin.push_back(-1);
+      break;
+      case 5:
+      origin.push_back(0);
+      break;
+      case 4:
+      origin.push_back(1);
+      break;
+      case 21:
+      origin.push_back(2);
+      break;
+      default:
+      origin.push_back(3);
+    }
+  }
+  calcfakesf(origin,pt,prong);
+}
+
+void nominal::addweights(double weight, TString name){
+  weights->push_back(weight);
+  if(ifill==0) weightlist.push_back(name);
+}
+
+void nominal::saveweightslist(TString filename){
+  ofstream out(filename.Data());
+  for(auto names: weightlist){
+    out<<names<<endl;
+  }
+  out.close();
+}
+
 vector<int> nominal::findwpair(vector<TLorentzVector> lightjets, int cjet){
   if(!GeV) {
     printf("Error: nominal::GeV not initialised\n");

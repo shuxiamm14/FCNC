@@ -77,6 +77,7 @@ public :
   static int GeV;
   std::vector<int> plotNPs;
   Int_t ierflg;
+  int ifill = 0;
   bool dumptruth;
   double nonfcncmatched;
   double fcncmatched;
@@ -118,6 +119,7 @@ public :
   float drtaub;
   int nljet = 0;
   bool nominaltree = 1;
+  std::vector<TString> weightlist;
   TH1D* theoryweightsum = 0;
   TFile *outputtreefile;
   std::vector<histSaver*> fcnc_plots;
@@ -144,6 +146,9 @@ public :
   virtual ~nominal();
   void plot();
   std::map<TString, TTree*> outputtree;
+
+  void addweights(double weight, TString name);
+  void saveweightslist(TString filename);
   void readTFmeanstd(TString filename);
   TMinuit* initgM();
   void initMVA(TString fcnc_region);
@@ -160,6 +165,8 @@ public :
   void fill_fake(TString region, int nprong, TString sample, int ptbin, float taubtag);
   void fill_notau(TString region, TString sample);
   bool SelectTLepid(int id);
+  void calcfakesf(std::vector<int> origin, std::vector<float> pt, std::vector<int> prong);
+  void calcfakesf_pdg(std::vector<int> originpdg, std::vector<float> pt, std::vector<int> prong);
   void defGeV(int _GeV);
   virtual void init_reduce1(){ printf("WARNING: virtual function is used\n");};
   virtual void init_reduce2(){ printf("WARNING: virtual function is used\n");};

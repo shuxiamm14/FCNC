@@ -115,14 +115,14 @@ void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weig
       TCut mycuts = "tauabspdg == 15";
    
       dataloader->AddTree(signal, "Signal", 1.0, cut, Types::kTraining);
-      dataloader->AddTree(background, "Background", 1, cut && mycuts, Types::kTraining);
+      dataloader->AddTree(background, "Background", 1, cut, Types::kTraining);
       dataloader->AddTree(datatreess, "Background", norm, cut, Types::kTraining); 
-      dataloader->AddTree(mctreess, "Background", -norm, cut && mycuts, Types::kTraining);
+      dataloader->AddTree(mctreess, "Background", -norm, cut, Types::kTraining);
    
       dataloader->AddTree(signal, "Signal", 1.0, !cut, Types::kTesting);
-      dataloader->AddTree(background, "Background", 1, !cut && mycuts, Types::kTesting);
+      dataloader->AddTree(background, "Background", 1, !cut, Types::kTesting);
       dataloader->AddTree(datatreess, "Background", norm, !cut, Types::kTesting); 
-      dataloader->AddTree(mctreess, "Background", -norm, !cut && mycuts, Types::kTesting);
+      dataloader->AddTree(mctreess, "Background", -norm, !cut, Types::kTesting);
       dataloader->SetSignalWeightExpression    ("weights[0]");
       dataloader->SetBackgroundWeightExpression("weights[0]");
    }else{
