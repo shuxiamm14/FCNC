@@ -9,15 +9,30 @@ for samplefiles in `find "$ttH_fakes_DIR/datafiles/tthML/v2/" -name *.txt`
 do
 	for lines in `cat $samplefiles`
 	do
+		nfilea=0
+		nfiled=0
+		nfilee=0
 		for files in `grep $lines $allsamplefile`
 		do
 			if [[ $files =~ "mc16a" ]] ; then
+				if (( nfilea == 0 )) ; then
+					tmp=${files/part*/.root}
+					echo $lines" "${tmp/MytthAnaSkim/MysumWeights} >> $ttH_fakes_DIR/datafiles/tthML/v2/run/weightsum_mc16a_`echo $samplefiles | awk -F "/" '{print $NF}'`
+				fi
 				echo $lines" "$files >> $ttH_fakes_DIR/datafiles/tthML/v2/run/mc16a_`echo $samplefiles | awk -F "/" '{print $NF}'`
 			fi
 			if [[ $files =~ "mc16d" ]] ; then
+				if (( nfiled == 0 )) ; then
+					tmp=${files/part*/.root}
+					echo $lines" "${tmp/MytthAnaSkim/MysumWeights} >> $ttH_fakes_DIR/datafiles/tthML/v2/run/weightsum_mc16d_`echo $samplefiles | awk -F "/" '{print $NF}'`
+				fi
 				echo $lines" "$files >> $ttH_fakes_DIR/datafiles/tthML/v2/run/mc16d_`echo $samplefiles | awk -F "/" '{print $NF}'`
 			fi
 			if [[ $files =~ "mc16e" ]] ; then
+				if (( nfilee == 0 )) ; then
+					tmp=${files/part*/.root}
+					echo $lines" "${tmp/MytthAnaSkim/MysumWeights} >> $ttH_fakes_DIR/datafiles/tthML/v2/run/weightsum_mc16e_`echo $samplefiles | awk -F "/" '{print $NF}'`
+				fi
 				echo $lines" "$files >> $ttH_fakes_DIR/datafiles/tthML/v2/run/mc16e_`echo $samplefiles | awk -F "/" '{print $NF}'`
 			fi
 		done

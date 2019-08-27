@@ -176,6 +176,7 @@ public :
   static void printv(TLorentzVector v);
   int leading_b = -1 ;
   int leading_ljet = -1 ;
+  std::vector<float> *weight_mc_v;
   std::vector<double>           *weights;
   std::vector<int>    ljet_indice;
   std::vector<float>  *neutrino_pt;

@@ -114,7 +114,6 @@ public:
    Char_t          HLT_e5_loose;
    Char_t          HLT_e300_etcut;
    Double_t        mcWeightOrg;
-   std::vector<float>   *mcEventWeights;
    Double_t        pileupEventWeight_090;
    Double_t        MV2c10_60_EventWeight;
    Double_t        MV2c10_70_EventWeight;
@@ -155,6 +154,8 @@ public:
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C1_down;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C2_up;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C2_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C3_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_C3_down;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_up;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_down;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_up;
@@ -163,6 +164,8 @@ public:
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_down;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_up;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_down;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_up;
+   Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_down;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_up;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down;
    Float_t         bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up;
@@ -1966,7 +1969,6 @@ public:
    TBranch        *b_HLT_e5_loose;   //!
    TBranch        *b_HLT_e300_etcut;   //!
    TBranch        *b_mcWeightOrg;   //!
-   TBranch        *b_mcEventWeights;   //!
    TBranch        *b_pileupEventWeight_090;   //!
    TBranch        *b_MV2c10_60_EventWeight;   //!
    TBranch        *b_MV2c10_70_EventWeight;   //!
@@ -2007,6 +2009,8 @@ public:
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C1_down;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C2_up;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C2_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C3_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_C3_down;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_up;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_down;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_up;
@@ -2015,6 +2019,8 @@ public:
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_down;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_up;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_down;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_up;
+   TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_down;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_up;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down;
    TBranch        *b_bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up;
