@@ -200,7 +200,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     //if(mc_channel_number == 411172 || mc_channel_number == 411173 || mc_channel_number == 411176 || mc_channel_number == 411177)
     //  continue;
     if ((jentry % 100000 == 0) || debug)
-      std::cout << " I am here event " << jentry << " Event " << event_number << " Run " << run_number << " ismc " << mc_channel_number << std::endl;
+      std::cout << " I am here event " << jentry << " Event " << event_number << " Run " << run_number << " ismc " << mc_channel_number << " Filled events "<< ifill<<std::endl;
 /*
     if(year == 2015) passtrigger = HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1TAU20IM_2TAU12IM || HLT_tau35_loose1_tracktwo_tau25_loose1_tracktwo;
     if(year == 2016) passtrigger = HLT_tau35_loose1_tracktwo_tau25_loose1_tracktwo || HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo || HLT_tau80_medium1_TAU60_tau50_medium1_L1TAU12 || HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo;
@@ -485,7 +485,6 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       }
     }
     ifill ++;
-    if(!(ifill % 1000)) printf("Entries filled: %d\n", ifill);
   }
   if (writetree) {
     outputtreefile->cd();
