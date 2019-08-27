@@ -329,7 +329,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       taus_v[1] = *taus_p4->at(1);
       mets.SetXYZ(met_p4->Px(), met_p4->Py(), met_sumet);
       gM->SetObjectFit( & forFit);
-  
+
       arglist[0] = 1000;
       arglist[1] = 0;
       double val[6],err[6];
@@ -484,7 +484,8 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
         if(debug == 2) printf("finish hist\n");
       }
     }
-    ifill += 1;
+    ifill ++;
+    if(!(ifill % 1000)) printf("Entries filled: %d\n", ifill);
   }
   if (writetree) {
     outputtreefile->cd();
