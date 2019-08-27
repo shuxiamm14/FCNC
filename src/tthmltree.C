@@ -411,7 +411,10 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
   reduce += 1;
   map < TString, bool > ::iterator iter;
   printf("reduce scheme: %d\n", reduce);
-  if (inputtree == 0) return;
+  if (inputtree == 0) {
+    printf("Init inputtree failed\n")
+    return;
+  }
   Long64_t nentries = inputtree->GetEntriesFast();
   TString sample = samplename;
   if (samplename.Contains("ttbar")) sample = "ttbar";
@@ -1028,6 +1031,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       ljets_v.clear();
     }
     ifill ++;
+    if(!(ifill % 1000)) printf("Entries filled: %d\n", ifill);
   }
   if(reduce > 1) printf("%s ", inputtree->GetName());
   tthcutflow.print();
