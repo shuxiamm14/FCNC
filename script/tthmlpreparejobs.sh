@@ -16,23 +16,26 @@ do
 		do
 			if [[ $files =~ "mc16a" ]] ; then
 				if (( nfilea == 0 )) ; then
-					tmp=${files/part*/.root}
+					tmp=${files/_part*/.root}
 					echo $lines" "${tmp/MytthAnaSkim/MysumWeights} >> $ttH_fakes_DIR/datafiles/tthML/v2/run/weightsum_mc16a_`echo $samplefiles | awk -F "/" '{print $NF}'`
 				fi
+				(( nfilea ++ ))
 				echo $lines" "$files >> $ttH_fakes_DIR/datafiles/tthML/v2/run/mc16a_`echo $samplefiles | awk -F "/" '{print $NF}'`
 			fi
 			if [[ $files =~ "mc16d" ]] ; then
 				if (( nfiled == 0 )) ; then
-					tmp=${files/part*/.root}
+					tmp=${files/_part*/.root}
 					echo $lines" "${tmp/MytthAnaSkim/MysumWeights} >> $ttH_fakes_DIR/datafiles/tthML/v2/run/weightsum_mc16d_`echo $samplefiles | awk -F "/" '{print $NF}'`
 				fi
+				(( nfiled ++ ))
 				echo $lines" "$files >> $ttH_fakes_DIR/datafiles/tthML/v2/run/mc16d_`echo $samplefiles | awk -F "/" '{print $NF}'`
 			fi
 			if [[ $files =~ "mc16e" ]] ; then
 				if (( nfilee == 0 )) ; then
-					tmp=${files/part*/.root}
+					tmp=${files/_part*/.root}
 					echo $lines" "${tmp/MytthAnaSkim/MysumWeights} >> $ttH_fakes_DIR/datafiles/tthML/v2/run/weightsum_mc16e_`echo $samplefiles | awk -F "/" '{print $NF}'`
 				fi
+				(( nfilee ++ ))
 				echo $lines" "$files >> $ttH_fakes_DIR/datafiles/tthML/v2/run/mc16e_`echo $samplefiles | awk -F "/" '{print $NF}'`
 			fi
 		done
