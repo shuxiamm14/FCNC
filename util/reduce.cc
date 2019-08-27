@@ -165,8 +165,8 @@ int main(int argc, char const *argv[])
 	}
 	map<int, float> xsecs;
 	if(!isData && framework == "xTFW"){
-		ifstream xsecfile(prefix + "/config/Xsecs.txt");
 		printf("reading cross section file: %s\n", (prefix + "/config/Xsecs.txt").Data());
+		ifstream xsecfile(prefix + "/config/Xsecs.txt");
 		while(!xsecfile.eof()){
 			xsecfile.getline(inputline,500);
 			if(strlen(inputline)==0) continue;
@@ -336,10 +336,9 @@ int main(int argc, char const *argv[])
 		if(isData) analysis->Loop( (TTree*)inputfile.Get(systname), inputconfig, 1.);
 		else {
 			if(analysis->nominaltree) {
-				if(framework == "xTFW")
-					analysis->theoryweightsum=theoryweightsum[dsid];
+				analysis->theoryweightsum=theoryweightsum[dsid];
 			}
-			analysis->Loop( (TTree*)inputfile.Get(systname), inputconfig, xsecs[dsid]*luminosity/totgenweighted[dsid]);
+			analysis->Loop( (TTree*)inputfile.Get(systname), inputconfig, framework == "xTFW"? xsecs[dsid]*luminosity/totgenweighted[dsid] : 1);
 		}
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		inputfile.Close();
