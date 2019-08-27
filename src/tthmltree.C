@@ -412,7 +412,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
   map < TString, bool > ::iterator iter;
   printf("reduce scheme: %d\n", reduce);
   if (inputtree == 0) {
-    printf("Init inputtree failed\n")
+    printf("Init inputtree failed\n");
     return;
   }
   Long64_t nentries = inputtree->GetEntriesFast();
