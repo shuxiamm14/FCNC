@@ -7,7 +7,7 @@ int main(int argc, char const *argv[])
 {
 	if (argc < 5)
 	{
-		printf("Usage: reduce_run framework(eg. xTFW) reduce(eg. 1) dataconfigfile(eg. mc16a_wjet.txt) systname(eg. NOMINAL)\n");
+		printf("Usage: reduce_run framework(xTFW/tthML) reduce(1/2/3) dataconfigfile(eg. mc16a_wjet.txt) systname(eg. NOMINAL) [optional: 1 for saveweightslist]\n");
 		exit(1);
 	}
 	bool debug = 0;

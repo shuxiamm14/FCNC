@@ -262,10 +262,12 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
   fake_nregions_notau = fake_regions_notau.size();
 
   if(writetree){
-    gSystem->mkdir(TString(PACKAGE_DIR) + "/data/tthMLreduce" + char('0' + reduce));
-    gSystem->mkdir(TString(PACKAGE_DIR) + "/data/tthMLreduce" + char('0' + reduce) + "/" + SystematicsName);
-    printf("create outputfile: %s\n", (TString(PACKAGE_DIR) + "/data/tthmlreduce" + char('0' + reduce) + "/" + SystematicsName + "/" + sample + "_tree.root").Data());
-    outputtreefile = new TFile(TString(PACKAGE_DIR) + "/data/tthmlreduce" + char('0' + reduce) + "/" + SystematicsName + "/" + sample + "_tree.root","update");
+    TString outdir=TString(PACKAGE_DIR) + "/data/tthMLreduce" + char('0' + reduce);
+    gSystem->mkdir(outdir);
+    gSystem->mkdir(outdir + "/" + SystematicsName);
+    TString outfile=outdir + "/" + SystematicsName + "/" + sample + "_tree.root").Data();
+    printf("create outputfile: %s\n", outfile.Data());
+    outputtreefile = new TFile(outfile,"update");
 
     map<TString, TTree*>::iterator iter;
     for (int i = 0; i < fcnc_nregions; ++i)
