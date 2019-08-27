@@ -114,7 +114,6 @@ public:
    Char_t          HLT_e5_loose;
    Char_t          HLT_e300_etcut;
    Double_t        mcWeightOrg;
-   std::vector<float>   *mcEventWeights;
    Double_t        pileupEventWeight_090;
    Double_t        MV2c10_60_EventWeight;
    Double_t        MV2c10_70_EventWeight;
@@ -1966,7 +1965,6 @@ public:
    TBranch        *b_HLT_e5_loose;   //!
    TBranch        *b_HLT_e300_etcut;   //!
    TBranch        *b_mcWeightOrg;   //!
-   TBranch        *b_mcEventWeights;   //!
    TBranch        *b_pileupEventWeight_090;   //!
    TBranch        *b_MV2c10_60_EventWeight;   //!
    TBranch        *b_MV2c10_70_EventWeight;   //!

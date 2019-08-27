@@ -263,6 +263,100 @@ Float_t eval(const Float_t x, const TH1F* h) {
 }
 
 bool tthmltree::addWeightSys(){
+  addweights(lepSFObjLoose_EL_SF_Reco_UP/lepSFObjLoose,"Ele_Reco_up");
+  addweights(lepSFObjLoose_EL_SF_Reco_DOWN/lepSFObjLoose,"Ele_Reco_down");
+  addweights(lepSFObjLoose_EL_SF_ID_UP/lepSFObjLoose,"Ele_ID_up");
+  addweights(lepSFObjLoose_EL_SF_ID_DOWN/lepSFObjLoose,"Ele_ID_down");
+  addweights(lepSFObjLoose_EL_SF_Isol_UP/lepSFObjLoose,"Ele_Isol_up");
+  addweights(lepSFObjLoose_EL_SF_Isol_DOWN/lepSFObjLoose,"Ele_Isol_down");
+  addweights(lepSFObjLoose_MU_SF_ID_STAT_UP/lepSFObjLoose,"Mu_ID_STAT_up");
+  addweights(lepSFObjLoose_MU_SF_ID_STAT_DOWN/lepSFObjLoose,"Mu_ID_STAT_down");
+  addweights(lepSFObjLoose_MU_SF_ID_SYST_UP/lepSFObjLoose,"Mu_ID_SYST_up");
+  addweights(lepSFObjLoose_MU_SF_ID_SYST_DOWN/lepSFObjLoose,"Mu_ID_SYST_down");
+  addweights(lepSFObjLoose_MU_SF_ID_STAT_LOWPT_UP/lepSFObjLoose,"Mu_ID_STAT_LOWPT_up");
+  addweights(lepSFObjLoose_MU_SF_ID_STAT_LOWPT_DOWN/lepSFObjLoose,"Mu_ID_STAT_LOWPT_down");
+  addweights(lepSFObjLoose_MU_SF_ID_SYST_LOWPT_UP/lepSFObjLoose,"Mu_ID_SYST_LOWPT_up");
+  addweights(lepSFObjLoose_MU_SF_ID_SYST_LOWPT_DOWN/lepSFObjLoose,"Mu_ID_SYST_LOWPT_down");
+  addweights(lepSFObjLoose_MU_SF_Isol_STAT_UP/lepSFObjLoose,"Mu_Isol_STAT_up");
+  addweights(lepSFObjLoose_MU_SF_Isol_STAT_DOWN/lepSFObjLoose,"Mu_Isol_STAT_down");
+  addweights(lepSFObjLoose_MU_SF_Isol_SYST_UP/lepSFObjLoose,"Mu_Isol_SYST_up");
+  addweights(lepSFObjLoose_MU_SF_Isol_SYST_DOWN/lepSFObjLoose,"Mu_Isol_SYST_down");
+  addweights(lepSFObjLoose_MU_SF_TTVA_STAT_UP/lepSFObjLoose,"Mu_TTVA_STAT_up");
+  addweights(lepSFObjLoose_MU_SF_TTVA_STAT_DOWN/lepSFObjLoose,"Mu_TTVA_STAT_down");
+  addweights(lepSFObjLoose_MU_SF_TTVA_SYST_UP/lepSFObjLoose,"Mu_TTVA_SYST_up");
+  addweights(lepSFObjLoose_MU_SF_TTVA_SYST_DOWN/lepSFObjLoose,"Mu_TTVA_SYST_down");
+  addweights(tauSFTight_TAU_SF_ELEOLR_TOTAL_UP/tauSFTight,"tauEveto_TOTAL_up");
+  addweights(tauSFTight_TAU_SF_ELEOLR_TOTAL_DOWN/tauSFTight,"tauEveto_TOTAL_down");
+  addweights(tauSFTight_TAU_SF_TRUEELECTRON_ELEOLR_TOTAL_UP/tauSFTight,"tauEveto_E_TOTAL_up");
+  addweights(tauSFTight_TAU_SF_TRUEELECTRON_ELEOLR_TOTAL_DOWN/tauSFTight,"tauEveto_E_TOTAL_down");
+  addweights(tauSFTight_TAU_SF_JETID_TOTAL_UP/tauSFTight,"tauID_TOTAL_up");
+  addweights(tauSFTight_TAU_SF_JETID_TOTAL_DOWN/tauSFTight,"tauID_TOTAL_down");
+  addweights(tauSFTight_TAU_SF_JETID_HIGHPT_UP/tauSFTight,"tauID_HIGHPT_up");
+  addweights(tauSFTight_TAU_SF_JETID_HIGHPT_DOWN/tauSFTight,"tauID_HIGHPT_down");
+  addweights(tauSFTight_TAU_SF_RECO_TOTAL_UP/tauSFTight,"tauRecon_TOTAL_up");
+  addweights(tauSFTight_TAU_SF_RECO_TOTAL_DOWN/tauSFTight,"tauRecon_TOTAL_down");
+  addweights(tauSFTight_TAU_SF_RECO_HIGHPT_UP/tauSFTight,"tauRecon_HIGHPT_up");
+  addweights(tauSFTight_TAU_SF_RECO_HIGHPT_DOWN/tauSFTight,"tauRecon_HIGHPT_down");
+  addweights(JVT_EventWeight_UP/JVT_EventWeight,"jvt_up");
+  addweights(JVT_EventWeight_DOWN/JVT_EventWeight,"jvt_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_0_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_0_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B1_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_1_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B1_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_1_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B2_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_2_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B2_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_2_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B3_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_3_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B3_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_3_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B4_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_4_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B4_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_4_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B5_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_5_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B5_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_5_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B6_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_6_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B6_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_6_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B7_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_7_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B7_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_7_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B8_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_8_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_B8_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_B_8_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_C0_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_C_0_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_C0_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_C_0_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_C1_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_C_1_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_C1_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_C_1_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_C2_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_C_2_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_C2_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_C_2_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_C3_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_C_3_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_C3_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_C_3_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_Light_0_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_Light0_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_Light_0_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_Light_1_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_Light1_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_Light_1_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_Light_2_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_Light2_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_Light_2_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_Light_3_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_Light3_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_Light_3_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_Light_4_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_Light4_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_Light_4_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_extrapolation_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_extrapolation_down");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_extrapolation_from_charm_up");
+  addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_down/bTagSF_weight_MV2c10_FixedCutBEff_70,"btag_extrapolation_from_charm_down");
+  addweights(pileupEventWeight_UP/pileupEventWeight_090,"pileupEventWeight_up");
+  addweights(pileupEventWeight_DOWN/pileupEventWeight_090,"pileupEventWeight_down");
+
+  if(weight_mc_v){
+    for (int i = 1; i <= theoryweightsum->GetNbinsX(); ++i)
+    {
+      if(theoryweightsum->GetXaxis()->GetBinLabel(i))
+        if((TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("LHE3Weight_muR=") && TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("muF=")) || TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("LHE3Weight_PDFset=260") )
+          addweights(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),theoryweightsum->GetXaxis()->GetBinLabel(i));
+    }
+  }
+
+  for(int i = 0; i < weights->size(); i++){
+    if(weights->at(i)!=weights->at(i)) {
+      printf("weight is nan, eventNumber: %llu, n_weight: %d\n", event_number, i);
+      return 0;
+    }
+  }
   return 1;
 }
 
@@ -280,7 +374,7 @@ void tthmltree::Init(TTree*tree) {
   tau_eta = 0;
   tau_phi = 0;
   tau_charge = 0;
-  mcEventWeights = 0;
+  weight_mc_v; = 0;
   m_truth_m = 0;
   m_truth_pt = 0;
   m_truth_eta = 0;
@@ -667,7 +761,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("triggers", & triggers);
   tree->SetBranchAddress("loose", & loose);
   tree->SetBranchAddress("mcWeightOrg", & mcWeightOrg);
-  tree->SetBranchAddress("mcEventWeights", & mcEventWeights);
+  tree->SetBranchAddress("mcEventWeights", &weight_mc_v);
   tree->SetBranchAddress("pileupEventWeight_090", & pileupEventWeight_090);
   tree->SetBranchAddress("MV2c10_60_EventWeight", & MV2c10_60_EventWeight);
   tree->SetBranchAddress("MV2c10_70_EventWeight", & MV2c10_70_EventWeight);
@@ -2420,7 +2514,7 @@ void tthmltree::definetree(TTree*tree) {
   tree->Branch("triggers", & triggers, "triggers/I");
   tree->Branch("loose", & loose, "loose/I");
   tree->Branch("mcWeightOrg", & mcWeightOrg, "mcWeightOrg/D");
-  tree->Branch("mcEventWeights", & mcEventWeights);
+  tree->Branch("mcEventWeights", & weight_mc_v);
   tree->Branch("pileupEventWeight_090", & pileupEventWeight_090, "pileupEventWeight_090/D");
   tree->Branch("MV2c10_60_EventWeight", & MV2c10_60_EventWeight, "MV2c10_60_EventWeight/D");
   tree->Branch("MV2c10_70_EventWeight", & MV2c10_70_EventWeight, "MV2c10_70_EventWeight/D");
