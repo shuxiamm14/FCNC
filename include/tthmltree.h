@@ -6,7 +6,7 @@ public:
    bool SelectTLepid(int id);
    void definetree(TTree *tree);
    virtual void     Init(TTree *tree);
-   void Loop(TTree *inputtree, TString samplename);
+   void Loop(TTree *inputtree, TString samplename, float globalweight);
    void dumpTruth(int ipart);
    void init_sample(TString sample, TString sampletitle);
    static  void     fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);

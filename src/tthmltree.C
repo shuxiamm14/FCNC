@@ -387,7 +387,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
 }
 
 
-void tthmltree::Loop(TTree* inputtree, TString samplename) {
+void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
   if(SystematicsName == "nominal") nominaltree = 1;
   else nominaltree = 0;
   nonfcncmatched = 0;
