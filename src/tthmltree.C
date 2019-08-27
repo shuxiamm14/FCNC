@@ -1031,7 +1031,6 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       ljets_v.clear();
     }
     ifill ++;
-    if(!(ifill % 1000)) printf("Entries filled: %d\n", ifill);
   }
   if(reduce > 1) printf("%s ", inputtree->GetName());
   tthcutflow.print();
