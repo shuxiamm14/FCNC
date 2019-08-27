@@ -194,7 +194,6 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   if(samplename.Contains("fcnc")) signalevtnb.open((samplename+"_evt.txt").Data(), fstream:: in | fstream::out | fstream::app);
   printf("nentries: %d\n", nloop);
   if(nentries == 0) return;
-  ifill = 0;
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     hadcutflow.newEvent();
     inputtree->GetEntry(jentry);

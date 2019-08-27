@@ -546,7 +546,7 @@ bool hadhadtree::addWeightSys(){
     {
       if(theoryweightsum->GetXaxis()->GetBinLabel(i))
         if((TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("LHE3Weight_muR=") && TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("muF=")) || TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("LHE3Weight_PDFset=260") )
-          weights->push_back(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i));
+          addweights(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),theoryweightsum->GetXaxis()->GetBinLabel(i));
     }
   }
 

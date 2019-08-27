@@ -5,7 +5,7 @@
 using namespace std;
 int main(int argc, char const *argv[])
 {
-	if (argc != 5)
+	if (argc < 5)
 	{
 		printf("Usage: reduce_run framework(eg. xTFW) reduce(eg. 1) dataconfigfile(eg. mc16a_wjet.txt) systname(eg. NOMINAL)\n");
 		exit(1);
@@ -312,6 +312,6 @@ int main(int argc, char const *argv[])
 		cutflowraw->Write();
 	}
 	analysis->finalise_sample();
-	analysis->saveweightslist(prefix + "/config/hadhadweights.txt");
+	if(argc >= 5) analysis->saveweightslist(prefix + "/config/hadhadweights.txt");
 	return 0;
 }
