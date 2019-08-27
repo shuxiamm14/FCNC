@@ -268,6 +268,41 @@ int main(int argc, char const *argv[])
 		cutflowweighted->GetXaxis()->SetBinLabel(2,"DAOD");
 		cutflowraw->GetXaxis()->SetBinLabel(1,"Total Events");
 		cutflowraw->GetXaxis()->SetBinLabel(2,"DAOD");
+	}else if(analysis->nominaltree && !isData){
+		TString weightfilename = prefix + "/datafiles/" + framework + "/v2/run/weightsum_" + samplefile;
+		printf("Read weightSum file: %s\n", weightfilename.Data());
+		ifstream wtfn(weightfilename);
+		while(!wtfn.eof()){
+			wtfn.getline(inputline,500);
+			if(strlen(inputline)==0) continue;
+			if(inputline[0]=='#') continue;
+			char filename[500];
+			int dsid;
+			if(!isData) sscanf(inputline,"%d %s",&dsid,filename);
+			else sscanf(inputline,"%s",filename);
+			printf("reading file: DSID: %d name %s\n", dsid, filename);
+			TFile inputfile(filename);
+			TTree *weighttree = (TTree*)inputfile.Get("sumWeights");
+			if(!weighttree) {
+				printf("sumWeights not found, exit.\n");
+				exit(1);
+			}
+			vector<float>* weightsum;
+			vector<string>* weightname;
+			weighttree->SetBranchAddress("names_mc_generator_weights",&weightname);
+			weighttree->SetBranchAddress("totalEventsWeighted_mc_generator_weights", &weightsum);
+			int nentries = weighttree->GetEntries();
+			for (int i = 0; i < nentries; ++i)
+			{
+				weighttree->GetEntry(i);
+				if(theoryweightsum.find(dsid) == theoryweightsum.end()) {
+					theoryweightsum[dsid] = new TH1D(("theory_"+to_string(dsid)).c_str(), ("theory_"+to_string(dsid)).c_str(), weightname->size(), 0, weightname->size());
+					theoryweightsum[dsid]->SetDirectory(gROOT);
+					for(int j = 0; j<weightname->size(); j++) theoryweightsum[dsid]->GetXaxis()->SetBinLabel(j+1,weightname->at(j).c_str());
+				}
+				for(int j = 0; j<weightname->size(); j++) theoryweightsum[dsid]->Fill(j,weightsum->at(j));
+			}
+		}
 	}
 	while(!fn.eof()){
 		fn.getline(inputline,500);
