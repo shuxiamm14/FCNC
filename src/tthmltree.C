@@ -472,7 +472,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     inputtree->GetEntry(jentry);
     tthcutflow.newEvent();
     if ((jentry % 100000 == 0))
-      std::cout << " I am here event " << jentry << " Event " << eventNumber << " Run " << runNumber << " ismc " << mc_channel_number << std::endl;
+      std::cout << " I am here event " << jentry << " Event " << eventNumber << " Run " << runNumber << " ismc " << mc_channel_number << " Filled events "<< ifill<<std::endl;
     //===============================pre-selections===============================
     if (reduce == 1 && selected_jets_T->size() == 0 && nJets_OR_T != 0) {
       printf("error: read jet vector failed entry: %lld\n", jentry);
