@@ -265,7 +265,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
     TString outdir=TString(PACKAGE_DIR) + "/data/tthMLreduce" + char('0' + reduce);
     gSystem->mkdir(outdir);
     gSystem->mkdir(outdir + "/" + SystematicsName);
-    TString outfile=outdir + "/" + SystematicsName + "/" + sample + "_tree.root").Data();
+    TString outfile=(outdir + "/" + SystematicsName + "/" + sample + "_tree.root").Data();
     printf("create outputfile: %s\n", outfile.Data());
     outputtreefile = new TFile(outfile,"update");
 
