@@ -289,8 +289,8 @@ int main(int argc, char const *argv[])
 			}
 			vector<float>* weightsum;
 			vector<string>* weightname;
-			weighttree->SetBranchAddress("names_mc_generator_weights",&weightname);
-			weighttree->SetBranchAddress("totalEventsWeighted_mc_generator_weights", &weightsum);
+			sumWeights->SetBranchAddress("names_mc_generator_weights",&weightname);
+			sumWeights->SetBranchAddress("totalEventsWeighted_mc_generator_weights", &weightsum);
 			int nentries = weighttree->GetEntries();
 			printf("Loop over %d entries for weight sum\n", nentries);
 			for (int i = 0; i < nentries; ++i)
@@ -305,6 +305,7 @@ int main(int argc, char const *argv[])
 			}
 		}
 	}
+	int lastdsid = -1;
 	while(!fn.eof()){
 		fn.getline(inputline,500);
 		if(strlen(inputline)==0) continue;
@@ -343,6 +344,8 @@ int main(int argc, char const *argv[])
 		}
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		inputfile.Close();
+		if(dsid != lastdsid && inputconfig.Contains("mc16a")) analysis->saveweightslist(prefix + "/config/" + framework + "_" + to_string(dsid) + ".txt");
+		lastdsid = dsid;
 	}
 	if(framework == "xTFW"){
 		analysis->outputtreefile->cd();
@@ -350,6 +353,5 @@ int main(int argc, char const *argv[])
 		cutflowraw->Write();
 	}
 	analysis->finalise_sample();
-	if(argc >= 5) analysis->saveweightslist(prefix + "/config/hadhadweights.txt");
 	return 0;
 }
