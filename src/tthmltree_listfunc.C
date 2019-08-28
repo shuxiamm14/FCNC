@@ -780,7 +780,7 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("HLT_mu24", & HLT_mu24);
     tree->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70", & bTagSF_weight_DL1_FixedCutBEff_70);
     tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70", & bTagSF_weight_MV2c10_FixedCutBEff_70);
-    if (dosys) {
+    if (nominaltree && reduce == 0) {
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_FixedCutBEff_70_B1_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_B1_up);
@@ -896,7 +896,7 @@ void tthmltree::Init(TTree*tree) {
   } else {
     tree->SetBranchAddress("bTagSF_weight_DL1_Continuous", & bTagSF_weight_DL1_Continuous);
     tree->SetBranchAddress("bTagSF_weight_MV2c10_Continuous", & bTagSF_weight_MV2c10_Continuous);
-    if (dosys) {
+    if (nominaltree && reduce == 0) {
       tree->SetBranchAddress("bTagSF_weight_MV2c10_Continuous_B0_up", & bTagSF_weight_MV2c10_Continuous_B0_up);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_Continuous_B0_down", & bTagSF_weight_MV2c10_Continuous_B0_down);
       tree->SetBranchAddress("bTagSF_weight_MV2c10_Continuous_B1_up", & bTagSF_weight_MV2c10_Continuous_B1_up);
@@ -2335,7 +2335,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("lepSFObjTight", & lepSFObjTight);
   tree->SetBranchAddress("tauSFTight", & tauSFTight);
   tree->SetBranchAddress("tauSFLoose", & tauSFLoose);
-  if (dosys) {
+  if (nominaltree && reduce == 0) {
     tree->SetBranchAddress("lepSFTrigLoose_EL_SF_Trigger_UP", & lepSFTrigLoose_EL_SF_Trigger_UP);
     tree->SetBranchAddress("lepSFTrigTight_EL_SF_Trigger_UP", & lepSFTrigTight_EL_SF_Trigger_UP);
     tree->SetBranchAddress("lepSFTrigTightLoose_EL_SF_Trigger_UP", & lepSFTrigTightLoose_EL_SF_Trigger_UP);
@@ -2538,7 +2538,7 @@ void tthmltree::definetree(TTree*tree) {
     tree->Branch("HLT_mu24", & HLT_mu24, "HLT_mu24/B");
     tree->Branch("bTagSF_weight_DL1_FixedCutBEff_70", & bTagSF_weight_DL1_FixedCutBEff_70, "bTagSF_weight_DL1_FixedCutBEff_70/D");
     tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70", & bTagSF_weight_MV2c10_FixedCutBEff_70, "bTagSF_weight_MV2c10_FixedCutBEff_70/D");
-    if (dosys) {
+    if (nominaltree && reduce == 0) {
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up, "bTagSF_weight_MV2c10_FixedCutBEff_70_B0_up/F");
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down", & bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down, "bTagSF_weight_MV2c10_FixedCutBEff_70_B0_down/F");
       tree->Branch("bTagSF_weight_MV2c10_FixedCutBEff_70_B1_up", & bTagSF_weight_MV2c10_FixedCutBEff_70_B1_up, "bTagSF_weight_MV2c10_FixedCutBEff_70_B1_up/F");
@@ -2634,7 +2634,7 @@ void tthmltree::definetree(TTree*tree) {
   } else {
     tree->Branch("bTagSF_weight_DL1_Continuous", & bTagSF_weight_DL1_Continuous, "bTagSF_weight_DL1_Continuous/D");
     tree->Branch("bTagSF_weight_MV2c10_Continuous", & bTagSF_weight_MV2c10_Continuous, "bTagSF_weight_MV2c10_Continuous/D");
-    if (dosys) {
+    if (nominaltree && reduce == 0) {
       tree->Branch("bTagSF_weight_MV2c10_Continuous_B0_up", & bTagSF_weight_MV2c10_Continuous_B0_up, "bTagSF_weight_MV2c10_Continuous_B0_up/F");
       tree->Branch("bTagSF_weight_MV2c10_Continuous_B0_down", & bTagSF_weight_MV2c10_Continuous_B0_down, "bTagSF_weight_MV2c10_Continuous_B0_down/F");
       tree->Branch("bTagSF_weight_MV2c10_Continuous_B1_up", & bTagSF_weight_MV2c10_Continuous_B1_up, "bTagSF_weight_MV2c10_Continuous_B1_up/F");
@@ -4105,7 +4105,7 @@ void tthmltree::definetree(TTree*tree) {
   tree->Branch("Lepiso", & Lepiso, "Lepiso/D");
   tree->Branch("Bdt", & Bdt, "Bdt/D");
   tree->Branch("BdtvsttV", & BdtvsttV, "BdtvsttV/D");
-  if (dosys) {
+  if (nominaltree && reduce == 0) {
     tree->Branch("lepSFTrigLoose_EL_SF_Trigger_UP", & lepSFTrigLoose_EL_SF_Trigger_UP, "lepSFTrigLoose_EL_SF_Trigger_UP/F");
     tree->Branch("lepSFTrigTight_EL_SF_Trigger_UP", & lepSFTrigTight_EL_SF_Trigger_UP, "lepSFTrigTight_EL_SF_Trigger_UP/F");
     tree->Branch("lepSFTrigTightLoose_EL_SF_Trigger_UP", & lepSFTrigTightLoose_EL_SF_Trigger_UP, "lepSFTrigTightLoose_EL_SF_Trigger_UP/F");
