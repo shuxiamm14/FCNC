@@ -1,4 +1,4 @@
-addweights#include "nominal.h"
+#include "nominal.h"
 #include "fcnc_include.h"
 int nominal::GeV = 0;
 
