@@ -346,7 +346,7 @@ bool tthmltree::addWeightSys(){
     for (int i = 1; i <= theoryweightsum->GetNbinsX(); ++i)
     {
       if(theoryweightsum->GetXaxis()->GetBinLabel(i))
-        if((TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("LHE3Weight_muR=") && TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("muF=")) || TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("LHE3Weight_PDFset=260") )
+        if((TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("muR=") && TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("muF=")) || TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("PDFset=260") )
           addweights(weight_mc_v->at(i-1)/mcWeightOrg*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),theoryweightsum->GetXaxis()->GetBinLabel(i));
     }
   }
