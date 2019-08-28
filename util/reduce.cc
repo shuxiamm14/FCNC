@@ -287,8 +287,8 @@ int main(int argc, char const *argv[])
 				printf("sumWeights not found, exit.\n");
 				exit(1);
 			}
-			vector<float>* weightsum;
-			vector<string>* weightname;
+			vector<float>* weightsum = new vector<float>();
+			vector<string>* weightname = new vector<string>();
 			weighttree->SetBranchAddress("names_mc_generator_weights",&weightname);
 			weighttree->SetBranchAddress("totalEventsWeighted_mc_generator_weights", &weightsum);
 			int nentries = weighttree->GetEntries();
