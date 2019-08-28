@@ -344,7 +344,8 @@ int main(int argc, char const *argv[])
 		}
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		inputfile.Close();
-		if(dsid != lastdsid && inputconfig.Contains("mc16a")) analysis->saveweightslist(prefix + "/config/" + framework + "_" + to_string(dsid) + ".txt");
+		gROOT->mkdir(prefix + "/config/theoryweightlist");
+		if(dsid != lastdsid && inputconfig.Contains("mc16a")) analysis->saveweightslist(prefix + "/config/theoryweightlist/" + framework + "_" + to_string(dsid) + ".txt");
 		lastdsid = dsid;
 	}
 	if(framework == "xTFW"){
