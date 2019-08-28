@@ -292,6 +292,7 @@ int main(int argc, char const *argv[])
 			weighttree->SetBranchAddress("names_mc_generator_weights",&weightname);
 			weighttree->SetBranchAddress("totalEventsWeighted_mc_generator_weights", &weightsum);
 			int nentries = weighttree->GetEntries();
+			printf("Loop over %d entries for weight sum\n", nentries);
 			for (int i = 0; i < nentries; ++i)
 			{
 				weighttree->GetEntry(i);
