@@ -1,4 +1,4 @@
-#include "nominal.h"
+addweights#include "nominal.h"
 #include "fcnc_include.h"
 int nominal::GeV = 0;
 
@@ -461,6 +461,7 @@ void nominal::calcfakesf_pdg(std::vector<int> originpdg, std::vector<float> pt, 
 }
 
 void nominal::addweights(double weight, TString name){
+  if(weight == 0) printf("Warning: %s weight is 0\n", name.Data());
   weights->push_back(weight);
   if(ifill==0) weightlist.push_back(name);
 }
