@@ -36,8 +36,8 @@ void plot(int iNP)
 		tau_plots->muteregion("3j");
 		tau_plots->muteregion("2j");
 	}else{
-		//tau_plots->sensitivevariable = "BDTG_test";
-		//tau_plots->add("BDT discriminant","BDTG_test","",10);
+		tau_plots->sensitivevariable = "BDTG_test";
+		tau_plots->add("BDT discriminant","BDTG_test","",10);
     	//tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
     	//tau_plots->add("#chi^{2}","chi2","",5);
     	//tau_plots->add("M_{all}","allmass","",5);
@@ -64,8 +64,8 @@ void plot(int iNP)
     	//tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
   		//tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
   		//tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
-  		tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
-  		tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
+  		//tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
+  		//tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
   	}
     gErrorIgnoreLevel = kWarning;
 	TString regions[] = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os"};
