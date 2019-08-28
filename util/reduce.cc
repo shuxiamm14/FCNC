@@ -305,6 +305,7 @@ int main(int argc, char const *argv[])
 			}
 		}
 	}
+	int lastdsid = -1;
 	while(!fn.eof()){
 		fn.getline(inputline,500);
 		if(strlen(inputline)==0) continue;
@@ -343,6 +344,9 @@ int main(int argc, char const *argv[])
 		}
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		inputfile.Close();
+		gROOT->mkdir(prefix + "/config/theoryweightlist");
+		if(dsid != lastdsid && inputconfig.Contains("mc16a")) analysis->saveweightslist(prefix + "/config/theoryweightlist/" + framework + "_" + to_string(dsid) + ".txt");
+		lastdsid = dsid;
 	}
 	if(framework == "xTFW"){
 		analysis->outputtreefile->cd();
@@ -350,6 +354,5 @@ int main(int argc, char const *argv[])
 		cutflowraw->Write();
 	}
 	analysis->finalise_sample();
-	if(argc >= 5) analysis->saveweightslist(prefix + "/config/hadhadweights.txt");
 	return 0;
 }
