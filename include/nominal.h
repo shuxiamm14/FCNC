@@ -75,7 +75,7 @@ public :
   static RooAddPdf   _pdf_;
 
   static int GeV;
-  std::vector<int> plotNPs;
+  std::vector<TString> plotNPs;
   Int_t ierflg;
   int ifill = 0;
   bool dumptruth;
@@ -119,7 +119,8 @@ public :
   float drtaub;
   int nljet = 0;
   bool nominaltree = 1;
-  std::vector<TString> weightlist;
+  std::map<int, std::vector<TString>> weightsysmap; //only used after reduce 1
+  std::vector<TString> weightlist; //only used in reduce 1
   TH1D* theoryweightsum = 0;
   TFile *outputtreefile;
   std::vector<histSaver*> fcnc_plots;
@@ -153,6 +154,7 @@ public :
   TMinuit* initgM();
   void initMVA(TString fcnc_region);
   void dumpTruth(int part);
+  void readweightsysmap(int dsid,TString framework);
   TLorentzVector vectorPtEtaPhiE(std::vector<float> vec);
   virtual std::vector<int> findcjet(TString channel, std::vector<TLorentzVector> ljet, TLorentzVector bjet, TLorentzVector lepton, std::vector<TLorentzVector> taus);
   virtual std::vector<int> findcjetML(TString channel, std::vector<TLorentzVector> ljet, TLorentzVector bjet, TLorentzVector lepton, std::vector<TLorentzVector> taus, int part);

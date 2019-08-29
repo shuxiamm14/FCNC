@@ -167,7 +167,7 @@ void tthmltree::init_hist(TString outputfilename){
 
   for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
   {
-    fcnc_plots.push_back(new histSaver(outputfilename + "_fcnc" + char('0' + plotNPs[iNP])));
+    fcnc_plots.push_back(new histSaver(outputfilename + "_fcnc_" + plotNPs[iNP]));
     fcnc_plots[iNP]->set_weight(&weight);
     fcnc_plots[iNP]->debug = !!debug;
     if(reduce == 3) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG_train",&BDTG_train,false,"");
@@ -268,8 +268,6 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
     TString outfile=(outdir + "/" + SystematicsName + "/" + sample + "_tree.root").Data();
     printf("create outputfile: %s\n", outfile.Data());
     outputtreefile = new TFile(outfile,"update");
-
-    map<TString, TTree*>::iterator iter;
     for (int i = 0; i < fcnc_nregions; ++i)
     {
       if(debug) printf("init sample:: get region: %s\n",fcnc_regions[i].Data());
@@ -325,8 +323,6 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         outputtree[fcnc_regions[i]]->Branch("nljet", &nljet);
         outputtree[fcnc_regions[i]]->Branch("tau_truthJetFlavour_0", & tau_truthJetFlavour_0);
         outputtree[fcnc_regions[i]]->Branch("nTaus_OR_Pt25", &nTaus_OR_Pt25);
-
-
       }
     }
 
@@ -366,13 +362,13 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
       else sample.Remove(sample.Sizeof()-2);
       for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
       {
-        fcnc_plots[iNP]->init_sample(sample + "_g",sample + "_g_NP" + char('0' + plotNPs[iNP]),sampletitle + "(gluon fake #tau)",(enum EColor)7);
-        fcnc_plots[iNP]->init_sample(sample + "_j",sample + "_j_NP" + char('0' + plotNPs[iNP]),sampletitle + "(light-jet fake #tau)",kBlue);
-        fcnc_plots[iNP]->init_sample(sample + "_b",sample + "_b_NP" + char('0' + plotNPs[iNP]),sampletitle + "(b-jets fake #tau)",kViolet);
-        fcnc_plots[iNP]->init_sample(sample + "_lep",sample + "_lep_NP" + char('0' + plotNPs[iNP]),sampletitle + "(lepton fake #tau)",kGreen);
-        fcnc_plots[iNP]->init_sample(sample + "_real",sample + "_real_NP" + char('0' + plotNPs[iNP]),sampletitle + "(real #tau)",kRed);
-        fcnc_plots[iNP]->init_sample(sample + "_c",sample + "_c_NP" + char('0' + plotNPs[iNP]),sampletitle + "(c-jets fake #tau)",kOrange);
-        fcnc_plots[iNP]->init_sample(sample + "_nomatch",sample + "_nomatch_NP" + char('0' + plotNPs[iNP]),sampletitle + "(no truth matched fake #tau)",kGray);
+        fcnc_plots[iNP]->init_sample(sample + "_g",sample + "_g_" + plotNPs[iNP],sampletitle + "(gluon fake #tau)",(enum EColor)7);
+        fcnc_plots[iNP]->init_sample(sample + "_j",sample + "_j_" + plotNPs[iNP],sampletitle + "(light-jet fake #tau)",kBlue);
+        fcnc_plots[iNP]->init_sample(sample + "_b",sample + "_b_" + plotNPs[iNP],sampletitle + "(b-jets fake #tau)",kViolet);
+        fcnc_plots[iNP]->init_sample(sample + "_lep",sample + "_lep_" + plotNPs[iNP],sampletitle + "(lepton fake #tau)",kGreen);
+        fcnc_plots[iNP]->init_sample(sample + "_real",sample + "_real_" + plotNPs[iNP],sampletitle + "(real #tau)",kRed);
+        fcnc_plots[iNP]->init_sample(sample + "_c",sample + "_c_" + plotNPs[iNP],sampletitle + "(c-jets fake #tau)",kOrange);
+        fcnc_plots[iNP]->init_sample(sample + "_nomatch",sample + "_nomatch_" + plotNPs[iNP],sampletitle + "(no truth matched fake #tau)",kGray);
       }
       fake_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
       fake_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
@@ -1012,7 +1008,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     }
 
     if (dumptruth && triggeredfcnc && sample.Contains("fcnc")) dumpTruth(eventNumber % 2);
-
+    if (dohist) readweightsysmap(mc_channel_number,"tthML");
     for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
       if (iter->second == 1) {
         if (writetree) {
@@ -1024,11 +1020,14 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
           {
             if(iNP != 0 && tauorigin.Contains("data")) continue;
-            if(plotNPs[iNP]<3) weight = weights->at(plotNPs[iNP]);
-            else if(plotNPs[iNP] > 8 && plotNPs[iNP] < 17)
-              weight = weights->at(2) * weights->at(plotNPs[iNP]);
+            std::vector<TString>::iterator it = std::find(weightsysmap[mc_channel_number].begin(), weightsysmap[mc_channel_number].end(), plotNPs[iNP]);
+            int index = 2;
+            if(it != weightsysmap[mc_channel_number].end()) index = std::distance(weightsysmap[mc_channel_number].begin(), it);
+            if(index<3) weight = weights->at(index);
+            else if(index > 8 && index < 17)
+              weight = weights->at(2) * weights->at(index);
             else
-              weight = weights->at(1) * weights->at(plotNPs[iNP]);
+              weight = weights->at(1) * weights->at(index);
             if (iter->first.Contains("tau")) {
               if (triggeredfcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, iNP);
               else if (!sample.Contains("fcnc")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
