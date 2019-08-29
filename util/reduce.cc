@@ -443,12 +443,12 @@ int main(int argc, char const *argv[])
 	if(reduce > 1){
 		if(framework == "tthML"){
 			if(!dofake) {
-				doplot = 1;
 				analysis->writetree = 0;
 				analysis->dovetobwp["btagwp70"] = 1;
 				analysis->fcnc_regions = regions;
 			}
 			else {
+				doplot = 1;
 				analysis->dovetobwp["btagwp70"] = 1;
 				analysis->dobwp["btagwp70"] = 1;
 				analysis->dobwp["btagwp85"] = 1;
@@ -458,7 +458,7 @@ int main(int argc, char const *argv[])
 			regions.insert(regions.end(),regions_notau.begin(),regions_notau.end());
 		}
 		if(doplot) {
-			if(!inputconfig.Contains("data")){
+			if(!inputconfig.Contains("data") && !dofake){
 				if(analysis->nominaltree == 1 )
 					for(int i = 0; i < 124; ++i) {
 						for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
