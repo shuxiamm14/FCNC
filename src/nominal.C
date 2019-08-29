@@ -511,6 +511,12 @@ void nominal::fill_fcnc(TString region, int nprong, TString sample, int iptbin, 
   }
 }
 
+void nominal::readweightsysmap(int dsid, TString framework){
+  if(weightsysmap.find(dsid) != weightsysmap.end()) return;
+  TString prefix = PACKAGE_DIR;
+  prefix = prefix + "/config/theoryweightlist/" + framework + "_" + TString(to_string(dsid)) + ".txt";
+  weightsysmap[dsid] = readTovecString(prefix);
+}
 
 void nominal::printv(TLorentzVector v){
   printf("Pt : %f, Eta: %f, Phi: %f, E: %f, m: %f\n", v.Pt(),v.Eta(),v.Phi(),v.E(),v.M());
