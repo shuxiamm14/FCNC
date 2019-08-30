@@ -164,94 +164,98 @@ void tthmltree::init_hist(TString outputfilename){
     initMVA("reg1l1tau1b2j_os");
     initMVA("reg1l1tau1b3j_os");
   }
-
-  for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
-  {
-    fcnc_plots.push_back(new histSaver(outputfilename + "_fcnc_" + plotNPs[iNP]));
-    fcnc_plots[iNP]->set_weight(&weight);
-    fcnc_plots[iNP]->debug = !!debug;
-    if(reduce == 3) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG_train",&BDTG_train,false,"");
-    if(reduce == 3) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG_test",&BDTG_test,false,"");
-    if(reduce >= 2) {
-      fcnc_plots[iNP]->add(100,5.,55.,"#chi^2","chi2",&chi2,false,"");
-      fcnc_plots[iNP]->add(500,200.,1200.,"m_{all}","allmass",&allmass,true,"GeV");
-      fcnc_plots[iNP]->add(500,0.,1000.,"P_{z,all}","allpz",&allpz,true,"GeV");
-    }
-    fcnc_plots[iNP]->add(10,25.,125.,"p_{T,#tau}","taupt_0",&tau_pt_0,true,"GeV");
-    fcnc_plots[iNP]->add(10,25.,125.,"p_{T,#tau}","taupt_1",&tau_pt_1,true,"GeV");
-    fcnc_plots[iNP]->add(10,25.,125.,"p_{T,SS#tau}","tauptss",&tau_pt_ss,true,"GeV");
-    fcnc_plots[iNP]->add(10,25.,125.,"p_{T,OS#tau}","tauptos",&tau_pt_os,true,"GeV");
-    fcnc_plots[iNP]->add(100,100.,300.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
-    fcnc_plots[iNP]->add(100,0.,200.,"m^{T}_{W}","mtw",&mtw,true,"GeV");
-    fcnc_plots[iNP]->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
-    fcnc_plots[iNP]->add(100,0.,250.,"m_{W}","wmass",&wmass,true,"GeV");
-    fcnc_plots[iNP]->add(150,120.,270.,"m_{t,FCNC}","t2mass",&t2mass,true,"GeV");
-    fcnc_plots[iNP]->add(100,25.,125.,"m_{#tau#tau,vis}","tautauvismass",&ttvismass,true,"GeV");
-    fcnc_plots[iNP]->add(100,0.,200.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,true,"GeV");
-    fcnc_plots[iNP]->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,true,"GeV");
-    fcnc_plots[iNP]->add(150,40.,190.,"m_{t,SM,vis}","t1vismass",&t1vismass,true,"GeV");
-    fcnc_plots[iNP]->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
-    fcnc_plots[iNP]->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
-    fcnc_plots[iNP]->add(60,0.,6.,"#DeltaR(l+b-jet,#tau+#tau)","drlbditau",&drlbditau,false,"");
-    fcnc_plots[iNP]->add(60,0.,6.,"#DeltaR(l,b-jet)","drlb",&drlb,false,"");
-    fcnc_plots[iNP]->add(60,0.,6.,"#DeltaR(l,b-jet)","drtaub",&drtaub,false,"");
-    fcnc_plots[iNP]->add(100,0.,2.5,"#eta_{#tau,max}","etamax",&etamax,false,"");
-    fcnc_plots[iNP]->add(72,0.4,4.,"#DeltaR(l,#tau)","drltau",&drltau,false,"");
-    fcnc_plots[iNP]->add(120,0.,6.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
-    fcnc_plots[iNP]->add(92,0.4,5.,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
-    fcnc_plots[iNP]->add(60,0.4,3.4,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
-    fcnc_plots[iNP]->add(100,50.,250.,"M(#tau#tau#light-jet,min)","mtaujmin",&mtaujmin,true,"GeV");
-    fcnc_plots[iNP]->add(100,20.,200.,"M(light-jet,light-jet,min)","mjjmin",&mjjmin,true,"GeV");
-    fcnc_plots[iNP]->add(10,0.,10.,"N_{l-jet}","njet",&nljet,false,"");
-    fcnc_plots[iNP]->add(100,15.,115.,"E^{T}_{miss}","etmiss",&etmiss,true,"GeV");
-    fcnc_plots[iNP]->add(60,0.,3.,"#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss",&dphitauetmiss,false);
-    fcnc_plots[iNP]->add(60,-1.5,1.5,"E^{T}_{miss} centrality","phicent",&phicent,false,"");
-
-    for (int j = 0; j < fcnc_nregions; ++j){
-      for (int k = 0; k < 2; ++k)
-      {
-        for (int i = 0; i < 4; ++i)
+  if(fcnc_nregions){
+    for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
+    {
+      fcnc_plots.push_back(new histSaver(outputfilename + "_fcnc_" + plotNPs[iNP]));
+      fcnc_plots[iNP]->set_weight(&weight);
+      fcnc_plots[iNP]->debug = !!debug;
+      if(reduce == 3) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG_train",&BDTG_train,false,"");
+      if(reduce == 3) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG_test",&BDTG_test,false,"");
+      if(reduce >= 2) {
+        fcnc_plots[iNP]->add(100,5.,55.,"#chi^2","chi2",&chi2,false,"");
+        fcnc_plots[iNP]->add(500,200.,1200.,"m_{all}","allmass",&allmass,true,"GeV");
+        fcnc_plots[iNP]->add(500,0.,1000.,"P_{z,all}","allpz",&allpz,true,"GeV");
+      }
+      fcnc_plots[iNP]->add(10,25.,125.,"p_{T,#tau}","taupt_0",&tau_pt_0,true,"GeV");
+      fcnc_plots[iNP]->add(10,25.,125.,"p_{T,#tau}","taupt_1",&tau_pt_1,true,"GeV");
+      fcnc_plots[iNP]->add(10,25.,125.,"p_{T,SS#tau}","tauptss",&tau_pt_ss,true,"GeV");
+      fcnc_plots[iNP]->add(10,25.,125.,"p_{T,OS#tau}","tauptos",&tau_pt_os,true,"GeV");
+      fcnc_plots[iNP]->add(100,100.,300.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
+      fcnc_plots[iNP]->add(100,0.,200.,"m^{T}_{W}","mtw",&mtw,true,"GeV");
+      fcnc_plots[iNP]->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
+      fcnc_plots[iNP]->add(100,0.,250.,"m_{W}","wmass",&wmass,true,"GeV");
+      fcnc_plots[iNP]->add(150,120.,270.,"m_{t,FCNC}","t2mass",&t2mass,true,"GeV");
+      fcnc_plots[iNP]->add(100,25.,125.,"m_{#tau#tau,vis}","tautauvismass",&ttvismass,true,"GeV");
+      fcnc_plots[iNP]->add(100,0.,200.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,true,"GeV");
+      fcnc_plots[iNP]->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,true,"GeV");
+      fcnc_plots[iNP]->add(150,40.,190.,"m_{t,SM,vis}","t1vismass",&t1vismass,true,"GeV");
+      fcnc_plots[iNP]->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
+      fcnc_plots[iNP]->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
+      fcnc_plots[iNP]->add(60,0.,6.,"#DeltaR(l+b-jet,#tau+#tau)","drlbditau",&drlbditau,false,"");
+      fcnc_plots[iNP]->add(60,0.,6.,"#DeltaR(l,b-jet)","drlb",&drlb,false,"");
+      fcnc_plots[iNP]->add(60,0.,6.,"#DeltaR(l,b-jet)","drtaub",&drtaub,false,"");
+      fcnc_plots[iNP]->add(100,0.,2.5,"#eta_{#tau,max}","etamax",&etamax,false,"");
+      fcnc_plots[iNP]->add(72,0.4,4.,"#DeltaR(l,#tau)","drltau",&drltau,false,"");
+      fcnc_plots[iNP]->add(120,0.,6.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
+      fcnc_plots[iNP]->add(92,0.4,5.,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
+      fcnc_plots[iNP]->add(60,0.4,3.4,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
+      fcnc_plots[iNP]->add(100,50.,250.,"M(#tau#tau#light-jet,min)","mtaujmin",&mtaujmin,true,"GeV");
+      fcnc_plots[iNP]->add(100,20.,200.,"M(light-jet,light-jet,min)","mjjmin",&mjjmin,true,"GeV");
+      fcnc_plots[iNP]->add(10,0.,10.,"N_{l-jet}","njet",&nljet,false,"");
+      fcnc_plots[iNP]->add(100,15.,115.,"E^{T}_{miss}","etmiss",&etmiss,true,"GeV");
+      fcnc_plots[iNP]->add(60,0.,3.,"#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss",&dphitauetmiss,false);
+      fcnc_plots[iNP]->add(60,-1.5,1.5,"E^{T}_{miss} centrality","phicent",&phicent,false,"");
+      for (int j = 0; j < fcnc_nregions; ++j){
+        for (int k = 0; k < 2; ++k)
         {
-          for (int iptbin = 0; iptbin < 2; ++iptbin)
+          for (int i = 0; i < 4; ++i)
           {
-            if(debug) printf("adding region: %s\n", (fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-            if(dobwp[bwps[i]]) fcnc_plots[iNP]->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
-            if(dovetobwp[bwps[i]]) fcnc_plots[iNP]->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+            for (int iptbin = 0; iptbin < 2; ++iptbin)
+            {
+              if(debug) printf("adding region: %s\n", (fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
+              if(dobwp[bwps[i]]) fcnc_plots[iNP]->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
+              if(dovetobwp[bwps[i]]) fcnc_plots[iNP]->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+            }
           }
         }
       }
     }
   }
-  fake_notau_plots = new histSaver(outputfilename + "_fake_notau");
-  fake_notau_plots->set_weight(&weight);
-  fake_notau_plots->debug = !!debug;
-  fake_plots = new histSaver(outputfilename + "_fake");
-  fake_plots->set_weight(&weight);
-  fake_plots->debug = !!debug;
-  fake_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
-  fake_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
-  fake_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
-  fake_plots->add(20,20.,120.,"m_{#tau,light-jet}","taulmass",&taulmass,true,"GeV");
-  fake_plots->add(100,0.,100.,"E_{miss}^{T}","met",&MET_RefFinal_et,true,"GeV");
-  fake_notau_plots->add(10,0.,200.,"p_{T,b}","bpt",&pt_b,true,"GeV");
-  fake_notau_plots->add(10,0.,200.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
-  
-  fake_nregions = fake_regions.size();
+
   fake_nregions_notau = fake_regions_notau.size();
-  
-  for (int j = 0; j < fake_nregions; ++j){
-    for (int k = 0; k < 2; ++k){
-      for (int i = 0; i < 4; i+=1){
-        for (int iptbin = 0; iptbin < 2; ++iptbin)
-        {
-          if(dobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
-          if(dovetobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+  if(fake_nregions_notau){
+    fake_notau_plots = new histSaver(outputfilename + "_fake_notau");
+    fake_notau_plots->set_weight(&weight);
+    fake_notau_plots->debug = !!debug;
+    fake_notau_plots->add(10,0.,200.,"p_{T,b}","bpt",&pt_b,true,"GeV");
+    fake_notau_plots->add(10,0.,200.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
+    for (int j = 0; j < fake_nregions_notau; ++j){
+      fake_notau_plots->add_region(fake_regions_notau[j]);
+    }
+  }
+
+  fake_nregions = fake_regions.size();
+  if(fake_nregions){
+    fake_plots = new histSaver(outputfilename + "_fake");
+    fake_plots->set_weight(&weight);
+    fake_plots->debug = !!debug;
+    fake_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+    fake_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
+    fake_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
+    fake_plots->add(20,20.,120.,"m_{#tau,light-jet}","taulmass",&taulmass,true,"GeV");
+    fake_plots->add(100,0.,100.,"E_{miss}^{T}","met",&MET_RefFinal_et,true,"GeV");
+    for (int j = 0; j < fake_nregions; ++j){
+      for (int k = 0; k < 2; ++k){
+        for (int i = 0; i < 4; i+=1){
+          for (int iptbin = 0; iptbin < 2; ++iptbin)
+          {
+            if(dobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
+            if(dovetobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+          }
         }
       }
     }
-  }
-  for (int j = 0; j < fake_nregions_notau; ++j){
-    fake_notau_plots->add_region(fake_regions_notau[j]);
   }
 }
 
