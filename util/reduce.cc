@@ -443,12 +443,12 @@ int main(int argc, char const *argv[])
 	if(reduce > 1){
 		if(framework == "tthML"){
 			if(!dofake) {
-				doplot = 1;
-				analysis->writetree = 0;
 				analysis->dovetobwp["btagwp70"] = 1;
 				analysis->fcnc_regions = regions;
 			}
 			else {
+				doplot = 1;
+				analysis->writetree = 0;
 				analysis->dovetobwp["btagwp70"] = 1;
 				analysis->dobwp["btagwp70"] = 1;
 				analysis->dobwp["btagwp85"] = 1;
@@ -458,13 +458,12 @@ int main(int argc, char const *argv[])
 			regions.insert(regions.end(),regions_notau.begin(),regions_notau.end());
 		}
 		if(doplot) {
-			if(!inputconfig.Contains("data")){
-				if(analysis->nominaltree == 1 )
-					for(int i = 0; i < 124; ++i) {
-						for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
-						if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
-						else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
-					}
+			if(!inputconfig.Contains("data") && !dofake){
+				if(analysis->nominaltree == 1 ){
+					for(auto v: fakeNPlist) analysis->plotNPs.push_back(v);
+					if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
+					else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
+				}
 				else analysis->plotNPs.push_back("fakeSF_tthML");
 			}else  analysis->plotNPs.push_back("NOMINAL");
 		}
@@ -477,7 +476,6 @@ int main(int argc, char const *argv[])
 			printf("Loop region: %s\n", reg.Data());
 			analysis->Loop( (TTree*)inputfile.Get(reg), inputconfig, 1);
 		}
-		inputfile.Close();
 		analysis->finalise_sample();
 		return 0;
 	}
