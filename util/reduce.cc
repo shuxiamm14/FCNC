@@ -452,10 +452,10 @@ int main(int argc, char const *argv[])
 				analysis->dovetobwp["btagwp70"] = 1;
 				analysis->dobwp["btagwp70"] = 1;
 				analysis->dobwp["btagwp85"] = 1;
+				regions.insert(regions.end(),regions_fake.begin(),regions_fake.end());
+				regions.insert(regions.end(),regions_notau.begin(),regions_notau.end());
 			}
 			analysis->dumpeventnumber = 1;
-			regions.insert(regions.end(),regions_fake.begin(),regions_fake.end());
-			regions.insert(regions.end(),regions_notau.begin(),regions_notau.end());
 		}
 		if(doplot) {
 			if(!inputconfig.Contains("data") && !dofake){
