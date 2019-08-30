@@ -476,7 +476,6 @@ int main(int argc, char const *argv[])
 			printf("Loop region: %s\n", reg.Data());
 			analysis->Loop( (TTree*)inputfile.Get(reg), inputconfig, 1);
 		}
-		inputfile.Close();
 		analysis->finalise_sample();
 		return 0;
 	}
