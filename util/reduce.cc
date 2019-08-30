@@ -454,7 +454,7 @@ int main(int argc, char const *argv[])
 				analysis->dobwp["btagwp85"] = 1;
 			}
 			analysis->dumpeventnumber = 1;
-			regions.insert(regions.end(),regions_fake.begin(),regions_fakeh.end());
+			regions.insert(regions.end(),regions_fake.begin(),regions_fake.end());
 			regions.insert(regions.end(),regions_notau.begin(),regions_notau.end());
 		}
 		if(doplot) {
