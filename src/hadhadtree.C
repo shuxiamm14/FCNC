@@ -194,6 +194,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   if(samplename.Contains("fcnc")) signalevtnb.open((samplename+"_evt.txt").Data(), fstream:: in | fstream::out | fstream::app);
   printf("nentries: %d\n", nloop);
   if(nentries == 0) return;
+  float droppedweight = 0;
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     hadcutflow.newEvent();
     inputtree->GetEntry(jentry);
@@ -230,7 +231,10 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       hadcutflow.fill();
       if(!isData/*This is wrong but eveto is buggy for data, waiting for new n-tuples*/ && (!tau_0_ele_bdt_medium_retuned || !tau_0_ele_bdt_medium_retuned)) continue;
       hadcutflow.fill();
-      if(weight > 5) continue;
+      if(fabs(weight) > 5) {
+        droppedweight+=weight;
+        continue;
+      }
       lepton_SF = 
         tau_0_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
         tau_1_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*
@@ -490,6 +494,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     }
     ifill ++;
   }
+  printf("dropped events total weight: %f\n", droppedweight);
   if (writetree) {
     outputtreefile->cd();
     for (auto itertmp : outputtree)
