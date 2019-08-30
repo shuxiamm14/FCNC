@@ -477,6 +477,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     }
   }
   float ngluon = 0;
+  float droppedweight = 0;
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     inputtree->GetEntry(jentry);
     tthcutflow.newEvent();
@@ -617,8 +618,9 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         }
       }
       //===============================find leading b,non b jets===============================
-      if(weight > 2) {
-        printf("weight > 1, drop the event\n");
+      if(fabs(weight) > 2) {
+        printf("fabs(weight) > 2, drop the event\n");
+        droppedweight+=weight;
         continue;
       }
       tthcutflow.fill();
@@ -1045,6 +1047,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     }
     ifill ++;
   }
+  printf("dropped events total weight: %f\n", droppedweight);
   if(reduce > 1) printf("%s ", inputtree->GetName());
   tthcutflow.print();
   tthcutflow.clear();

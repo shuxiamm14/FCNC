@@ -20,7 +20,7 @@ void plot(int iNP)
 	bool deriveSSOSSF = 0;
 	bool doTrex = 0;
 	bool plotnj = 0;
-	int plot_option = 2; // 1 plot tau origin, 2 standard plots
+	int plot_option = 1; // 1 plot tau origin, 2 standard plots
 	int fakeMC = 1; // 0 use DD, 1 include fake in each bkg, 2 show fakes in the plots
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");

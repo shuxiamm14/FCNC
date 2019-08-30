@@ -454,17 +454,16 @@ int main(int argc, char const *argv[])
 				analysis->dobwp["btagwp85"] = 1;
 			}
 			analysis->dumpeventnumber = 1;
-			regions.insert(regions.end(),regions_fake.begin(),regions_fake.end());
+			regions.insert(regions.end(),regions_fake.begin(),regions_fakeh.end());
 			regions.insert(regions.end(),regions_notau.begin(),regions_notau.end());
 		}
 		if(doplot) {
 			if(!inputconfig.Contains("data") && !dofake){
-				if(analysis->nominaltree == 1 )
-					for(int i = 0; i < 124; ++i) {
-						for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
-						if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
-						else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
-					}
+				if(analysis->nominaltree == 1 ){
+					for(auto v: fakeNPlist) analysis->plotNPs.push_back(v);
+					if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
+					else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
+				}
 				else analysis->plotNPs.push_back("fakeSF_tthML");
 			}else  analysis->plotNPs.push_back("NOMINAL");
 		}
