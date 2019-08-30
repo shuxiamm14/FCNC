@@ -345,7 +345,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
     if (sample.Contains("data"))
     {
       fcnc_plots[0]->init_sample("data","data","data",kBlack);
-      fake_plots->init_sample("data","data","data",kBlack);
+      if(fake_nregions) fake_plots->init_sample("data","data","data",kBlack);
       fake_notau_plots->init_sample("data","data_notau","data",kBlue);
       initdata = 1;
     }else{
@@ -361,14 +361,16 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         fcnc_plots[iNP]->init_sample(sample + "_c",sample + "_c_" + plotNPs[iNP],sampletitle + "(c-jets fake #tau)",kOrange);
         fcnc_plots[iNP]->init_sample(sample + "_nomatch",sample + "_nomatch_" + plotNPs[iNP],sampletitle + "(no truth matched fake #tau)",kGray);
       }
-      fake_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
-      fake_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
-      fake_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
-      fake_plots->init_sample(sample + "_lep",sample + "_lep",sampletitle + "(lepton fake #tau)",kGreen);
-      fake_plots->init_sample(sample + "_real",sample + "_real",sampletitle + "(real #tau)",kRed);
-      fake_plots->init_sample(sample + "_c",sample + "_c",sampletitle + "(c-jets fake #tau)",kOrange);
-      fake_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
-      fake_notau_plots->init_sample(sample,sample+"_notau",sampletitle,kRed);
+      if(fake_nregions){
+        fake_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
+        fake_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
+        fake_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
+        fake_plots->init_sample(sample + "_lep",sample + "_lep",sampletitle + "(lepton fake #tau)",kGreen);
+        fake_plots->init_sample(sample + "_real",sample + "_real",sampletitle + "(real #tau)",kRed);
+        fake_plots->init_sample(sample + "_c",sample + "_c",sampletitle + "(c-jets fake #tau)",kOrange);
+        fake_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
+      }
+      if(fake_nregions) fake_notau_plots->init_sample(sample,sample+"_notau",sampletitle,kRed);
     }
   }
 }

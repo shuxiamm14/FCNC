@@ -1,7 +1,7 @@
 
 mkdir -p $ttH_fakes_DIR/datafiles/tthML/v2/run
 rm $ttH_fakes_DIR/datafiles/tthML/v2/run/*
-allsamplefile=$ttH_fakes_DIR/datafiles/tthML/v2/run/allsamples.txt
+allsamplefile=$ttH_fakes_DIR/datafiles/tthML/v2/run/allsamples.dat
 cat /global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimV9/*.list | sort > $allsamplefile
 RemoveReplicateLines $allsamplefile
 sed -i "s#../..#/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop#" $allsamplefile
