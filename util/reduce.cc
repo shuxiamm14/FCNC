@@ -443,12 +443,12 @@ int main(int argc, char const *argv[])
 	if(reduce > 1){
 		if(framework == "tthML"){
 			if(!dofake) {
-				analysis->writetree = 0;
 				analysis->dovetobwp["btagwp70"] = 1;
 				analysis->fcnc_regions = regions;
 			}
 			else {
 				doplot = 1;
+				analysis->writetree = 0;
 				analysis->dovetobwp["btagwp70"] = 1;
 				analysis->dobwp["btagwp70"] = 1;
 				analysis->dobwp["btagwp85"] = 1;
