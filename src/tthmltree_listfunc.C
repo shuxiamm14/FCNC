@@ -639,7 +639,6 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("neutrino_phi", & neutrino_phi);
     tree->SetBranchAddress("neutrino_m", & neutrino_m);
     tree->SetBranchAddress("ljet_indice", & ljet_indice);
-    tree->SetBranchAddress("fakeSF", & fakeSF);
     tree->SetBranchAddress("x1fit", & x1fit);
     tree->SetBranchAddress("x2fit", & x2fit);
     tree->SetBranchAddress("t2vismass", & t2vismass);
