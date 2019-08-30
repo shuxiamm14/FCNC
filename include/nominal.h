@@ -201,7 +201,6 @@ public :
   float      ttvismass;
   float      tautauvispt;
   float      weight;
-  float      fakeSF;
   float      x1fit;
   float      x2fit;
   float      drtaujmin;
