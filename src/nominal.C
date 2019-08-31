@@ -155,6 +155,9 @@ nominal::nominal(){
   neutrino_eta = new vector<float>();
   neutrino_phi = new vector<float>();
   neutrino_m   = new vector<float>();
+  fake_plots = 0;
+  fake_notau_plots = 0;
+  gM = 0;
 }
 
 void nominal::defGeV(int _GeV){
