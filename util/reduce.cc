@@ -477,6 +477,7 @@ int main(int argc, char const *argv[])
 			analysis->Loop( (TTree*)inputfile.Get(reg), inputconfig, 1);
 		}
 		analysis->finalise_sample();
+		printf("finished reduce\n");
 		return 0;
 	}
 	analysis->init_sample(inputconfig,inputconfig);
