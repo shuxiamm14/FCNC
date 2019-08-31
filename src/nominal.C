@@ -527,6 +527,7 @@ void nominal::fill_notau(TString region, TString sample){
   fake_notau_plots->fill_hist(sample, region);
 }
 void nominal::finalise_sample(){
+  printf("finalising sample\n");
   if(dohist) {
     plot();
   }
