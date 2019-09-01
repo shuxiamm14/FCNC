@@ -348,6 +348,7 @@ int main(int argc, char const *argv[])
 	doplot = reduce == 3 ? 1 : 0;
 	TString samplefile = argv[3];
 	TString systname = argv[4];
+	if(systname != "nominal" && framework == "tthML") samplefile = "sys_" + samplefile;
 	TString samplefilefullname = prefix + "/datafiles/" + framework + "/v2/run/" + samplefile;
 	ifstream fn(samplefilefullname);
 	if(!fn) {
@@ -676,7 +677,7 @@ int main(int argc, char const *argv[])
 		gSystem->mkdir(prefix + "/config/theoryweightlist");
 		if(dsid != lastdsid && inputconfig.Contains("mc16a")) {
 			analysis->saveweightslist(prefix + "/config/theoryweightlist/" + framework + "_" + to_string(dsid) + ".txt");
-			analysis->ifill = 0
+			analysis->ifill = 0;
 		}
 		lastdsid = dsid;
 	}
