@@ -676,7 +676,7 @@ int main(int argc, char const *argv[])
 		gSystem->mkdir(prefix + "/config/theoryweightlist");
 		if(dsid != lastdsid && inputconfig.Contains("mc16a")) {
 			analysis->saveweightslist(prefix + "/config/theoryweightlist/" + framework + "_" + to_string(dsid) + ".txt");
-			analysis->ifill = 0
+			analysis->ifill = 0;
 		}
 		lastdsid = dsid;
 	}
