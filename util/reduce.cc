@@ -348,6 +348,10 @@ int main(int argc, char const *argv[])
 	doplot = reduce == 3 ? 1 : 0;
 	TString samplefile = argv[3];
 	TString systname = argv[4];
+	if(samplefile.Contains("sys") && systname != "NOMINAL") {
+		printf("sys sample doesnt have the systematic trees\n");
+		return 0;
+	}
 	if(systname != "nominal" && framework == "tthML") samplefile = "sys_" + samplefile;
 	TString samplefilefullname = prefix + "/datafiles/" + framework + "/v2/run/" + samplefile;
 	ifstream fn(samplefilefullname);
@@ -358,10 +362,6 @@ int main(int argc, char const *argv[])
 	  	fprintf(stderr,"can't open file: %s\n",argv[1]);
 	  	return 1;
 	  }
-	}
-	if(samplefile.Contains("sys") && systname != "NOMINAL") {
-		printf("sys sample doesnt have the systematic trees\n");
-		return 0;
 	}
 	vector<TString> regions, regions_fake, regions_notau;
 	if(framework == "xTFW"){
