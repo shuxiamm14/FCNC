@@ -479,6 +479,7 @@ int main(int argc, char const *argv[])
 		}
 		analysis->finalise_sample();
 		printf("finished reduce\n");
+		delete analysis;
 		return 0;
 	}
 	analysis->init_sample(inputconfig,inputconfig);

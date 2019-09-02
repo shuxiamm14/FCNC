@@ -171,14 +171,14 @@ void nominal::readTFmeanstd(TString filename){
 
 
 nominal::~nominal(){
-  //deletepointer(fake_plots);
-  //for(auto& ele : fcnc_plots) deletepointer(ele);
-  //deletepointer(fake_notau_plots);
-  //deletepointer(gM);
-  //deletepointer(neutrino_pt  );
-  //deletepointer(neutrino_eta );
-  //deletepointer(neutrino_phi );
-  //deletepointer(neutrino_m   );
+  deletepointer(fake_plots);
+  for(auto& ele : fcnc_plots) deletepointer(ele);
+  deletepointer(fake_notau_plots);
+  deletepointer(gM);
+  deletepointer(neutrino_pt  );
+  deletepointer(neutrino_eta );
+  deletepointer(neutrino_phi );
+  deletepointer(neutrino_m   );
 }
 
 void nominal::plot(){
