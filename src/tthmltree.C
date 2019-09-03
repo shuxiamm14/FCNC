@@ -1047,7 +1047,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       neutrino_m->clear();
       ljets_v.clear();
     }
-    ifill ++;
+    if(triggeredfcnc) ifill ++;
   }
   printf("dropped events total weight: %f\n", droppedweight);
   if(reduce > 1) printf("%s ", inputtree->GetName());
