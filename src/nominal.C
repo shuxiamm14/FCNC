@@ -50,15 +50,6 @@ void nominal::initMVA(TString fcnc_region){
   reader[fcnc_region]->BookMVA( "BDTG_2" , TString(PACKAGE_DIR) + "/config/weights/" + fcnc_region + "TMVAClassification_2_BDTG.weights.xml" );
 }
 
-void nominal::fill_fake(TString region, int nprong, TString sample, int iptbin, float taubtag){
-  for (int i = 0; i < 4; ++i){
-    if(taubtag>btagwpCut[i]) {
-      if(dobwp[bwps[i]] == 1) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
-    }else{
-      if(dovetobwp[bwps[i]] == 1) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
-    }
-  }
-}
 
 Double_t nominal::phi_centrality(Double_t aPhi, Double_t bPhi, Double_t cPhi) {
 //     Calculate the phi centrality score for an object to be between two other objects in phi
@@ -510,6 +501,15 @@ void nominal::fill_fcnc(TString region, int nprong, TString sample, int iptbin, 
       if(dobwp[bwps[i]] == 1) fcnc_plots[iNP]->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
     }else{
       if(dovetobwp[bwps[i]] == 1) fcnc_plots[iNP]->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
+    }
+  }
+}
+void nominal::fill_fake(TString region, int nprong, TString sample, int iptbin, float taubtag){
+  for (int i = 0; i < 4; ++i){
+    if(taubtag>btagwpCut[i]) {
+      if(dobwp[bwps[i]] == 1) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
+    }else{
+      if(dovetobwp[bwps[i]] == 1) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
     }
   }
 }
