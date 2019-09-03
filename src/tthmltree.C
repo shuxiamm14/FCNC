@@ -996,7 +996,10 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       if(triggeredfcnc && mc_channel_number){
         calcfakesf(origintag,vtaupt,vtauprong);
         if(nominaltree){
-          if(!addWeightSys()) continue;
+          if(!addWeightSys()) {
+            printf("Warning: cannot add weight systematics\n");
+            continue;
+          }
         }
       }
     }
