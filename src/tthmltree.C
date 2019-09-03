@@ -992,8 +992,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     if(debug) printf("calc SF\n");
     if(reduce == 1){
       weights->clear();
-      addweights(weight,"NOMINAL");
       if(triggeredfcnc && mc_channel_number){
+        addweights(weight,"NOMINAL");
         calcfakesf(origintag,vtaupt,vtauprong);
         if(nominaltree){
           if(!addWeightSys()) {
@@ -1001,6 +1001,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
             continue;
           }
         }
+      }else{
+        weights->push_back(weight);
       }
     }
 
@@ -1015,23 +1017,25 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         if (dohist) {
           if(debug) printf("fill hist\n");
           if(mc_channel_number!=0){
-            for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
-            {
-              if(iNP != 0 && tauorigin.Contains("data")) continue;
-              std::vector<TString>::iterator it = std::find(weightsysmap[mc_channel_number].begin(), weightsysmap[mc_channel_number].end(), plotNPs[iNP]);
-              int index = 2;
-              if(it != weightsysmap[mc_channel_number].end()) index = std::distance(weightsysmap[mc_channel_number].begin(), it);
-              if(index<3) weight = weights->at(index);
-              else if(index > 8 && index < 17)
-                weight = weights->at(2) * weights->at(index);
-              else
-                weight = weights->at(1) * weights->at(index);
-              if (iter->first.Contains("tau")) {
-                if (triggeredfcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, iNP);
-                else if (!sample.Contains("fcnc")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
-              } else fill_notau(iter->first, sample);
+            if (triggeredfcnc){
+              for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
+              {
+                if(iNP != 0 && tauorigin.Contains("data")) continue;
+                std::vector<TString>::iterator it = std::find(weightsysmap[mc_channel_number].begin(), weightsysmap[mc_channel_number].end(), plotNPs[iNP]);
+                int index = 2;
+                if(it != weightsysmap[mc_channel_number].end()) index = std::distance(weightsysmap[mc_channel_number].begin(), it);
+                if(index<3) weight = weights->at(index);
+                else if(index > 8 && index < 17)
+                  weight = weights->at(2) * weights->at(index);
+                else
+                  weight = weights->at(1) * weights->at(index);
+                fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, iNP);
+              }
+            }else if (!sample.Contains("fcnc")){ //fake analysis
+              if(iter->first.Contains("tau")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
+              else fill_notau(iter->first, sample);
             }
-          }else{
+          }else{ //data
             if (iter->first.Contains("tau")) {
               if (triggeredfcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, 0);
               else if (!sample.Contains("fcnc")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
