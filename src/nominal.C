@@ -172,6 +172,11 @@ nominal::~nominal(){
   deletepointer(neutrino_m   );
 }
 
+void nominal::init_dsid(){
+  ifill = 0;
+  weightlist.clear();
+}
+
 void nominal::plot(){
   if(fake_plots) {
     if(debug) printf("write fake_plots\n");

@@ -147,7 +147,7 @@ public :
   virtual ~nominal();
   void plot();
   std::map<TString, TTree*> outputtree;
-
+  void init_dsid();
   void addweights(double weight, TString name);
   void saveweightslist(TString filename);
   void readTFmeanstd(TString filename);
