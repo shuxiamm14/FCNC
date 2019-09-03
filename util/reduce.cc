@@ -671,6 +671,7 @@ int main(int argc, char const *argv[])
 			if(analysis->nominaltree) {
 				analysis->theoryweightsum=theoryweightsum[dsid];
 			}
+			if(dsid != lastdsid) ifill = 0;
 			analysis->Loop( (TTree*)inputfile.Get(systname), inputconfig, framework == "xTFW"? xsecs[dsid]*luminosity/totgenweighted[dsid] : 1);
 		}
 		printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
@@ -678,7 +679,6 @@ int main(int argc, char const *argv[])
 		gSystem->mkdir(prefix + "/config/theoryweightlist");
 		if(dsid != lastdsid && inputconfig.Contains("mc16a")) {
 			if(analysis->nominaltree) analysis->saveweightslist(prefix + "/config/theoryweightlist/" + framework + "_" + to_string(dsid) + ".txt");
-			analysis->ifill = 0;
 		}
 		lastdsid = dsid;
 	}
