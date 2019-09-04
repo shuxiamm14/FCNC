@@ -1,6 +1,6 @@
 #include "tthmltree.h"
 #define nominal_cxx
-#include "TH2.h"
+#include "TH2F.h"
 #include "TStyle.h"
 #include "TCanvas.h"
 #include "stdio.h"
