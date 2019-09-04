@@ -39,7 +39,7 @@ echo "date"   >> bulkreduce.sh
 chmod +x bulkreduce.sh
 
 if [[ $2 =~ "sub" ]] ; then
-	for lines in `ls $ttH_fakes_DIR/datafiles/tthML/v2/run/mc*  | xargs -n 1 basename`
+	for lines in `ls $ttH_fakes_DIR/datafiles/tthML/v2/run/{mc*,data*}  | xargs -n 1 basename`
 	do
 		if [[ $lines =~ "sys" ]] ; then
 			continue
@@ -48,7 +48,7 @@ if [[ $2 =~ "sub" ]] ; then
 			continue
 		fi
 		name=${lines/.txt}
-		echo "sbatch --job-name=${name} --output=${name}.out --error=${name}.err slurmscript.sh $lines"
+		echo "sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines"
 		sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines
 		if [[  $2 =~ "test" ]] ; then
 			break

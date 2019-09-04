@@ -1,6 +1,6 @@
 #include "tthmltree.h"
 #define nominal_cxx
-#include "TH2.h"
+#include "TH2F.h"
 #include "TStyle.h"
 #include "TCanvas.h"
 #include "stdio.h"
@@ -344,23 +344,24 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
   if(dohist){
     if (sample.Contains("data"))
     {
-      fcnc_plots[0]->init_sample("data","data","data",kBlack);
+      if(fcnc_nregions) fcnc_plots[0]->init_sample("data","data","data",kBlack);
       if(fake_nregions) fake_plots->init_sample("data","data","data",kBlack);
-      fake_notau_plots->init_sample("data","data_notau","data",kBlue);
+      if(fake_nregions_notau) fake_notau_plots->init_sample("data","data_notau","data",kBlue);
       initdata = 1;
     }else{
       if(sample.Contains("ttbar")) sample = "ttbar";
       else sample.Remove(sample.Sizeof()-2);
-      for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
-      {
-        fcnc_plots[iNP]->init_sample(sample + "_g",sample + "_g_" + plotNPs[iNP],sampletitle + "(gluon fake #tau)",(enum EColor)7);
-        fcnc_plots[iNP]->init_sample(sample + "_j",sample + "_j_" + plotNPs[iNP],sampletitle + "(light-jet fake #tau)",kBlue);
-        fcnc_plots[iNP]->init_sample(sample + "_b",sample + "_b_" + plotNPs[iNP],sampletitle + "(b-jets fake #tau)",kViolet);
-        fcnc_plots[iNP]->init_sample(sample + "_lep",sample + "_lep_" + plotNPs[iNP],sampletitle + "(lepton fake #tau)",kGreen);
-        fcnc_plots[iNP]->init_sample(sample + "_real",sample + "_real_" + plotNPs[iNP],sampletitle + "(real #tau)",kRed);
-        fcnc_plots[iNP]->init_sample(sample + "_c",sample + "_c_" + plotNPs[iNP],sampletitle + "(c-jets fake #tau)",kOrange);
-        fcnc_plots[iNP]->init_sample(sample + "_nomatch",sample + "_nomatch_" + plotNPs[iNP],sampletitle + "(no truth matched fake #tau)",kGray);
-      }
+      if(fcnc_nregions)
+        for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
+        {
+          fcnc_plots[iNP]->init_sample(sample + "_g",sample + "_g_" + plotNPs[iNP],sampletitle + "(gluon fake #tau)",(enum EColor)7);
+          fcnc_plots[iNP]->init_sample(sample + "_j",sample + "_j_" + plotNPs[iNP],sampletitle + "(light-jet fake #tau)",kBlue);
+          fcnc_plots[iNP]->init_sample(sample + "_b",sample + "_b_" + plotNPs[iNP],sampletitle + "(b-jets fake #tau)",kViolet);
+          fcnc_plots[iNP]->init_sample(sample + "_lep",sample + "_lep_" + plotNPs[iNP],sampletitle + "(lepton fake #tau)",kGreen);
+          fcnc_plots[iNP]->init_sample(sample + "_real",sample + "_real_" + plotNPs[iNP],sampletitle + "(real #tau)",kRed);
+          fcnc_plots[iNP]->init_sample(sample + "_c",sample + "_c_" + plotNPs[iNP],sampletitle + "(c-jets fake #tau)",kOrange);
+          fcnc_plots[iNP]->init_sample(sample + "_nomatch",sample + "_nomatch_" + plotNPs[iNP],sampletitle + "(no truth matched fake #tau)",kGray);
+        }
       if(fake_nregions){
         fake_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
         fake_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
@@ -370,7 +371,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         fake_plots->init_sample(sample + "_c",sample + "_c",sampletitle + "(c-jets fake #tau)",kOrange);
         fake_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
       }
-      if(fake_nregions) fake_notau_plots->init_sample(sample,sample+"_notau",sampletitle,kRed);
+      if(fake_nregions_notau) fake_notau_plots->init_sample(sample,sample+"_notau",sampletitle,kRed);
     }
   }
 }
