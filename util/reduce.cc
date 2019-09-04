@@ -26,8 +26,7 @@ int main(int argc, char const *argv[])
 		printf("sys sample doesnt have the systematic trees\n");
 		return 0;
 	}
-	if(systname != "nominal" && framework == "tthML") samplefile = "sys_" + samplefile;
-	TString samplefilefullname = prefix + "/datafiles/" + framework + "/v2/run/" + samplefile;
+	TString samplefilefullname = prefix + "/datafiles/" + framework + "/v2/run/"+ ((systname != "nominal" && framework == "tthML") ? "sys_" : "" ) + samplefile;
 	ifstream fn(samplefilefullname);
 	if(!fn) {
 	  fprintf(stderr,"can't open file: %s, try %s\n",samplefilefullname.Data(),samplefile.Data());

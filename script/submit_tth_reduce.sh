@@ -1,5 +1,9 @@
 #!/bin/bash
-systname=nominal
+for systname in `cat $ttH_fakes_DIR/config/tthmlSys.txt`
+do
+if [[ $3 =~ "nominal" ]] ; then
+	systname=nominal
+fi
 mkdir -p $systname
 cd $systname
 echo '#!/bin/bash
@@ -22,7 +26,7 @@ setupATLAS
 lsetup "root 6.14.04-x86_64-slc6-gcc62-opt"
 cd '`pwd`"
 ulimit -n 32000
-. $ttH_fakes_DIR/env.sh"'' > bulkreduce.sh
+. $ttH_fakes_DIR/env.sh" > bulkreduce.sh
 
 for i in {1..3}
 do
@@ -44,9 +48,15 @@ if [[ $2 =~ "sub" ]] ; then
 			continue
 		fi
 		name=${lines/.txt}
-		sbatch --job-name=${name} --output=${name}.out --error=${name}.err slurmscript.sh $lines
+		echo "sbatch --job-name=${name} --output=${name}.out --error=${name}.err slurmscript.sh $lines"
+		sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines
 		if [[  $2 =~ "test" ]] ; then
 			break
 		fi
 	done	
 fi
+cd ..
+if [[ $3 =~ "nominal" ]] ; then
+	break
+fi
+done
