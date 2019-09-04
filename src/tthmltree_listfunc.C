@@ -339,8 +339,8 @@ bool tthmltree::addWeightSys(){
   addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_down,"btag_extrapolation_down");
   addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_up,"btag_extrapolation_from_charm_up");
   addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_down,"btag_extrapolation_from_charm_down");
-  addweights(pileupEventWeight_UP,"pileupEventWeight_up");
-  addweights(pileupEventWeight_DOWN,"pileupEventWeight_down");
+  addweights(pileupEventWeight_UP,"PRW_up");
+  addweights(pileupEventWeight_DOWN,"PRW_down");
 
   if(weight_mc_v){
     for (int i = 1; i <= theoryweightsum->GetNbinsX(); ++i)
