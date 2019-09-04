@@ -1,21 +1,18 @@
 #include "histSaver.h"
 #include "TH1D.h"
 #include "fcnc_include.h"
-
-TString NPnames[] = {
-	"NOMINAL",
-	"fakeSFOrig",
-	"fakeSF",
-	"fakeSFNP1",
-	"fakeSFNP2",
-	"fakeSFNP3",
-	"fakeSFNP4",
-	"fakeSFNP5",
-	"fakeSFNP6"
-};
+#include "weightsys_list.h"
 
 void plot(int iNP)
 {
+	TString NPname;
+	int nfakeNP = fakeNPlist.size();
+	int nweightsys = tthMLNPlist.size();
+	int nTreesys = tthMLtree.size();
+	if(iNP < nfakeNP) NPname = fakeNPlist[iNP];
+	else if(iNP - nfakeNP < nweightsys) NPname = tthMLNPlist[iNP-nfakeNP];
+	else NPname = tthMLNPlist[iNP-nfakeNP-nweightsys];
+
 	bool doPlots = 1;
 	bool deriveSSOSSF = 0;
 	bool doTrex = 0;
@@ -25,7 +22,7 @@ void plot(int iNP)
 	TString outputdir[] = {"merge_other","merge_sample","merge_origin"};
 	histSaver *tau_plots = new histSaver("b4fakeSFplot");
 	//tau_plots->inputfilename = "hists"+to_string(iNP);
-	tau_plots->inputfilename = "hists";
+	tau_plots->inputfilename = "hists_" + NPname;
 	tau_plots->debug = 0;
   	tau_plots->blinding = 2;
 	tau_plots->muteregion("35_veto");
@@ -126,7 +123,7 @@ void plot(int iNP)
 		for (int i = 0; i < 7; ++i){
 			tau_plots->stackorder.push_back(origin[i]);
 			for (int j = 0; j < 6; ++j)
-				tau_plots->read_sample( origin[i], samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), origintitle[i], (enum EColor)colors[i], norm[j]);
+				tau_plots->read_sample( origin[i], samples[j] + "_" + origin[i] + "_" + NPname, origintitle[i], (enum EColor)colors[i], norm[j]);
 		}
 	}
 //============================ merge_origin ============================
@@ -134,18 +131,18 @@ void plot(int iNP)
 		for (int j = 0; j < samples.size(); ++j){
 			if(j < 6) tau_plots->stackorder.push_back(samples[j]);
 			if(j == samples.size()-4){
-					tau_plots->read_sample( samples[j], "fcnc_uh_" + origin[6] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], "fcnc_prod_uh_" + origin[6] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], "fcnc_uh_" + origin[6] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], "fcnc_prod_uh_" + origin[6] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
 			}else if(j == samples.size()-1){
-					tau_plots->read_sample( samples[j], "fcnc_ch_" + origin[6] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], "fcnc_prod_ch_" + origin[6] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], "fcnc_ch_" + origin[6] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], "fcnc_prod_ch_" + origin[6] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
 			}else{
 				for (int i = 0; i < 6; ++i)
 				{
-					if(fakeMC == 1) tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
-					else if(fakeMC == 2) tau_plots->read_sample( "fake", samples[j] + "_" + origin[i] + "_NP" + to_string(iNP), "Fake MC", kYellow, norm[j]);
+					if(fakeMC == 1) tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
+					else if(fakeMC == 2) tau_plots->read_sample( "fake", samples[j] + "_" + origin[i] + "_" + NPname, "Fake MC", kYellow, norm[j]);
 				}
-				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[6] + "_NP" + to_string(iNP), sampletitle[j], (enum EColor)colors[j], norm[j]);
+				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[6] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
 			}
 		}
 		if(fakeMC) tau_plots->stackorder.push_back("fake");
@@ -186,10 +183,10 @@ void plot(int iNP)
   	//tau_plots->printyield("reg1l1tau1b3j_os_vetobtagwp70");
 
 	if(doTrex){
-		if(NPnames[iNP].Contains("PDF")) tau_plots->trexdir = "PDF_trexinputs";
-		else if(NPnames[iNP].Contains("muR")) tau_plots->trexdir = "scale_trexinputs";
+		if(NPname.Contains("PDF")) tau_plots->trexdir = "PDF_trexinputs";
+		else if(NPname.Contains("muR")) tau_plots->trexdir = "scale_trexinputs";
 		else tau_plots->trexdir = "trexinputs";
-		tau_plots->write_trexinput(NPnames[iNP],"update");
+		tau_plots->write_trexinput(NPname,"update");
 	}
 
 	if(doPlots){
