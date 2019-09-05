@@ -1,5 +1,6 @@
 #include "nominal.h"
 #include "fcnc_include.h"
+using namespace std;
 int nominal::GeV = 0;
 
 void nominal::initMVA(TString fcnc_region){

@@ -4,7 +4,7 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 #include "fcnc_include.h"
-
+using namespace std;
 
 hadhadtree::hadhadtree() : nominal::nominal(){
   defGeV(1);

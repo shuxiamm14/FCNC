@@ -6,6 +6,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "fcnc_include.h"
+using namespace std;
 tthmltree::tthmltree():nominal::nominal(){
   defGeV(1000);
   dofit1l2tau = 0;
