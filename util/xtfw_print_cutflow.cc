@@ -1,5 +1,5 @@
 #include "fcnc_include.h"
-
+using namespace std;
 int countDigit(float n) 
 { 
     int count = 0; 

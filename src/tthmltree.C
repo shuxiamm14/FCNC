@@ -6,6 +6,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "fcnc_include.h"
+using namespace std;
 tthmltree::tthmltree():nominal::nominal(){
   defGeV(1000);
   dofit1l2tau = 0;
@@ -165,58 +166,55 @@ void tthmltree::init_hist(TString outputfilename){
     initMVA("reg1l1tau1b3j_os");
   }
   if(fcnc_nregions){
-    for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
-    {
-      fcnc_plots.push_back(new histSaver(outputfilename + "_fcnc_" + plotNPs[iNP]));
-      fcnc_plots[iNP]->set_weight(&weight);
-      fcnc_plots[iNP]->debug = !!debug;
-      if(reduce == 3) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG_train",&BDTG_train,false,"");
-      if(reduce == 3) fcnc_plots[iNP]->add(100,-1.,1.,"BDT discriminant","BDTG_test",&BDTG_test,false,"");
-      if(reduce >= 2) {
-        fcnc_plots[iNP]->add(100,5.,55.,"#chi^2","chi2",&chi2,false,"");
-        fcnc_plots[iNP]->add(500,200.,1200.,"m_{all}","allmass",&allmass,true,"GeV");
-        fcnc_plots[iNP]->add(500,0.,1000.,"P_{z,all}","allpz",&allpz,true,"GeV");
-      }
-      fcnc_plots[iNP]->add(10,25.,125.,"p_{T,#tau}","taupt_0",&tau_pt_0,true,"GeV");
-      fcnc_plots[iNP]->add(10,25.,125.,"p_{T,#tau}","taupt_1",&tau_pt_1,true,"GeV");
-      fcnc_plots[iNP]->add(10,25.,125.,"p_{T,SS#tau}","tauptss",&tau_pt_ss,true,"GeV");
-      fcnc_plots[iNP]->add(10,25.,125.,"p_{T,OS#tau}","tauptos",&tau_pt_os,true,"GeV");
-      fcnc_plots[iNP]->add(100,100.,300.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
-      fcnc_plots[iNP]->add(100,0.,200.,"m^{T}_{W}","mtw",&mtw,true,"GeV");
-      fcnc_plots[iNP]->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
-      fcnc_plots[iNP]->add(100,0.,250.,"m_{W}","wmass",&wmass,true,"GeV");
-      fcnc_plots[iNP]->add(150,120.,270.,"m_{t,FCNC}","t2mass",&t2mass,true,"GeV");
-      fcnc_plots[iNP]->add(100,25.,125.,"m_{#tau#tau,vis}","tautauvismass",&ttvismass,true,"GeV");
-      fcnc_plots[iNP]->add(100,0.,200.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,true,"GeV");
-      fcnc_plots[iNP]->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,true,"GeV");
-      fcnc_plots[iNP]->add(150,40.,190.,"m_{t,SM,vis}","t1vismass",&t1vismass,true,"GeV");
-      fcnc_plots[iNP]->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
-      fcnc_plots[iNP]->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
-      fcnc_plots[iNP]->add(60,0.,6.,"#DeltaR(l+b-jet,#tau+#tau)","drlbditau",&drlbditau,false,"");
-      fcnc_plots[iNP]->add(60,0.,6.,"#DeltaR(l,b-jet)","drlb",&drlb,false,"");
-      fcnc_plots[iNP]->add(60,0.,6.,"#DeltaR(l,b-jet)","drtaub",&drtaub,false,"");
-      fcnc_plots[iNP]->add(100,0.,2.5,"#eta_{#tau,max}","etamax",&etamax,false,"");
-      fcnc_plots[iNP]->add(72,0.4,4.,"#DeltaR(l,#tau)","drltau",&drltau,false,"");
-      fcnc_plots[iNP]->add(120,0.,6.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
-      fcnc_plots[iNP]->add(92,0.4,5.,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
-      fcnc_plots[iNP]->add(60,0.4,3.4,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
-      fcnc_plots[iNP]->add(100,50.,250.,"M(#tau#tau#light-jet,min)","mtaujmin",&mtaujmin,true,"GeV");
-      fcnc_plots[iNP]->add(100,20.,200.,"M(light-jet,light-jet,min)","mjjmin",&mjjmin,true,"GeV");
-      fcnc_plots[iNP]->add(10,0.,10.,"N_{l-jet}","njet",&nljet,false,"");
-      fcnc_plots[iNP]->add(100,15.,115.,"E^{T}_{miss}","etmiss",&etmiss,true,"GeV");
-      fcnc_plots[iNP]->add(60,0.,3.,"#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss",&dphitauetmiss,false);
-      fcnc_plots[iNP]->add(60,-1.5,1.5,"E^{T}_{miss} centrality","phicent",&phicent,false,"");
-      for (int j = 0; j < fcnc_nregions; ++j){
-        for (int k = 0; k < 2; ++k)
+    fcnc_plots = new histSaver(outputfilename + "_fcnc");
+    fcnc_plots->set_weight(&weight);
+    fcnc_plots->debug = !!debug;
+    if(reduce == 3) fcnc_plots->add(100,-1.,1.,"BDT discriminant","BDTG_train",&BDTG_train,false,"");
+    if(reduce == 3) fcnc_plots->add(100,-1.,1.,"BDT discriminant","BDTG_test",&BDTG_test,false,"");
+    if(reduce >= 2) {
+      fcnc_plots->add(100,5.,55.,"#chi^2","chi2",&chi2,false,"");
+      fcnc_plots->add(500,200.,1200.,"m_{all}","allmass",&allmass,true,"GeV");
+      fcnc_plots->add(500,0.,1000.,"P_{z,all}","allpz",&allpz,true,"GeV");
+    }
+    fcnc_plots->add(10,25.,125.,"p_{T,#tau}","taupt_0",&tau_pt_0,true,"GeV");
+    fcnc_plots->add(10,25.,125.,"p_{T,#tau}","taupt_1",&tau_pt_1,true,"GeV");
+    fcnc_plots->add(10,25.,125.,"p_{T,SS#tau}","tauptss",&tau_pt_ss,true,"GeV");
+    fcnc_plots->add(10,25.,125.,"p_{T,OS#tau}","tauptos",&tau_pt_os,true,"GeV");
+    fcnc_plots->add(100,100.,300.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
+    fcnc_plots->add(100,0.,200.,"m^{T}_{W}","mtw",&mtw,true,"GeV");
+    fcnc_plots->add(100,50.,250.,"m_{#tau,#tau}","tautaumass",&tautaumass,true,"GeV");
+    fcnc_plots->add(100,0.,250.,"m_{W}","wmass",&wmass,true,"GeV");
+    fcnc_plots->add(150,120.,270.,"m_{t,FCNC}","t2mass",&t2mass,true,"GeV");
+    fcnc_plots->add(100,25.,125.,"m_{#tau#tau,vis}","tautauvismass",&ttvismass,true,"GeV");
+    fcnc_plots->add(100,0.,200.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,true,"GeV");
+    fcnc_plots->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,true,"GeV");
+    fcnc_plots->add(150,40.,190.,"m_{t,SM,vis}","t1vismass",&t1vismass,true,"GeV");
+    fcnc_plots->add(100,0.,1.,"E_{#nu,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
+    fcnc_plots->add(100,0.,1.,"E_{#nu,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
+    fcnc_plots->add(60,0.,6.,"#DeltaR(l+b-jet,#tau+#tau)","drlbditau",&drlbditau,false,"");
+    fcnc_plots->add(60,0.,6.,"#DeltaR(l,b-jet)","drlb",&drlb,false,"");
+    fcnc_plots->add(60,0.,6.,"#DeltaR(l,b-jet)","drtaub",&drtaub,false,"");
+    fcnc_plots->add(100,0.,2.5,"#eta_{#tau,max}","etamax",&etamax,false,"");
+    fcnc_plots->add(72,0.4,4.,"#DeltaR(l,#tau)","drltau",&drltau,false,"");
+    fcnc_plots->add(120,0.,6.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
+    fcnc_plots->add(92,0.4,5.,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
+    fcnc_plots->add(60,0.4,3.4,"#DeltaR(#tau,#light-jet,min)","drtaujmin",&drtaujmin,false,"");
+    fcnc_plots->add(100,50.,250.,"M(#tau#tau#light-jet,min)","mtaujmin",&mtaujmin,true,"GeV");
+    fcnc_plots->add(100,20.,200.,"M(light-jet,light-jet,min)","mjjmin",&mjjmin,true,"GeV");
+    fcnc_plots->add(10,0.,10.,"N_{l-jet}","njet",&nljet,false,"");
+    fcnc_plots->add(100,15.,115.,"E^{T}_{miss}","etmiss",&etmiss,true,"GeV");
+    fcnc_plots->add(60,0.,3.,"#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss",&dphitauetmiss,false);
+    fcnc_plots->add(60,-1.5,1.5,"E^{T}_{miss} centrality","phicent",&phicent,false,"");
+    for (int j = 0; j < fcnc_nregions; ++j){
+      for (int k = 0; k < 2; ++k)
+      {
+        for (int i = 0; i < 4; ++i)
         {
-          for (int i = 0; i < 4; ++i)
+          for (int iptbin = 0; iptbin < 2; ++iptbin)
           {
-            for (int iptbin = 0; iptbin < 2; ++iptbin)
-            {
-              if(debug) printf("adding region: %s\n", (fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-              if(dobwp[bwps[i]]) fcnc_plots[iNP]->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
-              if(dovetobwp[bwps[i]]) fcnc_plots[iNP]->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
-            }
+            if(debug) printf("adding region: %s\n", (fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
+            if(dobwp[bwps[i]]) fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
+            if(dovetobwp[bwps[i]]) fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
           }
         }
       }
@@ -344,34 +342,38 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
   if(dohist){
     if (sample.Contains("data"))
     {
-      if(fcnc_nregions) fcnc_plots[0]->init_sample("data","data","data",kBlack);
+<<<<<<< Updated upstream
+      if(fcnc_nregions) fcnc_plots->init_sample("data","NOMINAL","data",kBlack);
+      if(fake_nregions) fake_plots->init_sample("data","NOMINAL","data",kBlack);
+      if(fake_nregions_notau) fake_notau_plots->init_sample("data","NOMINAL","data",kBlue);
+=======
+      if(fcnc_nregions && plotNPs.size()) fcnc_plots[0]->init_sample("data","data","data",kBlack);
       if(fake_nregions) fake_plots->init_sample("data","data","data",kBlack);
       if(fake_nregions_notau) fake_notau_plots->init_sample("data","data_notau","data",kBlue);
+>>>>>>> Stashed changes
       initdata = 1;
     }else{
       if(sample.Contains("ttbar")) sample = "ttbar";
-      else sample.Remove(sample.Sizeof()-2);
-      if(fcnc_nregions)
-        for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
-        {
-          fcnc_plots[iNP]->init_sample(sample + "_g",sample + "_g_" + plotNPs[iNP],sampletitle + "(gluon fake #tau)",(enum EColor)7);
-          fcnc_plots[iNP]->init_sample(sample + "_j",sample + "_j_" + plotNPs[iNP],sampletitle + "(light-jet fake #tau)",kBlue);
-          fcnc_plots[iNP]->init_sample(sample + "_b",sample + "_b_" + plotNPs[iNP],sampletitle + "(b-jets fake #tau)",kViolet);
-          fcnc_plots[iNP]->init_sample(sample + "_lep",sample + "_lep_" + plotNPs[iNP],sampletitle + "(lepton fake #tau)",kGreen);
-          fcnc_plots[iNP]->init_sample(sample + "_real",sample + "_real_" + plotNPs[iNP],sampletitle + "(real #tau)",kRed);
-          fcnc_plots[iNP]->init_sample(sample + "_c",sample + "_c_" + plotNPs[iNP],sampletitle + "(c-jets fake #tau)",kOrange);
-          fcnc_plots[iNP]->init_sample(sample + "_nomatch",sample + "_nomatch_" + plotNPs[iNP],sampletitle + "(no truth matched fake #tau)",kGray);
-        }
-      if(fake_nregions){
-        fake_plots->init_sample(sample + "_g",sample + "_g",sampletitle + "(gluon fake #tau)",(enum EColor)7);
-        fake_plots->init_sample(sample + "_j",sample + "_j",sampletitle + "(light-jet fake #tau)",kBlue);
-        fake_plots->init_sample(sample + "_b",sample + "_b",sampletitle + "(b-jets fake #tau)",kViolet);
-        fake_plots->init_sample(sample + "_lep",sample + "_lep",sampletitle + "(lepton fake #tau)",kGreen);
-        fake_plots->init_sample(sample + "_real",sample + "_real",sampletitle + "(real #tau)",kRed);
-        fake_plots->init_sample(sample + "_c",sample + "_c",sampletitle + "(c-jets fake #tau)",kOrange);
-        fake_plots->init_sample(sample + "_nomatch",sample + "_nomatch",sampletitle + "(no truth matched fake #tau)",kGray);
+      else sample.Remove(0,6);
+      if(fcnc_nregions){
+        fcnc_plots->init_sample(sample + "_g","NOMINAL",sampletitle + "(gluon fake #tau)",(enum EColor)7);
+        fcnc_plots->init_sample(sample + "_j","NOMINAL",sampletitle + "(light-jet fake #tau)",kBlue);
+        fcnc_plots->init_sample(sample + "_b","NOMINAL",sampletitle + "(b-jets fake #tau)",kViolet);
+        fcnc_plots->init_sample(sample + "_lep","NOMINAL",sampletitle + "(lepton fake #tau)",kGreen);
+        fcnc_plots->init_sample(sample + "_real","NOMINAL",sampletitle + "(real #tau)",kRed);
+        fcnc_plots->init_sample(sample + "_c","NOMINAL",sampletitle + "(c-jets fake #tau)",kOrange);
+        fcnc_plots->init_sample(sample + "_nomatch","NOMINAL",sampletitle + "(no truth matched fake #tau)",kGray);
       }
-      if(fake_nregions_notau) fake_notau_plots->init_sample(sample,sample+"_notau",sampletitle,kRed);
+      if(fake_nregions){
+        fake_plots->init_sample(sample + "_g","NOMINAL",sampletitle + "(gluon fake #tau)",(enum EColor)7);
+        fake_plots->init_sample(sample + "_j","NOMINAL",sampletitle + "(light-jet fake #tau)",kBlue);
+        fake_plots->init_sample(sample + "_b","NOMINAL",sampletitle + "(b-jets fake #tau)",kViolet);
+        fake_plots->init_sample(sample + "_lep","NOMINAL",sampletitle + "(lepton fake #tau)",kGreen);
+        fake_plots->init_sample(sample + "_real","NOMINAL",sampletitle + "(real #tau)",kRed);
+        fake_plots->init_sample(sample + "_c","NOMINAL",sampletitle + "(c-jets fake #tau)",kOrange);
+        fake_plots->init_sample(sample + "_nomatch","NOMINAL",sampletitle + "(no truth matched fake #tau)",kGray);
+      }
+      if(fake_nregions_notau) fake_notau_plots->init_sample(sample,"NOMINAL",sampletitle,kRed);
     }
   }
 }
@@ -421,7 +423,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
   Long64_t nentries = inputtree->GetEntriesFast();
   TString sample = samplename;
   if (samplename.Contains("ttbar")) sample = "ttbar";
-  else if (!samplename.Contains("data")) sample.Remove(sample.Sizeof() - 2);
+  else if (!samplename.Contains("data")) 
+      sample.Remove(0,6);
   gM = initgM();
   fstream evtfile;
   if(dumpeventnumber) evtfile.open((samplename+"_evt.txt").Data(), fstream:: in | fstream::out | fstream::app);
@@ -1008,7 +1011,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     }
 
     if (dumptruth && triggeredfcnc && sample.Contains("fcnc")) dumpTruth(eventNumber % 2);
-    if (dohist) readweightsysmap(mc_channel_number,"tthML");
+    if (dohist && mc_channel_number) readweightsysmap(mc_channel_number,"tthML");
     for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
       if (iter->second == 1) {
         if (writetree) {
@@ -1021,16 +1024,20 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
             if (triggeredfcnc){
               for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
               {
-                if(iNP != 0 && tauorigin.Contains("data")) continue;
+                if(tauorigin.Contains("data")) {
+			fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, iNP);
+			break;
+		}
                 std::vector<TString>::iterator it = std::find(weightsysmap[mc_channel_number].begin(), weightsysmap[mc_channel_number].end(), plotNPs[iNP]);
                 int index = 2;
                 if(it != weightsysmap[mc_channel_number].end()) index = std::distance(weightsysmap[mc_channel_number].begin(), it);
+                else continue;
                 if(index<3) weight = weights->at(index);
                 else if(index > 8 && index < 17)
                   weight = weights->at(2) * weights->at(index);
                 else
                   weight = weights->at(1) * weights->at(index);
-                fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, iNP);
+                fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, plotNPs[iNP]);
               }
             }else if (!sample.Contains("fcnc")){ //fake analysis
               if(iter->first.Contains("tau")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
@@ -1038,7 +1045,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
             }
           }else{ //data
             if (iter->first.Contains("tau")) {
-              if (triggeredfcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, 0);
+              if (triggeredfcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, "NOMINAL");
               else if (!sample.Contains("fcnc")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
             } else fill_notau(iter->first, sample);
           }

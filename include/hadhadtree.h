@@ -25,7 +25,7 @@ public :
    void     Init(TTree *tree);
    void init_sample(TString sample, TString sampletitle);
    static  void    fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
-   void fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag, int iNP);
+   void fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag, TString NPname);
    void definetree(TTree *tree);
    bool addWeightSys();
    TMinuit* initgM();

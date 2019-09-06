@@ -59,7 +59,7 @@ int main(int argc, char const *argv[])
 	TString origintitle[] = {"b-jets fake #tau", "c-jets fake #tau", "gluon-jets fake #tau", "light-jets fake #tau", "lepton fake #tau", "non-truth-matched fake #tau", "real #tau"};
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed};
 
-	tau_plots->read_sample("data","data","data",kBlack,1);
+	tau_plots->read_sample("data","data","NOMINAL","data",kBlack,1);
 	//notau_plots->read_sample("data","data_notau","data",kBlack,1);
 //============================ merge_other ============================
 	if (plot_option == 0)
@@ -68,10 +68,10 @@ int main(int argc, char const *argv[])
 			{
 				if (samples[j] != "ttbar")
 				{
-					if(origin[i] == "real") tau_plots->read_sample("other_real",samples[j] + "_" + origin[i],"Other samples with real tau",kYellow,1);
-					else tau_plots->read_sample("other_fake",samples[j] + "_" + origin[i],"Other samples with fake tau",kMagenta,1);
+					if(origin[i] == "real") tau_plots->read_sample("other_real",samples[j] + "_" + origin[i],"NOMINAL","Other samples with real tau",kYellow,1);
+					else tau_plots->read_sample("other_fake",samples[j] + "_" + origin[i],"NOMINAL","Other samples with fake tau",kMagenta,1);
 				}else
-					tau_plots->read_sample( samples[j] + "_" + origin[i], samples[j] + "_" + origin[i], sampletitle[j] + "(" + origintitle[i] + ")", (enum EColor)colors[i],1);
+					tau_plots->read_sample( samples[j] + "_" + origin[i], samples[j] + "_" + origin[i],"NOMINAL", sampletitle[j] + "(" + origintitle[i] + ")", (enum EColor)colors[i],1);
 			}
 //============================ merge_sample============================
 	else if(plot_option == 1){
@@ -81,7 +81,7 @@ int main(int argc, char const *argv[])
 		}
 		for (int j = 0; j < 6; ++j)
 			for (int i = 0; i < 7; ++i){
-				tau_plots->read_sample( origin[i], samples[j] + "_" + origin[i], origintitle[i], (enum EColor)colors[i],1);
+				tau_plots->read_sample( origin[i], samples[j] + "_" + origin[i],"NOMINAL", origintitle[i], (enum EColor)colors[i],1);
 				//tau_plots->read_sample("data", samples[j] + "_" + origin[i], "data",kBlack,pseudodataratio[i]);
 			}
 	}
@@ -89,7 +89,7 @@ int main(int argc, char const *argv[])
 	else if(plot_option == 2)
 		for (int j = 0; j < 6; ++j)
 			for (int i = 0; i < 7; ++i){
-				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i], sampletitle[j], (enum EColor)colors[j],1);
+				tau_plots->read_sample( samples[j], samples[j] + "_" + origin[i],"NOMINAL", sampletitle[j], (enum EColor)colors[j],1);
 			}
 	if(mergeprong){
 		for (int j = 0; j < 3; ++j)

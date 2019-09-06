@@ -41,13 +41,13 @@ chmod +x bulkreduce.sh
 if [[ $2 =~ "sub" ]] ; then
 	for lines in `ls $ttH_fakes_DIR/datafiles/tthML/v2/run/{mc*,data*}  | xargs -n 1 basename`
 	do
-		if [[ $lines =~ "sys" ]] ; then
-			continue
-		fi
 		if ( [[ $lines =~ "data" ]] || [[ $lines =~ "sys" ]] ) && [[ $systname != "nominal" ]] ; then
 			continue
 		fi
 		name=${lines/.txt}
+		if [[ ${name} =~ "mc16d_fcnc_ch_lv" ]] ; then
+			continue;
+		fi
 		echo "sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines"
 		sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines
 		if [[  $2 =~ "test" ]] ; then

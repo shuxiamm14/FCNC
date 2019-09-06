@@ -123,7 +123,7 @@ public :
   std::vector<TString> weightlist; //only used in reduce 1
   TH1D* theoryweightsum = 0;
   TFile *outputtreefile;
-  std::vector<histSaver*> fcnc_plots;
+  histSaver *fcnc_plots;
   histSaver *fake_plots;
   histSaver *fake_notau_plots;
 
@@ -163,7 +163,7 @@ public :
   Double_t phi_centrality(Double_t aPhi, Double_t bPhi, Double_t cPhi);
   void finalise_sample();
   static  void    fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
-  void fill_fcnc(TString region, int nprong, TString sample, int ptbin, float taubtag, int iNP);
+  void fill_fcnc(TString region, int nprong, TString sample, int ptbin, float taubtag, TString NP);
   void fill_fake(TString region, int nprong, TString sample, int ptbin, float taubtag);
   void fill_notau(TString region, TString sample);
   bool SelectTLepid(int id);

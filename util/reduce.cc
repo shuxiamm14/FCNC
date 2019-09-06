@@ -140,8 +140,8 @@ int main(int argc, char const *argv[])
 				}
 				else analysis->plotNPs.push_back("fakeSF_tthML");
 			}else  analysis->plotNPs.push_back("NOMINAL");
+			analysis->init_hist(inputconfig);
 		}
-		analysis->init_hist(inputconfig);
 		analysis->init_sample(inputconfig,inputconfig);
 		TString inputfilename = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/" + analysis->SystematicsName + "/" + inputconfig + "_tree.root";
 		printf("reading file: %s\n", inputfilename.Data());
@@ -154,8 +154,8 @@ int main(int argc, char const *argv[])
 		printf("finished reduce\n");
 		if(reduce == 3) {
 			printf("We need a crash here to terminate the job. Otherwise the destruction of the histograms takes forever. This is on purpose, don't worry.\n");
-			std::vector<int> aa;
-			aa.at(1);
+			std::vector<int> crasher;
+			crasher.at(1);
 		}
 		delete analysis;
 		return 0;
