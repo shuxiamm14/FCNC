@@ -164,7 +164,7 @@ void nominal::readTFmeanstd(TString filename){
 
 nominal::~nominal(){
   deletepointer(fake_plots);
-  for(auto& ele : fcnc_plots) deletepointer(ele);
+  deletepointer(fcnc_plots);
   deletepointer(fake_notau_plots);
   deletepointer(gM);
   deletepointer(neutrino_pt  );
@@ -183,11 +183,10 @@ void nominal::plot(){
     if(debug) printf("write fake_plots\n");
     fake_plots->write();
   }
-  for(auto& ele : fcnc_plots) 
-    if(ele) {
-      if(debug) printf("write fcnc plots\n");
-      ele->write();
-    }
+  if(fcnc_plots) {
+    if(debug) printf("write fcnc_plots\n");
+    fcnc_plots->write();
+  }
   if(fake_notau_plots) {
     if(debug) printf("write fake_notau_plots\n");
     fake_notau_plots->write();
@@ -501,21 +500,21 @@ vector<int> nominal::findwpair(vector<TLorentzVector> lightjets, int cjet){
   return output;
 }
 
-void nominal::fill_fcnc(TString region, int nprong, TString sample, int iptbin, float taubtag, int iNP){
+void nominal::fill_fcnc(TString region, int nprong, TString sample, int iptbin, float taubtag, TString NP){
   for (int i = 0; i < 4; ++i){
     if(taubtag>btagwpCut[i]) {
-      if(dobwp[bwps[i]] == 1) fcnc_plots[iNP]->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
+      if(dobwp[bwps[i]] == 1) fcnc_plots->fill_hist(sample,NP,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
     }else{
-      if(dovetobwp[bwps[i]] == 1) fcnc_plots[iNP]->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
+      if(dovetobwp[bwps[i]] == 1) fcnc_plots->fill_hist(sample,NP,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
     }
   }
 }
 void nominal::fill_fake(TString region, int nprong, TString sample, int iptbin, float taubtag){
   for (int i = 0; i < 4; ++i){
     if(taubtag>btagwpCut[i]) {
-      if(dobwp[bwps[i]] == 1) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
+      if(dobwp[bwps[i]] == 1) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i],"NOMINAL");
     }else{
-      if(dovetobwp[bwps[i]] == 1) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
+      if(dovetobwp[bwps[i]] == 1) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i],"NOMINAL");
     }
   }
 }
@@ -533,7 +532,7 @@ void nominal::printv(TLorentzVector v){
 
 void nominal::fill_notau(TString region, TString sample){
   if(debug) printf("fill region: %s sample: %s\n", (region).Data(), (sample).Data());
-  fake_notau_plots->fill_hist(sample, region);
+  fake_notau_plots->fill_hist(sample, region, "NOMINAL");
 }
 void nominal::finalise_sample(){
   printf("finalising sample\n");

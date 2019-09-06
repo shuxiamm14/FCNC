@@ -159,12 +159,12 @@ void plot(int iNP, TString framework)
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kRed, kRed, kRed, kRed, kRed, kMagenta, kSpring, kTeal, kAzure};
 
 	TFile *datafile = new TFile("histsdata.root");
-	tau_plots->read_sample("data","data","data",kBlack, 1, datafile);
+	tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile);
 //============================ merge_sample============================
 	if(plot_option == 1){
 		for (int j = 0; j < samples.size(); ++j)
 			for (int i = 0; i < 7; ++i)
-				tau_plots->read_sample( origin[i], samples[j] + "_" + origin[i], origintitle[i], (enum EColor)colors[i], norm[j]);
+				tau_plots->read_sample( origin[i], samples[j] + "_" + origin[i], NPname, origintitle[i], (enum EColor)colors[i], norm[j]);
 	}
 //============================ merge_origin ============================
 	else if(plot_option == 2){
@@ -172,31 +172,31 @@ void plot(int iNP, TString framework)
 			for (int i = 0; i < 7; i++){
 				if (fakeMC && origin[i] != "real")
 				{
-					tau_plots->read_sample( "fake1truth", (samplesys==samples[j] ? NPname : samples[j]) + "_" + origin[i] + "_" + NPname, "Fake MC, 1 truth #tau", kMagenta, norm[j]);
+					tau_plots->read_sample( "fake1truth", (samplesys==samples[j] ? NPname : samples[j]) + "_" + origin[i], NPname, "Fake MC, 1 truth #tau", kMagenta, norm[j]);
 				}
 				
 				if(samples[j] == "tcH"){
-					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_prod_ch") + "_" + origin[i] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_prod_ch") + "_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}else if(samples[j] == "tuH"){
-					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_prod_uh") + "_" + origin[i] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_prod_uh") + "_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}else if(samples[j] == "fcnc_uh"){
-					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}else if(samples[j] == "fcnc_ch"){
-					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}else if(origin[i] == "real"){
-					tau_plots->read_sample( samples[j], (samplesys==samples[j] ? NPname : samples[j]) + "_" + origin[i] + "_" + NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
+					tau_plots->read_sample( samples[j], (samplesys==samples[j] ? NPname : samples[j]) + "_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
 				}else if(origin[i] != "real" && !fakeMC && calibfake){
-					tau_plots->read_sample( "fake", (samplesys==samples[j] ? NPname : samples[j]) + "_" + origin[i] + "_" + NPname, "MC Fake #tau", kTeal, norm[j]);
+					tau_plots->read_sample( "fake", (samplesys==samples[j] ? NPname : samples[j]) + "_" + origin[i], NPname, "MC Fake #tau", kTeal, norm[j]);
 				}
 				
 			}
-			if(fakeMC && j != samples.size()-1) tau_plots->read_sample( "fake0truth", (samplesys==samples[j] ? NPname : samples[j]) + "_" + origin[8] + "_" + NPname, "fake, 0 truth #tau", kTeal, norm[j]);
+			if(fakeMC && j != samples.size()-1) tau_plots->read_sample( "fake0truth", (samplesys==samples[j] ? NPname : samples[j]) + "_" + origin[8], NPname, "fake, 0 truth #tau", kTeal, norm[j]);
 		}
 
 	}
@@ -219,8 +219,8 @@ void plot(int iNP, TString framework)
   		stacks.push_back("diboson");
   		if(!fakeMC && framework == "xTFW") {
   			stacks.push_back("fakeSS");
-  			tau_plots->templatesample("reg2mtau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b3jos","fakeSS","Fake",kYellow,0,1.31597);
-  			tau_plots->templatesample("reg2mtau1b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b2jos","fakeSS","Fake",kYellow,0,1.31597);
+  			tau_plots->templatesample("reg2mtau1b3jss",NPname,"1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b3jos","fakeSS","Fake",kYellow,0,1.31597);
+  			tau_plots->templatesample("reg2mtau1b2jss",NPname,"1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b2jos","fakeSS","Fake",kYellow,0,1.31597);
   			//tau_plots->templatesample("reg2mtau2b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b3jos","fakeSS","Fake",kYellow,1);
   			//tau_plots->templatesample("reg2mtau2b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b2jos","fakeSS","Fake",kYellow,1);
 
@@ -269,7 +269,7 @@ void plot(int iNP, TString framework)
 		tau_plots->plot_stack(("output_"+to_string(iNP)).c_str());
 		
 	}
-	//deletepointer(tau_plots);
+	deletepointer(tau_plots);
 }
 
 int main(int argc, char const *argv[])
@@ -279,22 +279,6 @@ int main(int argc, char const *argv[])
 	int to = atoi(argv[3]);
 	for (int i = from; i <= to; ++i)
 	{
-//	struct winsize w; 
-//	ioctl(0, TIOCGWINSZ, &w);
-//	auto start = chrono::steady_clock::now();
-//
-//	for (int i = 0; i < 168; ++i)
-//	{
-//		if (i == 1)
-//		{
-//			continue;
-//		}
-//		auto end = chrono::steady_clock::now();
-//		stringstream ss;
-//		ss<<"Elapsed time in seconds : "<< chrono::duration_cast<chrono::seconds>(end - start).count()
-//		<< " sec";
-//	
-//		printf("%*s\n" , w.ws_col, ss.str().c_str());
 		printf("=============================generating NP %d : %s=============================\n", i, findNPname(i,framework).Data());
 		plot(i,framework);
 	}
