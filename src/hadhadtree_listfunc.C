@@ -65,11 +65,11 @@ void hadhadtree::definetree(TTree * tree) {
       if(nominaltree){
         tree->Branch("met_truth_p4", &met_truth_p4);
         tree->Branch("met_truth_sumet", &met_truth_sumet);
-        tree->Branch("taus_matched_mother_pdgId",taus_matched_mother_pdgId);
-        tree->Branch("taus_matched_mother_status",taus_matched_mother_status);
-        tree->Branch("taus_matched_vis_p4",taus_matched_vis_p4);
-        tree->Branch("jets_wztruth_p4",jets_wztruth_p4);
-        tree->Branch("jets_wztruth_pdgid",jets_wztruth_pdgid);
+        tree->Branch("taus_matched_mother_pdgId",&taus_matched_mother_pdgId);
+        tree->Branch("taus_matched_mother_status",&taus_matched_mother_status);
+        tree->Branch("taus_matched_vis_p4",&taus_matched_vis_p4);
+        tree->Branch("jets_wztruth_p4",&jets_wztruth_p4);
+        tree->Branch("jets_wztruth_pdgid",&jets_wztruth_pdgid);
       }
     }
     return;
