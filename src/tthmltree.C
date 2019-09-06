@@ -355,9 +355,15 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
   if(dohist){
     if (sample.Contains("data"))
     {
+<<<<<<< Updated upstream
       if(fcnc_nregions) fcnc_plots->init_sample("data","NOMINAL","data",kBlack);
       if(fake_nregions) fake_plots->init_sample("data","NOMINAL","data",kBlack);
       if(fake_nregions_notau) fake_notau_plots->init_sample("data","NOMINAL","data",kBlue);
+=======
+      if(fcnc_nregions && plotNPs.size()) fcnc_plots[0]->init_sample("data","data","data",kBlack);
+      if(fake_nregions) fake_plots->init_sample("data","data","data",kBlack);
+      if(fake_nregions_notau) fake_notau_plots->init_sample("data","data_notau","data",kBlue);
+>>>>>>> Stashed changes
       initdata = 1;
     }else{
       if(sample.Contains("ttbar")) sample = "ttbar";
@@ -1019,7 +1025,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     }
 
     if (dumptruth && triggeredfcnc && sample.Contains("fcnc")) dumpTruth(eventNumber % 2);
-    if (dohist) readweightsysmap(mc_channel_number,"tthML");
+    if (dohist && mc_channel_number) readweightsysmap(mc_channel_number,"tthML");
     for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
       if (iter->second == 1) {
         if (writetree) {
@@ -1032,7 +1038,10 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
             if (triggeredfcnc){
               for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
               {
-                if(iNP != 0 && tauorigin.Contains("data")) continue;
+                if(tauorigin.Contains("data")) {
+			fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, iNP);
+			break;
+		}
                 std::vector<TString>::iterator it = std::find(weightsysmap[mc_channel_number].begin(), weightsysmap[mc_channel_number].end(), plotNPs[iNP]);
                 int index = 2;
                 if(it != weightsysmap[mc_channel_number].end()) index = std::distance(weightsysmap[mc_channel_number].begin(), it);
