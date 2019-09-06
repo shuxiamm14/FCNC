@@ -140,8 +140,8 @@ int main(int argc, char const *argv[])
 				}
 				else analysis->plotNPs.push_back("fakeSF_tthML");
 			}else  analysis->plotNPs.push_back("NOMINAL");
+			analysis->init_hist(inputconfig);
 		}
-		analysis->init_hist(inputconfig);
 		analysis->init_sample(inputconfig,inputconfig);
 		TString inputfilename = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/" + analysis->SystematicsName + "/" + inputconfig + "_tree.root";
 		printf("reading file: %s\n", inputfilename.Data());
