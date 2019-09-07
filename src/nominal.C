@@ -503,9 +503,9 @@ vector<int> nominal::findwpair(vector<TLorentzVector> lightjets, int cjet){
 void nominal::fill_fcnc(TString region, int nprong, TString sample, int iptbin, float taubtag, TString NP){
   for (int i = 0; i < 4; ++i){
     if(taubtag>btagwpCut[i]) {
-      if(dobwp[bwps[i]] == 1) fcnc_plots->fill_hist(sample,NP,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i]);
+      if(dobwp[bwps[i]] == 1) fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i],NP);
     }else{
-      if(dovetobwp[bwps[i]] == 1) fcnc_plots->fill_hist(sample,NP,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i]);
+      if(dovetobwp[bwps[i]] == 1) fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i],NP);
     }
   }
 }
