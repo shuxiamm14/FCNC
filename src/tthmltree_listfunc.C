@@ -628,16 +628,16 @@ void tthmltree::Init(TTree*tree) {
 
   if (reduce >= 2 && fcnc) {
     tree->SetBranchAddress("nljet",&nljet);
-    tree->SetBranchAddress("neutrino_pt", & neutrino_pt);
     tree->SetBranchAddress("chi2", &chi2);
     tree->SetBranchAddress("drlb", &drlb);
     tree->SetBranchAddress("drtaub", &drtaub);
     tree->SetBranchAddress("mjjmin", &mjjmin);
     tree->SetBranchAddress("allmass", &allmass);
     tree->SetBranchAddress("allpz", &allpz);
-    tree->SetBranchAddress("neutrino_eta", & neutrino_eta);
-    tree->SetBranchAddress("neutrino_phi", & neutrino_phi);
-    tree->SetBranchAddress("neutrino_m", & neutrino_m);
+    //tree->SetBranchAddress("neutrino_pt", & neutrino_pt);
+    //tree->SetBranchAddress("neutrino_eta", & neutrino_eta);
+    //tree->SetBranchAddress("neutrino_phi", & neutrino_phi);
+    //tree->SetBranchAddress("neutrino_m", & neutrino_m);
     tree->SetBranchAddress("ljet_indice", & ljet_indice);
     tree->SetBranchAddress("x1fit", & x1fit);
     tree->SetBranchAddress("x2fit", & x2fit);
