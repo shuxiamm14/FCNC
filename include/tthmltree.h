@@ -18,7 +18,6 @@ public:
    static Float_t eval(const Float_t x, const Float_t y, const TH2F* h);
    static void fillOverFlow(TH1F* h);
    bool addWeightSys();
-   bool nominaltree = 0;
    cutflow tthcutflow;
    bool dofit1l2tau = 0;
    bool applyfakeSF = 0;

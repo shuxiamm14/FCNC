@@ -1,4 +1,5 @@
 #!/bin/bash
+mkdir -p /tmp/boyang/boyang
 for systname in `cat $ttH_fakes_DIR/config/tthmlSys.txt`
 do
 if [[ $3 =~ "nominal" ]] ; then
@@ -12,8 +13,8 @@ echo '#!/bin/bash
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --constraint=haswell
-#SBATCH --time=48:00:00
-#SBATCH --mem=4GB
+#SBATCH --time=24:00:00
+#SBATCH --mem=2GB
 #SBATCH --image=zlmarshall/atlas-grid-slc6:20190416 --export=NONE
 shifter --module=cvmfs /bin/bash bulkreduce.sh $1
 ' > slurmscript.sh
@@ -45,9 +46,6 @@ if [[ $2 =~ "sub" ]] ; then
 			continue
 		fi
 		name=${lines/.txt}
-		if [[ ${name} =~ "mc16d_fcnc_ch_lv" ]] ; then
-			continue;
-		fi
 		echo "sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines"
 		sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines
 		if [[  $2 =~ "test" ]] ; then

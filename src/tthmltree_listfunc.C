@@ -623,6 +623,7 @@ void tthmltree::Init(TTree*tree) {
   printf("init tree: %s \nreduce scheme: %d\n", tree->GetName(), reduce);
   tree->SetMakeClass(1);
 
+  tree->SetBranchAddress("mc_channel_number", & mc_channel_number);
   if(reduce>=1 && fcnc) tree->SetBranchAddress("weights", & weights);
 
   if (reduce >= 2 && fcnc) {
@@ -634,7 +635,6 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("mjjmin", &mjjmin);
     tree->SetBranchAddress("allmass", &allmass);
     tree->SetBranchAddress("allpz", &allpz);
-    tree->SetBranchAddress("mc_channel_number", & mc_channel_number);
     tree->SetBranchAddress("neutrino_eta", & neutrino_eta);
     tree->SetBranchAddress("neutrino_phi", & neutrino_phi);
     tree->SetBranchAddress("neutrino_m", & neutrino_m);
@@ -1407,7 +1407,6 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("antitop_E", & antitop_E);
     tree->SetBranchAddress("RunYear", & RunYear);
     tree->SetBranchAddress("higgsDecayMode", & higgsDecayMode);
-    tree->SetBranchAddress("mc_channel_number", & mc_channel_number);
     tree->SetBranchAddress("mc_isAFII", & mc_isAFII);
     tree->SetBranchAddress("mc_xSection", & mc_xSection);
     tree->SetBranchAddress("mc_rawXSection", & mc_rawXSection);
