@@ -165,7 +165,7 @@ void tthmltree::init_hist(TString outputfilename){
     initMVA("reg1l1tau1b2j_os");
     initMVA("reg1l1tau1b3j_os");
   }
-  if(fcnc_nregions){
+  if(fcnc_nregions && plotNPs.size()){
     fcnc_plots = new histSaver(outputfilename + "_fcnc");
     fcnc_plots->set_weight(&weight);
     fcnc_plots->debug = !!debug;
@@ -342,27 +342,21 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
   if(dohist){
     if (sample.Contains("data"))
     {
-<<<<<<< Updated upstream
-      if(fcnc_nregions) fcnc_plots->init_sample("data","NOMINAL","data",kBlack);
+      if(fcnc_nregions && plotNPs.size()) fcnc_plots->init_sample("data","NOMINAL","data",kBlack);
       if(fake_nregions) fake_plots->init_sample("data","NOMINAL","data",kBlack);
       if(fake_nregions_notau) fake_notau_plots->init_sample("data","NOMINAL","data",kBlue);
-=======
-      if(fcnc_nregions && plotNPs.size()) fcnc_plots[0]->init_sample("data","data","data",kBlack);
-      if(fake_nregions) fake_plots->init_sample("data","data","data",kBlack);
-      if(fake_nregions_notau) fake_notau_plots->init_sample("data","data_notau","data",kBlue);
->>>>>>> Stashed changes
       initdata = 1;
     }else{
       if(sample.Contains("ttbar")) sample = "ttbar";
       else sample.Remove(0,6);
       if(fcnc_nregions){
-        fcnc_plots->init_sample(sample + "_g","NOMINAL",sampletitle + "(gluon fake #tau)",(enum EColor)7);
-        fcnc_plots->init_sample(sample + "_j","NOMINAL",sampletitle + "(light-jet fake #tau)",kBlue);
-        fcnc_plots->init_sample(sample + "_b","NOMINAL",sampletitle + "(b-jets fake #tau)",kViolet);
-        fcnc_plots->init_sample(sample + "_lep","NOMINAL",sampletitle + "(lepton fake #tau)",kGreen);
-        fcnc_plots->init_sample(sample + "_real","NOMINAL",sampletitle + "(real #tau)",kRed);
-        fcnc_plots->init_sample(sample + "_c","NOMINAL",sampletitle + "(c-jets fake #tau)",kOrange);
-        fcnc_plots->init_sample(sample + "_nomatch","NOMINAL",sampletitle + "(no truth matched fake #tau)",kGray);
+        fcnc_plots->init_sample(sample + "_g",plotNPs[0],sampletitle + "(gluon fake #tau)",(enum EColor)7);
+        fcnc_plots->init_sample(sample + "_j",plotNPs[0],sampletitle + "(light-jet fake #tau)",kBlue);
+        fcnc_plots->init_sample(sample + "_b",plotNPs[0],sampletitle + "(b-jets fake #tau)",kViolet);
+        fcnc_plots->init_sample(sample + "_lep",plotNPs[0],sampletitle + "(lepton fake #tau)",kGreen);
+        fcnc_plots->init_sample(sample + "_real",plotNPs[0],sampletitle + "(real #tau)",kRed);
+        fcnc_plots->init_sample(sample + "_c",plotNPs[0],sampletitle + "(c-jets fake #tau)",kOrange);
+        fcnc_plots->init_sample(sample + "_nomatch",plotNPs[0],sampletitle + "(no truth matched fake #tau)",kGray);
       }
       if(fake_nregions){
         fake_plots->init_sample(sample + "_g","NOMINAL",sampletitle + "(gluon fake #tau)",(enum EColor)7);
@@ -380,8 +374,10 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
 
 
 void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
-  if(SystematicsName == "nominal") nominaltree = 1;
-  else nominaltree = 0;
+  if(!inputtree) {
+    printf("Error: input tree is NULL\n");
+    exit(0);
+  }
   nonfcncmatched = 0;
   fcncmatched = 0;
   leptonicw = 0;
@@ -457,16 +453,16 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     }
   }
   int nloop = debug ? 1000 : nentries;
-  bool triggeredfcnc = 0;
+  bool fcnc = 0;
   bool fcncsignalregion = 0;
   TString fcncreg = "";
   double defaultbtagwp = btagwpCut[1];
   if(reduce > 1) {
     TString namestring = ((TString)inputtree->GetName());
-    triggeredfcnc = namestring.Contains("1l1tau1b2j")|| namestring.Contains("1l1tau1b3j") || namestring.Contains("1l2tau1bnj");
-    triggeredfcnc = triggeredfcnc || namestring.Contains("1l1tau2b2j")|| namestring.Contains("1l1tau2b3j") || namestring.Contains("1l2tau2bnj");
+    fcnc = namestring.Contains("1l1tau1b2j")|| namestring.Contains("1l1tau1b3j") || namestring.Contains("1l2tau1bnj");
+    fcnc = fcnc || namestring.Contains("1l1tau2b2j")|| namestring.Contains("1l1tau2b3j") || namestring.Contains("1l2tau2bnj");
     fcncsignalregion = (namestring.Contains("1l1tau1b2j")|| namestring.Contains("1l1tau1b3j") || namestring.Contains("1l2tau1bnj")) && namestring.Contains("os");
-    if(triggeredfcnc){
+    if(fcnc){
       if(namestring.Contains("2tau")) fcncreg = "1l2tau";
       else if(namestring.Contains("2j")) fcncreg = "lh3j";
       else if(namestring.Contains("3j")) fcncreg = "lh4j";
@@ -479,7 +475,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     inputtree->GetEntry(jentry);
     tthcutflow.newEvent();
     if ((jentry % 100000 == 0))
-      std::cout << " I am here event " << jentry << " Event " << eventNumber << " Run " << runNumber << " ismc " << mc_channel_number << " Filled events "<< ifill<<std::endl;
+      std::cout << " I am here event " << jentry << " Event " << eventNumber << " Run " << mc_channel_number << " ismc " << mc_channel_number << " Filled events "<< ifill<<std::endl;
     //===============================pre-selections===============================
     if (reduce == 1 && selected_jets_T->size() == 0 && nJets_OR_T != 0) {
       printf("error: read jet vector failed entry: %lld\n", jentry);
@@ -528,7 +524,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         taus_v[0] = lep_v;
         lep_v.SetPtEtaPhiE(0, 0, 0, 0);
       }
-      triggeredfcnc = 0;
+      fcnc = 0;
       bool triggered = 0;
       ifregions.clear();
       if(SLtrig_match && onelep_type && (!tightLep || SelectTLepid(0)) && nTaus_OR_Pt25 && (tau_passEleBDT_0 && tau_passMuonOLR_0)){
@@ -556,7 +552,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         ifregions["reg1l2tau2bnj_ss"] = nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 > 0;
         for(auto reg: ifregions){
           if(reg.second == 1) {
-            triggeredfcnc = 1;
+            fcnc = 1;
             break;
           }
         }
@@ -662,14 +658,14 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
             if((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)]<(*m_jet_flavor_weight_MV2c10)[highscore_b]){
               subhighscore_b = selected_jets_T->at(i);
               subbjet_v.SetPtEtaPhiE((*m_jet_pt)[highscore_b], (*m_jet_eta)[highscore_b], (*m_jet_phi)[highscore_b], (*m_jet_E)[highscore_b]);
-              if (triggeredfcnc) { ljets_v.push_back(subbjet_v); }
+              if (fcnc) { ljets_v.push_back(subbjet_v); }
             }else{
               subhighscore_b = highscore_b;
               subbjet_v = bjet_v;
               highscore_b = selected_jets_T->at(i);
               pt_b = (*m_jet_pt)[selected_jets_T->at(i)];
               bjet_v.SetPtEtaPhiE((*m_jet_pt)[highscore_b], (*m_jet_eta)[highscore_b], (*m_jet_phi)[highscore_b], (*m_jet_E)[highscore_b]);
-              if (triggeredfcnc) { ljets_v.push_back(subbjet_v); }
+              if (fcnc) { ljets_v.push_back(subbjet_v); }
             }
           }
         }
@@ -677,13 +673,13 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           TLorentzVector tmpljet_v;
           tmpljet_v.SetPtEtaPhiE((*m_jet_pt)[selected_jets_T->at(i)], (*m_jet_eta)[selected_jets_T->at(i)], (*m_jet_phi)[selected_jets_T->at(i)], (*m_jet_E)[selected_jets_T->at(i)]);
           ljets_v.push_back(tmpljet_v);
-          if (reloop && !triggeredfcnc) {
+          if (reloop && !fcnc) {
             pt_ljet = (*m_jet_pt)[selected_jets_T->at(i)];
             reloop = 0;
           }
         }
       }
-      if (triggeredfcnc) {
+      if (fcnc) {
         double tmpdr;
         double tmpm;
         for (auto lj1:ljets_v) {
@@ -718,7 +714,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         continue;
       }
       if (debug == 2) printf("kine fcnc\n");
-      if (triggeredfcnc) {
+      if (fcnc) {
         if (tau_MV2c10_0 > btagwpCut[1]) continue;
         if (nTaus_OR_Pt25 == 2 && tau_MV2c10_1 > btagwpCut[1]) continue;
         tthcutflow.fill();
@@ -937,7 +933,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           if(mc_channel_number>0)
             evtfile<<reg.first<<" "<<mc_channel_number<<" "<<eventNumber<<" "<<weights->at(0)<<endl;
           else
-            evtfile<<reg.first<<" "<<runNumber<<" "<<eventNumber<<" "<<weights->at(0)<<endl;
+            evtfile<<reg.first<<" "<<mc_channel_number<<" "<<eventNumber<<" "<<weights->at(0)<<endl;
         }
       }
     }
@@ -996,7 +992,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     if(debug) printf("calc SF\n");
     if(reduce == 1){
       weights->clear();
-      if(triggeredfcnc && mc_channel_number){
+      if(fcnc && mc_channel_number){
         addweights(weight,"NOMINAL");
         calcfakesf(origintag,vtaupt,vtauprong);
         if(nominaltree){
@@ -1010,7 +1006,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       }
     }
 
-    if (dumptruth && triggeredfcnc && sample.Contains("fcnc")) dumpTruth(eventNumber % 2);
+    if (dumptruth && fcnc && sample.Contains("fcnc")) dumpTruth(eventNumber % 2);
     if (dohist && mc_channel_number) readweightsysmap(mc_channel_number,"tthML");
     for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
       if (iter->second == 1) {
@@ -1021,7 +1017,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         if (dohist) {
           if(debug) printf("fill hist\n");
           if(mc_channel_number!=0){
-            if (triggeredfcnc){
+            if (fcnc){
               for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
               {
                 if(tauorigin.Contains("data")) {
@@ -1045,7 +1041,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
             }
           }else{ //data
             if (iter->first.Contains("tau")) {
-              if (triggeredfcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, "NOMINAL");
+              if (fcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, "NOMINAL");
               else if (!sample.Contains("fcnc")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
             } else fill_notau(iter->first, sample);
           }
@@ -1059,7 +1055,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       neutrino_m->clear();
       ljets_v.clear();
     }
-    if(triggeredfcnc) ifill ++;
+    if(fcnc) ifill ++;
   }
   printf("dropped events total weight: %f\n", droppedweight);
   if(reduce > 1) printf("%s ", inputtree->GetName());

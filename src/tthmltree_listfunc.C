@@ -623,6 +623,7 @@ void tthmltree::Init(TTree*tree) {
   printf("init tree: %s \nreduce scheme: %d\n", tree->GetName(), reduce);
   tree->SetMakeClass(1);
 
+  tree->SetBranchAddress("mc_channel_number", & mc_channel_number);
   if(reduce>=1 && fcnc) tree->SetBranchAddress("weights", & weights);
 
   if (reduce >= 2 && fcnc) {
@@ -634,7 +635,6 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("mjjmin", &mjjmin);
     tree->SetBranchAddress("allmass", &allmass);
     tree->SetBranchAddress("allpz", &allpz);
-    tree->SetBranchAddress("mc_channel_number", & mc_channel_number);
     tree->SetBranchAddress("neutrino_eta", & neutrino_eta);
     tree->SetBranchAddress("neutrino_phi", & neutrino_phi);
     tree->SetBranchAddress("neutrino_m", & neutrino_m);
@@ -1407,7 +1407,6 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("antitop_E", & antitop_E);
     tree->SetBranchAddress("RunYear", & RunYear);
     tree->SetBranchAddress("higgsDecayMode", & higgsDecayMode);
-    tree->SetBranchAddress("mc_channel_number", & mc_channel_number);
     tree->SetBranchAddress("mc_isAFII", & mc_isAFII);
     tree->SetBranchAddress("mc_xSection", & mc_xSection);
     tree->SetBranchAddress("mc_rawXSection", & mc_rawXSection);
@@ -2480,26 +2479,6 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("tau_btag70_1", & tau_btag70_1);
   tree->SetBranchAddress("tau_tight_1", & tau_tight_1);
   tree->SetBranchAddress("tau_truth_1", & tau_truth_1);
-  tree->SetBranchAddress("l2tau_htjets", & l2tau_htjets);
-  tree->SetBranchAddress("l2tau_jjdr", & l2tau_jjdr);
-  tree->SetBranchAddress("l2tau_mtautau", & l2tau_mtautau);
-  tree->SetBranchAddress("Channel", & Channel);
-  tree->SetBranchAddress("Drhwwvis", & Drhwwvis);
-  tree->SetBranchAddress("Mtwbvis", & Mtwbvis);
-  tree->SetBranchAddress("Mhwwvis", & Mhwwvis);
-  tree->SetBranchAddress("Mhwwqvis", & Mhwwqvis);
-  tree->SetBranchAddress("Msum", & Msum);
-  tree->SetBranchAddress("Pthwl0", & Pthwl0);
-  tree->SetBranchAddress("Ptlep", & Ptlep);
-  tree->SetBranchAddress("Pthwj", & Pthwj);
-  tree->SetBranchAddress("Ptqj", & Ptqj);
-  tree->SetBranchAddress("Ptbj", & Ptbj);
-  tree->SetBranchAddress("Chisqmin", & Chisqmin);
-  tree->SetBranchAddress("Chisqmax", & Chisqmax);
-  tree->SetBranchAddress("Lepwiso", & Lepwiso);
-  tree->SetBranchAddress("Lepiso", & Lepiso);
-  tree->SetBranchAddress("Bdt", & Bdt);
-  tree->SetBranchAddress("BdtvsttV", & BdtvsttV);
 }
 void tthmltree::definetree(TTree*tree) {
   tree->Branch("weights", &weights);

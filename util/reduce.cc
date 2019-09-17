@@ -140,6 +140,7 @@ int main(int argc, char const *argv[])
 				}
 				else analysis->plotNPs.push_back("fakeSF_tthML");
 			}else  analysis->plotNPs.push_back("NOMINAL");
+			for(auto NPs: analysis->plotNPs) printf("Plotting NPs: %s\n",NPs.Data());
 			analysis->init_hist(inputconfig);
 		}
 		analysis->init_sample(inputconfig,inputconfig);
