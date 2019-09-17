@@ -2480,26 +2480,6 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("tau_btag70_1", & tau_btag70_1);
   tree->SetBranchAddress("tau_tight_1", & tau_tight_1);
   tree->SetBranchAddress("tau_truth_1", & tau_truth_1);
-  tree->SetBranchAddress("l2tau_htjets", & l2tau_htjets);
-  tree->SetBranchAddress("l2tau_jjdr", & l2tau_jjdr);
-  tree->SetBranchAddress("l2tau_mtautau", & l2tau_mtautau);
-  tree->SetBranchAddress("Channel", & Channel);
-  tree->SetBranchAddress("Drhwwvis", & Drhwwvis);
-  tree->SetBranchAddress("Mtwbvis", & Mtwbvis);
-  tree->SetBranchAddress("Mhwwvis", & Mhwwvis);
-  tree->SetBranchAddress("Mhwwqvis", & Mhwwqvis);
-  tree->SetBranchAddress("Msum", & Msum);
-  tree->SetBranchAddress("Pthwl0", & Pthwl0);
-  tree->SetBranchAddress("Ptlep", & Ptlep);
-  tree->SetBranchAddress("Pthwj", & Pthwj);
-  tree->SetBranchAddress("Ptqj", & Ptqj);
-  tree->SetBranchAddress("Ptbj", & Ptbj);
-  tree->SetBranchAddress("Chisqmin", & Chisqmin);
-  tree->SetBranchAddress("Chisqmax", & Chisqmax);
-  tree->SetBranchAddress("Lepwiso", & Lepwiso);
-  tree->SetBranchAddress("Lepiso", & Lepiso);
-  tree->SetBranchAddress("Bdt", & Bdt);
-  tree->SetBranchAddress("BdtvsttV", & BdtvsttV);
 }
 void tthmltree::definetree(TTree*tree) {
   tree->Branch("weights", &weights);
