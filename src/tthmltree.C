@@ -259,7 +259,7 @@ void tthmltree::init_hist(TString outputfilename){
 void tthmltree::init_sample(TString sample, TString sampletitle){
 //==========================init output n-tuple==========================
   fcnc_nregions = fcnc_regions.size();
-  fake_nregions = fake_regions.size();
+  fake_nregions =fake_regions .size();
   fake_nregions_notau = fake_regions_notau.size();
 
   if(writetree){
@@ -273,7 +273,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
     {
       if(debug) printf("init sample:: get region: %s\n",fcnc_regions[i].Data());
       outputtree[fcnc_regions[i]] = new TTree(fcnc_regions[i],fcnc_regions[i]);
-      if(reduce<2 || !fcnc) definetree(outputtree[fcnc_regions[i]]);
+      if(reduce==1 ) definetree(outputtree[fcnc_regions[i]]);
       if(reduce==2 ){
         outputtree[fcnc_regions[i]]->Branch("chi2",&chi2);
         outputtree[fcnc_regions[i]]->Branch("allmass", &allmass);
@@ -1078,12 +1078,6 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           filetruth[i][1].close();
         }
       }
-  }
-  if (writetree) {
-    outputtreefile->cd();
-    map < TString, TTree*> ::iterator iter;
-    for (iter = outputtree.begin(); iter != outputtree.end(); ++iter)
-      iter->second->Write(iter->first, TObject::kWriteDelete);
   }
 }
 void tthmltree::dumpTruth(int ipart) {

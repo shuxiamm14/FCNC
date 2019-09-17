@@ -539,7 +539,11 @@ void nominal::finalise_sample(){
   if(dohist) {
     plot();
   }
-  if(writetree) {
+  if (writetree) {
+    outputtreefile->cd();
+    map < TString, TTree*> ::iterator iter;
+    for (iter = outputtree.begin(); iter != outputtree.end(); ++iter)
+      iter->second->Write(iter->first, TObject::kWriteDelete);
     outputtreefile->Close();
     deletepointer(outputtreefile);
   }

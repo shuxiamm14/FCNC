@@ -490,11 +490,6 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     ifill ++;
   }
   printf("dropped events total weight: %f\n", droppedweight);
-  if (writetree) {
-    outputtreefile->cd();
-    for (auto itertmp : outputtree)
-      itertmp.second->Write(itertmp.first, TObject::kWriteDelete);
-  }
   if(reduce <=2){
     printf("%s \n", inputtree->GetName());
     hadcutflow.print();
