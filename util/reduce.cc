@@ -108,7 +108,7 @@ int main(int argc, char const *argv[])
 		if(reduce == 1) analysis->init_reduce1();
 		else analysis->init_reduce2();
 	}
-	if(framework == "tthML" && reduce <= 2) {
+	if(framework == "tthML" && (reduce < 2 || dofake)) {
 		analysis->fake_regions = regions_fake;
 		analysis->fake_regions_notau = regions_notau;
 	}
