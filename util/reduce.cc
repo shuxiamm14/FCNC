@@ -137,6 +137,7 @@ int main(int argc, char const *argv[])
 					for(auto v: fakeNPlist) analysis->plotNPs.push_back(v);
 					if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
 					else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
+					for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
 				}
 				else analysis->plotNPs.push_back("fakeSF_tthML");
 			}else  analysis->plotNPs.push_back("NOMINAL");
