@@ -270,6 +270,7 @@ void plot(int iNP, TString framework)
 		
 	}
 	deletepointer(tau_plots);
+	deletepointer(datafile);
 }
 
 int main(int argc, char const *argv[])

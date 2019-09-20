@@ -1,4 +1,15 @@
 #!/bin/bash
+
+#usage: 
+#for nominal submission
+#submit_tth_reduce.sh <reduce scheme (1/2/3/12/23/123)> sub nominal
+#for systematics submission
+#submit_tth_reduce.sh <reduce scheme (1/2/3/12/23/123)> sub
+#for test
+#submit_tth_reduce.sh <reduce scheme (1/2/3/12/23/123)> subtest
+#no submission
+#submit_tth_reduce.sh <reduce scheme (1/2/3/12/23/123)> generate (nominal)
+
 mkdir -p /tmp/boyang/boyang
 for systname in `cat $ttH_fakes_DIR/config/tthmlSys.txt`
 do
