@@ -470,7 +470,7 @@ std::vector<TString> sampleNPlist = {
 	"ttbarsys_ISR"
 };
 
-TString findNPname(int iNP = 0, TString framework = "tthML"){
+TString findNPname(TString &dirname, int iNP = 0, TString framework = "tthML"){
 
 	std::vector<TString> specNPlist = framework == "xTFW"?xTFWNPlist:tthMLNPlist;
 	std::vector<TString> treeNPlist = framework == "xTFW"?xTFWtreeNPlist:tthMLtreeNPlist;
@@ -478,7 +478,11 @@ TString findNPname(int iNP = 0, TString framework = "tthML"){
 	std::vector<std::vector<TString>*> nlist = {&fakeNPlist,&commonNPlist,&theoryNPlist,&specNPlist,&treeNPlist,&sampleNPlist};
 	for (int i = 0; i < nlist.size(); ++i)
 	{
-		if(iNP < nlist[i]->size()) return nlist[i]->at(iNP);
+		if(iNP < nlist[i]->size()) {
+			if(i == 4) dirname = nlist[i]->at(iNP);
+			else dirname = framework == "tthML"? "nominal" : "NOMINAL";
+			return nlist[i]->at(iNP);
+		}
 		else iNP-=nlist[i]->size();
 	}
 	return "";

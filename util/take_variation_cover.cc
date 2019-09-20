@@ -1,25 +1,26 @@
 #include "fcnc_include.h"
-
+using namespace std;
 int main(int argc, char const *argv[])
 {
 
 	if(argc!=5){
-		printf("Please feed the file with variation list and the file with sample list, give the path of input files and path of output files\n");
+		printf("Please feed the file with variation list and the file with sample list, give the path of input files\n");
 		exit(0);
 	}
 
-	TString prefixinput = argv[1];
-	TString prefixoutput = argv[2];
-	std::vector<TString> samples;
-	std::vector<TString> variations;
-	std::vector<TString> varup;  //varup[ibin]
-	std::vector<TString> vardown; //vardown[ibin]
+	string variationlistfile = argv[1];
+	TString prefixinput = argv[2];
+	vector<TString> samples;
+	vector<TString> variations = readTovecString(variationlistfile.c_str());
+	findAndReplaceAll(variationlistfile,".txt","");
+
+	vector<TString> varup;  //varup[ibin]
+	vector<TString> vardown; //vardown[ibin]
 	varup.push_back("");
 	vardown.push_back("");
-	std::map<TString, std::map<TString, TH1D*>> histograms;  //histograms[sample][variation]
-	std::map<TString, TFile*> inputfiles;
-	std::map<TString, TH1D*> stacked_histograms;  //histograms[variation]
-
+	map<TString, map<TString, TH1D*>> histograms;  //histograms[sample][variation]
+	map<TString, TFile*> inputfiles;
+	map<TString, TH1D*> stacked_histograms;  //histograms[variation]
 
 //======================= read files ======================
 
@@ -55,7 +56,8 @@ int main(int argc, char const *argv[])
 	}
 //======================= save cover ======================
 	for(auto sample: samples){
-		TFile outputfile(prefixoutput+"/" + sample + ".root","update");
+		gROOT->mkdir(variationlistfile.c_str());
+		TFile outputfile(variationlistfile+"/" + sample + ".root","update");
 		for (int i = 1; i <= nbins; ++i){
 			templatehist->SetBinContent(i,histograms[sample][varup[i]]->GetBinContent(i));
 			templatehist->SetBinError(i,histograms[sample][varup[i]]->GetBinError(i));
