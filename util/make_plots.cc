@@ -193,13 +193,13 @@ void plot(int iNP, TString framework)
 				TFile *inputfile;
 				if(signalmap.find(samples[j]) != signalmap.end()){
 					for(auto signalsamp : signalmap[samples[j]]){
-						inputfile = getFile(mc_campaign + signalsamp, NPname, nominalname);
+						inputfile = getFile(dirname + "/" + mc_campaign + signalsamp, NPname, nominalname);
 						for (int i = 0; i < 7; i++) tau_plots->read_sample( samples[j], signalsamp + "_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j], inputfile);
 						deletepointer(inputfile);
 					}
 				}else{
 					TString samplename = (samplesys==samples[j] ? NPname : samples[j]);
-					inputfile = getFile(mc_campaign + samplename, NPname, nominalname);
+					inputfile = getFile(dirname + "/" +mc_campaign + samplename, NPname, nominalname);
 					tau_plots->read_sample( samples[j], samplename + "_real", NPname, sampletitle[j], (enum EColor)colors[j], norm[j], inputfile);
 					if (fakeMC) {
 						for (int i = 0; i < 7; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], NPname, "Fake MC, 1 truth #tau", kMagenta, norm[j], inputfile);
