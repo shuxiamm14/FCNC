@@ -8,16 +8,26 @@
 #include "fcnc_include.h"
 #include "weightsys_list.h"
 using namespace std;
+
+TFile *getFile(TString sample, TString NPname, TString nominalname){
+	TFile *inputfile = new TFile(sample + "_" + NPname + ".root");
+	if(inputfile->IsZombie()) {
+		deletepointer(inputfile);
+		inputfile = new TFile(sample + "_" + nominalname + ".root");
+	}
+	return inputfile;
+}
+
 void plot(int iNP, TString framework)
 {
-	TString NPname = findNPname(iNP,"tthML");
+	TString dirname;
+	TString NPname = findNPname(dirname,iNP,framework);
+	TString nominalname = "fakeSF_tthML";
 	float BRbenchmark = 0.2;
-	int histoiNP = 1;
 	bool calibfake = 1;
 	bool fakeMC = 0;
 	bool doTrex = 0;
 	bool plotnj = 0;
-	if(iNP < 124) histoiNP = iNP;
 	bool doPlots = 1;
 	int plot_option = 2;
 	histSaver *tau_plots = new histSaver("dummy");
@@ -51,11 +61,18 @@ void plot(int iNP, TString framework)
 	sampletitle.push_back("#bar{t}t#rightarrowbWuH");
 	sampletitle.push_back("utH Prod Mode");
 	sampletitle.push_back("tuH merged signal");
+
+	map<TString,vector<TString>> signalmap = {
+		{"tcH",{"fcnc_ch_lv","fcnc_ch_qq","fcnc_prod_ch"}},
+		{"tuH",{"fcnc_uh_lv","fcnc_uh_qq","fcnc_prod_uh"}},
+		{"fcnc_ch",{"fcnc_ch_lv","fcnc_ch_qq"}},
+		{"fcnc_uh",{"fcnc_uh_lv","fcnc_uh_qq"}},
+	};
 	TString samplesys = "";
 	if(NPname.Contains("ttbar")){
 		samplesys = "top";
 	}
-	tau_plots->inputfilename = "hists_"+NPname;
+
 	tau_plots->sensitivevariable = "BDTG_test";
 	if(framework == "tthML"){
 		if(plotnj){
@@ -160,6 +177,7 @@ void plot(int iNP, TString framework)
 
 	TFile *datafile = new TFile("histsdata.root");
 	tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile);
+	TString campains[] = {"mc16a_","mc16d_","mc16e_"};
 //============================ merge_sample============================
 	if(plot_option == 1){
 		for (int j = 0; j < samples.size(); ++j)
@@ -169,34 +187,29 @@ void plot(int iNP, TString framework)
 //============================ merge_origin ============================
 	else if(plot_option == 2){
 		for (int j = 0; j < samples.size(); ++j){
-			for (int i = 0; i < 7; i++){
-				if (fakeMC && origin[i] != "real")
-				{
-					tau_plots->read_sample( "fake1truth", (samplesys==samples[j] ? NPname : samples[j]) + "_" + origin[i], NPname, "Fake MC, 1 truth #tau", kMagenta, norm[j]);
+			for (int i = 0; i < 3; ++i)
+			{
+				TString mc_campaign = campains[i];
+				TFile *inputfile;
+				if(signalmap.find(samples[j]) != signalmap.end()){
+					for(auto signalsamp : signalmap[samples[j]]){
+						inputfile = getFile(mc_campaign + signalsamp, NPname, nominalname);
+						for (int i = 0; i < 7; i++) tau_plots->read_sample( samples[j], signalsamp + "_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j], inputfile);
+						deletepointer(inputfile);
+					}
+				}else{
+					TString samplename = (samplesys==samples[j] ? NPname : samples[j]);
+					inputfile = getFile(mc_campaign + samplename, NPname, nominalname);
+					tau_plots->read_sample( samples[j], samplename + "_real", NPname, sampletitle[j], (enum EColor)colors[j], norm[j], inputfile);
+					if (fakeMC) {
+						for (int i = 0; i < 7; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], NPname, "Fake MC, 1 truth #tau", kMagenta, norm[j], inputfile);
+						tau_plots->read_sample( "fake0truth", samplename + "_" + origin[8], NPname, "fake, 0 truth #tau", kTeal, norm[j],inputfile);
+					}else if(calibfake){
+						for (int i = 0; i < 7; i++) tau_plots->read_sample( "fake", samplename + "_" + origin[i], NPname, "MC Fake #tau", kTeal, norm[j], inputfile);
+					}
+					deletepointer(inputfile);
 				}
-				
-				if(samples[j] == "tcH"){
-					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_prod_ch") + "_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-				}else if(samples[j] == "tuH"){
-					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_prod_uh") + "_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-				}else if(samples[j] == "fcnc_uh"){
-					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_qq_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_uh") + "_lv_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-				}else if(samples[j] == "fcnc_ch"){
-					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_qq_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-					tau_plots->read_sample( samples[j], TString("fcnc_ch") + "_lv_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-				}else if(origin[i] == "real"){
-					tau_plots->read_sample( samples[j], (samplesys==samples[j] ? NPname : samples[j]) + "_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j]);
-				}else if(origin[i] != "real" && !fakeMC && calibfake){
-					tau_plots->read_sample( "fake", (samplesys==samples[j] ? NPname : samples[j]) + "_" + origin[i], NPname, "MC Fake #tau", kTeal, norm[j]);
-				}
-				
 			}
-			if(fakeMC && j != samples.size()-1) tau_plots->read_sample( "fake0truth", (samplesys==samples[j] ? NPname : samples[j]) + "_" + origin[8], NPname, "fake, 0 truth #tau", kTeal, norm[j]);
 		}
 
 	}
@@ -278,9 +291,10 @@ int main(int argc, char const *argv[])
 	TString framework = argv[1];
 	int from = atoi(argv[2]);
 	int to = atoi(argv[3]);
+	TString dirname;
 	for (int i = from; i <= to; ++i)
 	{
-		printf("=============================generating NP %d : %s=============================\n", i, findNPname(i,framework).Data());
+		printf("=============================generating NP %d : %s=============================\n", i, findNPname(dirname,i,framework).Data());
 		plot(i,framework);
 	}
 	return 0;
