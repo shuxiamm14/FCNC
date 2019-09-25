@@ -177,11 +177,12 @@ void plot(int iNP, TString framework)
 
 	TFile *datafile1516 = new TFile(framework== "tthML"? "nominal/data1516_fcnc_NOMINAL.root" : "NOMINAL/data1516_NOMINAL.root");
 	TFile *datafile17 = new TFile(framework== "tthML"? "nominal/data17_fcnc_NOMINAL.root" : "NOMINAL/data17_NOMINAL.root");
-	TFile *datafile18 = new TFile(framework== "tthML"? "nominal/data18_fcnc_NOMINAL.root" : "NOMINAL/data18_NOMINAL.root");
+	TFile *datafile18;
+	if(framework == "xTFW") datafile18 = new TFile(framework== "tthML"? "nominal/data18_fcnc_NOMINAL.root" : "NOMINAL/data18_NOMINAL.root");
 
 	tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile1516);
 	tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile17);
-	tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile18);
+	if(framework == "xTFW") tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile18);
 	TString campains[] = {"mc16a_","mc16d_","mc16e_"};
 //============================ merge_sample============================
 	if(plot_option == 1){
@@ -192,7 +193,7 @@ void plot(int iNP, TString framework)
 //============================ merge_origin ============================
 	else if(plot_option == 2){
 		for (int j = 0; j < samples.size(); ++j){
-			for (int i = 0; i < 3; ++i)
+			for (int i = 0; i < (framework == "tthML"? 2:3); ++i)
 			{
 				TString mc_campaign = campains[i];
 				TFile *inputfile;
