@@ -472,18 +472,22 @@ std::vector<TString> sampleNPlist = {
 
 TString findNPname(TString &dirname, int iNP = 0, TString framework = "tthML"){
 
+	int npidx = iNP;
 	std::vector<TString> specNPlist = framework == "xTFW"?xTFWNPlist:tthMLNPlist;
 	std::vector<TString> treeNPlist = framework == "xTFW"?xTFWtreeNPlist:tthMLtreeNPlist;
 
 	std::vector<std::vector<TString>*> nlist = {&fakeNPlist,&commonNPlist,&theoryNPlist,&specNPlist,&treeNPlist,&sampleNPlist};
+	int totalNP = 0
 	for (int i = 0; i < nlist.size(); ++i)
 	{
-		if(iNP < nlist[i]->size()) {
-			if(i == 4) dirname = nlist[i]->at(iNP);
+		if(npidx < nlist[i]->size()) {
+			if(i == 4) dirname = nlist[i]->at(npidx);
 			else dirname = framework == "tthML"? "nominal" : "NOMINAL";
-			return nlist[i]->at(iNP);
+			return nlist[i]->at(npidx);
 		}
-		else iNP-=nlist[i]->size();
+		else npidx-=nlist[i]->size();
+		totalNP += nlist[i]->size();
 	}
+	printf("NP %d not found, %d NPs in total\n", iNP);
 	return "";
 }
