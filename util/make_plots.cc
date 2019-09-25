@@ -194,18 +194,18 @@ void plot(int iNP, TString framework)
 				if(signalmap.find(samples[j]) != signalmap.end()){
 					for(auto signalsamp : signalmap[samples[j]]){
 						inputfile = getFile(mc_campaign + signalsamp + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
-						for (int i = 0; i < 7; i++) tau_plots->read_sample( samples[j], signalsamp + "_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j], inputfile);
+						for (int i = 0; i < 7; i++) tau_plots->read_sample( samples[j], signalsamp + "_" + origin[i], dirname==NPname? nominalname:NPname, sampletitle[j], (enum EColor)colors[j], norm[j], inputfile);
 						deletepointer(inputfile);
 					}
 				}else{
 					TString samplename = (samplesys==samples[j] ? NPname : samples[j]);
 					inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
-					tau_plots->read_sample( samples[j], samplename + "_real", NPname, sampletitle[j], (enum EColor)colors[j], norm[j], inputfile);
+					tau_plots->read_sample( samples[j], samplename + "_real", dirname==NPname? nominalname:NPname, sampletitle[j], (enum EColor)colors[j], norm[j], inputfile);
 					if (fakeMC) {
-						for (int i = 0; i < 7; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], NPname, "Fake MC, 1 truth #tau", kMagenta, norm[j], inputfile);
-						tau_plots->read_sample( "fake0truth", samplename + "_" + origin[8], NPname, "fake, 0 truth #tau", kTeal, norm[j],inputfile);
+						for (int i = 0; i < 7; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "Fake MC, 1 truth #tau", kMagenta, norm[j], inputfile);
+						tau_plots->read_sample( "fake0truth", samplename + "_" + origin[8], dirname==NPname? nominalname:NPname, "fake, 0 truth #tau", kTeal, norm[j],inputfile);
 					}else if(calibfake){
-						for (int i = 0; i < 7; i++) tau_plots->read_sample( "fake", samplename + "_" + origin[i], NPname, "MC Fake #tau", kTeal, norm[j], inputfile);
+						for (int i = 0; i < 7; i++) tau_plots->read_sample( "fake", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "MC Fake #tau", kTeal, norm[j], inputfile);
 					}
 					deletepointer(inputfile);
 				}
