@@ -10,7 +10,7 @@
 using namespace std;
 
 TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir, TString nominalname){
-	TFile *inputfile = new TFile(NPdir + "/" + sample + "_" + NPname + ".root");
+	TFile *inputfile = new TFile(NPdir + "/" + sample + "_" + (NPdir==nominaldir? NPname : nominalname) + ".root");
 	if(inputfile->IsZombie()) {
 		deletepointer(inputfile);
 		inputfile = new TFile(nominaldir + "/" + sample + "_" + nominalname + ".root");
@@ -175,8 +175,13 @@ void plot(int iNP, TString framework)
 	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "real #tau"};
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kRed, kRed, kRed, kRed, kRed, kMagenta, kSpring, kTeal, kAzure};
 
-	TFile *datafile = new TFile("histsdata.root");
-	tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile);
+	TFile *datafile1516 = new TFile(framework== "tthML"? "nominal/data1516_fcnc_NOMINAL.root" : "NOMINAL/data1516_NOMINAL.root");
+	TFile *datafile17 = new TFile(framework== "tthML"? "nominal/data17_fcnc_NOMINAL.root" : "NOMINAL/data17_NOMINAL.root");
+	TFile *datafile18 = new TFile(framework== "tthML"? "nominal/data18_fcnc_NOMINAL.root" : "NOMINAL/data18_NOMINAL.root");
+
+	tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile1516);
+	tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile17);
+	tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile18);
 	TString campains[] = {"mc16a_","mc16d_","mc16e_"};
 //============================ merge_sample============================
 	if(plot_option == 1){
@@ -283,7 +288,9 @@ void plot(int iNP, TString framework)
 		
 	}
 	deletepointer(tau_plots);
-	deletepointer(datafile);
+	deletepointer(datafile1516);
+	deletepointer(datafile17);
+	deletepointer(datafile18);
 }
 
 int main(int argc, char const *argv[])
