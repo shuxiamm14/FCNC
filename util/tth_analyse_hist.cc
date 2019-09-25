@@ -115,7 +115,7 @@ int main(int argc, char const *argv[])
 				}
 			}
 		}
-		tau_plots  ->plot_stack(outputdir[plot_option]);
+		tau_plots  ->plot_stack("NOMINAL",outputdir[plot_option]);
 	
 		//notau_plots->plot_stack(outputdir[plot_option]);
 	}
@@ -184,7 +184,7 @@ int main(int argc, char const *argv[])
 			}
 		} // loop prong
 
-		if(doPlots) tau_plots->plot_stack("postfit");
+		if(doPlots) tau_plots->plot_stack("NOMINAL","postfit");
 		tau_plots->write();
 	}
 	return 0;

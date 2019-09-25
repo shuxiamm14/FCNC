@@ -265,15 +265,15 @@ void plot(int iNP, TString framework)
   	}
   	//tau_plots->printyield("reg2mtau1b3jos");
   	//tau_plots->printyield("reg2mtau1b2jos");
-  	std::string nptmp = NPname.Data();
-  	findAndReplaceAll(nptmp,"_1down","_down");
-  	findAndReplaceAll(nptmp,"_1up","_up");
-  	findAndReplaceAll(nptmp,"JET_EffectiveNP","JET_EFF");
-  	findAndReplaceAll(nptmp,"JET_JER_EffectiveNP","JER");
-  	findAndReplaceAll(nptmp,"JET_EtaIntercalibration","JET_EtaInt");
-	findAndReplaceAll(nptmp,"TAUS_TRUEHADTAU_SME_TES","TES");
-	NPname = nptmp;
 	if(doTrex){
+  		std::string nptmp = NPname.Data();
+  		findAndReplaceAll(nptmp,"_1down","_down");
+  		findAndReplaceAll(nptmp,"_1up","_up");
+  		findAndReplaceAll(nptmp,"JET_EffectiveNP","JET_EFF");
+  		findAndReplaceAll(nptmp,"JET_JER_EffectiveNP","JER");
+  		findAndReplaceAll(nptmp,"JET_EtaIntercalibration","JET_EtaInt");
+		findAndReplaceAll(nptmp,"TAUS_TRUEHADTAU_SME_TES","TES");
+		NPname = nptmp;
 		if(NPname.Contains("PDF")) tau_plots->trexdir = "PDF_trexinputs";
 		else if(NPname.Contains("muR")) tau_plots->trexdir = "scale_trexinputs";
 		else tau_plots->trexdir = "trexinputs";
@@ -285,7 +285,7 @@ void plot(int iNP, TString framework)
 		{
   			tau_plots->overlay(samples[i]);
 		}
-		tau_plots->plot_stack(("output_"+to_string(iNP)).c_str());
+		tau_plots->plot_stack(dirname==NPname? nominalname:NPname, NPname);
 		
 	}
 	deletepointer(tau_plots);
