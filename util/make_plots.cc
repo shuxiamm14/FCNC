@@ -9,11 +9,11 @@
 #include "weightsys_list.h"
 using namespace std;
 
-TFile *getFile(TString sample, TString NPname, TString nominalname){
-	TFile *inputfile = new TFile(sample + "_" + NPname + ".root");
+TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir, TString nominalname){
+	TFile *inputfile = new TFile(NPdir + "/" + sample + "_" + NPname + ".root");
 	if(inputfile->IsZombie()) {
 		deletepointer(inputfile);
-		inputfile = new TFile(sample + "_" + nominalname + ".root");
+		inputfile = new TFile(nominaldir + "/" + sample + "_" + nominalname + ".root");
 	}
 	return inputfile;
 }
@@ -193,13 +193,13 @@ void plot(int iNP, TString framework)
 				TFile *inputfile;
 				if(signalmap.find(samples[j]) != signalmap.end()){
 					for(auto signalsamp : signalmap[samples[j]]){
-						inputfile = getFile(dirname + "/" + mc_campaign + signalsamp + (framework == "tthML"? "_fcnc" : ""), NPname, nominalname);
+						inputfile = getFile(mc_campaign + signalsamp + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 						for (int i = 0; i < 7; i++) tau_plots->read_sample( samples[j], signalsamp + "_" + origin[i], NPname, sampletitle[j], (enum EColor)colors[j], norm[j], inputfile);
 						deletepointer(inputfile);
 					}
 				}else{
 					TString samplename = (samplesys==samples[j] ? NPname : samples[j]);
-					inputfile = getFile(dirname + "/" +mc_campaign + samplename + (framework == "tthML"? "_fcnc" : ""), NPname, nominalname);
+					inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 					tau_plots->read_sample( samples[j], samplename + "_real", NPname, sampletitle[j], (enum EColor)colors[j], norm[j], inputfile);
 					if (fakeMC) {
 						for (int i = 0; i < 7; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], NPname, "Fake MC, 1 truth #tau", kMagenta, norm[j], inputfile);
