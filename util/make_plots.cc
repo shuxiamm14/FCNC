@@ -10,7 +10,7 @@
 using namespace std;
 
 TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir, TString nominalname){
-	TFile *inputfile = new TFile(NPdir + "/" + sample + "_" + nominalname + ".root");
+	TFile *inputfile = new TFile(NPdir + "/" + sample + "_" + (NPdir==nominaldir? NPname : nominalname) + ".root");
 	if(inputfile->IsZombie()) {
 		deletepointer(inputfile);
 		inputfile = new TFile(nominaldir + "/" + sample + "_" + nominalname + ".root");

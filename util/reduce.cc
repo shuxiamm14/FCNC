@@ -27,6 +27,7 @@ int main(int argc, char const *argv[])
 		return 0;
 	}
 	TString samplefilefullname = prefix + "/datafiles/" + framework + "/v2/run/"+ ((systname != "nominal" && framework == "tthML") ? "sys_" : "" ) + samplefile;
+	printf("reading list: %s",samplefilefullname.Data());
 	ifstream fn(samplefilefullname);
 	if(!fn) {
 	  fprintf(stderr,"can't open file: %s, try %s\n",samplefilefullname.Data(),samplefile.Data());
