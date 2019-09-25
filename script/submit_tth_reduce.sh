@@ -11,7 +11,7 @@
 #submit_tth_reduce.sh <reduce scheme (1/2/3/12/23/123)> generate (nominal)
 
 mkdir -p /tmp/boyang/boyang
-for systname in `cat $ttH_fakes_DIR/config/tthmlSys.txt`
+for systname in `cat $ttH_fakes_DIR/config/tthMLtreeSys.txt`
 do
 if [[ $3 =~ "nominal" ]] ; then
 	systname=nominal
@@ -25,7 +25,7 @@ echo '#!/bin/bash
 #SBATCH --cpus-per-task=1
 #SBATCH --constraint=haswell
 #SBATCH --time=24:00:00
-#SBATCH --mem=2GB
+#SBATCH --mem=4GB
 #SBATCH --image=zlmarshall/atlas-grid-slc6:20190416 --export=NONE
 shifter --module=cvmfs /bin/bash bulkreduce.sh $1
 ' > slurmscript.sh
@@ -53,6 +53,10 @@ chmod +x bulkreduce.sh
 if [[ $2 =~ "sub" ]] ; then
 	for lines in `ls $ttH_fakes_DIR/datafiles/tthML/v2/run/{mc*,data*}  | xargs -n 1 basename`
 	do
+		donefind=`grep $lines ../done.txt`
+		if [[ $donefind == $lines ]] ; then
+			continue
+		fi
 		if ( [[ $lines =~ "data" ]] || [[ $lines =~ "sys" ]] ) && [[ $systname != "nominal" ]] ; then
 			continue
 		fi
