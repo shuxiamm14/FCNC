@@ -33,7 +33,7 @@ void plot(int iNP, TString framework)
 	histSaver *tau_plots = new histSaver("dummy");
 	tau_plots->doROC = 0;
 	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
-	tau_plots->debug = 0;
+	tau_plots->debug = 1;
 	vector<TString> samples;
 	samples.push_back("smhiggs");
 	samples.push_back("wjet");
@@ -177,7 +177,8 @@ void plot(int iNP, TString framework)
 
 	TFile *datafile1516 = new TFile(framework== "tthML"? "nominal/data1516_fcnc_NOMINAL.root" : "NOMINAL/data1516_NOMINAL.root");
 	TFile *datafile17 = new TFile(framework== "tthML"? "nominal/data17_fcnc_NOMINAL.root" : "NOMINAL/data17_NOMINAL.root");
-	TFile *datafile18 = new TFile(framework== "tthML"? "nominal/data18_fcnc_NOMINAL.root" : "NOMINAL/data18_NOMINAL.root");
+	TFile *datafile18 = 0;
+	if(framework == "xTFW") datafile18 = new TFile(framework== "tthML"? "nominal/data18_fcnc_NOMINAL.root" : "NOMINAL/data18_NOMINAL.root");
 
 	tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile1516);
 	tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile17);

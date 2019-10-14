@@ -1021,11 +1021,21 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     }
 
     if (dumptruth && fcnc && sample.Contains("fcnc")) dumpTruth(eventNumber % 2);
-    if (dohist && mc_channel_number) readweightsysmap(mc_channel_number,"tthML");
+    if (dohist && mc_channel_number && weightsysmap.find(mc_channel_number) == weightsysmap.end()) {
+      readweightsysmap(mc_channel_number,"tthML");
+      if(weightsysmap.find(mc_channel_number) == weightsysmap.end()) {
+        printf("tthmltree::Loop() WARNING: channel number %d not found in the systematics map, skipping\n", mc_channel_number);
+        continue;
+      }
+    }
     for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
       if (iter->second == 1) {
         if (writetree) {
           if(debug) printf("fill tree: %s\n", iter->first.Data());
+          if(outputtree.find(iter->first) == outputtree.end()) {
+            printf("ERROR: Loop() outputtree not found: %s",iter->first.Data());
+            exit(0);
+          }
           outputtree[iter->first]->Fill();
         }
         if (dohist) {

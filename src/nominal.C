@@ -523,7 +523,9 @@ void nominal::readweightsysmap(int dsid, TString framework){
   if(weightsysmap.find(dsid) != weightsysmap.end()) return;
   TString prefix = PACKAGE_DIR;
   prefix = prefix + "/config/theoryweightlist/" + framework + "_" + TString(to_string(dsid)) + ".txt";
-  weightsysmap[dsid] = readTovecString(prefix);
+  ifstream f(prefix);
+  if(f.good())
+    weightsysmap[dsid] = readTovecString(prefix);
 }
 
 void nominal::printv(TLorentzVector v){
