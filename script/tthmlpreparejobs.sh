@@ -3,8 +3,19 @@ mkdir -p $ttH_fakes_DIR/datafiles/tthML/v2/run
 rm $ttH_fakes_DIR/datafiles/tthML/v2/run/*
 allsamplefile=$ttH_fakes_DIR/datafiles/tthML/v2/run/allsamples.dat
 sysallsamplefile=$ttH_fakes_DIR/datafiles/tthML/v2/run/sys_allsamples.dat
-cat /global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimV9/*.list | sort > $allsamplefile
-cat /global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimSysV9/*.list | sort > $sysallsamplefile
+for files in `ls /global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimV9/*.list`
+do
+	cat $files | sort >> $allsamplefile
+	echo >> $allsamplefile
+done
+for files in `ls /global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimSysV9/*.list`
+do
+	cat $files | sort >> $sysallsamplefile
+	echo >> $sysallsamplefile
+done
+
+Order $allsamplefile
+Order $sysallsamplefile
 RemoveReplicateLines $allsamplefile
 RemoveReplicateLines $sysallsamplefile
 sed -i "s#../..#/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop#" $allsamplefile
