@@ -256,7 +256,6 @@ void tthmltree::init_hist(TString outputfilename){
     }
   }
 }
-
 void tthmltree::init_sample(TString sample, TString sampletitle){
 //==========================init output n-tuple==========================
   fcnc_nregions = fcnc_regions.size();
@@ -330,25 +329,13 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
 
     for (int i = 0; i < fake_nregions; ++i)
     {
-      if(debug) printf("init sample:: get region: %s\n", fake_regions[i].Data());
-      if (outputtreefile->Get(fake_regions[i])) {
-        outputtree[fake_regions[i]] = (TTree*)(outputtreefile->Get(fake_regions[i]));
-        Init(outputtree[fake_regions[i]]);
-      }else{
-        outputtree[fake_regions[i]] = new TTree(fake_regions[i],fake_regions[i]);
-        definetree(outputtree[fake_regions[i]]);
-      }
+      outputtree[fake_regions[i]] = new TTree(fake_regions[i],fake_regions[i]);
+      definetree(outputtree[fake_regions[i]]);
     }
     for (int i = 0; i < fake_nregions_notau; ++i)
     {
-      if(debug) printf("init sample:: get region: %s\n", fake_regions_notau[i].Data());
-      if (outputtreefile->Get(fake_regions_notau[i])) {
-        outputtree[fake_regions_notau[i]] = (TTree*)(outputtreefile->Get(fake_regions_notau[i]));
-        Init(outputtree[fake_regions_notau[i]]);
-      }else{
-        outputtree[fake_regions_notau[i]] = new TTree(fake_regions_notau[i],fake_regions_notau[i]);
-        definetree(outputtree[fake_regions_notau[i]]);
-      }
+      outputtree[fake_regions_notau[i]] = new TTree(fake_regions_notau[i],fake_regions_notau[i]);
+      definetree(outputtree[fake_regions_notau[i]]);
     }
   }
 //==========================init output histogram==========================
@@ -588,12 +575,11 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         ifregions["reg1e1mu1tau1b"] = nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T == 1 && nTaus_OR_Pt25 == 1;
         ifregions["reg1e1mu2b"] = nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 0;
       }
-      for (iter = ifregions.begin(); iter != ifregions.end();){
+      for (iter = ifregions.begin(); iter != ifregions.end();iter++){
         if(debug == 2) 
           printf("region: %s, %d\n", iter->first.Data(), iter->second);
         if (iter->second && (find(fcnc_regions.begin(),fcnc_regions.end(),iter->first) != fcnc_regions.end() || find(fake_regions.begin(),fake_regions.end(),iter->first) != fake_regions.end() || find(fake_regions_notau.begin(),fake_regions_notau.end(),iter->first) != fake_regions_notau.end() ) ) {
           triggered = 1;
-          iter++;
         }else{
           ifregions.erase(iter->first);
         }
