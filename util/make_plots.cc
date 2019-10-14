@@ -182,7 +182,7 @@ void plot(int iNP, TString framework)
 
 	tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile1516);
 	tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile17);
-	tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile18);
+	if(framework == "xTFW") tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile18);
 	TString campains[] = {"mc16a_","mc16d_","mc16e_"};
 //============================ merge_sample============================
 	if(plot_option == 1){
@@ -193,7 +193,7 @@ void plot(int iNP, TString framework)
 //============================ merge_origin ============================
 	else if(plot_option == 2){
 		for (int j = 0; j < samples.size(); ++j){
-			for (int i = 0; i < 3; ++i)
+			for (int i = 0; i < (framework == "tthML"? 2:3); ++i)
 			{
 				TString mc_campaign = campains[i];
 				TFile *inputfile;
@@ -265,15 +265,15 @@ void plot(int iNP, TString framework)
   	}
   	//tau_plots->printyield("reg2mtau1b3jos");
   	//tau_plots->printyield("reg2mtau1b2jos");
-  	std::string nptmp = NPname.Data();
-  	findAndReplaceAll(nptmp,"_1down","_down");
-  	findAndReplaceAll(nptmp,"_1up","_up");
-  	findAndReplaceAll(nptmp,"JET_EffectiveNP","JET_EFF");
-  	findAndReplaceAll(nptmp,"JET_JER_EffectiveNP","JER");
-  	findAndReplaceAll(nptmp,"JET_EtaIntercalibration","JET_EtaInt");
-	findAndReplaceAll(nptmp,"TAUS_TRUEHADTAU_SME_TES","TES");
-	NPname = nptmp;
 	if(doTrex){
+  		std::string nptmp = NPname.Data();
+  		findAndReplaceAll(nptmp,"_1down","_down");
+  		findAndReplaceAll(nptmp,"_1up","_up");
+  		findAndReplaceAll(nptmp,"JET_EffectiveNP","JET_EFF");
+  		findAndReplaceAll(nptmp,"JET_JER_EffectiveNP","JER");
+  		findAndReplaceAll(nptmp,"JET_EtaIntercalibration","JET_EtaInt");
+		findAndReplaceAll(nptmp,"TAUS_TRUEHADTAU_SME_TES","TES");
+		NPname = nptmp;
 		if(NPname.Contains("PDF")) tau_plots->trexdir = "PDF_trexinputs";
 		else if(NPname.Contains("muR")) tau_plots->trexdir = "scale_trexinputs";
 		else tau_plots->trexdir = "trexinputs";
@@ -285,7 +285,7 @@ void plot(int iNP, TString framework)
 		{
   			tau_plots->overlay(samples[i]);
 		}
-		tau_plots->plot_stack(("output_"+to_string(iNP)).c_str());
+		tau_plots->plot_stack(dirname==NPname? nominalname:NPname, NPname);
 		
 	}
 	deletepointer(tau_plots);
