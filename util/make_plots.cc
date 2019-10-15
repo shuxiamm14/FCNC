@@ -233,14 +233,10 @@ void plot(int iNP, TString framework)
 	}
 	if(plot_option == 2){
   		vector<TString> stacks;
-  		//tau_plots->overlay("fake");
-  		stacks.push_back("ztautau");
-  		stacks.push_back("top");
+  		for(auto samp: samples){
+  			if(signalmap.find(samp) != signalmap.end()) stacks.push_back(samp.name);
+  		}
   		if(!fakeMC && calibfake) stacks.push_back("fake");
-  		stacks.push_back("smhiggs");
-  		stacks.push_back("wjet");
-  		stacks.push_back("zll");
-  		stacks.push_back("diboson");
   		if(!fakeMC && framework == "xTFW") {
   			stacks.push_back("fakeSS");
   			tau_plots->templatesample("reg2mtau1b3jss",NPname,"1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b3jos","fakeSS","Fake",kYellow,0,1.31597);
