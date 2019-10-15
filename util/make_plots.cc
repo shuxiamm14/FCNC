@@ -234,7 +234,7 @@ void plot(int iNP, TString framework)
 	if(plot_option == 2){
   		vector<TString> stacks;
   		for(auto samp: samples){
-  			if(signalmap.find(samp.name) != signalmap.end()) stacks.push_back(samp.name);
+  			if(signalmap.find(samp.name) == signalmap.end()) stacks.push_back(samp.name);
   		}
   		if(!fakeMC && calibfake) stacks.push_back("fake");
   		if(!fakeMC && framework == "xTFW") {
