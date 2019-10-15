@@ -78,6 +78,8 @@ void plot(int iNP, TString framework)
 		{"tuH",{"fcnc_uh_lv","fcnc_uh_qq","fcnc_prod_uh"}},
 		{"fcnc_ch",{"fcnc_ch_lv","fcnc_ch_qq"}},
 		{"fcnc_uh",{"fcnc_uh_lv","fcnc_uh_qq"}},
+		{"fcnc_prod_ch",{"fcnc_prod_ch"}},
+		{"fcnc_prod_uh",{"fcnc_prod_ch"}},
 	};
 	TString samplesys = "";
 	if(NPname.Contains("ttbar")){
@@ -213,10 +215,10 @@ void plot(int iNP, TString framework)
 					inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 					tau_plots->read_sample( samples[j].name, samplename + "_real", dirname==NPname? nominalname:NPname, samples[j].title, samples[j].color, samples[j].norm, inputfile);
 					if (fakeMC) {
-						for (int i = 0; i < 7; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "Fake MC, 1 truth #tau", kMagenta, samples[j].norm, inputfile);
+						for (int i = 0; i < 6; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "Fake MC, 1 truth #tau", kMagenta, samples[j].norm, inputfile);
 						tau_plots->read_sample( "fake0truth", samplename + "_" + origin[8], dirname==NPname? nominalname:NPname, "fake, 0 truth #tau", kTeal, samples[j].norm,inputfile);
 					}else if(calibfake){
-						for (int i = 0; i < 7; i++) tau_plots->read_sample( "fake", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "MC Fake #tau", kTeal, samples[j].norm, inputfile);
+						for (int i = 0; i < 6; i++) tau_plots->read_sample( "fake", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "MC Fake #tau", kTeal, samples[j].norm, inputfile);
 					}
 					deletepointer(inputfile);
 				}
