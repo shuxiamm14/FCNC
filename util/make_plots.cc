@@ -9,6 +9,17 @@
 #include "weightsys_list.h"
 using namespace std;
 
+class sample
+{
+public:
+	sample(TString _name, TString _title, enum EColor _color, double _norm = 1): name(_name), title(_title), color(_color), norm(_norm) {};
+	~sample(){};
+	TString name;
+	TString title;
+	double norm;
+	enum EColor color;
+};
+
 TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir, TString nominalname){
 	TFile *inputfile = new TFile(NPdir + "/" + sample + "_" + (NPdir==nominaldir? NPname : nominalname) + ".root");
 	if(inputfile->IsZombie()) {
@@ -34,33 +45,33 @@ void plot(int iNP, TString framework)
 	tau_plots->doROC = 0;
 	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
 	tau_plots->debug = 1;
-	vector<TString> samples;
-	samples.push_back("smhiggs");
-	samples.push_back("wjet");
-	samples.push_back("diboson");
-	samples.push_back("zll");
-	samples.push_back("ztautau");
-	samples.push_back("top");
-	samples.push_back("fcnc_ch");
-	samples.push_back("fcnc_prod_ch");
-	samples.push_back("tcH");
-	samples.push_back("fcnc_uh");
-	samples.push_back("fcnc_prod_uh");
-	samples.push_back("tuH");
- 	double norm[] = {1,1,1,1,1,1,BRbenchmark*(framework == "xTFW"? 1:5),BRbenchmark*(framework == "xTFW"? 1:5),BRbenchmark*(framework == "xTFW"? 1:5),BRbenchmark*(framework == "xTFW"? 1:5),BRbenchmark*(framework == "xTFW"? 1:5),BRbenchmark*(framework == "xTFW"? 1:5)};
-	vector<TString> sampletitle;
-	sampletitle.push_back("SM Higgs");
-	sampletitle.push_back("W+jets");
-	sampletitle.push_back("Diboson");
-	sampletitle.push_back("Z#rightarrowll");
-	sampletitle.push_back("Z#rightarrow#tau#tau");
-	sampletitle.push_back("Top production");
-	sampletitle.push_back("#bar{t}t#rightarrowbWcH");
-	sampletitle.push_back("ctH Prod Mode");
-	sampletitle.push_back("tcH merged signal");
-	sampletitle.push_back("#bar{t}t#rightarrowbWuH");
-	sampletitle.push_back("utH Prod Mode");
-	sampletitle.push_back("tuH merged signal");
+	vector<sample> samples;
+	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kMagenta, kSpring, kTeal, kAzure};
+
+	samples.push_back(sample("smhiggs","SM Higgs",kViolet));
+	samples.push_back(sample("wjet","W+jets",kOrange));
+	samples.push_back(sample("diboson","Diboson",(enum EColor)7));
+	samples.push_back(sample("zll","Z#rightarrowll",kBlue));
+	samples.push_back(sample("ztautau","Z#rightarrow#tau#tau",kGreen));
+	if(framework=="tthML"){
+		samples.push_back(sample("top","Top rare",kSpring));
+		samples.push_back(sample("others","Rare",kTeal));
+		samples.push_back(sample("ttbar","t#bar{t}",kYellow));
+		samples.push_back(sample("ttV","t#bar{t}V",kAzure));
+	}else{
+		samples.push_back(sample("top","Top production",kYellow));
+	}
+	stringstream ss;
+	ss<<"(BR=" << BRbenchmark << "%)";
+	TString tmp;
+	ss>>tmp;
+	double signorm = BRbenchmark*(framework == "xTFW"? 1:5);
+	samples.push_back(sample("fcnc_ch","#bar{t}t#rightarrowbWcH"+tmp,kRed,signorm));
+	samples.push_back(sample("fcnc_prod_ch","ctH Prod Mode"+tmp,kRed,signorm));
+	samples.push_back(sample("tcH","tcH merged signal"+tmp,kRed,signorm));
+	samples.push_back(sample("fcnc_uh","#bar{t}t#rightarrowbWuH"+tmp,kRed,signorm));
+	samples.push_back(sample("fcnc_prod_uh","utH Prod Mode"+tmp,kRed,signorm));
+	samples.push_back(sample("tuH","tuH merged signal"+tmp,kRed,signorm));
 
 	map<TString,vector<TString>> signalmap = {
 		{"tcH",{"fcnc_ch_lv","fcnc_ch_qq","fcnc_prod_ch"}},
@@ -166,14 +177,8 @@ void plot(int iNP, TString framework)
 	    	tau_plots->add_region(regions[j] + "_" + nprong[k] + "_below35_vetobtagwp70");
 	    }
 	tau_plots->muteregion("prong");
-	stringstream ss;
-	ss<<"(BR=" << BRbenchmark << "%)";
-	TString tmp;
-	ss>>tmp;
-	for(int i = 6; i<12 ; ++i) sampletitle[i]+=tmp;
 	TString origin[] = {"b", "c", "g", "j", "lep", "nomatch", "real", "data","doublefake"};
 	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "real #tau"};
-	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kRed, kRed, kRed, kRed, kRed, kMagenta, kSpring, kTeal, kAzure};
 
 	TFile *datafile1516 = new TFile(framework== "tthML"? "nominal/data1516_fcnc_NOMINAL.root" : "NOMINAL/data1516_NOMINAL.root");
 	TFile *datafile17 = new TFile(framework== "tthML"? "nominal/data17_fcnc_NOMINAL.root" : "NOMINAL/data17_NOMINAL.root");
@@ -188,7 +193,7 @@ void plot(int iNP, TString framework)
 	if(plot_option == 1){
 		for (int j = 0; j < samples.size(); ++j)
 			for (int i = 0; i < 7; ++i)
-				tau_plots->read_sample( origin[i], samples[j] + "_" + origin[i], NPname, origintitle[i], (enum EColor)colors[i], norm[j]);
+				tau_plots->read_sample( origin[i], samples[j].name + "_" + origin[i], NPname, origintitle[i], (enum EColor)colors[i], samples[j].norm);
 	}
 //============================ merge_origin ============================
 	else if(plot_option == 2){
@@ -197,21 +202,21 @@ void plot(int iNP, TString framework)
 			{
 				TString mc_campaign = campains[i];
 				TFile *inputfile;
-				if(signalmap.find(samples[j]) != signalmap.end()){
-					for(auto signalsamp : signalmap[samples[j]]){
+				if(signalmap.find(samples[j].name) != signalmap.end()){
+					for(auto signalsamp : signalmap[samples[j].name]){
 						inputfile = getFile(mc_campaign + signalsamp + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
-						for (int i = 0; i < 7; i++) tau_plots->read_sample( samples[j], signalsamp + "_" + origin[i], dirname==NPname? nominalname:NPname, sampletitle[j], (enum EColor)colors[j], norm[j], inputfile);
+						for (int i = 0; i < 7; i++) tau_plots->read_sample( samples[j].name, signalsamp + "_" + origin[i], dirname==NPname? nominalname:NPname, samples[j].title, samples[j].color, samples[j].norm, inputfile);
 						deletepointer(inputfile);
 					}
 				}else{
-					TString samplename = (samplesys==samples[j] ? NPname : samples[j]);
+					TString samplename = (samplesys==samples[j].name ? NPname : samples[j].name);
 					inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
-					tau_plots->read_sample( samples[j], samplename + "_real", dirname==NPname? nominalname:NPname, sampletitle[j], (enum EColor)colors[j], norm[j], inputfile);
+					tau_plots->read_sample( samples[j].name, samplename + "_real", dirname==NPname? nominalname:NPname, samples[j].title, samples[j].color, samples[j].norm, inputfile);
 					if (fakeMC) {
-						for (int i = 0; i < 7; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "Fake MC, 1 truth #tau", kMagenta, norm[j], inputfile);
-						tau_plots->read_sample( "fake0truth", samplename + "_" + origin[8], dirname==NPname? nominalname:NPname, "fake, 0 truth #tau", kTeal, norm[j],inputfile);
+						for (int i = 0; i < 7; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "Fake MC, 1 truth #tau", kMagenta, samples[j].norm, inputfile);
+						tau_plots->read_sample( "fake0truth", samplename + "_" + origin[8], dirname==NPname? nominalname:NPname, "fake, 0 truth #tau", kTeal, samples[j].norm,inputfile);
 					}else if(calibfake){
-						for (int i = 0; i < 7; i++) tau_plots->read_sample( "fake", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "MC Fake #tau", kTeal, norm[j], inputfile);
+						for (int i = 0; i < 7; i++) tau_plots->read_sample( "fake", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "MC Fake #tau", kTeal, samples[j].norm, inputfile);
 					}
 					deletepointer(inputfile);
 				}
@@ -283,7 +288,7 @@ void plot(int iNP, TString framework)
 		gSystem->mkdir(("output_"+to_string(iNP)).c_str());
 		for (int i = samples.size()-6; i < samples.size(); ++i)
 		{
-  			tau_plots->overlay(samples[i]);
+  			tau_plots->overlay(samples[i].name);
 		}
 		tau_plots->plot_stack(dirname==NPname? nominalname:NPname, NPname);
 		
