@@ -54,7 +54,7 @@ void plot(int iNP, TString framework)
 	samples.push_back(sample("zll","Z#rightarrowll",kBlue));
 	samples.push_back(sample("ztautau","Z#rightarrow#tau#tau",kGreen));
 	if(framework=="tthML"){
-		samples.push_back(sample("top","Top rare",kSpring));
+		samples.push_back(sample("top","Top rare",kWhite));
 		samples.push_back(sample("others","Rare",kTeal));
 		samples.push_back(sample("ttbar","t#bar{t}",kYellow));
 		samples.push_back(sample("ttV","t#bar{t}V",kAzure));
