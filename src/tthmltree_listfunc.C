@@ -773,8 +773,20 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("DL1_85_EventWeight", & DL1_85_EventWeight);
   tree->SetBranchAddress("DL1_Continuous_EventWeight", & DL1_Continuous_EventWeight);
   tree->SetBranchAddress("MV2c10_Continuous_EventWeight", & MV2c10_Continuous_EventWeight);
-  tree->SetBranchAddress("pileupEventWeight_UP", & pileupEventWeight_UP);
-  tree->SetBranchAddress("pileupEventWeight_DOWN", & pileupEventWeight_DOWN);
+  if (nominaltree){
+    tree->SetBranchAddress("pileupEventWeight_UP", & pileupEventWeight_UP);
+    tree->SetBranchAddress("pileupEventWeight_DOWN", & pileupEventWeight_DOWN);
+    tree->SetBranchAddress("muon_jet_pt", & muon_jet_pt);
+    tree->SetBranchAddress("muon_jet_eta", & muon_jet_eta);
+    tree->SetBranchAddress("muon_jet_phi", & muon_jet_phi);
+    tree->SetBranchAddress("muon_jet_dr", & muon_jet_dr);
+    tree->SetBranchAddress("muon_jet_ptRel", & muon_jet_ptRel);
+    tree->SetBranchAddress("muon_jet_numTrk", & muon_jet_numTrk);
+    tree->SetBranchAddress("muon_jet_sumPtTrk", & muon_jet_sumPtTrk);
+    tree->SetBranchAddress("muon_jet_MV2c10_Weight", & muon_jet_MV2c10_Weight);
+    tree->SetBranchAddress("muon_jet_tagWeightBin", & muon_jet_tagWeightBin);
+    tree->SetBranchAddress("muon_jet_BDT", & muon_jet_BDT);
+  }
   if (version == 7) {
     tree->SetBranchAddress("HLT_mu24", & HLT_mu24);
     tree->SetBranchAddress("bTagSF_weight_DL1_FixedCutBEff_70", & bTagSF_weight_DL1_FixedCutBEff_70);
@@ -1636,16 +1648,6 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("muon_PromptLeptonInput_rnnip", & muon_PromptLeptonInput_rnnip);
     tree->SetBranchAddress("muon_PromptLeptonIso_TagWeight", & muon_PromptLeptonIso_TagWeight);
     tree->SetBranchAddress("muon_PromptLeptonVeto_TagWeight", & muon_PromptLeptonVeto_TagWeight);
-    tree->SetBranchAddress("muon_jet_pt", & muon_jet_pt);
-    tree->SetBranchAddress("muon_jet_eta", & muon_jet_eta);
-    tree->SetBranchAddress("muon_jet_phi", & muon_jet_phi);
-    tree->SetBranchAddress("muon_jet_dr", & muon_jet_dr);
-    tree->SetBranchAddress("muon_jet_ptRel", & muon_jet_ptRel);
-    tree->SetBranchAddress("muon_jet_numTrk", & muon_jet_numTrk);
-    tree->SetBranchAddress("muon_jet_sumPtTrk", & muon_jet_sumPtTrk);
-    tree->SetBranchAddress("muon_jet_MV2c10_Weight", & muon_jet_MV2c10_Weight);
-    tree->SetBranchAddress("muon_jet_tagWeightBin", & muon_jet_tagWeightBin);
-    tree->SetBranchAddress("muon_jet_BDT", & muon_jet_BDT);
     tree->SetBranchAddress("isQMisIDEvent", & isQMisIDEvent);
     tree->SetBranchAddress("isFakeEvent", & isFakeEvent);
     tree->SetBranchAddress("isLepFromPhEvent", & isLepFromPhEvent);
@@ -2511,8 +2513,10 @@ void tthmltree::definetree(TTree*tree) {
   tree->Branch("DL1_77_EventWeight", & DL1_77_EventWeight, "DL1_77_EventWeight/D");
   tree->Branch("DL1_85_EventWeight", & DL1_85_EventWeight, "DL1_85_EventWeight/D");
   tree->Branch("DL1_Continuous_EventWeight", & DL1_Continuous_EventWeight, "DL1_Continuous_EventWeight/D");
-  tree->Branch("pileupEventWeight_UP", & pileupEventWeight_UP, "pileupEventWeight_UP/D");
-  tree->Branch("pileupEventWeight_DOWN", & pileupEventWeight_DOWN, "pileupEventWeight_DOWN/D");
+  if (nominaltree){
+    tree->Branch("pileupEventWeight_UP", & pileupEventWeight_UP, "pileupEventWeight_UP/D");
+    tree->Branch("pileupEventWeight_DOWN", & pileupEventWeight_DOWN, "pileupEventWeight_DOWN/D");
+  }
   tree->Branch("muon_match_HLT_mu24", & muon_match_HLT_mu24);
   if (version == 7) {
     tree->Branch("HLT_mu24", & HLT_mu24, "HLT_mu24/B");
@@ -3097,7 +3101,7 @@ void tthmltree::definetree(TTree*tree) {
   tree->Branch("runNumber", & runNumber, "runNumber/i");
   tree->Branch("mc_channel_number", & mc_channel_number, "mc_channel_number/i");
   if(reduce == 0){
-   tree->Branch("m_mcevt_pdf_X1", & m_mcevt_pdf_X1);
+    tree->Branch("m_mcevt_pdf_X1", & m_mcevt_pdf_X1);
     tree->Branch("m_mcevt_pdf_X2", & m_mcevt_pdf_X2);
     tree->Branch("m_mcevt_pdf_PDGID1", & m_mcevt_pdf_PDGID1);
     tree->Branch("m_mcevt_pdf_PDGID2", & m_mcevt_pdf_PDGID2);
@@ -3356,16 +3360,6 @@ void tthmltree::definetree(TTree*tree) {
     tree->Branch("muon_PromptLeptonInput_rnnip", & muon_PromptLeptonInput_rnnip);
     tree->Branch("muon_PromptLeptonIso_TagWeight", & muon_PromptLeptonIso_TagWeight);
     tree->Branch("muon_PromptLeptonVeto_TagWeight", & muon_PromptLeptonVeto_TagWeight);
-    tree->Branch("muon_jet_pt", & muon_jet_pt);
-    tree->Branch("muon_jet_eta", & muon_jet_eta);
-    tree->Branch("muon_jet_phi", & muon_jet_phi);
-    tree->Branch("muon_jet_dr", & muon_jet_dr);
-    tree->Branch("muon_jet_ptRel", & muon_jet_ptRel);
-    tree->Branch("muon_jet_numTrk", & muon_jet_numTrk);
-    tree->Branch("muon_jet_sumPtTrk", & muon_jet_sumPtTrk);
-    tree->Branch("muon_jet_MV2c10_Weight", & muon_jet_MV2c10_Weight);
-    tree->Branch("muon_jet_tagWeightBin", & muon_jet_tagWeightBin);
-    tree->Branch("muon_jet_BDT", & muon_jet_BDT);
   }
   tree->Branch("m_jet_pt", & m_jet_pt);
   tree->Branch("m_jet_eta", & m_jet_eta);
