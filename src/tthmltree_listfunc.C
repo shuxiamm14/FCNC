@@ -624,7 +624,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetMakeClass(1);
 
   tree->SetBranchAddress("mc_channel_number", & mc_channel_number);
-  if(reduce>=1 && fcnc) tree->SetBranchAddress("weights", & weights);
+  if(reduce>=1) tree->SetBranchAddress("weights", & weights);
 
   if (reduce >= 2 && fcnc) {
     tree->SetBranchAddress("nljet",&nljet);
