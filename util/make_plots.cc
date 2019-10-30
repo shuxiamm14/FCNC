@@ -91,6 +91,15 @@ void plot(int iNP, TString framework)
 
 	tau_plots->sensitivevariable = "BDTG_test";
 	if(framework == "tthML"){
+		if(calculate_fake_calibration){
+			tau_plots->add("p_{T,#tau}","taupt","GeV");
+			tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
+			//tau_plots->add("p_{T,b}","bpt","GeV");
+  			//tau_plots->add("E_{miss}^{T}","met","GeV",5);
+			//tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
+			//notau_plots->add("p_{T,b}","bpt","GeV");
+			//notau_plots->add("p_{T,light-jet}","ljetpt","GeV");
+		}
 		if(plotnj){
   			tau_plots->add("N_{l-jet}","njet","",1);
 			tau_plots->muteregion("3j");
