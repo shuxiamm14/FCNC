@@ -35,12 +35,14 @@ void plot(int iNP, TString framework)
 	TString NPname = findNPname(dirname,iNP,framework);
 	TString nominalname = "fakeSF_tthML";
 	float BRbenchmark = 0.2;
+	bool calculate_fake_calibration = 1;
 	bool calibfake = 1;
 	bool fakeMC = 0;
 	bool doTrex = 0;
 	bool plotnj = 0;
 	bool doPlots = 1;
 	int plot_option = 2;
+	if(framework == "xTFW") calculate_fake_calibration = 0;
 	histSaver *tau_plots = new histSaver("dummy");
 	tau_plots->doROC = 0;
 	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
@@ -61,18 +63,19 @@ void plot(int iNP, TString framework)
 	}else{
 		samples.push_back(sample("top","Top production",kYellow));
 	}
-	stringstream ss;
-	ss<<"(BR=" << BRbenchmark << "%)";
-	TString tmp;
-	ss>>tmp;
-	double signorm = BRbenchmark*(framework == "xTFW"? 1:5);
-	samples.push_back(sample("fcnc_ch","#bar{t}t#rightarrowbWcH"+tmp,kRed,signorm));
-	samples.push_back(sample("fcnc_prod_ch","ctH Prod Mode"+tmp,kRed,signorm));
-	samples.push_back(sample("tcH","tcH merged signal"+tmp,kRed,signorm));
-	samples.push_back(sample("fcnc_uh","#bar{t}t#rightarrowbWuH"+tmp,kRed,signorm));
-	samples.push_back(sample("fcnc_prod_uh","utH Prod Mode"+tmp,kRed,signorm));
-	samples.push_back(sample("tuH","tuH merged signal"+tmp,kRed,signorm));
-
+	if(!calculate_fake_calibration){
+		stringstream ss;
+		ss<<"(BR=" << BRbenchmark << "%)";
+		TString tmp;
+		ss>>tmp;
+		double signorm = BRbenchmark*(framework == "xTFW"? 1:5);
+		samples.push_back(sample("fcnc_ch","#bar{t}t#rightarrowbWcH"+tmp,kRed,signorm));
+		samples.push_back(sample("fcnc_prod_ch","ctH Prod Mode"+tmp,kRed,signorm));
+		samples.push_back(sample("tcH","tcH merged signal"+tmp,kRed,signorm));
+		samples.push_back(sample("fcnc_uh","#bar{t}t#rightarrowbWuH"+tmp,kRed,signorm));
+		samples.push_back(sample("fcnc_prod_uh","utH Prod Mode"+tmp,kRed,signorm));
+		samples.push_back(sample("tuH","tuH merged signal"+tmp,kRed,signorm));
+	}
 	map<TString,vector<TString>> signalmap = {
 		{"tcH",{"fcnc_ch_lv","fcnc_ch_qq","fcnc_prod_ch"}},
 		{"tuH",{"fcnc_uh_lv","fcnc_uh_qq","fcnc_prod_uh"}},
@@ -165,7 +168,9 @@ void plot(int iNP, TString framework)
 	};
 	vector<TString> regions_tthML = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os"};
 	// "reg1l2tau2bnj_ss","reg1l2tau2bnj_os","reg1l1tau2b2j_ss","reg1l1tau2b2j_os","reg1l1tau2b3j_ss","reg1l1tau2b3j_os"};
+	vector<TString> regions_calc_fake = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
 	vector<TString> regions = framework == "xTFW" ? regions_xTFW : regions_tthML;
+	if(calculate_fake_calibration) regions = regions_calc_fake;
 	int nregions = regions.size();
 	TString nprong[] = {"1prong","3prong"};
 	for (int j = 0; j < nregions; ++j)
@@ -204,7 +209,7 @@ void plot(int iNP, TString framework)
 			{
 				TString mc_campaign = campains[i];
 				TFile *inputfile;
-				if(signalmap.find(samples[j].name) != signalmap.end()){
+				if(!calculate_fake_calibration && signalmap.find(samples[j].name) != signalmap.end()){
 					for(auto signalsamp : signalmap[samples[j].name]){
 						inputfile = getFile(mc_campaign + signalsamp + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 						for (int i = 0; i < 7; i++) tau_plots->read_sample( samples[j].name, signalsamp + "_" + origin[i], dirname==NPname? nominalname:NPname, samples[j].title, samples[j].color, samples[j].norm, inputfile);
