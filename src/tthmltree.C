@@ -481,7 +481,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       printf("error: read jet vector failed entry: %lld\n", jentry);
       continue;
     }
-    if (debug == 2) printf("reduce scheme during loop: %d\n", reduce);
+    if (debug >= 2) printf("reduce scheme during loop: %d\n", reduce);
     if (reduce == 1) {
       bool basic_selection = passEventCleaning;
       if (debug == 2) printf("passEventCleaning: %d\n", passEventCleaning);

@@ -106,11 +106,11 @@ void plot(int iNP, TString framework)
 		}else{
 			tau_plots->sensitivevariable = "BDTG_test";
 			tau_plots->add("BDT discriminant","BDTG_test","",10);
-    		//tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
-    		//tau_plots->add("#chi^{2}","chi2","",5);
-    		//tau_plots->add("M_{all}","allmass","",5);
-    		//tau_plots->add("p_{Z,all}","allpz","",5);
-    		//tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
+			//tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
+			//tau_plots->add("#chi^{2}","chi2","",5);
+			//tau_plots->add("M_{all}","allmass","",5);
+			//tau_plots->add("p_{Z,all}","allpz","",5);
+			//tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
   			//tau_plots->add("m_{t,SM}","t1mass","GeV",5);
   			//tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
   			//tau_plots->add("m_{W}","wmass","GeV",5);
@@ -128,8 +128,8 @@ void plot(int iNP, TString framework)
   			//tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
   			//tau_plots->add("M(#tau#tau#light-jet,min)","mtaujmin","",5);
   			//tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
-    		//tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
-    		//tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
+			//tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
+			//tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
   			//tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
   			//tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
   			//tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
@@ -280,8 +280,8 @@ void plot(int iNP, TString framework)
   		tau_plots->stackorder = stacks;
 
   	}
-  	tau_plots->printyield("reg1l1tau1b3j_os");
-  	tau_plots->printyield("reg1l1tau1b2j_os");
+  	//tau_plots->printyield("reg1l1tau1b3j_os");
+  	//tau_plots->printyield("reg1l1tau1b2j_os");
 	if(doTrex){
   		std::string nptmp = NPname.Data();
   		findAndReplaceAll(nptmp,"_1down","_down");
