@@ -89,7 +89,6 @@ void plot(int iNP, TString framework)
 		samplesys = "top";
 	}
 
-	tau_plots->sensitivevariable = "BDTG_test";
 	if(framework == "tthML"){
 		if(calculate_fake_calibration){
 			tau_plots->add("p_{T,#tau}","taupt","GeV");
@@ -137,6 +136,7 @@ void plot(int iNP, TString framework)
   			//tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
   		}
   	}else{
+		tau_plots->sensitivevariable = "BDTG_test";
 		tau_plots->add("BDT discriminant","BDTG_test","",5);
 		//tau_plots->add("BDT discriminant","BDTG_train","",5);
   		//tau_plots->add("p_{T,lead-#tau}","tau_0_pt","GeV",5);
