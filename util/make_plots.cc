@@ -198,10 +198,10 @@ void plot(int iNP, TString framework)
 
 	TFile *datafile1516;
 	if(!calculate_fake_calibration) datafile1516 = new TFile(framework== "tthML"? "nominal/data1516_fcnc_NOMINAL.root" : "NOMINAL/data1516_NOMINAL.root");
-	else datafile1516 = new TFile("nominal/data1516_fake_NOMINAL.root")
+	else datafile1516 = new TFile("nominal/data1516_fake_NOMINAL.root");
 	TFile *datafile17;
 	if(!calculate_fake_calibration)  datafile17 = new TFile(framework== "tthML"? "nominal/data17_fcnc_NOMINAL.root" : "NOMINAL/data17_NOMINAL.root");
-	else datafile17 = new TFile("nominal/data17_fake_NOMINAL.root")
+	else datafile17 = new TFile("nominal/data17_fake_NOMINAL.root");
 	TFile *datafile18 = 0;
 	if(framework == "xTFW") datafile18 = new TFile(framework== "tthML"? "nominal/data18_fcnc_NOMINAL.root" : "NOMINAL/data18_NOMINAL.root");
 
