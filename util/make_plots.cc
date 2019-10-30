@@ -230,7 +230,7 @@ void plot(int iNP, TString framework)
 					}
 				}else{
 					TString samplename = (samplesys==samples[j].name ? NPname : samples[j].name);
-					inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? (calculate_fake_calibration ? "fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
+					inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 					tau_plots->read_sample( samples[j].name, samplename + "_real", dirname==NPname? nominalname:NPname, samples[j].title, samples[j].color, samples[j].norm, inputfile);
 					if (fakeMC) {
 						for (int i = 0; i < 6; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "Fake MC, 1 truth #tau", kMagenta, samples[j].norm, inputfile);
