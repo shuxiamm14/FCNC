@@ -99,7 +99,7 @@ void plot(int iNP, TString framework)
 			//notau_plots->add("p_{T,b}","bpt","GeV");
 			//notau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 		}
-		if(plotnj){
+		else if(plotnj){
   			tau_plots->add("N_{l-jet}","njet","",1);
 			tau_plots->muteregion("3j");
 			tau_plots->muteregion("2j");
