@@ -12,9 +12,10 @@ int main(int argc, char const *argv[])
 		printf("Usage: reduce_run framework(xTFW/tthML) reduce(1/2/3) dataconfigfile(eg. mc16a_wjet.txt) systname(eg. NOMINAL) [optional: 1 for saveweightslist]\n");
 		exit(1);
 	}
-	bool debug = 0;
+	int debug = 0;
+	bool tthdofcnc = 0;
 	bool doplot = 0;
-	bool dofake = 0;
+	bool dofake = 1;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	TString framework = argv[1];
@@ -64,27 +65,31 @@ int main(int argc, char const *argv[])
 		regions.push_back("reg2ttau1b3jos");
 		regions.push_back("reg1ttau1mtau1b3jos");
 	}else{
-		regions.push_back("reg1l1tau1b2j_os");
-		regions.push_back("reg1l1tau1b3j_os");
-		regions.push_back("reg1l1tau2b2j_os");
-		regions.push_back("reg1l1tau2b3j_os");
-		regions.push_back("reg1l1tau1b2j_ss");
-		regions.push_back("reg1l1tau1b3j_ss");
-		regions.push_back("reg1l1tau2b2j_ss");
-		regions.push_back("reg1l1tau2b3j_ss");
-		regions.push_back("reg1l2tau1bnj_os");
-		regions.push_back("reg1l2tau1bnj_ss");
-		regions.push_back("reg1l2tau2bnj_os");
-		regions.push_back("reg1l2tau2bnj_ss");
-		regions_fake.push_back("reg1e1mu1tau2b");
-		regions_fake.push_back("reg1l1tau2b1j_os");
-		regions_fake.push_back("reg1l1tau2b1j_ss");
-		regions_fake.push_back("reg1l1tau2b_os");
-		regions_fake.push_back("reg1l1tau2b_ss");
-		regions_fake.push_back("reg1e1mu1tau1b");
-		regions_notau.push_back("reg1e1mu2bnj");
-		regions_notau.push_back("reg1l2b2j");
-		regions_notau.push_back("reg1e1mu2b");
+		if(tthdofcnc){
+			regions.push_back("reg1l1tau1b2j_os");
+			regions.push_back("reg1l1tau1b3j_os");
+			regions.push_back("reg1l1tau2b2j_os");
+			regions.push_back("reg1l1tau2b3j_os");
+			regions.push_back("reg1l1tau1b2j_ss");
+			regions.push_back("reg1l1tau1b3j_ss");
+			regions.push_back("reg1l1tau2b2j_ss");
+			regions.push_back("reg1l1tau2b3j_ss");
+			regions.push_back("reg1l2tau1bnj_os");
+			regions.push_back("reg1l2tau1bnj_ss");
+			regions.push_back("reg1l2tau2bnj_os");
+			regions.push_back("reg1l2tau2bnj_ss");
+		}
+		if(dofake){
+			regions_fake.push_back("reg1e1mu1tau2b");
+			regions_fake.push_back("reg1l1tau2b1j_os");
+			regions_fake.push_back("reg1l1tau2b1j_ss");
+			regions_fake.push_back("reg1l1tau2b_os");
+			regions_fake.push_back("reg1l1tau2b_ss");
+			regions_fake.push_back("reg1e1mu1tau1b");
+			regions_notau.push_back("reg1e1mu2bnj");
+			regions_notau.push_back("reg1l2b2j");
+			regions_notau.push_back("reg1e1mu2b");
+		}
 
 	}
 	
