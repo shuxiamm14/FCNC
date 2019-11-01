@@ -83,6 +83,10 @@ int main(int argc, char const *argv[])
 			regions_fake.push_back("reg1e1mu1tau2b");
 			regions_fake.push_back("reg1l1tau2b1j_os");
 			regions_fake.push_back("reg1l1tau2b1j_ss");
+			regions_fake.push_back("reg1l1tau2b2j_os");
+			regions_fake.push_back("reg1l1tau2b2j_ss");
+			regions_fake.push_back("reg1l1tau2b3j_os");
+			regions_fake.push_back("reg1l1tau2b3j_ss");
 			regions_fake.push_back("reg1l1tau2b_os");
 			regions_fake.push_back("reg1l1tau2b_ss");
 			regions_fake.push_back("reg1e1mu1tau1b");

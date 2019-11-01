@@ -46,7 +46,7 @@ void plot(int iNP, TString framework)
 	histSaver *tau_plots = new histSaver("dummy");
 	tau_plots->doROC = 0;
 	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
-	tau_plots->debug = 0;
+	tau_plots->debug = 1;
 	vector<sample> samples;
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kMagenta, kSpring, kTeal, kAzure};
 
@@ -57,7 +57,7 @@ void plot(int iNP, TString framework)
 	samples.push_back(sample("ztautau","Z#rightarrow#tau#tau",kGreen));
 	if(framework=="tthML"){
 		samples.push_back(sample("top","Top rare",kWhite));
-		samples.push_back(sample("others","Rare",kTeal));
+		samples.push_back(sample("others","Rare",kMagenta));
 		samples.push_back(sample("ttbar","t#bar{t}",kYellow));
 		samples.push_back(sample("ttV","t#bar{t}V",kAzure));
 	}else{
@@ -177,7 +177,7 @@ void plot(int iNP, TString framework)
 	};
 	vector<TString> regions_tthML = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os"};
 	// "reg1l2tau2bnj_ss","reg1l2tau2bnj_os","reg1l1tau2b2j_ss","reg1l1tau2b2j_os","reg1l1tau2b3j_ss","reg1l1tau2b3j_os"};
-	vector<TString> regions_calc_fake = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
+	vector<TString> regions_calc_fake = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_os","reg1e1mu1tau1b"};//,"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
 	vector<TString> regions = framework == "xTFW" ? regions_xTFW : regions_tthML;
 	if(calculate_fake_calibration) regions = regions_calc_fake;
 	int nregions = regions.size();
@@ -302,10 +302,11 @@ void plot(int iNP, TString framework)
 	}
 	if(doPlots){
 		gSystem->mkdir(("output_"+to_string(iNP)).c_str());
-		for (int i = samples.size()-6; i < samples.size(); ++i)
-		{
-  			tau_plots->overlay(samples[i].name);
-		}
+		if(!calculate_fake_calibration)
+		  for (int i = samples.size()-6; i < samples.size(); ++i)
+		  {
+  		  	tau_plots->overlay(samples[i].name);
+		  }
 		tau_plots->plot_stack(dirname==NPname? nominalname:NPname, NPname);
 		
 	}
