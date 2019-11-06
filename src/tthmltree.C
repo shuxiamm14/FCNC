@@ -539,14 +539,14 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         }
         ifregions["reg1l1tau1b2j_ss"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
         ifregions["reg1l1tau1b3j_ss"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-        ifregions["reg1l1tau2b2j_os"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
-        ifregions["reg1l1tau2b3j_os"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
-        ifregions["reg1l1tau2b2j_ss"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-        ifregions["reg1l1tau2b3j_ss"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-        ifregions["reg1l1tau2b2j_os_85"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
-        ifregions["reg1l1tau2b3j_os_85"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
-        ifregions["reg1l1tau2b2j_ss_85"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-        ifregions["reg1l1tau2b3j_ss_85"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+        ifregions["reg1l1tau2b2j_os"] = nJets_OR_T == 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l1tau2b3j_os"] = nJets_OR_T >= 5 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l1tau2b2j_ss"] = nJets_OR_T == 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+        ifregions["reg1l1tau2b3j_ss"] = nJets_OR_T >= 5 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+        ifregions["reg1l1tau2b2j_os_85"] = nJets_OR_T == 4 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l1tau2b3j_os_85"] = nJets_OR_T >= 5 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l1tau2b2j_ss_85"] = nJets_OR_T == 4 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+        ifregions["reg1l1tau2b3j_ss_85"] = nJets_OR_T >= 5 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
         ifregions["reg1l2tau1bnj_ss"] = nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 > 0;
         ifregions["reg1l2tau2bnj_os"] = nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 < 0;
         ifregions["reg1l2tau2bnj_ss"] = nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 > 0;
@@ -559,10 +559,6 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         ifregions["reg1l2b2j"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 4 && nTaus_OR_Pt25 == 0;
         ifregions["reg1l1tau2b1j_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 3 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
         ifregions["reg1l1tau2b1j_ss"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 3 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
-        ifregions["reg1l1tau2b2j_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 4 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
-        ifregions["reg1l1tau2b2j_ss"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 4 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
-        ifregions["reg1l1tau2b3j_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 5 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
-        ifregions["reg1l1tau2b3j_ss"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 5 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
         ifregions["reg1l1tau2b_os"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0;
         ifregions["reg1l1tau2b_ss"] = onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0;
       }
@@ -906,7 +902,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         drtauj = nJets_OR_T >= 2 ? (taus_v[0] + taus_v[1]).DeltaR(cjet_v) : 0;
 
       } else if (nljet) {
-        if (ifregions["reg1l1tau2b1j_os"] || ifregions["reg1l1tau2b1j_ss"] || ifregions["reg1l1tau2b2j_ss"] || ifregions["reg1l1tau2b2j_os"] || ifregions["reg1l1tau2b3j_ss"] || ifregions["reg1l1tau2b3j_os"] ) {
+        if (ifregions["reg1l1tau2b1j_os"] || ifregions["reg1l1tau2b1j_ss"]) {
           if(nJets_OR_T != 3) continue;
           taulmass = (taus_v[1] + ljets_v[0]).M();
         } else taulmass = 0;
