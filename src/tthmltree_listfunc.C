@@ -674,6 +674,8 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("wmass", &wmass);
     tree->SetBranchAddress("tau_truthJetFlavour_0", & tau_truthJetFlavour_0);
     tree->SetBranchAddress("nTaus_OR_Pt25", &nTaus_OR_Pt25);
+    tree->SetBranchAddress("PIV_0", &lep_promptLeptonVeto_TagWeight_0);
+    tree->SetBranchAddress("PIV_1", &lep_promptLeptonVeto_TagWeight_1);
     return;
   }
 

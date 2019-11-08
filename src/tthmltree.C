@@ -324,6 +324,8 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         outputtree[fcnc_regions[i]]->Branch("nljet", &nljet);
         outputtree[fcnc_regions[i]]->Branch("tau_truthJetFlavour_0", & tau_truthJetFlavour_0);
         outputtree[fcnc_regions[i]]->Branch("nTaus_OR_Pt25", &nTaus_OR_Pt25);
+        outputtree[fcnc_regions[i]]->Branch("PIV_0", &lep_promptLeptonVeto_TagWeight_0);
+        outputtree[fcnc_regions[i]]->Branch("PIV_1", &lep_promptLeptonVeto_TagWeight_1);
       }
     }
 
