@@ -383,6 +383,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
   nonfcncmatched = 0;
   fcncmatched = 0;
   leptonicw = 0;
+  bool cutPIV = 1;
+  bool cutmet = 1;
   TString cutflowregion = "";
   double cutflow[] = {
     0,
@@ -912,6 +914,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       dphitauetmiss = fabs(met_phi - (taus_v[0] + taus_v[1]).Phi());
     }
     if(reduce == 3){
+      if (cutPIV == 1 && lep_promptLeptonVeto_TagWeight_0>-0.5) continue; 
+      if (cutmet == 1 && etmiss<30*GeV) continue;
       if (ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"])
         if(t1vismass > 190*GeV )
           continue;

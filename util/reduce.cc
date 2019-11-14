@@ -13,9 +13,10 @@ int main(int argc, char const *argv[])
 		exit(1);
 	}
 	int debug = 0;
-	bool tthdofcnc = 0;
+	bool tthdofcnc = 1;
 	bool doplot = 0;
-	bool dofake = 1;
+	bool plot_sys = 0;
+	bool dofake = 0;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	TString framework = argv[1];
@@ -70,10 +71,10 @@ int main(int argc, char const *argv[])
 			regions.push_back("reg1l1tau1b3j_os");
 			regions.push_back("reg1l1tau2b2j_os");
 			regions.push_back("reg1l1tau2b3j_os");
-			regions.push_back("reg1l1tau1b2j_ss");
-			regions.push_back("reg1l1tau1b3j_ss");
 			regions.push_back("reg1l1tau2b2j_ss");
 			regions.push_back("reg1l1tau2b3j_ss");
+			regions.push_back("reg1l1tau1b2j_ss");
+			regions.push_back("reg1l1tau1b3j_ss");
 			regions.push_back("reg1l2tau1bnj_os");
 			regions.push_back("reg1l2tau1bnj_ss");
 			regions.push_back("reg1l2tau2bnj_os");
@@ -145,9 +146,11 @@ int main(int argc, char const *argv[])
 			if(!inputconfig.Contains("data") && !dofake){
 				if(analysis->nominaltree == 1 ){
 					for(auto v: fakeNPlist) analysis->plotNPs.push_back(v);
-					if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
-					else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
-					for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
+					if(plot_sys){
+						if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
+						else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
+						for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
+					}
 				}
 				else analysis->plotNPs.push_back("fakeSF_tthML");
 			}else  analysis->plotNPs.push_back("NOMINAL");
