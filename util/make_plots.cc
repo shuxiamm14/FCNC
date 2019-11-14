@@ -46,7 +46,7 @@ void plot(int iNP, TString framework)
 	histSaver *tau_plots = new histSaver("dummy");
 	tau_plots->doROC = 0;
 	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
-	tau_plots->debug = 1;
+	tau_plots->debug = 0;
 	vector<sample> samples;
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kMagenta, kSpring, kTeal, kAzure};
 
@@ -261,11 +261,11 @@ void plot(int iNP, TString framework)
   			tau_plots->scale_to_data("reg1l1tau2b2j_os","NOMINAL","1 fake","taupt_0",slices,3);
   			tau_plots->scale_to_data("reg1l1tau2b3j_os","NOMINAL","1 fake","taupt_0",slices,3);
   			tau_plots->scale_to_data("reg1l1tau2b2j_ss","NOMINAL","1 fake","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau2b3j_os","NOMINAL","1 fake","taupt_0",slices,3);
+  			tau_plots->scale_to_data("reg1l1tau2b3j_ss","NOMINAL","1 fake","taupt_0",slices,3);
   			tau_plots->scale_to_data("reg1l1tau1b2j_os","NOMINAL","1 fake","taupt_0",slices,3);
   			tau_plots->scale_to_data("reg1l1tau1b3j_os","NOMINAL","1 fake","taupt_0",slices,3);
   			tau_plots->scale_to_data("reg1l1tau1b2j_ss","NOMINAL","1 fake","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau1b3j_os","NOMINAL","1 fake","taupt_0",slices,3);
+  			tau_plots->scale_to_data("reg1l1tau1b3j_ss","NOMINAL","1 fake","taupt_0",slices,3);
   		}
   		if(!fakeMC && framework == "xTFW") {
   			stacks.push_back("fakeSS");
