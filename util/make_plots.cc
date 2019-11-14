@@ -258,14 +258,14 @@ void plot(int iNP, TString framework)
   		if(!fakeMC && calibfake) stacks.push_back("fake");
   		if(scaletodata){
   			double slices[] = {25,35,50,125};
-  			tau_plots->scale_to_data("reg1l1tau2b2j_os","NOMINAL","1 fakeMC","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau2b3j_os","NOMINAL","1 fakeMC","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau2b2j_ss","NOMINAL","1 fakeMC","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau2b3j_os","NOMINAL","1 fakeMC","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau1b2j_os","NOMINAL","1 fakeMC","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau1b3j_os","NOMINAL","1 fakeMC","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau1b2j_ss","NOMINAL","1 fakeMC","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau1b3j_os","NOMINAL","1 fakeMC","taupt_0",slices,3);
+  			tau_plots->scale_to_data("reg1l1tau2b2j_os","NOMINAL","1 fake","taupt_0",slices,3);
+  			tau_plots->scale_to_data("reg1l1tau2b3j_os","NOMINAL","1 fake","taupt_0",slices,3);
+  			tau_plots->scale_to_data("reg1l1tau2b2j_ss","NOMINAL","1 fake","taupt_0",slices,3);
+  			tau_plots->scale_to_data("reg1l1tau2b3j_os","NOMINAL","1 fake","taupt_0",slices,3);
+  			tau_plots->scale_to_data("reg1l1tau1b2j_os","NOMINAL","1 fake","taupt_0",slices,3);
+  			tau_plots->scale_to_data("reg1l1tau1b3j_os","NOMINAL","1 fake","taupt_0",slices,3);
+  			tau_plots->scale_to_data("reg1l1tau1b2j_ss","NOMINAL","1 fake","taupt_0",slices,3);
+  			tau_plots->scale_to_data("reg1l1tau1b3j_os","NOMINAL","1 fake","taupt_0",slices,3);
   		}
   		if(!fakeMC && framework == "xTFW") {
   			stacks.push_back("fakeSS");
