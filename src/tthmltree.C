@@ -325,6 +325,8 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         outputtree[fcnc_regions[i]]->Branch("nljet", &nljet);
         outputtree[fcnc_regions[i]]->Branch("tau_truthJetFlavour_0", & tau_truthJetFlavour_0);
         outputtree[fcnc_regions[i]]->Branch("nTaus_OR_Pt25", &nTaus_OR_Pt25);
+        outputtree[fcnc_regions[i]]->Branch("PIV_0", &lep_promptLeptonVeto_TagWeight_0);
+        outputtree[fcnc_regions[i]]->Branch("PIV_1", &lep_promptLeptonVeto_TagWeight_1);
       }
     }
 
@@ -552,14 +554,14 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         }
         ifregions["reg1l1tau1b2j_ss"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
         ifregions["reg1l1tau1b3j_ss"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-        ifregions["reg1l1tau2b2j_os"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
-        ifregions["reg1l1tau2b3j_os"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
-        ifregions["reg1l1tau2b2j_ss"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-        ifregions["reg1l1tau2b3j_ss"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-        ifregions["reg1l1tau2b2j_os_85"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
-        ifregions["reg1l1tau2b3j_os_85"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
-        ifregions["reg1l1tau2b2j_ss_85"] = nJets_OR_T == 3 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
-        ifregions["reg1l1tau2b3j_ss_85"] = nJets_OR_T >= 4 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+        ifregions["reg1l1tau2b2j_os"] = nJets_OR_T == 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l1tau2b3j_os"] = nJets_OR_T >= 5 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l1tau2b2j_ss"] = nJets_OR_T == 4 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+        ifregions["reg1l1tau2b3j_ss"] = nJets_OR_T >= 5 && nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+        ifregions["reg1l1tau2b2j_os_85"] = nJets_OR_T == 4 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l1tau2b3j_os_85"] = nJets_OR_T >= 5 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 > 0;
+        ifregions["reg1l1tau2b2j_ss_85"] = nJets_OR_T == 4 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
+        ifregions["reg1l1tau2b3j_ss_85"] = nJets_OR_T >= 5 && nJets_OR_T_MV2c10_85 == 2 && nJets_OR_T_MV2c10_70 == 0 && nTaus_OR_Pt25 == 1 && tau_charge_0*lep_ID_0 < 0;
         ifregions["reg1l2tau1bnj_ss"] = nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 > 0;
         ifregions["reg1l2tau2bnj_os"] = nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 < 0;
         ifregions["reg1l2tau2bnj_ss"] = nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 >= 2 && (tau_passEleBDT_1 && tau_passMuonOLR_1) && tau_charge_0*tau_charge_1 > 0;

@@ -89,9 +89,17 @@ void plot(int iNP, TString framework)
 		samplesys = "top";
 	}
 
-	tau_plots->sensitivevariable = "BDTG_test";
 	if(framework == "tthML"){
-		if(plotnj){
+		if(calculate_fake_calibration){
+			tau_plots->add("p_{T,#tau}","taupt","GeV");
+			tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
+			//tau_plots->add("p_{T,b}","bpt","GeV");
+  			//tau_plots->add("E_{miss}^{T}","met","GeV",5);
+			//tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
+			//notau_plots->add("p_{T,b}","bpt","GeV");
+			//notau_plots->add("p_{T,light-jet}","ljetpt","GeV");
+		}
+		else if(plotnj){
   			tau_plots->add("N_{l-jet}","njet","",1);
 			tau_plots->muteregion("3j");
 			tau_plots->muteregion("2j");
@@ -128,6 +136,7 @@ void plot(int iNP, TString framework)
   			//tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
   		}
   	}else{
+		tau_plots->sensitivevariable = "BDTG_test";
 		tau_plots->add("BDT discriminant","BDTG_test","",5);
 		//tau_plots->add("BDT discriminant","BDTG_train","",5);
   		//tau_plots->add("p_{T,lead-#tau}","tau_0_pt","GeV",5);
@@ -187,8 +196,12 @@ void plot(int iNP, TString framework)
 	TString origin[] = {"b", "c", "g", "j", "lep", "nomatch", "real", "data","doublefake"};
 	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "real #tau"};
 
-	TFile *datafile1516 = new TFile(framework== "tthML"? "nominal/data1516_fcnc_NOMINAL.root" : "NOMINAL/data1516_NOMINAL.root");
-	TFile *datafile17 = new TFile(framework== "tthML"? "nominal/data17_fcnc_NOMINAL.root" : "NOMINAL/data17_NOMINAL.root");
+	TFile *datafile1516;
+	if(!calculate_fake_calibration) datafile1516 = new TFile(framework== "tthML"? "nominal/data1516_fcnc_NOMINAL.root" : "NOMINAL/data1516_NOMINAL.root");
+	else datafile1516 = new TFile("nominal/data1516_fake_NOMINAL.root");
+	TFile *datafile17;
+	if(!calculate_fake_calibration)  datafile17 = new TFile(framework== "tthML"? "nominal/data17_fcnc_NOMINAL.root" : "NOMINAL/data17_NOMINAL.root");
+	else datafile17 = new TFile("nominal/data17_fake_NOMINAL.root");
 	TFile *datafile18 = 0;
 	if(framework == "xTFW") datafile18 = new TFile(framework== "tthML"? "nominal/data18_fcnc_NOMINAL.root" : "NOMINAL/data18_NOMINAL.root");
 
@@ -217,7 +230,7 @@ void plot(int iNP, TString framework)
 					}
 				}else{
 					TString samplename = (samplesys==samples[j].name ? NPname : samples[j].name);
-					inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
+					inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 					tau_plots->read_sample( samples[j].name, samplename + "_real", dirname==NPname? nominalname:NPname, samples[j].title, samples[j].color, samples[j].norm, inputfile);
 					if (fakeMC) {
 						for (int i = 0; i < 6; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "Fake MC, 1 truth #tau", kMagenta, samples[j].norm, inputfile);
