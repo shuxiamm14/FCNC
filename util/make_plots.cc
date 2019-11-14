@@ -35,7 +35,7 @@ void plot(int iNP, TString framework)
 	TString NPname = findNPname(dirname,iNP,framework);
 	TString nominalname = "fakeSF_tthML";
 	float BRbenchmark = 0.2;
-	bool calculate_fake_calibration = 1;
+	bool calculate_fake_calibration = 0;
 	bool calibfake = 1;
 	bool fakeMC = 0;
 	bool doTrex = 0;
@@ -104,8 +104,8 @@ void plot(int iNP, TString framework)
 			tau_plots->muteregion("3j");
 			tau_plots->muteregion("2j");
 		}else{
-			tau_plots->sensitivevariable = "BDTG_test";
-			tau_plots->add("BDT discriminant","BDTG_test","",10);
+			//tau_plots->sensitivevariable = "BDTG_test";
+			//tau_plots->add("BDT discriminant","BDTG_test","",10);
 			//tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
 			//tau_plots->add("#chi^{2}","chi2","",5);
 			//tau_plots->add("M_{all}","allmass","",5);
@@ -130,7 +130,7 @@ void plot(int iNP, TString framework)
   			//tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
 			//tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
 			//tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
-  			//tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
+  			tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
   			//tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
   			//tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
   			//tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
@@ -175,9 +175,8 @@ void plot(int iNP, TString framework)
 		"reg2mtau2b3jss",
 		"reg2mtau2b3jos",
 	};
-	vector<TString> regions_tthML = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os"};
-	// "reg1l2tau2bnj_ss","reg1l2tau2bnj_os","reg1l1tau2b2j_ss","reg1l1tau2b2j_os","reg1l1tau2b3j_ss","reg1l1tau2b3j_os"};
-	vector<TString> regions_calc_fake = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
+	vector<TString> regions_tthML = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os", "reg1l2tau2bnj_ss","reg1l2tau2bnj_os","reg1l1tau2b2j_ss","reg1l1tau2b2j_os","reg1l1tau2b3j_ss","reg1l1tau2b3j_os"};
+	vector<TString> regions_calc_fake = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_os","reg1e1mu1tau1b"};//,"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
 	vector<TString> regions = framework == "xTFW" ? regions_xTFW : regions_tthML;
 	if(calculate_fake_calibration) regions = regions_calc_fake;
 	int nregions = regions.size();
