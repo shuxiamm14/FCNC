@@ -128,16 +128,15 @@ int main(int argc, char const *argv[])
 				for (int iorigin = 0; iorigin < 8; ++iorigin)
 				{
 					TH1D *target[] = {
-						tau_plots->grabhist(origin[iorigin],regions[0] + "_" + nprong[iprong] + abvorbl[ptbin] + bwps[1],0),
-						tau_plots->grabhist(origin[iorigin],regions[1] + "_" + nprong[iprong] + abvorbl[ptbin] + bwps[1],0),
-						tau_plots->grabhist(origin[iorigin],regions[2] + "_" + nprong[iprong] + abvorbl[ptbin] + bwps[1],0),
-						tau_plots->grabhist(origin[iorigin],regions[0] + "_" + nprong[iprong] + abvorbl[ptbin] + "veto" + bwps[1],0),
-						tau_plots->grabhist(origin[iorigin],regions[1] + "_" + nprong[iprong] + abvorbl[ptbin] + "veto" + bwps[1],0),
-						tau_plots->grabhist(origin[iorigin],regions[2] + "_" + nprong[iprong] + abvorbl[ptbin] + "veto" + bwps[1],0),
-						tau_plots->grabhist(origin[iorigin],regions[1] + "_" + nprong[iprong] + abvorbl[ptbin] + bwps[3],0),
-
-						tau_plots->grabhist(origin[iorigin],regions[1] + "_" + nprong[iprong] + abvorbl[ptbin] + "veto" + bwps[1],1),
-						tau_plots->grabhist(origin[iorigin],regions[1] + "_" + nprong[iprong] + abvorbl[ptbin] + bwps[1],1)
+						tau_plots->grabhist_int(origin[iorigin],regions[0] + "_" + nprong[iprong] + abvorbl[ptbin] + bwps[1],0),
+						tau_plots->grabhist_int(origin[iorigin],regions[1] + "_" + nprong[iprong] + abvorbl[ptbin] + bwps[1],0),
+						tau_plots->grabhist_int(origin[iorigin],regions[2] + "_" + nprong[iprong] + abvorbl[ptbin] + bwps[1],0),
+						tau_plots->grabhist_int(origin[iorigin],regions[0] + "_" + nprong[iprong] + abvorbl[ptbin] + "veto" + bwps[1],0),
+						tau_plots->grabhist_int(origin[iorigin],regions[1] + "_" + nprong[iprong] + abvorbl[ptbin] + "veto" + bwps[1],0),
+						tau_plots->grabhist_int(origin[iorigin],regions[2] + "_" + nprong[iprong] + abvorbl[ptbin] + "veto" + bwps[1],0),
+						tau_plots->grabhist_int(origin[iorigin],regions[1] + "_" + nprong[iprong] + abvorbl[ptbin] + bwps[3],0),
+						tau_plots->grabhist_int(origin[iorigin],regions[1] + "_" + nprong[iprong] + abvorbl[ptbin] + "veto" + bwps[1],1),
+						tau_plots->grabhist_int(origin[iorigin],regions[1] + "_" + nprong[iprong] + abvorbl[ptbin] + bwps[1],1)
 					};
 					//TH1D *fithist[4];
 					//for (int i = 0; i < 4; ++i)
@@ -168,7 +167,7 @@ int main(int argc, char const *argv[])
 						for (int ibtag = 0; ibtag < 2; ++ibtag){
 							for (int i = 0; i < 3; ++i){
 								if(ifveto==1 && ibtag==1) continue; 
-								target = tau_plots->grabhist(origin[iorigin],regions[i] + "_" + nprong[iprong] + abvorbl[ptbin] + (ifveto?"veto":"") + bwps[ibtag*2+1],0);
+								target = tau_plots->grabhist_int(origin[iorigin],regions[i] + "_" + nprong[iprong] + abvorbl[ptbin] + (ifveto?"veto":"") + bwps[ibtag*2+1],0);
 								target->Scale(val[iorigin]);
 							} // loop region
 						} // loop btag wp

@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <cstdlib>
 #include <sys/ioctl.h>
-#include "observable.h"
 #include "fcnc_include.h"
 #include "weightsys_list.h"
 using namespace std;
