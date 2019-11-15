@@ -676,6 +676,8 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("nTaus_OR_Pt25", &nTaus_OR_Pt25);
     tree->SetBranchAddress("PIV_0", &lep_promptLeptonVeto_TagWeight_0);
     tree->SetBranchAddress("PIV_1", &lep_promptLeptonVeto_TagWeight_1);
+    tree->SetBranchAddress("lep_ID_0", &lep_ID_0);
+    tree->SetBranchAddress("lep_ID_1", &lep_ID_1);
     return;
   }
 
@@ -775,7 +777,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("DL1_85_EventWeight", & DL1_85_EventWeight);
   tree->SetBranchAddress("DL1_Continuous_EventWeight", & DL1_Continuous_EventWeight);
   tree->SetBranchAddress("MV2c10_Continuous_EventWeight", & MV2c10_Continuous_EventWeight);
-  if (nominaltree){
+  if (nominaltree && reduce == 0){
     tree->SetBranchAddress("pileupEventWeight_UP", & pileupEventWeight_UP);
     tree->SetBranchAddress("pileupEventWeight_DOWN", & pileupEventWeight_DOWN);
     tree->SetBranchAddress("muon_jet_pt", & muon_jet_pt);

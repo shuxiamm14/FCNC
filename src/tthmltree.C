@@ -326,6 +326,8 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         outputtree[fcnc_regions[i]]->Branch("nTaus_OR_Pt25", &nTaus_OR_Pt25);
         outputtree[fcnc_regions[i]]->Branch("PIV_0", &lep_promptLeptonVeto_TagWeight_0);
         outputtree[fcnc_regions[i]]->Branch("PIV_1", &lep_promptLeptonVeto_TagWeight_1);
+        outputtree[fcnc_regions[i]]->Branch("lep_ID_0",&lep_ID_0);
+        outputtree[fcnc_regions[i]]->Branch("lep_ID_1",&lep_ID_1);
       }
     }
 
@@ -384,6 +386,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
   fcncmatched = 0;
   leptonicw = 0;
   bool cutPIV = 1;
+  bool cutmass = 0;
   bool cutmet = 1;
   TString cutflowregion = "";
   double cutflow[] = {
@@ -914,16 +917,18 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       dphitauetmiss = fabs(met_phi - (taus_v[0] + taus_v[1]).Phi());
     }
     if(reduce == 3){
-      if (cutPIV == 1 && lep_promptLeptonVeto_TagWeight_0>-0.5) continue; 
+      if (cutPIV == 1 && ((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 > -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 > -0.5))) continue; 
       if (cutmet == 1 && etmiss<30*GeV) continue;
       if (ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"])
         if(t1vismass > 190*GeV )
           continue;
       tthcutflow.fill();
-      if(ttvismass > 125*GeV ) continue;
-      tthcutflow.fill();
-      if(ttvismass < 25*GeV ) continue;      
-      tthcutflow.fill();
+      if(cutmass == 1){
+        if(ttvismass > 125*GeV ) continue;
+        tthcutflow.fill();
+        if(ttvismass < 25*GeV ) continue;      
+        tthcutflow.fill();
+      }
       allpz = fabs(allpz);
       if(debug) printf("eval BDTG\n");
 
