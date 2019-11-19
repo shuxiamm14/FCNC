@@ -177,7 +177,7 @@ int main(int argc, char const *argv[])
 	bool isData = 0;
 	if(inputconfig.Contains("data")) isData = 1;
 	else if(inputconfig.Contains("mc16a")) luminosity = 3.219555072 + 32.988125184;
-	else if(inputconfig.Contains("mc16d")) luminosity = 44.30739456;
+	else if(inputconfig.Contains("mc16d")) luminosity = 44.30739456 - 0.242743152; //No event passed GRL in run 338377 in v3, reason unknown.
 	else if(inputconfig.Contains("mc16e")) luminosity = 59.93723904;
 	else {
 		printf("Wrong config file name, cannot recognise mc campaign: %s\n", inputconfig.Data());

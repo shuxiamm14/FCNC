@@ -16,6 +16,7 @@ tthmltree::tthmltree():nominal::nominal(){
   tthcutflow.set_event_number(&eventNumber);
 }
 
+
 TH2F* tthmltree::prob_20_40 = 0;
 TH2F* tthmltree::prob_40_60 = 0;
 TH2F* tthmltree::prob_60_80 = 0;
@@ -291,6 +292,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         outputtree[fcnc_regions[i]]->Branch("tau_JetBDTSigTight_0",&tau_JetBDTSigTight_0);
         outputtree[fcnc_regions[i]]->Branch("tau_JetBDTSigTight_1",&tau_JetBDTSigTight_1);
         outputtree[fcnc_regions[i]]->Branch("eventNumber", &eventNumber);
+        outputtree[fcnc_regions[i]]->Branch("runNumber", &runNumber);
         outputtree[fcnc_regions[i]]->Branch("neutrino_pt" , &neutrino_pt );
         outputtree[fcnc_regions[i]]->Branch("neutrino_eta", &neutrino_eta);
         outputtree[fcnc_regions[i]]->Branch("neutrino_phi", &neutrino_phi);
@@ -958,7 +960,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           if(mc_channel_number>0)
             evtfile<<reg.first<<" "<<mc_channel_number<<" "<<eventNumber<<" "<<weights->at(0)<<endl;
           else
-            evtfile<<reg.first<<" "<<mc_channel_number<<" "<<eventNumber<<" "<<weights->at(0)<<endl;
+            evtfile<<reg.first<<" "<<runNumber<<" "<<eventNumber<<" "<<weights->at(0)<<endl;
         }
       }
     }
