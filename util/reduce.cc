@@ -12,16 +12,19 @@ int main(int argc, char const *argv[])
 		printf("Usage: reduce_run framework(xTFW/tthML) reduce(1/2/3) dataconfigfile(eg. mc16a_wjet.txt) systname(eg. NOMINAL) [optional: 1 for saveweightslist]\n");
 		exit(1);
 	}
-	int debug = 0;
-	bool tthdofcnc = 1;
-	bool doplot = 0;
+	int debug = 1;
+	int reduce = *argv[2]-'0';
+	bool doplot = reduce == 3 ? 1 : 0;
+	bool tthdofcnc = 0;
 	bool plot_sys = 0;
-	bool dofake = 0;
+	bool dofake = 1;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	TString framework = argv[1];
-	int reduce = *argv[2]-'0';
-	doplot = reduce == 3 ? 1 : 0;
+	if(reduce == 3) {
+		dofake = 0;
+		tthdofcnc = 1;
+	}
 	TString samplefile = argv[3];
 	TString systname = argv[4];
 	if(samplefile.Contains("sys") && systname != "NOMINAL") {
@@ -135,6 +138,8 @@ int main(int argc, char const *argv[])
 				analysis->dobwp["btagwp85"] = 1;
 				regions.insert(regions.end(),regions_fake.begin(),regions_fake.end());
 				regions.insert(regions.end(),regions_notau.begin(),regions_notau.end());
+				analysis->fake_regions = regions_fake;
+				analysis->fake_regions_notau = regions_notau;
 			}
 			analysis->dumpeventnumber = 1;
 		}

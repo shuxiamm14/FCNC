@@ -176,7 +176,7 @@ void plot(int iNP, TString framework)
 		"reg2mtau2b3jos",
 	};
 	vector<TString> regions_tthML = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os", "reg1l2tau2bnj_ss","reg1l2tau2bnj_os","reg1l1tau2b2j_ss","reg1l1tau2b2j_os","reg1l1tau2b3j_ss","reg1l1tau2b3j_os"};
-	vector<TString> regions_calc_fake = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_os","reg1e1mu1tau1b"};//,"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
+	vector<TString> regions_calc_fake = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_os","reg1e1mu1tau1b","reg1l1tau2b_os","reg1l1tau2b_ss"};//,"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
 	vector<TString> regions = framework == "xTFW" ? regions_xTFW : regions_tthML;
 	if(calculate_fake_calibration) regions = regions_calc_fake;
 	int nregions = regions.size();
@@ -257,15 +257,22 @@ void plot(int iNP, TString framework)
   		}
   		if(!fakeMC && calibfake) stacks.push_back("fake");
   		if(scaletodata){
-  			double slices[] = {25,35,50,125};
-  			tau_plots->scale_to_data("reg1l1tau2b2j_os","NOMINAL","1 fake","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau2b3j_os","NOMINAL","1 fake","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau2b2j_ss","NOMINAL","1 fake","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau2b3j_ss","NOMINAL","1 fake","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau1b2j_os","NOMINAL","1 fake","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau1b3j_os","NOMINAL","1 fake","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau1b2j_ss","NOMINAL","1 fake","taupt_0",slices,3);
-  			tau_plots->scale_to_data("reg1l1tau1b3j_ss","NOMINAL","1 fake","taupt_0",slices,3);
+  			double slices[] = {25,35,45,125};
+			if(calculate_fake_calibration){
+				tau_plots->scale_to_data("reg1l1tau2b1j_os","NOMINAL","1 fake","taupt",slices,3);
+				tau_plots->scale_to_data("reg1l1tau2b1j_ss","NOMINAL","1 fake","taupt",slices,3);
+				tau_plots->scale_to_data("reg1l1tau2b_os","NOMINAL","1 fake","taupt",slices,3);
+				tau_plots->scale_to_data("reg1l1tau2b_ss","NOMINAL","1 fake","taupt",slices,3);
+			}else{
+  				tau_plots->scale_to_data("reg1l1tau2b2j_os","NOMINAL","1 fake","taupt_0",slices,3);
+  				tau_plots->scale_to_data("reg1l1tau2b3j_os","NOMINAL","1 fake","taupt_0",slices,3);
+  				tau_plots->scale_to_data("reg1l1tau2b2j_ss","NOMINAL","1 fake","taupt_0",slices,3);
+  				tau_plots->scale_to_data("reg1l1tau2b3j_ss","NOMINAL","1 fake","taupt_0",slices,3);
+  				tau_plots->scale_to_data("reg1l1tau1b2j_os","NOMINAL","1 fake","taupt_0",slices,3);
+  				tau_plots->scale_to_data("reg1l1tau1b3j_os","NOMINAL","1 fake","taupt_0",slices,3);
+  				tau_plots->scale_to_data("reg1l1tau1b2j_ss","NOMINAL","1 fake","taupt_0",slices,3);
+  				tau_plots->scale_to_data("reg1l1tau1b3j_ss","NOMINAL","1 fake","taupt_0",slices,3);
+			}
   		}
   		if(!fakeMC && framework == "xTFW") {
   			stacks.push_back("fakeSS");
