@@ -1075,7 +1075,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
                   weight = weights->at(1) * weights->at(index);
                 fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, plotNPs[iNP]);
               }
-            }else if(iter->first.Contains("tau")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
+            }else {
+              if(iter->first.Contains("tau")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
               else fill_notau(iter->first, sample);
             }
           }else{ //data
