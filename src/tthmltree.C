@@ -702,6 +702,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           }
         }
       }
+      etmiss = met_met;
       if (fcnc) {
         double tmpdr;
         double tmpm;
@@ -763,7 +764,6 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         }
         if (nJets_OR_T >= 2) cjet_v = ljets_v[ljet_indice[0]];
         mets.SetXYZ(met_met*cos(met_phi), met_met*sin(met_phi), MET_RefFinal_sumet);
-        etmiss = met_met;
         //==  =============================fit neutrino===============================
         if(nTaus_OR_Pt25 == 1 || dofit1l2tau){
           if (nTaus_OR_Pt25 >= 2) {
