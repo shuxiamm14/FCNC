@@ -665,6 +665,7 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("tau_JetBDTSigTight_0", & tau_JetBDTSigTight_0);
     tree->SetBranchAddress("tau_JetBDTSigTight_1", & tau_JetBDTSigTight_1);
     tree->SetBranchAddress("eventNumber", & eventNumber);
+    tree->SetBranchAddress("runNumber", & runNumber);
     tree->SetBranchAddress("drtaujmin", & drtaujmin);
     tree->SetBranchAddress("mtaujmin", & mtaujmin);
     tree->SetBranchAddress("etmiss",&etmiss);

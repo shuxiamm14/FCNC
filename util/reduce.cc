@@ -12,16 +12,19 @@ int main(int argc, char const *argv[])
 		printf("Usage: reduce_run framework(xTFW/tthML) reduce(1/2/3) dataconfigfile(eg. mc16a_wjet.txt) systname(eg. NOMINAL) [optional: 1 for saveweightslist]\n");
 		exit(1);
 	}
-	int debug = 0;
-	bool tthdofcnc = 1;
-	bool doplot = 0;
+	int debug = 1;
+	int reduce = *argv[2]-'0';
+	bool doplot = reduce == 3 ? 1 : 0;
+	bool tthdofcnc = 0;
 	bool plot_sys = 0;
-	bool dofake = 0;
+	bool dofake = 1;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	TString framework = argv[1];
-	int reduce = *argv[2]-'0';
-	doplot = reduce == 3 ? 1 : 0;
+	if(reduce == 3) {
+		dofake = 0;
+		tthdofcnc = 1;
+	}
 	TString samplefile = argv[3];
 	TString systname = argv[4];
 	if(samplefile.Contains("sys") && systname != "NOMINAL") {
@@ -139,6 +142,8 @@ int main(int argc, char const *argv[])
 				analysis->dobwp["btagwp85"] = 1;
 				regions.insert(regions.end(),regions_fake.begin(),regions_fake.end());
 				regions.insert(regions.end(),regions_notau.begin(),regions_notau.end());
+				analysis->fake_regions = regions_fake;
+				analysis->fake_regions_notau = regions_notau;
 			}
 			analysis->dumpeventnumber = 1;
 		}
@@ -181,7 +186,7 @@ int main(int argc, char const *argv[])
 	bool isData = 0;
 	if(inputconfig.Contains("data")) isData = 1;
 	else if(inputconfig.Contains("mc16a")) luminosity = 3.219555072 + 32.988125184;
-	else if(inputconfig.Contains("mc16d")) luminosity = 44.30739456;
+	else if(inputconfig.Contains("mc16d")) luminosity = 44.30739456 - 0.242743152; //No event passed GRL in run 338377 in v3, reason unknown.
 	else if(inputconfig.Contains("mc16e")) luminosity = 59.93723904;
 	else {
 		printf("Wrong config file name, cannot recognise mc campaign: %s\n", inputconfig.Data());

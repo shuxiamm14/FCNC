@@ -16,6 +16,7 @@ tthmltree::tthmltree():nominal::nominal(){
   tthcutflow.set_event_number(&eventNumber);
 }
 
+
 TH2F* tthmltree::prob_20_40 = 0;
 TH2F* tthmltree::prob_40_60 = 0;
 TH2F* tthmltree::prob_60_80 = 0;
@@ -290,6 +291,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         outputtree[fcnc_regions[i]]->Branch("tau_JetBDTSigTight_0",&tau_JetBDTSigTight_0);
         outputtree[fcnc_regions[i]]->Branch("tau_JetBDTSigTight_1",&tau_JetBDTSigTight_1);
         outputtree[fcnc_regions[i]]->Branch("eventNumber", &eventNumber);
+        outputtree[fcnc_regions[i]]->Branch("runNumber", &runNumber);
         outputtree[fcnc_regions[i]]->Branch("neutrino_pt" , &neutrino_pt );
         outputtree[fcnc_regions[i]]->Branch("neutrino_eta", &neutrino_eta);
         outputtree[fcnc_regions[i]]->Branch("neutrino_phi", &neutrino_phi);
@@ -686,6 +688,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           }
         }
       }
+      etmiss = met_met;
       if (fcnc) {
         double tmpdr;
         double tmpm;
@@ -747,7 +750,6 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         }
         if (nJets_OR_T >= 2) cjet_v = ljets_v[ljet_indice[0]];
         mets.SetXYZ(met_met*cos(met_phi), met_met*sin(met_phi), MET_RefFinal_sumet);
-        etmiss = met_met;
         //==  =============================fit neutrino===============================
         if(nTaus_OR_Pt25 == 1 || dofit1l2tau){
           if (nTaus_OR_Pt25 >= 2) {
@@ -916,9 +918,12 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       }
       dphitauetmiss = fabs(met_phi - (taus_v[0] + taus_v[1]).Phi());
     }
-    if(reduce == 3){
+    if((reduce == 3 && fcnc)|| (reduce == 2 && !fcnc)){
       if (cutPIV == 1 && ((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 > -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 > -0.5))) continue; 
       if (cutmet == 1 && etmiss<30*GeV) continue;
+      tthcutflow.fill();
+    }
+    if(reduce == 3){
       if (ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"])
         if(t1vismass > 190*GeV )
           continue;
@@ -944,7 +949,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           if(mc_channel_number>0)
             evtfile<<reg.first<<" "<<mc_channel_number<<" "<<eventNumber<<" "<<weights->at(0)<<endl;
           else
-            evtfile<<reg.first<<" "<<mc_channel_number<<" "<<eventNumber<<" "<<weights->at(0)<<endl;
+            evtfile<<reg.first<<" "<<runNumber<<" "<<eventNumber<<" "<<weights->at(0)<<endl;
         }
       }
     }

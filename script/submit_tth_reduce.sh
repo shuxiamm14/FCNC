@@ -57,7 +57,7 @@ if [[ $2 =~ "sub" ]] ; then
 		if [[ $donefind == $lines ]] ; then
 			continue
 		fi
-		if ( [[ $lines =~ "data" ]] || [[ $lines =~ "sys" ]] ) && [[ $systname != "nominal" ]] ; then
+		if ( [[ $lines =~ "data" ]] && [[ $systname != "nominal" ]] ) || [[ $lines =~ "sys" ]] ; then
 			continue
 		fi
 		name=${lines/.txt}
