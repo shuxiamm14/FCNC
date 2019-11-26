@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
 		printf("Usage: reduce_run framework(xTFW/tthML) reduce(1/2/3) dataconfigfile(eg. mc16a_wjet.txt) systname(eg. NOMINAL) [optional: 1 for saveweightslist]\n");
 		exit(1);
 	}
-	int debug = 1;
+	int debug = 0;
 	int reduce = *argv[2]-'0';
 	bool doplot = reduce == 3 ? 1 : 0;
 	bool tthdofcnc = 0;
@@ -83,7 +83,7 @@ int main(int argc, char const *argv[])
 			regions.push_back("reg1l2tau2bnj_os");
 			regions.push_back("reg1l2tau2bnj_ss");
 		}
-		if(dofake){
+		if(dofake || reduce == 1){
 			regions_fake.push_back("reg1e1mu1tau2b");
 			regions_fake.push_back("reg1l1tau2b1j_os");
 			regions_fake.push_back("reg1l1tau2b1j_ss");
@@ -115,16 +115,11 @@ int main(int argc, char const *argv[])
 	analysis->dumptruth = 0;
 	analysis->reduce = reduce;
 	analysis->debug = debug;
-	analysis->fcnc_regions = regions;
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
-	analysis->writetree = reduce <= 2 ? 1:0;
+	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
 	if(framework == "xTFW") {
 		if(reduce == 1) analysis->init_reduce1();
 		else analysis->init_reduce2();
-	}
-	if(framework == "tthML" && (reduce < 2 || dofake)) {
-		analysis->fake_regions = regions_fake;
-		analysis->fake_regions_notau = regions_notau;
 	}
 	char inputline[500];
 
@@ -179,6 +174,11 @@ int main(int argc, char const *argv[])
 		}
 		delete analysis;
 		return 0;
+	}
+	if(framework == "tthML"){
+		analysis->fcnc_regions = regions;
+		analysis->fake_regions = regions_fake;
+		analysis->fake_regions_notau = regions_notau;
 	}
 	analysis->init_sample(inputconfig,inputconfig);
 
