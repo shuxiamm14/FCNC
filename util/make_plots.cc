@@ -34,7 +34,7 @@ void plot(int iNP, TString framework)
 	TString NPname = findNPname(dirname,iNP,framework);
 	TString nominalname = "fakeSF_tthML";
 	float BRbenchmark = 0.2;
-	bool calculate_fake_calibration = 0;
+	bool calculate_fake_calibration = 1;
 	bool calibfake = 1;
 	bool fakeMC = 0;
 	bool doTrex = 0;
@@ -45,7 +45,9 @@ void plot(int iNP, TString framework)
 	if(framework == "xTFW") calculate_fake_calibration = 0;
 	histSaver *tau_plots = new histSaver("dummy");
 	tau_plots->doROC = 0;
-	tau_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV, 140 fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
+	TString lumitag = "#it{#sqrt{s}} = 13TeV, ";
+	lumitag += framework == "xTFW" ? "140 fb^{-1}" : "80 fb^{-1}";
+	tau_plots->SetLumiAnaWorkflow(lumitag,"FCNC tqH H#rightarrow tautau","Internal");
 	tau_plots->debug = 0;
 	vector<sample> samples;
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kMagenta, kSpring, kTeal, kAzure};
