@@ -98,8 +98,8 @@ void plot(int iNP, TString framework)
 			tau_plots->add("p_{T,b}","bpt","GeV");
   			tau_plots->add("E_{miss}^{T}","met","GeV",5);
 			tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
-			notau_plots->add("p_{T,b}","bpt","GeV");
-			notau_plots->add("p_{T,light-jet}","ljetpt","GeV");
+			//tau_plots->add("p_{T,b}","bpt","GeV");
+			//tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 		}
 		else if(plotnj){
   			tau_plots->add("N_{l-jet}","njet","",1);
