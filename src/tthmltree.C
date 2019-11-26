@@ -277,6 +277,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
       outputtree[fcnc_regions[i]] = new TTree(fcnc_regions[i],fcnc_regions[i]);
       if(reduce==1 ) definetree(outputtree[fcnc_regions[i]]);
       if(reduce==2 ){
+        if(sample.Contains("data")) outputtree[fcnc_regions[i]]->Branch("runNumber", &runNumber);
         outputtree[fcnc_regions[i]]->Branch("chi2",&chi2);
         outputtree[fcnc_regions[i]]->Branch("allmass", &allmass);
         outputtree[fcnc_regions[i]]->Branch("allpz", &allpz);
@@ -292,7 +293,6 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         outputtree[fcnc_regions[i]]->Branch("tau_JetBDTSigTight_0",&tau_JetBDTSigTight_0);
         outputtree[fcnc_regions[i]]->Branch("tau_JetBDTSigTight_1",&tau_JetBDTSigTight_1);
         outputtree[fcnc_regions[i]]->Branch("eventNumber", &eventNumber);
-        outputtree[fcnc_regions[i]]->Branch("runNumber", &runNumber);
         outputtree[fcnc_regions[i]]->Branch("neutrino_pt" , &neutrino_pt );
         outputtree[fcnc_regions[i]]->Branch("neutrino_eta", &neutrino_eta);
         outputtree[fcnc_regions[i]]->Branch("neutrino_phi", &neutrino_phi);
