@@ -176,6 +176,7 @@ void tthmltree::init_hist(TString outputfilename){
       fcnc_plots->add(100,5.,55.,"#chi^2","chi2",&chi2,false,"");
       fcnc_plots->add(500,200.,1200.,"m_{all}","allmass",&allmass,true,"GeV");
       fcnc_plots->add(500,0.,1000.,"P_{z,all}","allpz",&allpz,true,"GeV");
+      fcnc_plots->add(20,20.,120.,"m_{#tau,light-jet}","taulmass",&taulmass,true,"GeV");
     }
     fcnc_plots->add(10,25.,125.,"p_{T,#tau}","taupt_0",&tau_pt_0,true,"GeV");
     fcnc_plots->add(10,25.,125.,"p_{T,#tau}","taupt_1",&tau_pt_1,true,"GeV");
@@ -915,12 +916,14 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         t2vismass = nJets_OR_T >= 2 ? (taus_v[0] + taus_v[1] + cjet_v).M() : 0;
         drtautau = taus_v[0].DeltaR(taus_v[1]);
         drtauj = nJets_OR_T >= 2 ? (taus_v[0] + taus_v[1]).DeltaR(cjet_v) : 0;
-
-      } else if (nljet) {
-        if (ifregions["reg1l1tau2b1j_os"] || ifregions["reg1l1tau2b1j_ss"]) {
-          if(nJets_OR_T != 3) continue;
-          taulmass = (taus_v[1] + ljets_v[0]).M();
-        } else taulmass = 0;
+      }
+      taulmass = 0;
+      if (nljet && nTaus_OR_Pt25){
+        for(auto jv: ljets_v){
+          if(taulmass == 0 || taulmass > (taus_v[1] + jv).M()){
+            taulmass = (taus_v[1] + jv).M();
+          }
+        }
       }
       dphitauetmiss = fabs(met_phi - (taus_v[0] + taus_v[1]).Phi());
     }
@@ -1175,7 +1178,7 @@ void tthmltree::constructTruth(){
           printf("Erase particle: %d\n", parts->pdg);
         }
       }else{
-        printf("WARNING: only 1 child found: %d but not itself %d\n", parts->children[0]->pdg, parts->pdg);
+        if(debug) printf("WARNING: only 1 child found: %d but not itself %d\n", parts->children[0]->pdg, parts->pdg);
       }
     }
   }
