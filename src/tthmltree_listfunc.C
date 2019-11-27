@@ -679,6 +679,8 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("PIV_1", &lep_promptLeptonVeto_TagWeight_1);
     tree->SetBranchAddress("lep_ID_0", &lep_ID_0);
     tree->SetBranchAddress("lep_ID_1", &lep_ID_1);
+    tree->SetBranchAddress("taumatchwjet", &taumatchwjet);
+    
     return;
   }
 

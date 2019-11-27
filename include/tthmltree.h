@@ -1,5 +1,6 @@
 #include "nominal.h"
 #include "cutflow.h"
+#include "truthpart.h"
 class tthmltree : public nominal{
 public:
    tthmltree();
@@ -18,6 +19,9 @@ public:
    static Float_t eval(const Float_t x, const Float_t y, const TH2F* h);
    static void fillOverFlow(TH1F* h);
    bool addWeightSys();
+   void constructTruth();
+   truthpart* truthmatch(TLorentzVector p4);
+   std::vector<truthpart*> truthparticles;
    cutflow tthcutflow;
    bool dofit1l2tau = 0;
    bool applyfakeSF = 0;
@@ -34,6 +38,7 @@ public:
    static TH2F* prob_400;
    const bool tightLep = 1;
    const bool tightTau = 0;
+   bool taumatchwjet = 0;
 
    ULong64_t       eventNumber;
    UInt_t          runNumber;

@@ -331,6 +331,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         outputtree[fcnc_regions[i]]->Branch("PIV_1", &lep_promptLeptonVeto_TagWeight_1);
         outputtree[fcnc_regions[i]]->Branch("lep_ID_0",&lep_ID_0);
         outputtree[fcnc_regions[i]]->Branch("lep_ID_1",&lep_ID_1);
+        outputtree[fcnc_regions[i]]->Branch("taumatchwjet", &taumatchwjet);
       }
     }
 
@@ -375,7 +376,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         fcnc_plots->init_sample(sample + "_lep",plotNPs[0],sampletitle + "(lepton fake #tau)",kGreen);
         fcnc_plots->init_sample(sample + "_real",plotNPs[0],sampletitle + "(real #tau)",kRed);
         fcnc_plots->init_sample(sample + "_c",plotNPs[0],sampletitle + "(c-jets fake #tau)",kOrange);
-        fcnc_plots->init_sample(sample + "_nomatch",plotNPs[0],sampletitle + "(no truth matched fake #tau)",kGray);
+        fcnc_plots->init_sample(sample + "_wjet",plotNPs[0],sampletitle + "(w-jet matched fake #tau)",kGray);
       }
       if(fake_nregions){
         fake_plots->init_sample(sample + "_g","NOMINAL",sampletitle + "(gluon fake #tau)",(enum EColor)7);
@@ -384,7 +385,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         fake_plots->init_sample(sample + "_lep","NOMINAL",sampletitle + "(lepton fake #tau)",kGreen);
         fake_plots->init_sample(sample + "_real","NOMINAL",sampletitle + "(real #tau)",kRed);
         fake_plots->init_sample(sample + "_c","NOMINAL",sampletitle + "(c-jets fake #tau)",kOrange);
-        fake_plots->init_sample(sample + "_nomatch","NOMINAL",sampletitle + "(no truth matched fake #tau)",kGray);
+        fake_plots->init_sample(sample + "_wjet","NOMINAL",sampletitle + "(w-jet matched fake #tau)",kGray);
       }
       if(fake_nregions_notau) fake_notau_plots->init_sample(sample,"NOMINAL",sampletitle,kRed);
     }
@@ -703,6 +704,9 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         }
       }
       etmiss = met_met;
+      constructTruth();
+      if(truthmatch(taus_v[0])) taumatchwjet = abs(truthmatch(taus_v[0])->mother->pdg) == 24;
+      else taumatchwjet = 0;
       if (fcnc) {
         double tmpdr;
         double tmpm;
@@ -989,6 +993,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           break;
         case 4:
           tauorigin = sample + "_c";
+          if(taumatchwjet) tauorigin = sample + "_wjet";
           origintag.push_back(1);
           break;
         case 21:
@@ -997,6 +1002,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           break;
         default:
           tauorigin = sample + "_j";
+          if(taumatchwjet) tauorigin = sample + "_wjet";
           origintag.push_back(3);
         }
       if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"]){
@@ -1061,9 +1067,9 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
               for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
               {
                 if(tauorigin.Contains("data")) {
-			fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, iNP);
-			break;
-		}
+		            	fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, iNP);
+		            	break;
+		            }
                 std::vector<TString>::iterator it = std::find(weightsysmap[mc_channel_number].begin(), weightsysmap[mc_channel_number].end(), plotNPs[iNP]);
                 int index = 2;
                 if(it != weightsysmap[mc_channel_number].end()) index = std::distance(weightsysmap[mc_channel_number].begin(), it);
@@ -1120,6 +1126,84 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       }
   }
 }
+
+void tthmltree::constructTruth(){
+  //vector<truthpart*> truthparticles
+  for(auto &parts : truthparticles){
+    deletepointer(parts);
+  }
+  truthparticles.clear();
+  //===========================save all particle information==============================
+  for (int itruth = 0; itruth < m_truth_pdgId->size(); ++itruth) {
+    TLorentzVector truthpartp4;
+    truthpartp4.SetPtEtaPhiM(m_truth_pt->at(itruth), m_truth_eta->at(itruth), m_truth_phi->at(itruth), m_truth_m->at(itruth));
+    truthpart *thispart = new truthpart(m_truth_pdgId->at(itruth), truthpartp4);
+    thispart->barcode = m_truth_barcode->at(itruth);
+    if(m_truth_parents->at(itruth).size()) thispart->motherbarcode = m_truth_parents->at(itruth)[0];
+    if(m_truth_children->at(itruth).size()) thispart->childrenbarcode = m_truth_children->at(itruth);
+  }
+  //===========================link mother and children===================================
+  for(auto parts : truthparticles){
+    if(parts->motherbarcode >= 0){
+      for(auto motherparts: truthparticles){
+        if(parts->motherbarcode == motherparts->barcode){
+          parts->mother = motherparts;
+          motherparts->children.push_back(parts);
+        }
+      }
+    }
+  }
+  //===========================remove intermediate particles: eg. g->g->bb====================
+  for(auto parts : truthparticles){
+    if(parts->children.size() == 1){
+      if(parts->children[0]->pdg == parts->pdg){
+        if(parts->mother){
+          for (int i = 0; i < parts->mother->children.size(); ++i)
+          {
+            if(parts->mother->children[i] == parts){
+              parts->mother->children[i] = parts->children[0];
+              parts->children[0]->mother = parts->mother;
+            }
+          }
+        }
+        truthparticles.erase(find(truthparticles.begin(), truthparticles.end(), parts->children[0]));
+      }else{
+        printf("WARNING: only 1 child found: %d but not itself %d\n", parts->children[0]->pdg, parts->pdg);
+      }
+    }
+  }
+  if(debug){
+    for(auto parts : truthparticles){
+      printf("particle %d: pt %f, eta %f, phi %f, m %f", parts->pdg, parts->p4.Pt(), parts->p4.Eta(), parts->p4.Phi(), parts->p4.M());
+      if(parts->mother) printf(", mother %d", parts->mother->pdg);
+      if(parts->children.size()) {
+        printf(", children ");
+        for (int i = 0; i < parts->children.size(); ++i)
+        {
+          printf("%d \n", parts->children[i]->pdg);
+        }
+      }
+      printf("\n");
+    }
+  }
+}
+
+truthpart* tthmltree::truthmatch(TLorentzVector p4){
+  truthpart* matched = 0;
+  for(auto parts : truthparticles){
+    if(abs(parts->pdg) == 12 || abs(parts->pdg) == 14 || abs(parts->pdg) == 16) continue;  //do not match neutrinos
+    if(parts->children.size()) continue;   //do not match intermediate particles
+    if(parts->p4.DeltaR(p4) < 0.4){
+      if(matched){
+        if(parts->p4.DeltaR(p4) < matched->p4.DeltaR(p4)) matched = parts;
+      }else{
+        matched = parts;
+      }
+    }
+  }
+  return matched;
+}
+
 void tthmltree::dumpTruth(int ipart) {
   TLorentzVector wchild[2], fcncjet, wboson;
   stringstream outstream;
