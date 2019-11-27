@@ -1144,6 +1144,7 @@ void tthmltree::constructTruth(){
   }
   //===========================remove intermediate particles: eg. g->g->g->bb====================
   if(debug) printf("%lu truth particles in total\n", truthparticles.size());
+  vector<truthpart*> forerase;
   for(auto parts : truthparticles){
     if(debug){
       printf("tthmltree::constructTruth() : particle %d: pt %f, eta %f, phi %f, m %f", parts->pdg, parts->p4.Pt(), parts->p4.Eta(), parts->p4.Phi(), parts->p4.M());
@@ -1168,13 +1169,17 @@ void tthmltree::constructTruth(){
             }
           }
         }
-        auto eraseiter = find(truthparticles.begin(), truthparticles.end(), parts);
+        forerase.push_back(parts);
+        
         if(debug){
           printf("Erase particle: %d\n", parts->pdg);
         }
-        truthparticles.erase(eraseiter);
       }else{
         printf("WARNING: only 1 child found: %d but not itself %d\n", parts->children[0]->pdg, parts->pdg);
+      }
+      for(auto erase: forerase){
+        auto eraseiter = find(truthparticles.begin(), truthparticles.end(), erase);
+        truthparticles.erase(eraseiter);
       }
     }
   }
