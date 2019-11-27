@@ -1141,6 +1141,7 @@ void tthmltree::constructTruth(){
     thispart->barcode = m_truth_barcode->at(itruth);
     if(m_truth_parents->at(itruth).size()) thispart->motherbarcode = m_truth_parents->at(itruth)[0];
     if(m_truth_children->at(itruth).size()) thispart->childrenbarcode = m_truth_children->at(itruth);
+    truthparticles.push_back(thispart);
   }
   //===========================link mother and children===================================
   for(auto parts : truthparticles){
