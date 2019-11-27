@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
 		printf("Usage: reduce_run framework(xTFW/tthML) reduce(1/2/3) dataconfigfile(eg. mc16a_wjet.txt) systname(eg. NOMINAL) [optional: 1 for saveweightslist]\n");
 		exit(1);
 	}
-	int debug = 0;
+	int debug = 1;
 	int reduce = *argv[2]-'0';
 	bool doplot = reduce == 3 ? 1 : 0;
 	bool tthdofcnc = 0;

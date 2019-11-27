@@ -691,8 +691,10 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       }
       etmiss = met_met;
       constructTruth();
-      if(truthmatch(taus_v[0])) taumatchwjet = abs(truthmatch(taus_v[0])->mother->pdg) == 24;
-      else taumatchwjet = 0;
+      taumatchwjet = 0;
+      if(truthmatch(taus_v[0]))
+        if(truthmatch(taus_v[0])->mother)
+          taumatchwjet = abs(truthmatch(taus_v[0])->mother->pdg) == 24;
       if (fcnc) {
         double tmpdr;
         double tmpm;
@@ -1143,6 +1145,18 @@ void tthmltree::constructTruth(){
   //===========================remove intermediate particles: eg. g->g->g->bb====================
   if(debug) printf("%lu truth particles in total\n", truthparticles.size());
   for(auto parts : truthparticles){
+    if(debug){
+      printf("tthmltree::constructTruth() : particle %d: pt %f, eta %f, phi %f, m %f", parts->pdg, parts->p4.Pt(), parts->p4.Eta(), parts->p4.Phi(), parts->p4.M());
+      if(parts->mother) printf(", mother %d", parts->mother->pdg);
+      if(parts->children.size()) {
+        printf(", children ");
+        for (int i = 0; i < parts->children.size(); ++i)
+        {
+          printf("%d ", parts->children[i]->pdg);
+        }
+      }
+      printf("\n");
+    }
     if(parts->children.size() == 1){
       if(parts->children[0]->pdg == parts->pdg){
         if(parts->mother){
@@ -1165,20 +1179,6 @@ void tthmltree::constructTruth(){
     }
   }
   if(debug) printf("%lu truth particles after removal\n", truthparticles.size());
-  if(debug){
-    for(auto parts : truthparticles){
-      printf("tthmltree::constructTruth() : particle %d: pt %f, eta %f, phi %f, m %f", parts->pdg, parts->p4.Pt(), parts->p4.Eta(), parts->p4.Phi(), parts->p4.M());
-      if(parts->mother) printf(", mother %d", parts->mother->pdg);
-      if(parts->children.size()) {
-        printf(", children ");
-        for (int i = 0; i < parts->children.size(); ++i)
-        {
-          printf("%d ", parts->children[i]->pdg);
-        }
-      }
-      printf("\n");
-    }
-  }
 }
 
 truthpart* tthmltree::truthmatch(TLorentzVector p4){
