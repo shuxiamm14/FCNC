@@ -705,8 +705,10 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       }
       etmiss = met_met;
       constructTruth();
-      if(truthmatch(taus_v[0])) taumatchwjet = abs(truthmatch(taus_v[0])->mother->pdg) == 24;
-      else taumatchwjet = 0;
+      taumatchwjet = 0;
+      if(truthmatch(taus_v[0]))
+        if(truthmatch(taus_v[0])->mother)
+          taumatchwjet = abs(truthmatch(taus_v[0])->mother->pdg) == 24;
       if (fcnc) {
         double tmpdr;
         double tmpm;

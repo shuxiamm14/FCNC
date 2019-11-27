@@ -41,6 +41,7 @@ void plot(int iNP, TString framework)
 	bool plotnj = 0;
 	bool doPlots = 1;
 	bool scaletodata = 1;
+	bool mergeprong = 0;
 	int plot_option = 2;
 	if(framework == "xTFW") calculate_fake_calibration = 0;
 	histSaver *tau_plots = new histSaver("dummy");
@@ -106,36 +107,36 @@ void plot(int iNP, TString framework)
 			tau_plots->muteregion("3j");
 			tau_plots->muteregion("2j");
 		}else{
-			tau_plots->sensitivevariable = "BDTG_test";
-			tau_plots->add("BDT discriminant","BDTG_test","",10);
-			tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
-			tau_plots->add("#chi^{2}","chi2","",5);
-			tau_plots->add("M_{all}","allmass","",5);
-			tau_plots->add("p_{Z,all}","allpz","",5);
-			tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
-  			tau_plots->add("m_{t,SM}","t1mass","GeV",5);
-  			tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
-  			tau_plots->add("m_{W}","wmass","GeV",5);
-  			tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
-  			tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",10);
-  			tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
-  			tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
-  			tau_plots->add("m^{T}_{W}","mtw","GeV",10);
-  			tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",15);
-  			tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",5);
-  			tau_plots->add("#eta_{#tau,max}","etamax","",10);
-  			tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
-  			tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
-  			tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
-  			tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-  			tau_plots->add("M(#tau#tau#light-jet,min)","mtaujmin","",5);
-  			tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
-			tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
-			tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
   			tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
-  			tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
-  			tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
-  			tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
+  			tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
+			//tau_plots->sensitivevariable = "BDTG_test";
+			//tau_plots->add("BDT discriminant","BDTG_test","",10);
+			//tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
+			//tau_plots->add("#chi^{2}","chi2","",5);
+			//tau_plots->add("M_{all}","allmass","",5);
+			//tau_plots->add("p_{Z,all}","allpz","",5);
+			//tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
+  			//tau_plots->add("m_{t,SM}","t1mass","GeV",5);
+  			//tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
+  			//tau_plots->add("m_{W}","wmass","GeV",5);
+  			//tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
+  			//tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",10);
+  			//tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
+  			//tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
+  			//tau_plots->add("m^{T}_{W}","mtw","GeV",10);
+  			//tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",15);
+  			//tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",5);
+  			//tau_plots->add("#eta_{#tau,max}","etamax","",10);
+  			//tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
+  			//tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
+  			//tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
+  			//tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
+  			//tau_plots->add("M(#tau#tau#light-jet,min)","mtaujmin","",5);
+			//tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
+			//tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
+  			//tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
+  			//tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
+  			//tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
   		}
   	}else{
 		tau_plots->sensitivevariable = "BDTG_test";
@@ -182,18 +183,19 @@ void plot(int iNP, TString framework)
 	vector<TString> regions = framework == "xTFW" ? regions_xTFW : regions_tthML;
 	if(calculate_fake_calibration) regions = regions_calc_fake;
 	int nregions = regions.size();
-	TString nprong[] = {"1prong","3prong"};
+	TString nprong[] = {"_1prong","_3prong",""};
 	for (int j = 0; j < nregions; ++j)
 	  for (int k = 0; k < 2; ++k)
 	    for (int i = 1; i < 2; i+=2){
-	    	//TString addedregion = regions[j] + "_" + nprong[k] + "_veto";
+	    	//TString addedregion = regions[j] + nprong[k] + "_veto";
 	      	//printf("adding region: %s\n", addedregion.Data());
 	      	//tau_plots->add_region(addedregion);
-//	    	tau_plots->add_region(regions[j] + "_" + nprong[k] + "_");
-	    	tau_plots->add_region(regions[j] + "_" + nprong[k] + "_above35_vetobtagwp70");
-	    	tau_plots->add_region(regions[j] + "_" + nprong[k] + "_below35_vetobtagwp70");
+//	    	tau_plots->add_region(regions[j] + nprong[k] + "_");
+	    	tau_plots->add_region(regions[j] + nprong[k] + "_above35_vetobtagwp70");
+	    	tau_plots->add_region(regions[j] + nprong[k] + "_below35_vetobtagwp70");
 	    }
-	tau_plots->muteregion("prong");
+	if(mergeprong) tau_plots->muteregion("prong");
+	if(!mergeprong) tau_plots->muteregion("35");
 	TString origin[] = {"b", "c", "g", "j", "lep", "nomatch", "real", "data","doublefake"};
 	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "real #tau"};
 
@@ -248,9 +250,9 @@ void plot(int iNP, TString framework)
 	for (int j = 0; j < nregions; ++j){
 		for (int k = 0; k < 2; ++k)
 			for (int i = 1; i < 2; i+=2){
-			  tau_plots->merge_regions(regions[j] + "_" + nprong[k] + "_above35_vetobtagwp70",regions[j] + "_" + nprong[k] + "_below35_vetobtagwp70",regions[j] + "_" + nprong[k]);
+			  tau_plots->merge_regions(regions[j] + nprong[k] + "_above35_vetobtagwp70",regions[j] + nprong[k] + "_below35_vetobtagwp70",regions[j] + nprong[k]);
 			}
-		tau_plots->merge_regions(regions[j] + "_" + nprong[0],regions[j] + "_" + nprong[1],regions[j]);
+		if(mergeprong) tau_plots->merge_regions(regions[j] + nprong[0],regions[j] + nprong[1],regions[j]);
 	}
 	if(plot_option == 2){
   		vector<TString> stacks;
@@ -260,21 +262,25 @@ void plot(int iNP, TString framework)
   		if(!fakeMC && calibfake) stacks.push_back("fake");
   		if(scaletodata){
   			double slices[] = {25,35,45,125};
-			if(calculate_fake_calibration){
-				tau_plots->scale_to_data("reg1l1tau2b1j_os","NOMINAL","1 fake","taupt",slices,3);
-				tau_plots->scale_to_data("reg1l1tau2b1j_ss","NOMINAL","1 fake","taupt",slices,3);
-				tau_plots->scale_to_data("reg1l1tau2b_os","NOMINAL","1 fake","taupt",slices,3);
-				tau_plots->scale_to_data("reg1l1tau2b_ss","NOMINAL","1 fake","taupt",slices,3);
-			}else{
-  				tau_plots->scale_to_data("reg1l1tau2b2j_os","NOMINAL","1 fake","taupt_0",slices,3);
-  				tau_plots->scale_to_data("reg1l1tau2b3j_os","NOMINAL","1 fake","taupt_0",slices,3);
-  				tau_plots->scale_to_data("reg1l1tau2b2j_ss","NOMINAL","1 fake","taupt_0",slices,3);
-  				tau_plots->scale_to_data("reg1l1tau2b3j_ss","NOMINAL","1 fake","taupt_0",slices,3);
-  				tau_plots->scale_to_data("reg1l1tau1b2j_os","NOMINAL","1 fake","taupt_0",slices,3);
-  				tau_plots->scale_to_data("reg1l1tau1b3j_os","NOMINAL","1 fake","taupt_0",slices,3);
-  				tau_plots->scale_to_data("reg1l1tau1b2j_ss","NOMINAL","1 fake","taupt_0",slices,3);
-  				tau_plots->scale_to_data("reg1l1tau1b3j_ss","NOMINAL","1 fake","taupt_0",slices,3);
-			}
+			for(int i = 0; i < 3; i++){
+				if(mergeprong) { if(i != 2) continue; }
+				else { if(i == 2) continue; }
+                                if(calculate_fake_calibration){
+                                        tau_plots->scale_to_data("reg1l1tau2b1j_os" + nprong[i],"NOMINAL","1 fake","taupt",slices,3);
+                                        tau_plots->scale_to_data("reg1l1tau2b1j_ss" + nprong[i],"NOMINAL","1 fake","taupt",slices,3);
+                                        tau_plots->scale_to_data("reg1l1tau2b_os" + nprong[i],"NOMINAL","1 fake","taupt",slices,3);
+                                        tau_plots->scale_to_data("reg1l1tau2b_ss" + nprong[i],"NOMINAL","1 fake","taupt",slices,3);
+                                }else{
+                                        tau_plots->scale_to_data("reg1l1tau2b2j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
+                                        tau_plots->scale_to_data("reg1l1tau2b3j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
+                                        tau_plots->scale_to_data("reg1l1tau2b2j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
+                                        tau_plots->scale_to_data("reg1l1tau2b3j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
+                                        tau_plots->scale_to_data("reg1l1tau1b2j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
+                                        tau_plots->scale_to_data("reg1l1tau1b3j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
+                                        tau_plots->scale_to_data("reg1l1tau1b2j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
+                                        tau_plots->scale_to_data("reg1l1tau1b3j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
+                                }
+                        }
   		}
   		if(!fakeMC && framework == "xTFW") {
   			stacks.push_back("fakeSS");
