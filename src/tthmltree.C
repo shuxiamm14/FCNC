@@ -1153,7 +1153,7 @@ void tthmltree::constructTruth(){
             }
           }
         }
-        truthparticles.erase(find(truthparticles.begin(), truthparticles.end(), parts->children[0]));
+        truthparticles.erase(find(truthparticles.begin(), truthparticles.end(), parts));
       }else{
         printf("WARNING: only 1 child found: %d but not itself %d\n", parts->children[0]->pdg, parts->pdg);
       }
