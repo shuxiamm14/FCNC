@@ -1160,13 +1160,13 @@ void tthmltree::constructTruth(){
   }
   if(debug){
     for(auto parts : truthparticles){
-      printf("particle %d: pt %f, eta %f, phi %f, m %f", parts->pdg, parts->p4.Pt(), parts->p4.Eta(), parts->p4.Phi(), parts->p4.M());
+      printf("tthmltree::constructTruth() : particle %d: pt %f, eta %f, phi %f, m %f", parts->pdg, parts->p4.Pt(), parts->p4.Eta(), parts->p4.Phi(), parts->p4.M());
       if(parts->mother) printf(", mother %d", parts->mother->pdg);
       if(parts->children.size()) {
         printf(", children ");
         for (int i = 0; i < parts->children.size(); ++i)
         {
-          printf("%d \n", parts->children[i]->pdg);
+          printf("%d ", parts->children[i]->pdg);
         }
       }
       printf("\n");
