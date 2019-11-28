@@ -34,14 +34,14 @@ void plot(int iNP, TString framework)
 	TString NPname = findNPname(dirname,iNP,framework);
 	TString nominalname = "fakeSF_tthML";
 	float BRbenchmark = 0.2;
-	bool calculate_fake_calibration = 1;
+	bool calculate_fake_calibration = 0;
 	bool calibfake = 1;
 	bool fakeMC = 0;
 	bool doTrex = 0;
 	bool plotnj = 0;
 	bool doPlots = 1;
-	bool scaletodata = 1;
-	bool mergeprong = 0;
+	bool scaletodata = 0;
+	bool mergeprong = 1;
 	int plot_option = 2;
 	if(framework == "xTFW") calculate_fake_calibration = 0;
 	histSaver *tau_plots = new histSaver("dummy");
@@ -85,7 +85,7 @@ void plot(int iNP, TString framework)
 		{"fcnc_ch",{"fcnc_ch_lv","fcnc_ch_qq"}},
 		{"fcnc_uh",{"fcnc_uh_lv","fcnc_uh_qq"}},
 		{"fcnc_prod_ch",{"fcnc_prod_ch"}},
-		{"fcnc_prod_uh",{"fcnc_prod_ch"}},
+		{"fcnc_prod_uh",{"fcnc_prod_uh"}},
 	};
 	TString samplesys = "";
 	if(NPname.Contains("ttbar")){
@@ -108,6 +108,7 @@ void plot(int iNP, TString framework)
 			tau_plots->muteregion("2j");
 		}else{
   			tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
+			tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
   			tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
 			//tau_plots->sensitivevariable = "BDTG_test";
 			//tau_plots->add("BDT discriminant","BDTG_test","",10);
@@ -196,7 +197,7 @@ void plot(int iNP, TString framework)
 	    }
 	if(mergeprong) tau_plots->muteregion("prong");
 	if(!mergeprong) tau_plots->muteregion("35");
-	TString origin[] = {"b", "c", "g", "j", "lep", "nomatch", "real", "data","doublefake"};
+	TString origin[] = {"b", "c", "g", "j", "lep", "wjet", "real", "data","doublefake"};
 	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "real #tau"};
 
 	TFile *datafile1516;
@@ -239,7 +240,12 @@ void plot(int iNP, TString framework)
 						for (int i = 0; i < 6; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "Fake MC, 1 truth #tau", kMagenta, samples[j].norm, inputfile);
 						tau_plots->read_sample( "fake0truth", samplename + "_" + origin[8], dirname==NPname? nominalname:NPname, "fake, 0 truth #tau", kTeal, samples[j].norm,inputfile);
 					}else if(calibfake){
-						for (int i = 0; i < 6; i++) tau_plots->read_sample( "fake", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "MC Fake #tau", kTeal, samples[j].norm, inputfile);
+						for (int i = 0; i < 6; i++) {
+							if(origin[i] == "wjet")
+								tau_plots->read_sample( "wjet-fake", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "W-jet Fake #tau", kRed, samples[j].norm, inputfile);
+							else 
+								tau_plots->read_sample( "fake", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "MC Fake #tau", kTeal, samples[j].norm, inputfile);
+						}
 					}
 					deletepointer(inputfile);
 				}
@@ -259,7 +265,10 @@ void plot(int iNP, TString framework)
   		for(auto samp: samples){
   			if(signalmap.find(samp.name) == signalmap.end()) stacks.push_back(samp.name);
   		}
-  		if(!fakeMC && calibfake) stacks.push_back("fake");
+  		if(!fakeMC && calibfake) {
+			stacks.push_back("fake");
+			stacks.push_back("wjet-fake");
+		}
   		if(scaletodata){
   			double slices[] = {25,35,45,125};
 			for(int i = 0; i < 3; i++){
