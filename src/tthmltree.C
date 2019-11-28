@@ -333,6 +333,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         outputtree[fcnc_regions[i]]->Branch("lep_ID_0",&lep_ID_0);
         outputtree[fcnc_regions[i]]->Branch("lep_ID_1",&lep_ID_1);
         outputtree[fcnc_regions[i]]->Branch("taumatchwjet", &taumatchwjet);
+        outputtree[fcnc_regions[i]]->Branch("taulmass", &taulmass);
       }
     }
 
