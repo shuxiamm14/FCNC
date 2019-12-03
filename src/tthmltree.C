@@ -630,18 +630,17 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       tthcutflow.fill();
       if(  mc_channel_number <= 0 ) weight = 1;
 
-      if (reduce != 1){
-        if (onelep_type || dilep_type) {
-          lep_v.SetPtEtaPhiE(lep_Pt_0, lep_Eta_0, lep_Phi_0, lep_E_0);
-        }
-        taus_v[0].SetPtEtaPhiE(tau_pt_0,tau_eta_0,tau_phi_0,tau_E_0);
-        taus_v[1].SetPtEtaPhiE(tau_pt_1,tau_eta_1,tau_phi_1,tau_E_1);
-        if(nTaus_OR_Pt25 == 1){
-          taus_v[1] = taus_v[0];
-          taus_v[0] = lep_v;
-          lep_v.SetPtEtaPhiE(0, 0, 0, 0);
-        }
+      if (onelep_type || dilep_type) {
+        lep_v.SetPtEtaPhiE(lep_Pt_0, lep_Eta_0, lep_Phi_0, lep_E_0);
       }
+      taus_v[0].SetPtEtaPhiE(tau_pt_0,tau_eta_0,tau_phi_0,tau_E_0);
+      taus_v[1].SetPtEtaPhiE(tau_pt_1,tau_eta_1,tau_phi_1,tau_E_1);
+      if(nTaus_OR_Pt25 == 1){
+        taus_v[1] = taus_v[0];
+        taus_v[0] = lep_v;
+        lep_v.SetPtEtaPhiE(0, 0, 0, 0);
+      }
+      
       nljet = nJets_OR_T - nJets_OR_T_MV2c10_70;
       int highscore_b = -1;
       int subhighscore_b = -1;
@@ -694,9 +693,11 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       etmiss = met_met;
       constructTruth();
       taumatchwjet = 0;
-      if(truthmatch(taus_v[0]))
-        if(truthmatch(taus_v[0])->mother)
-          taumatchwjet = abs(truthmatch(taus_v[0])->mother->pdg) == 24;
+      TLorentzVector leadtau;
+      leadtau.SetPtEtaPhiE(tau_pt_0,tau_eta_0,tau_phi_0,tau_E_0);
+      if(truthmatch(leadtau))
+        if(truthmatch(leadtau)->mother)
+          taumatchwjet = abs(truthmatch(leadtau)->mother->pdg) == 24;
       if (fcnc) {
         double tmpdr;
         double tmpm;
