@@ -146,7 +146,7 @@ int main(int argc, char const *argv[])
 					//}
 
 					for (int i = 0; i < 7; ++i)
-						fitter->addfithist(origin[iorigin],target[i],1,target[i]->GetNbinsX());
+						fitter->addfithist(origin[iorigin],target[i],1,target[i]->GetNbinsX(),"sf_" + origin[iorigin]);
 
 					fitter->addfithist(origin[iorigin],target[7],9,13);
 
