@@ -269,6 +269,12 @@ void plot(int iNP, TString framework)
 			stacks.push_back("fake");
 			stacks.push_back("wjet-fake");
 		}
+		if(fittodata){
+			vector<TString> fit_regions = {"reg1l1tau2b2j_os", "reg1l1tau2b3j_os", "reg1l1tau2b1j_os"};
+			vector<TString> scalesamples = {"wjet-fake","fake"};
+			vector<double> slices = {25,35,45,125};
+			fit_scale_factor(fit_regions, "taupt", scalesamples, slices);
+		}
   		if(scaletodata){
   			double slices[] = {25,35,45,125};
 			for(int i = 0; i < 3; i++){
