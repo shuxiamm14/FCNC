@@ -41,7 +41,7 @@ void plot(int iNP, TString framework)
 	bool plotnj = 0;
 	bool doPlots = 1;
 	bool scaletodata = 0;
-	bool mergeprong = 0;
+	bool mergeprong = 1;
 	int plot_option = 2;
 	bool fittodata = 1;
 	if(framework == "xTFW") calculate_fake_calibration = 0;
@@ -271,10 +271,14 @@ void plot(int iNP, TString framework)
 			stacks.push_back("wjet-fake");
 		}
 		if(fittodata){
-			vector<TString> fit_regions = {"reg1l1tau2b2j_os", "reg1l1tau2b3j_os", "reg1l1tau2b1j_os"};
-			vector<TString> scalesamples = {"wjet-fake","fake"};
-			vector<double> slices = {25,35,45,125};
-			tau_plots->fit_scale_factor(fit_regions, "taupt_0", scalesamples, slices);
+			for(int i = 0; i < 3; i++){
+				if(mergeprong) { if(i != 2) continue; }
+				else { if(i == 2) continue; }
+				vector<TString> fit_regions = {"reg1l1tau2b2j_os" + nprong[i], "reg1l1tau2b3j_os" + nprong[i], "reg1l1tau2b1j_os" + nprong[i]};
+				vector<TString> scalesamples = {"wjet-fake","fake"};
+				vector<double> slices = {25,35,45,125};
+				tau_plots->fit_scale_factor(fit_regions, "taupt_0", scalesamples, slices);
+			}
 		}
   		if(scaletodata){
   			double slices[] = {25,35,45,125};
