@@ -240,7 +240,7 @@ void tthmltree::init_hist(TString outputfilename){
     fake_plots = new histSaver(outputfilename + "_fake");
     fake_plots->set_weight(&weight);
     fake_plots->debug = !!debug;
-    fake_plots->add(10,25.,125.,"p_{T,#tau}","taupt",&tau_pt_0,true,"GeV");
+    fake_plots->add(10,25.,125.,"p_{T,#tau}","taupt_0",&tau_pt_0,true,"GeV");
     fake_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
     fake_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
     fake_plots->add(20,20.,120.,"m_{#tau,light-jet}","taulmass",&taulmass,true,"GeV");
