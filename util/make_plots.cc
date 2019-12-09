@@ -95,7 +95,7 @@ void plot(int iNP, TString framework)
 
 	if(framework == "tthML"){
 		if(calculate_fake_calibration){
-			tau_plots->add("p_{T,#tau}","taupt","GeV");
+			tau_plots->add("p_{T,#tau}","taupt_0","GeV");
 			tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
 			tau_plots->add("p_{T,b}","bpt","GeV");
   			tau_plots->add("E_{miss}^{T}","met","GeV",5);
@@ -274,7 +274,7 @@ void plot(int iNP, TString framework)
 			vector<TString> fit_regions = {"reg1l1tau2b2j_os", "reg1l1tau2b3j_os", "reg1l1tau2b1j_os"};
 			vector<TString> scalesamples = {"wjet-fake","fake"};
 			vector<double> slices = {25,35,45,125};
-			tau_plots->fit_scale_factor(fit_regions, "taupt", scalesamples, slices);
+			tau_plots->fit_scale_factor(fit_regions, "taupt_0", scalesamples, slices);
 		}
   		if(scaletodata){
   			double slices[] = {25,35,45,125};
@@ -282,10 +282,10 @@ void plot(int iNP, TString framework)
 				if(mergeprong) { if(i != 2) continue; }
 				else { if(i == 2) continue; }
                                 if(calculate_fake_calibration){
-                                        tau_plots->scale_to_data("reg1l1tau2b1j_os" + nprong[i],"NOMINAL","1 fake","taupt",slices,3);
-                                        tau_plots->scale_to_data("reg1l1tau2b1j_ss" + nprong[i],"NOMINAL","1 fake","taupt",slices,3);
-                                        tau_plots->scale_to_data("reg1l1tau2b_os" + nprong[i],"NOMINAL","1 fake","taupt",slices,3);
-                                        tau_plots->scale_to_data("reg1l1tau2b_ss" + nprong[i],"NOMINAL","1 fake","taupt",slices,3);
+                                        tau_plots->scale_to_data("reg1l1tau2b1j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
+                                        tau_plots->scale_to_data("reg1l1tau2b1j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
+                                        tau_plots->scale_to_data("reg1l1tau2b_os" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
+                                        tau_plots->scale_to_data("reg1l1tau2b_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
                                 }else{
                                         tau_plots->scale_to_data("reg1l1tau2b2j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
                                         tau_plots->scale_to_data("reg1l1tau2b3j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
