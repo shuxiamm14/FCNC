@@ -44,9 +44,10 @@ for i in {1..3}
 do
 	if [[ $1 =~ $i ]] ; then
 		echo "reduce_run tthML $i"' $1'" $systname"  >> bulkreduce.sh
+		echo "reduce_run tthML $i"' $1'" $systname"  >> sublocal.sh
 	fi
 done
-
+chmod +x sublocal.sh
 echo "date"   >> bulkreduce.sh
 chmod +x bulkreduce.sh
 
@@ -61,8 +62,12 @@ if [[ $2 =~ "sub" ]] ; then
 			continue
 		fi
 		name=${lines/.txt}
-		echo "sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines"
-		sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines
+		if [[ $2 =~ "local" ]] ; then
+			./sublocal.sh $lines > ${name}.out 2>&1 &
+		else
+			echo "sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines"
+			sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines
+		fi
 		if [[  $2 =~ "test" ]] ; then
 			break
 		fi
