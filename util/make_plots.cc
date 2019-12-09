@@ -43,6 +43,7 @@ void plot(int iNP, TString framework)
 	bool scaletodata = 0;
 	bool mergeprong = 1;
 	int plot_option = 2;
+	bool fittodata = 1;
 	if(framework == "xTFW") calculate_fake_calibration = 0;
 	histSaver *tau_plots = new histSaver("dummy");
 	tau_plots->doROC = 0;
@@ -273,7 +274,7 @@ void plot(int iNP, TString framework)
 			vector<TString> fit_regions = {"reg1l1tau2b2j_os", "reg1l1tau2b3j_os", "reg1l1tau2b1j_os"};
 			vector<TString> scalesamples = {"wjet-fake","fake"};
 			vector<double> slices = {25,35,45,125};
-			fit_scale_factor(fit_regions, "taupt", scalesamples, slices);
+			tau_plots->fit_scale_factor(fit_regions, "taupt", scalesamples, slices);
 		}
   		if(scaletodata){
   			double slices[] = {25,35,45,125};
