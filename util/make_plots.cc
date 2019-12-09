@@ -41,7 +41,7 @@ void plot(int iNP, TString framework)
 	bool plotnj = 0;
 	bool doPlots = 1;
 	bool scaletodata = 0;
-	bool mergeprong = 1;
+	bool mergeprong = 0;
 	int plot_option = 2;
 	bool fittodata = 1;
 	if(framework == "xTFW") calculate_fake_calibration = 0;
