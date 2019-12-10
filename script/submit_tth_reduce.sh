@@ -40,6 +40,8 @@ cd '`pwd`"
 ulimit -n 32000
 . $ttH_fakes_DIR/env.sh" > bulkreduce.sh
 
+rm sublocal.sh
+
 for i in {1..3}
 do
 	if [[ $1 =~ $i ]] ; then
