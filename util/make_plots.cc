@@ -275,13 +275,12 @@ void plot(int iNP, TString framework)
 		if(mergeprong) tau_plots->merge_regions(regions[j] + nprong[0],regions[j] + nprong[1],regions[j]);
 	}
 	if(plot_option == 2){
-  		vector<TString> stacks;
   		for(auto samp: samples){
-  			if(signalmap.find(samp.name) == signalmap.end()) stacks.push_back(samp.name);
+  			if(signalmap.find(samp.name) == signalmap.end()) tau_plots->stackorder.push_back(samp.name);
   		}
   		if(!fakeMC && calibfake) {
-			stacks.push_back("fake");
-			stacks.push_back("wjet-fake");
+			tau_plots->stackorder.push_back("fake");
+			tau_plots->stackorder.push_back("wjet-fake");
 		}
 		if(fittodata){
 			for(int i = 0; i < 3; i++){
@@ -316,7 +315,7 @@ void plot(int iNP, TString framework)
                         }
   		}
   		if(!fakeMC && framework == "xTFW") {
-  			stacks.push_back("fakeSS");
+  			tau_plots->stackorder.push_back("fakeSS");
   			tau_plots->templatesample("reg2mtau1b3jss",NPname,"1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b3jos","fakeSS","Fake",kYellow,0,1.31597);
   			tau_plots->templatesample("reg2mtau1b2jss",NPname,"1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b2jos","fakeSS","Fake",kYellow,0,1.31597);
   			//tau_plots->templatesample("reg2mtau2b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b3jos","fakeSS","Fake",kYellow,1);
@@ -336,10 +335,9 @@ void plot(int iNP, TString framework)
   			////tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 fakeMC -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
   		}
   		else{
-  			stacks.push_back("fake1truth");
-  			stacks.push_back("fake0truth");
+  			tau_plots->stackorder.push_back("fake1truth");
+  			tau_plots->stackorder.push_back("fake0truth");
   		}
-  		tau_plots->stackorder = stacks;
 
   	}
   	//tau_plots->printyield("reg1l1tau1b3j_os");
