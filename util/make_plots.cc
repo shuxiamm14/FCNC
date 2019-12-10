@@ -212,13 +212,13 @@ void plot(int iNP, TString framework)
 	TString campaigns[] = {"mc16a_","mc16d_","mc16e_"};
 	for (int i = 0; i < 3; ++i)
 	{
-		if(framework == "tthML" && i == 3) continue;
+		if(framework == "tthML" && i == 2) continue;
 		if(!calculate_fake_calibration || fittodata || framework!= "tthML") {
 				datafile[i] = new TFile(framework== "tthML"? "nominal/" + datafilesname[i] + "_fcnc_NOMINAL.root" : "NOMINAL/" + datafilesname[i] + "_NOMINAL.root");
 				tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile[i]);
 		}
 		if(calculate_fake_calibration && framework== "tthML") {
-			datafile_fake[i] = new TFile("nominal/data1516_fake_NOMINAL.root");
+			datafile_fake[i] = new TFile("nominal/" + datafilesname[i] + "_fake_NOMINAL.root");
 			tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile_fake[i]);
 		}
 	}
