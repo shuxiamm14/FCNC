@@ -34,7 +34,7 @@ void plot(int iNP, TString framework)
 	TString NPname = findNPname(dirname,iNP,framework);
 	TString nominalname = "fakeSF_tthML";
 	float BRbenchmark = 0.2;
-	bool calculate_fake_calibration = 0;
+	bool calculate_fake_calibration = 1;
 	bool calibfake = 1;
 	bool fakeMC = 0;
 	bool doTrex = 0;
