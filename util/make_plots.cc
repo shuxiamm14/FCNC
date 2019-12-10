@@ -286,10 +286,14 @@ void plot(int iNP, TString framework)
 			for(int i = 0; i < 3; i++){
 				if(mergeprong) { if(i != 2) continue; }
 				else { if(i == 2) continue; }
-				vector<TString> fit_regions = {"reg1l1tau2b2j_os" + nprong[i], "reg1l1tau2b3j_os" + nprong[i], "reg1l1tau2b1j_os" + nprong[i]};
+				vector<TString> fit_regions = {"reg1l1tau2b2j_os" + nprong[i], "reg1l1tau2b3j_os" + nprong[i], "reg1l1tau2b1j_os" + nprong[i],"reg1e1mu1tau1b" + nprong[i],"reg1e1mu1tau2b" + nprong[i]};
+				vector<TString> postfit_regions = fit_regions;
+				postfit_regions.push_back("reg1l1tau1b2j_os" + nprong[i]);
+				postfit_regions.push_back("reg1l1tau1b3j_os" + nprong[i]);
+				//vector<TString> scalesamples = {"wjet-fake"};//,"fake"};
 				vector<TString> scalesamples = {"wjet-fake","fake"};
 				vector<double> slices = {25,35,45,125};
-				tau_plots->fit_scale_factor(fit_regions, "taupt_0", scalesamples, slices);
+				tau_plots->fit_scale_factor(fit_regions, "taupt_0", scalesamples, slices, "NOMINAL", postfit_regions);
 			}
 		}
   		if(scaletodata){
