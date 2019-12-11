@@ -1070,26 +1070,18 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         if (dohist) {
           if(debug) printf("fill hist\n");
           if(mc_channel_number!=0){
-            if (fcnc){
-              for (int iNP = 0; iNP < plotNPs.size(); ++iNP)
-              {
-                if(tauorigin.Contains("data")) {
-		            	fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, iNP);
-		            	break;
-		            }
-                std::vector<TString>::iterator it = std::find(weightsysmap[mc_channel_number].begin(), weightsysmap[mc_channel_number].end(), plotNPs[iNP]);
-                int index = 2;
-                if(it != weightsysmap[mc_channel_number].end()) index = std::distance(weightsysmap[mc_channel_number].begin(), it);
-                else continue;
-                if(index<3) weight = weights->at(index);
-                else if(index > 8 && index < 17)
-                  weight = weights->at(2) * weights->at(index);
-                else
-                  weight = weights->at(1) * weights->at(index);
-                fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, plotNPs[iNP]);
-              }
-            }else {
-              if(iter->first.Contains("tau")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
+            for (int iNP = 0; iNP < plotNPs.size(); ++iNP){
+              std::vector<TString>::iterator it = std::find(weightsysmap[mc_channel_number].begin(), weightsysmap[mc_channel_number].end(), plotNPs[iNP]);
+              int index = 2;
+              if(it != weightsysmap[mc_channel_number].end()) index = std::distance(weightsysmap[mc_channel_number].begin(), it);
+              else continue;
+              if(index<3) weight = weights->at(index);
+              else if(index > 8 && index < 17)
+                weight = weights->at(2) * weights->at(index);
+              else
+                weight = weights->at(1) * weights->at(index);
+              if (fcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, plotNPs[iNP]);
+              else if(iter->first.Contains("tau")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
               else fill_notau(iter->first, sample);
             }
           }else{ //data
