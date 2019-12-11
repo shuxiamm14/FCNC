@@ -18,6 +18,7 @@ int main(int argc, char const *argv[])
 	bool tthdofcnc = 0;
 	bool plot_sys = 0;
 	bool dofake = 1;
+	bool onlyMajorNP = 1; // set to 0 for current xTFW analysis.
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	TString framework = argv[1];
@@ -139,17 +140,22 @@ int main(int argc, char const *argv[])
 			analysis->dumpeventnumber = 1;
 		}
 		if(doplot) {
-			if(!inputconfig.Contains("data") && !dofake){
+			if(!inputconfig.Contains("data")){
 				if(analysis->nominaltree == 1 ){
 					for(auto v: fakeNPlist) analysis->plotNPs.push_back(v);
 					if(plot_sys){
-						if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
-						else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
-						for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
+						if(onlyMajorNP){
+							if(framework == "tthML") for(auto v: tthMLmajorNPlist) analysis->plotNPs.push_back(v);
+							else for(auto v: xTFWmajorNPlist) analysis->plotNPs.push_back(v);
+						}else{
+							if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
+							else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
+							for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
+						}
 					}
 				}
 				else analysis->plotNPs.push_back("fakeSF_tthML");
-			}else  analysis->plotNPs.push_back("NOMINAL");
+			}else analysis->plotNPs.push_back("NOMINAL");
 			for(auto NPs: analysis->plotNPs) printf("Plotting NPs: %s\n",NPs.Data());
 			analysis->init_hist(inputconfig);
 		}
@@ -171,8 +177,8 @@ int main(int argc, char const *argv[])
 		delete analysis;
 		return 0;
 	}
+	analysis->fcnc_regions = regions;
 	if(framework == "tthML"){
-		analysis->fcnc_regions = regions;
 		analysis->fake_regions = regions_fake;
 		analysis->fake_regions_notau = regions_notau;
 	}

@@ -470,6 +470,29 @@ std::vector<TString> sampleNPlist = {
 	"ttbarsys_ISR"
 };
 
+std::vector<TString> tthMLmajorNPlist = {
+	"tauEveto_TOTAL_up",
+	"tauEveto_TOTAL_down",
+	"tauEveto_E_TOTAL_up",
+	"tauEveto_E_TOTAL_down",
+	"tauID_TOTAL_up",
+	"tauID_TOTAL_down",
+	"tauID_HIGHPT_up",
+	"tauID_HIGHPT_down",
+	"tauRecon_TOTAL_up",
+	"tauRecon_TOTAL_down",
+	"tauRecon_HIGHPT_up",
+	"tauRecon_HIGHPT_down",
+	"TAUS_TRUEHADTAU_SME_TES_DETECTOR_1down",
+	"TAUS_TRUEHADTAU_SME_TES_DETECTOR_1up",
+	"TAUS_TRUEHADTAU_SME_TES_INSITU_1down",
+	"TAUS_TRUEHADTAU_SME_TES_INSITU_1up",
+	"TAUS_TRUEHADTAU_SME_TES_MODEL_1down",
+	"TAUS_TRUEHADTAU_SME_TES_MODEL_1up",
+};
+
+std::vector<TString> xTFWmajorNPlist = {};
+
 TString findNPname(TString &dirname, int iNP = 0, TString framework = "tthML"){
 
 	int npidx = iNP;
@@ -491,4 +514,23 @@ TString findNPname(TString &dirname, int iNP = 0, TString framework = "tthML"){
 	}
 	printf("NP %d not found, %d NPs in total\n", iNP, totalNP);
 	return "";
+}
+
+void printNPindex(TString framework = "tthML"){
+	std::vector<TString> *specNPlist = framework == "xTFW"?&xTFWNPlist:&tthMLNPlist;
+	std::vector<TString> *treeNPlist = framework == "xTFW"?&xTFWtreeNPlist:&tthMLtreeNPlist;
+
+	std::vector<std::vector<TString>*> nlist = {&fakeNPlist,&commonNPlist,&theoryNPlist,specNPlist,treeNPlist,&sampleNPlist};
+	//17 + 44 + 108 + 34 + 83 + 3
+	int iNP = 0;
+	std::ofstream file;
+	file.open("NPlist.txt");
+	for (auto ilist : nlist)
+	{
+		for( auto NP : *ilist){
+			file << iNP << " " << NP << std::endl;
+			iNP++;
+		}
+	}
+	file.close();
 }
