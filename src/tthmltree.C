@@ -1035,7 +1035,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     if(debug) printf("calc SF\n");
     if(reduce == 1){
       weights->clear();
-      if(fcnc && mc_channel_number){
+      if(mc_channel_number){
         addweights(weight,"NOMINAL");
         calcfakesf(origintag,vtaupt,vtauprong);
         if(nominaltree){
