@@ -1071,6 +1071,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           if(debug) printf("fill hist\n");
           if(mc_channel_number!=0){
             for (int iNP = 0; iNP < plotNPs.size(); ++iNP){
+              if(debug) printf("fill NP %s\n", plotNPs[iNP].Data());
               std::vector<TString>::iterator it = std::find(weightsysmap[mc_channel_number].begin(), weightsysmap[mc_channel_number].end(), plotNPs[iNP]);
               int index = 2;
               if(it != weightsysmap[mc_channel_number].end()) index = std::distance(weightsysmap[mc_channel_number].begin(), it);
