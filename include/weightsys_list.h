@@ -483,14 +483,16 @@ std::vector<TString> tthMLmajorNPlist = {
 	"tauRecon_TOTAL_down",
 	"tauRecon_HIGHPT_up",
 	"tauRecon_HIGHPT_down",
+};
+
+std::vector<TString> tthMLmajortreeNPlist = {
 	"TAUS_TRUEHADTAU_SME_TES_DETECTOR_1down",
 	"TAUS_TRUEHADTAU_SME_TES_DETECTOR_1up",
 	"TAUS_TRUEHADTAU_SME_TES_INSITU_1down",
 	"TAUS_TRUEHADTAU_SME_TES_INSITU_1up",
 	"TAUS_TRUEHADTAU_SME_TES_MODEL_1down",
-	"TAUS_TRUEHADTAU_SME_TES_MODEL_1up",
+	"TAUS_TRUEHADTAU_SME_TES_MODEL_1up"
 };
-
 std::vector<TString> xTFWmajorNPlist = {};
 
 TString findNPname(TString &dirname, int iNP = 0, TString framework = "tthML"){
