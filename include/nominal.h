@@ -163,9 +163,8 @@ public :
   Double_t phi_centrality(Double_t aPhi, Double_t bPhi, Double_t cPhi);
   void finalise_sample();
   static  void    fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
-  void fill_fcnc(TString region, int nprong, TString sample, int ptbin, float taubtag, TString NP);
-  void fill_fake(TString region, int nprong, TString sample, int ptbin, float taubtag);
-  void fill_notau(TString region, TString sample);
+  void fillhist(histSaver *plots, TString region, int nprong, TString sample, int ptbin, float taubtag, TString NP);
+  void fill_notau(TString region, TString sample, TString NP);
   bool SelectTLepid(int id);
   void calcfakesf(std::vector<int> origin, std::vector<float> pt, std::vector<int> prong);
   void calcfakesf_pdg(std::vector<int> originpdg, std::vector<float> pt, std::vector<int> prong);
