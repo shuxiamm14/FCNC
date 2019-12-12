@@ -500,21 +500,12 @@ vector<int> nominal::findwpair(vector<TLorentzVector> lightjets, int cjet){
   return output;
 }
 
-void nominal::fill_fcnc(TString region, int nprong, TString sample, int iptbin, float taubtag, TString NP){
+void nominal::fillhist(histSaver* plots, TString region, int nprong, TString sample, int iptbin, float taubtag, TString NP){
   for (int i = 0; i < 4; ++i){
     if(taubtag>btagwpCut[i]) {
-      if(dobwp[bwps[i]] == 1) fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i],NP);
+      if(dobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i],NP);
     }else{
-      if(dovetobwp[bwps[i]] == 1) fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i],NP);
-    }
-  }
-}
-void nominal::fill_fake(TString region, int nprong, TString sample, int iptbin, float taubtag){
-  for (int i = 0; i < 4; ++i){
-    if(taubtag>btagwpCut[i]) {
-      if(dobwp[bwps[i]] == 1) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i],"NOMINAL");
-    }else{
-      if(dovetobwp[bwps[i]] == 1) fake_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i],"NOMINAL");
+      if(dovetobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i],NP);
     }
   }
 }
@@ -532,9 +523,9 @@ void nominal::printv(TLorentzVector v){
   printf("Pt : %f, Eta: %f, Phi: %f, E: %f, m: %f\n", v.Pt(),v.Eta(),v.Phi(),v.E(),v.M());
 }
 
-void nominal::fill_notau(TString region, TString sample){
+void nominal::fill_notau(TString region, TString sample, TString NP){
   if(debug) printf("fill region: %s sample: %s\n", (region).Data(), (sample).Data());
-  fake_notau_plots->fill_hist(sample, region, "NOMINAL");
+  fake_notau_plots->fill_hist(sample, region, NP);
 }
 void nominal::finalise_sample(){
   printf("finalising sample\n");

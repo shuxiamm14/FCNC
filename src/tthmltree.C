@@ -1067,15 +1067,15 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
                 weight = weights->at(2) * weights->at(index);
               else
                 weight = weights->at(1) * weights->at(index);
-              if (fcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, plotNPs[iNP]);
-              else if(iter->first.Contains("tau")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
-              else fill_notau(iter->first, sample);
+              if (fcnc) fillhist(fcnc_plots, iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, plotNPs[iNP]);
+              else if(iter->first.Contains("tau")) fillhist(fake_plots, iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, plotNPs[iNP]);
+              else fill_notau(iter->first, sample, plotNPs[iNP]);
             }
           }else{ //data
             if (iter->first.Contains("tau")) {
-              if (fcnc) fill_fcnc(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, "NOMINAL");
-              else if (!sample.Contains("fcnc")) fill_fake(iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0);
-            } else fill_notau(iter->first, sample);
+              if (fcnc) fillhist(fcnc_plots, iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, "NOMINAL");
+              else fillhist(fake_plots, iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, "NOMINAL");
+            } else fill_notau(iter->first, sample, "NOMINAL");
           }
         }
       }
