@@ -1066,7 +1066,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
               else if(index > 8 && index < 17)
                 weight = weights->at(2) * weights->at(index);
               else
-                weight = weights->at(1) * weights->at(index);
+                weight = weights->at(0) * weights->at(index);
               if (fcnc) fillhist(fcnc_plots, iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, plotNPs[iNP]);
               else if(iter->first.Contains("tau")) fillhist(fake_plots, iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, plotNPs[iNP]);
               else fill_notau(iter->first, sample, plotNPs[iNP]);
