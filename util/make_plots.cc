@@ -293,7 +293,26 @@ void plot(int iNP, TString framework)
 				//vector<TString> scalesamples = {"wjet-fake"};//,"fake"};
 				vector<TString> scalesamples = {"wjet-fake","fake"};
 				vector<double> slices = {25,35,45,125};
-				tau_plots->fit_scale_factor(fit_regions, "taupt_0", scalesamples, slices, NPname, postfit_regions);
+				vector<vector<observable>> SFs = tau_plots->fit_scale_factor(fit_regions, "taupt_0", scalesamples, slices, NPname, postfit_regions);
+
+				TFile SFfile("scale_factors.root","update");
+				TString prefix = "fit2param" + nprong[i] + "_";
+				TH1D* SFhist; 
+				for (int i = 0; i < 3; ++i)	//2 parameters, 3 pt bins
+				{
+					for (int j = 0; j < 2; ++j)
+					{
+						TString histname = prefix + scalesamples[j] + "_pt" + (to_string(slices[i]) + to_string(slices[i+1])).c_str();
+						SFhist = (TH1D*)SFfile.Get(histname);
+						if(!SFhist) {
+							SFhist = new TH1D(histname,histname,300,0,300);
+						}
+						SFhist -> SetBinContent(iNP+1,SFs[i][j].nominal);
+						SFhist -> SetBinError(iNP+1,SFs[i][j].error);
+						SFhist -> GetXaxis() -> SetBinLabel(iNP+1,NPname);
+						SFhist -> Write(histname, TObject::kWriteDelete);
+					}
+				}
 			}
 		}
   		if(scaletodata){
