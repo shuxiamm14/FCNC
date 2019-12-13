@@ -13,8 +13,8 @@
 mkdir -p /tmp/boyang/boyang
 for systname in `cat $ttH_fakes_DIR/config/tthMLtreeSys.txt`
 do
-if [[ $3 =~ "nominal" ]] ; then
-	systname=nominal
+if [ -n "$3" ] ; then
+	systname=$3
 fi
 mkdir -p $systname
 cd $systname
@@ -76,7 +76,7 @@ if [[ $2 =~ "sub" ]] ; then
 	done	
 fi
 cd ..
-if [[ $3 =~ "nominal" ]] ; then
+if [ -n "$3" ] ; then
 	break
 fi
 done
