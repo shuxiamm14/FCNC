@@ -16,7 +16,7 @@ int main(int argc, char const *argv[])
 	int reduce = *argv[2]-'0';
 	bool doplot = reduce == 3 ? 1 : 0;
 	bool tthdofcnc = 0;
-	bool plot_sys = 0;
+	bool plot_sys = 1;
 	bool dofake = 1;
 	bool onlyMajorNP = 1; // set to 0 for current xTFW analysis.
 	TString prefix1;
