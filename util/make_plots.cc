@@ -302,7 +302,7 @@ void plot(int iNP, TString framework)
 				{
 					for (int j = 0; j < 2; ++j)
 					{
-						TString histname = prefix + scalesamples[j] + "_pt" + (to_string(slices[i]) + to_string(slices[i+1])).c_str();
+						TString histname = prefix + scalesamples[j] + "_pt" + (to_string(int(slices[i])) + to_string(int(slices[i+1]))).c_str();
 						SFhist = (TH1D*)SFfile.Get(histname);
 						if(!SFhist) {
 							SFhist = new TH1D(histname,histname,300,0,300);
