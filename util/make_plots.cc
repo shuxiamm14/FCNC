@@ -41,7 +41,7 @@ void plot(int iNP, TString framework)
 	bool plotnj = 0;
 	bool doPlots = 1;
 	bool scaletodata = 0;
-	bool mergeprong = 0;
+	bool mergeprong = 1;
 	int plot_option = 2;
 	bool fittodata = 1;
 	if(framework == "xTFW") calculate_fake_calibration = 0;
@@ -293,7 +293,7 @@ void plot(int iNP, TString framework)
 				//vector<TString> scalesamples = {"wjet-fake"};//,"fake"};
 				vector<TString> scalesamples = {"wjet-fake","fake"};
 				vector<double> slices = {25,35,45,125};
-				tau_plots->fit_scale_factor(fit_regions, "taupt_0", scalesamples, slices, "NOMINAL", postfit_regions);
+				tau_plots->fit_scale_factor(fit_regions, "taupt_0", scalesamples, slices, NPname, postfit_regions);
 			}
 		}
   		if(scaletodata){
