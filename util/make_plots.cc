@@ -33,6 +33,7 @@ void plot(int iNP, TString framework)
 	TString dirname;
 	TString NPname = findNPname(dirname,iNP,framework);
 	TString nominalname = "fakeSF_tthML";
+	TString histmiddlename =  dirname==NPname? nominalname:NPname;
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 1;
 	bool calibfake = 1;
@@ -226,7 +227,7 @@ void plot(int iNP, TString framework)
 	if(plot_option == 1){
 		for (int j = 0; j < samples.size(); ++j)
 			for (int i = 0; i < 7; ++i)
-				tau_plots->read_sample( origin[i], samples[j].name + "_" + origin[i], NPname, origintitle[i], (enum EColor)colors[i], samples[j].norm);
+				tau_plots->read_sample( origin[i], samples[j].name + "_" + origin[i], histmiddlename, origintitle[i], (enum EColor)colors[i], samples[j].norm);
 	}
 //============================ merge_origin ============================
 	else if(plot_option == 2){
@@ -238,7 +239,7 @@ void plot(int iNP, TString framework)
 				if(!calculate_fake_calibration && signalmap.find(samples[j].name) != signalmap.end()){
 					for(auto signalsamp : signalmap[samples[j].name]){
 						inputfile = getFile(mc_campaign + signalsamp + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
-						for (int i = 0; i < 7; i++) tau_plots->read_sample( samples[j].name, signalsamp + "_" + origin[i], dirname==NPname? nominalname:NPname, samples[j].title, samples[j].color, samples[j].norm, inputfile);
+						for (int i = 0; i < 7; i++) tau_plots->read_sample( samples[j].name, signalsamp + "_" + origin[i], histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
 						deletepointer(inputfile);
 					}
 				}else{
@@ -248,16 +249,16 @@ void plot(int iNP, TString framework)
 						TString samplename = (samplesys==samples[j].name ? NPname : samples[j].name);
 						if(i == 0) inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 						else inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
-						tau_plots->read_sample( samples[j].name, samplename + "_real", dirname==NPname? nominalname:NPname, samples[j].title, samples[j].color, samples[j].norm, inputfile);
+						tau_plots->read_sample( samples[j].name, samplename + "_real", histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
 						if (fakeMC) {
-							for (int i = 0; i < 6; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "Fake MC, 1 truth #tau", kMagenta, samples[j].norm, inputfile);
-							tau_plots->read_sample( "fake0truth", samplename + "_" + origin[8], dirname==NPname? nominalname:NPname, "fake, 0 truth #tau", kTeal, samples[j].norm,inputfile);
+							for (int i = 0; i < 6; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], histmiddlename, "Fake MC, 1 truth #tau", kMagenta, samples[j].norm, inputfile);
+							tau_plots->read_sample( "fake0truth", samplename + "_" + origin[8], histmiddlename, "fake, 0 truth #tau", kTeal, samples[j].norm,inputfile);
 						}else if(calibfake){
 							for (int i = 0; i < 6; i++) {
 								if(origin[i] == "wjet")
-									tau_plots->read_sample( "wjet-fake", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "W-jet Fake #tau", kRed, samples[j].norm, inputfile);
+									tau_plots->read_sample( "wjet-fake", samplename + "_" + origin[i], histmiddlename, "W-jet Fake #tau", kRed, samples[j].norm, inputfile);
 								else 
-									tau_plots->read_sample( "fake", samplename + "_" + origin[i], dirname==NPname? nominalname:NPname, "MC Fake #tau", kTeal, samples[j].norm, inputfile);
+									tau_plots->read_sample( "fake", samplename + "_" + origin[i], histmiddlename, "MC Fake #tau", kTeal, samples[j].norm, inputfile);
 							}
 						}
 						deletepointer(inputfile);
@@ -293,7 +294,7 @@ void plot(int iNP, TString framework)
 				//vector<TString> scalesamples = {"wjet-fake"};//,"fake"};
 				vector<TString> scalesamples = {"wjet-fake","fake"};
 				vector<double> slices = {25,35,45,125};
-				vector<vector<observable>> SFs = tau_plots->fit_scale_factor(fit_regions, "taupt_0", scalesamples, slices, NPname, postfit_regions);
+				vector<vector<observable>> SFs = tau_plots->fit_scale_factor(fit_regions, "taupt_0", scalesamples, slices, histmiddlename, postfit_regions);
 
 				TFile SFfile("scale_factors.root","update");
 				TString prefix = "fit2param" + nprong[i] + "_";
@@ -339,8 +340,8 @@ void plot(int iNP, TString framework)
   		}
   		if(!fakeMC && framework == "xTFW") {
   			tau_plots->stackorder.push_back("fakeSS");
-  			tau_plots->templatesample("reg2mtau1b3jss",NPname,"1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b3jos","fakeSS","Fake",kYellow,0,1.31597);
-  			tau_plots->templatesample("reg2mtau1b2jss",NPname,"1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b2jos","fakeSS","Fake",kYellow,0,1.31597);
+  			tau_plots->templatesample("reg2mtau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b3jos","fakeSS","Fake",kYellow,0,1.31597);
+  			tau_plots->templatesample("reg2mtau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b2jos","fakeSS","Fake",kYellow,0,1.31597);
   			//tau_plots->templatesample("reg2mtau2b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b3jos","fakeSS","Fake",kYellow,1);
   			//tau_plots->templatesample("reg2mtau2b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b2jos","fakeSS","Fake",kYellow,1);
 
@@ -389,7 +390,7 @@ void plot(int iNP, TString framework)
 		{
   			tau_plots->overlay(samples[i].name);
 		}
-		tau_plots->plot_stack(dirname==NPname? nominalname:NPname, NPname);
+		tau_plots->plot_stack(histmiddlename, NPname);
 		
 	}
 	deletepointer(tau_plots);
