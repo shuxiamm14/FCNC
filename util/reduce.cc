@@ -15,7 +15,7 @@ int main(int argc, char const *argv[])
 	int debug = 0;
 	int reduce = *argv[2]-'0';
 	bool doplot = reduce == 3 ? 1 : 0;
-	bool tthdofcnc = 0;
+	bool tthdofcnc = 1;
 	bool plot_sys = 1;
 	bool dofake = 1;
 	bool onlyMajorNP = 1; // set to 0 for current xTFW analysis.
@@ -70,7 +70,7 @@ int main(int argc, char const *argv[])
 		regions.push_back("reg2ttau1b3jos");
 		regions.push_back("reg1ttau1mtau1b3jos");
 	}else{
-		if(tthdofcnc){
+		if(tthdofcnc || reduce == 1){
 			regions.push_back("reg1l1tau1b2j_os");
 			regions.push_back("reg1l1tau1b3j_os");
 			regions.push_back("reg1l1tau2b2j_os");
