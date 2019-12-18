@@ -386,7 +386,7 @@ int main(int argc, char const *argv[])
 			}
 			if(dsid != lastdsid) analysis->init_dsid();
 			analysis->Loop( (TTree*)inputfile.Get(systname), inputconfig, framework == "xTFW"? xsecs[dsid]*luminosity/totgenweighted[dsid] : 1);
-			printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
+			if(framework == "xTFW") printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		}
 		inputfile.Close();
 		lastdsid = dsid;
