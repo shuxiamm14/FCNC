@@ -297,7 +297,7 @@ void plot(int iNP, TString framework)
 				vector<double> slices = {25,35,45,125};
 				vector<vector<observable>> SFs = tau_plots->fit_scale_factor(fit_regions, "taupt_0", scalesamples, slices, histmiddlename, postfit_regions);
 
-				TFile SFfile("scale_factors.root","update");
+				TFile SFfile("scale_factors_" + fitcharge + ".root","update");
 				TString prefix = "fit2param" + nprong[i] + "_";
 				TH1D* SFhist; 
 				for (int i = 0; i < 3; ++i)	//2 parameters, 3 pt bins
