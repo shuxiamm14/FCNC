@@ -224,19 +224,43 @@ void plot(int iNP, TString framework)
 			tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile_fake[i]);
 		}
 	}
-//============================ merge_sample============================
-	if(plot_option == 1){
-		for (int j = 0; j < samples.size(); ++j)
-			for (int i = 0; i < 7; ++i)
-				tau_plots->read_sample( origin[i], samples[j].name + "_" + origin[i], histmiddlename, origintitle[i], (enum EColor)colors[i], samples[j].norm);
+	TFile *inputfile;
+//============================ merge_origin============================
+	if(plot_option == 0){
+		for (int j = 0; j < samples.size(); ++j){
+			for (int i = 0; i < 8; ++i){
+				for (int icamp = 0; icamp < (framework == "tthML"? 2:3); ++icamp)
+				{
+					TString mc_campaign = campaigns[icamp];
+					TString samplename = (samplesys==samples[j].name ? NPname : samples[j].name);
+					inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
+					tau_plots->read_sample( samples[j].name, samples[j].name + "_" + origin[i], histmiddlename, origintitle[i], (enum EColor)colors[i], samples[j].norm,inputfile);
+					deletepointer(inputfile);
+				}
+			}
+		}
 	}
-//============================ merge_origin ============================
+//============================ merge_sample============================
+	else if(plot_option == 1){
+		for (int j = 0; j < samples.size(); ++j){
+			for (int i = 0; i < 8; ++i){
+				for (int icamp = 0; icamp < (framework == "tthML"? 2:3); ++icamp)
+				{
+					TString mc_campaign = campaigns[icamp];
+					TString samplename = (samplesys==samples[j].name ? NPname : samples[j].name);
+					inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
+					tau_plots->read_sample( origin[i], samples[j].name + "_" + origin[i], histmiddlename, origintitle[i], (enum EColor)colors[i], samples[j].norm,inputfile);
+					deletepointer(inputfile);
+				}
+			}
+		}
+	}
+//============================ merge_real ============================
 	else if(plot_option == 2){
 		for (int j = 0; j < samples.size(); ++j){
-			for (int i = 0; i < (framework == "tthML"? 2:3); ++i)
+			for (int icamp = 0; icamp < (framework == "tthML"? 2:3); ++icamp)
 			{
-				TString mc_campaign = campaigns[i];
-				TFile *inputfile;
+				TString mc_campaign = campaigns[icamp];
 				if(!calculate_fake_calibration && signalmap.find(samples[j].name) != signalmap.end()){
 					for(auto signalsamp : signalmap[samples[j].name]){
 						inputfile = getFile(mc_campaign + signalsamp + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
