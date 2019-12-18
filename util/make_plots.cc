@@ -271,7 +271,8 @@ void plot(int iNP, TString framework)
 									tau_plots->read_sample( "fake", samplename + "_" + origin[i], histmiddlename, "MC Fake #tau", kTeal, samples[j].norm, inputfile);
 							}
 						}else{
-							for (int i = 0; i < 6; i++) tau_plots->read_sample( samples[j].name, samplename + origin[i], histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
+							for (int i = 0; i < 6; i++)
+								tau_plots->read_sample( samples[j].name, samplename + "_" + origin[i], histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
 						}
 						deletepointer(inputfile);
 					}
