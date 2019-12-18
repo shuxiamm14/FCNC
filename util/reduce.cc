@@ -161,10 +161,19 @@ int main(int argc, char const *argv[])
 		}
 		analysis->init_sample(inputconfig,inputconfig);
 		TString inputfilename = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/" + analysis->SystematicsName + "/" + inputconfig + "_tree.root";
+		TString inputfilename_nominal = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/nominal/" + inputconfig + "_tree.root";
 		printf("reading file: %s\n", inputfilename.Data());
 		TFile inputfile(inputfilename);
+		TFile *inputfile_nominal = 0;
+		if(!analysis->nominaltree && framework == "tthML") inputfile_nominal = new TFile(inputfilename_nominal,"read");
 		for(auto reg : regions){
 			printf("Loop region: %s\n", reg.Data());
+
+			if(!analysis->nominaltree && framework == "tthML"){
+				TTree *nominalinputtree;
+				inputfile_nominal->GetObject(reg,nominalinputtree);
+				analysis->constructwmatchmap(nominalinputtree);
+			}
 			analysis->Loop( (TTree*)inputfile.Get(reg), inputconfig, 1);
 		}
 		analysis->finalise_sample();
