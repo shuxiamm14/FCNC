@@ -692,13 +692,17 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         }
       }
       etmiss = met_met;
-      constructTruth();
-      taumatchwjet = 0;
-      TLorentzVector leadtau;
-      leadtau.SetPtEtaPhiE(tau_pt_0,tau_eta_0,tau_phi_0,tau_E_0);
-      if(truthmatch(leadtau))
-        if(truthmatch(leadtau)->mother)
-          taumatchwjet = abs(truthmatch(leadtau)->mother->pdg) == 24;
+      if(nominaltree){
+        constructTruth();
+        taumatchwjet = 0;
+        TLorentzVector leadtau;
+        leadtau.SetPtEtaPhiE(tau_pt_0,tau_eta_0,tau_phi_0,tau_E_0);
+        if(truthmatch(leadtau))
+          if(truthmatch(leadtau)->mother)
+            taumatchwjet = abs(truthmatch(leadtau)->mother->pdg) == 24;
+      }else{
+        taumatchwjet = taumatchmap[eventNumber];
+      }
       if (fcnc) {
         double tmpdr;
         double tmpm;
@@ -1327,4 +1331,20 @@ bool tthmltree::SelectTLepid(int id) {
     pass = lep_isolationFixedCutLoose_4 && (abs(lep_ID_4) == 13 || ((abs(lep_ID_4) == 11) && lep_isTightLH_4));
   }
   return pass;
+}
+
+void tthmltree::constructwmatchmap(TTree *tree){
+  ULong64_t eventnumber;
+  bool matched;
+  tree->SetBranchStatus("*",0);
+  tree->SetBranchStatus("eventNumber",1);
+  tree->SetBranchStatus("taumatchwjet",1);
+  tree->SetBranchAddress("eventNumber",&eventnumber);
+  tree->SetBranchAddress("taumatchwjet",&matched);
+  Long64_t nentries = tree->GetEntriesFast();
+  for (int i = 0; i < nentries; ++i)
+  {
+    tree->GetEntry(i);
+    taumatchmap[eventnumber] = matched;
+  }
 }

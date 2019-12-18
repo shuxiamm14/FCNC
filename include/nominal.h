@@ -174,6 +174,7 @@ public :
   virtual void init_hist(TString histfilename){ printf("WARNING: virtual function init_hist is used\n");};
   virtual void Loop(TTree*inputtree, TString samplename, float globalweight){ printf("WARNING: virtual function Loop is used\n");};
   virtual void init_sample(TString sample, TString sampletitle){ printf("WARNING: virtual function init_sample is used\n");};
+  virtual void constructwmatchmap(TTree *tree){ printf("WARNING: virtual function constructwmatchmap is used\n");};
   static void printv(TLorentzVector v);
   int leading_b = -1 ;
   int leading_ljet = -1 ;

@@ -21,10 +21,13 @@ public:
    bool addWeightSys();
    void constructTruth();
    truthpart* truthmatch(TLorentzVector p4);
+   void constructwmatchmap(TTree *tree);
    std::vector<truthpart*> truthparticles;
    cutflow tthcutflow;
    bool dofit1l2tau = 0;
    bool applyfakeSF = 0;
+   std::map<ULong64_t, bool> taumatchmap;
+
    static TH2F* prob_20_40;
    static TH2F* prob_40_60;
    static TH2F* prob_60_80;

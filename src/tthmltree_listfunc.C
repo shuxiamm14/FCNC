@@ -1384,16 +1384,19 @@ void tthmltree::Init(TTree*tree) {
       tree->SetBranchAddress("lepEffTrigTight_MU_SF_Trigger_STAT_UP", & lepEffTrigTight_MU_SF_Trigger_STAT_UP);
     }
   }
-  tree->SetBranchAddress("m_truth_m", & m_truth_m);
-  tree->SetBranchAddress("m_truth_pt", & m_truth_pt);
-  tree->SetBranchAddress("m_truth_eta", & m_truth_eta);
-  tree->SetBranchAddress("m_truth_phi", & m_truth_phi);
-  tree->SetBranchAddress("m_truth_e", & m_truth_e);
-  tree->SetBranchAddress("m_truth_pdgId", & m_truth_pdgId);
-  tree->SetBranchAddress("m_truth_status", & m_truth_status);
-  tree->SetBranchAddress("m_truth_barcode", & m_truth_barcode);
-  tree->SetBranchAddress("m_truth_parents", & m_truth_parents);
-  tree->SetBranchAddress("m_truth_children", & m_truth_children);
+  if (nominaltree)
+  {
+    tree->SetBranchAddress("m_truth_m", & m_truth_m);
+    tree->SetBranchAddress("m_truth_pt", & m_truth_pt);
+    tree->SetBranchAddress("m_truth_eta", & m_truth_eta);
+    tree->SetBranchAddress("m_truth_phi", & m_truth_phi);
+    tree->SetBranchAddress("m_truth_e", & m_truth_e);
+    tree->SetBranchAddress("m_truth_pdgId", & m_truth_pdgId);
+    tree->SetBranchAddress("m_truth_status", & m_truth_status);
+    tree->SetBranchAddress("m_truth_barcode", & m_truth_barcode);
+    tree->SetBranchAddress("m_truth_parents", & m_truth_parents);
+    tree->SetBranchAddress("m_truth_children", & m_truth_children);
+  }
   tree->SetBranchAddress("eventNumber", & eventNumber);
   tree->SetBranchAddress("runNumber", & runNumber);
   if (reduce == 0) {
@@ -2607,8 +2610,8 @@ void tthmltree::definetree(TTree*tree) {
       tree->Branch("bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_down", & bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_down, "bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_down/F");
       tree->Branch("bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_up", & bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_up, "bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_up/F");
       tree->Branch("bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_down", & bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_down, "bTagSF_weight_DL1_FixedCutBEff_70_extrapolation_from_charm_down/F");
-  tree->Branch("JVT_EventWeight_UP", & JVT_EventWeight_UP, "JVT_EventWeight_UP/D");
-  tree->Branch("JVT_EventWeight_DOWN", & JVT_EventWeight_DOWN, "JVT_EventWeight_DOWN/D");
+      tree->Branch("JVT_EventWeight_UP", & JVT_EventWeight_UP, "JVT_EventWeight_UP/D");
+      tree->Branch("JVT_EventWeight_DOWN", & JVT_EventWeight_DOWN, "JVT_EventWeight_DOWN/D");
     }
     tree->Branch("lep_firstEgMotherPdgId_0", & lep_firstEgMotherPdgId_0, "lep_firstEgMotherPdgId_0/I");
     tree->Branch("lep_firstEgMotherTruthType_0", & lep_firstEgMotherTruthType_0, "lep_firstEgMotherTruthType_0/I");
@@ -3095,16 +3098,19 @@ void tthmltree::definetree(TTree*tree) {
       tree->Branch("lepEffTrigTight_MU_SF_Trigger_STAT_UP", & lepEffTrigTight_MU_SF_Trigger_STAT_UP, "lepEffTrigTight_MU_SF_Trigger_STAT_UP/F");
     }
   }
-  tree->Branch("m_truth_m", & m_truth_m);
-  tree->Branch("m_truth_pt", & m_truth_pt);
-  tree->Branch("m_truth_eta", & m_truth_eta);
-  tree->Branch("m_truth_phi", & m_truth_phi);
-  tree->Branch("m_truth_e", & m_truth_e);
-  tree->Branch("m_truth_pdgId", & m_truth_pdgId);
-  tree->Branch("m_truth_status", & m_truth_status);
-  tree->Branch("m_truth_barcode", & m_truth_barcode);
-  tree->Branch("m_truth_parents", & m_truth_parents);
-  tree->Branch("m_truth_children", & m_truth_children);
+  if (nominaltree)
+  {
+    tree->Branch("m_truth_m", & m_truth_m);
+    tree->Branch("m_truth_pt", & m_truth_pt);
+    tree->Branch("m_truth_eta", & m_truth_eta);
+    tree->Branch("m_truth_phi", & m_truth_phi);
+    tree->Branch("m_truth_e", & m_truth_e);
+    tree->Branch("m_truth_pdgId", & m_truth_pdgId);
+    tree->Branch("m_truth_status", & m_truth_status);
+    tree->Branch("m_truth_barcode", & m_truth_barcode);
+    tree->Branch("m_truth_parents", & m_truth_parents);
+    tree->Branch("m_truth_children", & m_truth_children);
+  }
   tree->Branch("eventNumber", & eventNumber, "eventNumber/l");
   tree->Branch("runNumber", & runNumber, "runNumber/i");
   tree->Branch("mc_channel_number", & mc_channel_number, "mc_channel_number/i");
