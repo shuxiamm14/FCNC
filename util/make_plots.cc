@@ -300,30 +300,46 @@ void plot(int iNP, TString framework)
 			for(int i = 0; i < 3; i++){
 				if(mergeprong) { if(i != 2) continue; }
 				else { if(i == 2) continue; }
-				vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b3j_" + fitcharge + nprong[i], "reg1l1tau2b1j_" + fitcharge + nprong[i],"reg1e1mu1tau1b" + nprong[i],"reg1e1mu1tau2b" + nprong[i]};
+				//vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b3j_" + fitcharge + nprong[i], "reg1l1tau2b1j_" + fitcharge + nprong[i],"reg1e1mu1tau1b" + nprong[i],"reg1e1mu1tau2b" + nprong[i]};
+				vector<TString> fit_regions = {
+					"reg1l1tau2b2j_os" + nprong[i], "reg1l1tau2b3j_os" + nprong[i], "reg1l1tau2b1j_os" + nprong[i],
+					"reg1l1tau2b2j_ss" + nprong[i], "reg1l1tau2b3j_ss" + nprong[i], "reg1l1tau2b1j_ss" + nprong[i],
+					"reg1e1mu1tau1b" + nprong[i],"reg1e1mu1tau2b" + nprong[i]
+				};
 				vector<TString> postfit_regions = fit_regions;
-				postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + nprong[i]);
-				postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + nprong[i]);
-				//vector<TString> scalesamples = {"wjet-fake"};//,"fake"};
-				vector<TString> scalesamples = {"wjet-fake","fake"};
+				//postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + nprong[i]);
+				//postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + nprong[i]);
+				postfit_regions.push_back("reg1l1tau1b2j_os" + nprong[i]);
+				postfit_regions.push_back("reg1l1tau1b3j_os" + nprong[i]);
+				postfit_regions.push_back("reg1l1tau1b2j_ss" + nprong[i]);
+				postfit_regions.push_back("reg1l1tau1b3j_ss" + nprong[i]);
+				//vector<TString> scalesamples = {"wjet-fake","fake"};
+				map<TString,map<TString,vector<TString>>> scalesamples;
+				scalesamples["fake"];
+				scalesamples["wjet-fake"] = {
+					{"ss", {"reg1l1tau2b2j_ss" + nprong[i], "reg1l1tau2b3j_ss" + nprong[i], "reg1l1tau2b1j_ss" + nprong[i]}},
+					{"os", {"reg1l1tau2b2j_os" + nprong[i], "reg1l1tau2b3j_os" + nprong[i], "reg1l1tau2b1j_os" + nprong[i], "reg1e1mu1tau1b" + nprong[i], "reg1e1mu1tau2b" + nprong[i]}},
+				};
+
 				vector<double> slices = {25,35,45,125};
 				TString varname = "taupt_0";
-				vector<vector<observable>> *SFs = tau_plots->fit_scale_factor(&fit_regions, &varname, &scalesamples, &slices, &histmiddlename, &postfit_regions);
+				map<TString,vector<observable>> *SFs = tau_plots->fit_scale_factor(&fit_regions, &varname, &scalesamples, &slices, &histmiddlename, &postfit_regions);
 
-				TFile SFfile("scale_factors_" + fitcharge + ".root","update");
-				TString prefix = "fit2param" + nprong[i] + "_";
+				//TFile SFfile("scale_factors_" + fitcharge + ".root","update");
+				TFile SFfile("scale_factors.root","update");
+				TString prefix = "Fit" + nprong[i] + "_";
 				TH1D* SFhist; 
-				for (int i = 0; i < 3; ++i)	//2 parameters, 3 pt bins
+				for (int i = 0; i < 3; ++i)	//3 pt bins
 				{
-					for (int j = 0; j < 2; ++j)
+					for (auto SF : *SFs) //3 parameters
 					{
-						TString histname = prefix + scalesamples[j] + "_pt" + (to_string(int(slices[i])) + to_string(int(slices[i+1]))).c_str();
+						TString histname = prefix + SF.first + "_pt" + (to_string(int(slices[i])) + to_string(int(slices[i+1]))).c_str();
 						SFhist = (TH1D*)SFfile.Get(histname);
 						if(!SFhist) {
 							SFhist = new TH1D(histname,histname,300,0,300);
 						}
-						SFhist -> SetBinContent(iNP+1,SFs->at(i)[j].nominal);
-						SFhist -> SetBinError(iNP+1,SFs->at(i)[j].error);
+						SFhist -> SetBinContent(iNP+1,SF.second[i].nominal);
+						SFhist -> SetBinError(iNP+1,SF.second[i].error);
 						SFhist -> GetXaxis() -> SetBinLabel(iNP+1,NPname);
 						SFhist -> Write(histname, TObject::kWriteDelete);
 					}
