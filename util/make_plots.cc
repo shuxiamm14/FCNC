@@ -307,7 +307,8 @@ void plot(int iNP, TString framework)
 				//vector<TString> scalesamples = {"wjet-fake"};//,"fake"};
 				vector<TString> scalesamples = {"wjet-fake","fake"};
 				vector<double> slices = {25,35,45,125};
-				vector<vector<observable>> SFs = tau_plots->fit_scale_factor(fit_regions, "taupt_0", scalesamples, slices, histmiddlename, postfit_regions);
+				TString varname = "taupt_0";
+				vector<vector<observable>> *SFs = tau_plots->fit_scale_factor(&fit_regions, &varname, &scalesamples, &slices, &histmiddlename, &postfit_regions);
 
 				TFile SFfile("scale_factors_" + fitcharge + ".root","update");
 				TString prefix = "fit2param" + nprong[i] + "_";
@@ -321,8 +322,8 @@ void plot(int iNP, TString framework)
 						if(!SFhist) {
 							SFhist = new TH1D(histname,histname,300,0,300);
 						}
-						SFhist -> SetBinContent(iNP+1,SFs[i][j].nominal);
-						SFhist -> SetBinError(iNP+1,SFs[i][j].error);
+						SFhist -> SetBinContent(iNP+1,SFs->at(i)[j].nominal);
+						SFhist -> SetBinError(iNP+1,SFs->at(i)[j].error);
 						SFhist -> GetXaxis() -> SetBinLabel(iNP+1,NPname);
 						SFhist -> Write(histname, TObject::kWriteDelete);
 					}
