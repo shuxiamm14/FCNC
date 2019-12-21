@@ -306,13 +306,13 @@ void plot(int iNP, TString framework)
 					"reg1l1tau2b2j_ss" + nprong[i], "reg1l1tau2b3j_ss" + nprong[i], "reg1l1tau2b1j_ss" + nprong[i],
 					"reg1e1mu1tau1b" + nprong[i],"reg1e1mu1tau2b" + nprong[i]
 				};
-				vector<TString> postfit_regions = fit_regions;
+				//vector<TString> postfit_regions = fit_regions;
 				//postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + nprong[i]);
 				//postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + nprong[i]);
-				postfit_regions.push_back("reg1l1tau1b2j_os" + nprong[i]);
-				postfit_regions.push_back("reg1l1tau1b3j_os" + nprong[i]);
-				postfit_regions.push_back("reg1l1tau1b2j_ss" + nprong[i]);
-				postfit_regions.push_back("reg1l1tau1b3j_ss" + nprong[i]);
+				//postfit_regions.push_back("reg1l1tau1b2j_os" + nprong[i]);
+				//postfit_regions.push_back("reg1l1tau1b3j_os" + nprong[i]);
+				//postfit_regions.push_back("reg1l1tau1b2j_ss" + nprong[i]);
+				//postfit_regions.push_back("reg1l1tau1b3j_ss" + nprong[i]);
 				//vector<TString> scalesamples = {"wjet-fake","fake"};
 				map<TString,map<TString,vector<TString>>> scalesamples;
 				scalesamples["fake"];
@@ -320,7 +320,11 @@ void plot(int iNP, TString framework)
 					{"ss", {"reg1l1tau2b2j_ss" + nprong[i], "reg1l1tau2b3j_ss" + nprong[i], "reg1l1tau2b1j_ss" + nprong[i]}},
 					{"os", {"reg1l1tau2b2j_os" + nprong[i], "reg1l1tau2b3j_os" + nprong[i], "reg1l1tau2b1j_os" + nprong[i], "reg1e1mu1tau1b" + nprong[i], "reg1e1mu1tau2b" + nprong[i]}},
 				};
-
+				map<TString,map<TString,vector<TString>>> postfit_regions = scalesamples;
+				postfit_regions["wjet-fake"]["ss"].push_back("reg1l1tau1b3j_ss");
+				postfit_regions["wjet-fake"]["ss"].push_back("reg1l1tau1b2j_ss");
+				postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b3j_os");
+				postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b2j_os");
 				vector<double> slices = {25,35,45,125};
 				TString varname = "taupt_0";
 				map<TString,vector<observable>> *SFs = tau_plots->fit_scale_factor(&fit_regions, &varname, &scalesamples, &slices, &histmiddlename, &postfit_regions);
