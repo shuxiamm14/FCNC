@@ -277,7 +277,10 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
       if(debug) printf("init sample:: get region: %s\n",fcnc_regions[i].Data());
       TTree *target = new TTree(fcnc_regions[i],fcnc_regions[i]);
       outputtree[fcnc_regions[i]] = target;
-      if(reduce==1 ) definetree(target);
+      if(reduce==1 ) {
+        definetree(target);
+        target->Branch("taumatchwjet", &taumatchwjet);
+      }
       if(reduce==2 ){
         if(sample.Contains("data")) target->Branch("runNumber", &runNumber);
         target->Branch("chi2",&chi2);
@@ -333,7 +336,6 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         target->Branch("PIV_1", &lep_promptLeptonVeto_TagWeight_1);
         target->Branch("lep_ID_0",&lep_ID_0);
         target->Branch("lep_ID_1",&lep_ID_1);
-        target->Branch("taumatchwjet", &taumatchwjet);
         target->Branch("taulmass", &taulmass);
       }
     }
@@ -613,6 +615,17 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       }
 
       if (!triggered) continue;
+
+      if(nominaltree){
+        constructTruth();
+        taumatchwjet = 0;
+        TLorentzVector leadtau;
+        leadtau.SetPtEtaPhiE(tau_pt_0,tau_eta_0,tau_phi_0,tau_E_0);
+        if(truthmatch(leadtau))
+          if(truthmatch(leadtau)->mother)
+            taumatchwjet = abs(truthmatch(leadtau)->mother->pdg) == 24;
+      }
+
     }else if(tightTau) {
       bool passtight = 1;
       for(auto & iter : ifregions){
@@ -627,7 +640,9 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     else weight = weights->at(0);
 
     if (reduce == 2) {
-
+      if(!nominaltree){
+        taumatchwjet = taumatchmap[eventNumber];
+      }
       tthcutflow.fill();
       if (debug == 2) printf("event weight: %f\n", weight);
       if (debug == 2) {
@@ -706,17 +721,6 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         }
       }
       etmiss = met_met;
-      if(nominaltree){
-        constructTruth();
-        taumatchwjet = 0;
-        TLorentzVector leadtau;
-        leadtau.SetPtEtaPhiE(tau_pt_0,tau_eta_0,tau_phi_0,tau_E_0);
-        if(truthmatch(leadtau))
-          if(truthmatch(leadtau)->mother)
-            taumatchwjet = abs(truthmatch(leadtau)->mother->pdg) == 24;
-      }else{
-        taumatchwjet = taumatchmap[eventNumber];
-      }
       if (fcnc) {
         double tmpdr;
         double tmpm;

@@ -624,7 +624,10 @@ void tthmltree::Init(TTree*tree) {
   tree->SetMakeClass(1);
 
   tree->SetBranchAddress("mc_channel_number", & mc_channel_number);
-  if(reduce>=1) tree->SetBranchAddress("weights", & weights);
+  if(reduce>=1) {
+    if(nominaltree || reduce >=2) tree->SetBranchAddress("taumatchwjet", &taumatchwjet);
+    tree->SetBranchAddress("weights", & weights);
+  }
 
   if (reduce >= 2 && fcnc) {
     tree->SetBranchAddress("nljet",&nljet);
@@ -679,7 +682,6 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("PIV_1", &lep_promptLeptonVeto_TagWeight_1);
     tree->SetBranchAddress("lep_ID_0", &lep_ID_0);
     tree->SetBranchAddress("lep_ID_1", &lep_ID_1);
-    tree->SetBranchAddress("taumatchwjet", &taumatchwjet);
     tree->SetBranchAddress("taulmass", &taulmass);
     
     return;
