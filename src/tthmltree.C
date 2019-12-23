@@ -277,12 +277,13 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
       if(debug) printf("init sample:: get region: %s\n",fcnc_regions[i].Data());
       TTree *target = new TTree(fcnc_regions[i],fcnc_regions[i]);
       outputtree[fcnc_regions[i]] = target;
-      if(reduce==1 ) {
+      if(reduce==1 && nominaltree) {
         definetree(target);
         target->Branch("taumatchwjet", &taumatchwjet);
       }
       if(reduce==2 ){
         if(sample.Contains("data")) target->Branch("runNumber", &runNumber);
+        target->Branch("taumatchwjet", &taumatchwjet);
         target->Branch("chi2",&chi2);
         target->Branch("allmass", &allmass);
         target->Branch("allpz", &allpz);
@@ -616,7 +617,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
 
       if (!triggered) continue;
 
-      if(nominaltree){
+      if(nominaltree && nTaus_OR_Pt25){
         constructTruth();
         taumatchwjet = 0;
         TLorentzVector leadtau;
@@ -640,7 +641,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     else weight = weights->at(0);
 
     if (reduce == 2) {
-      if(!nominaltree){
+      if(!nominaltree && nTaus_OR_Pt25) {
         taumatchwjet = taumatchmap[eventNumber];
       }
       tthcutflow.fill();
