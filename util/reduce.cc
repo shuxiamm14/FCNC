@@ -165,7 +165,10 @@ int main(int argc, char const *argv[])
 		printf("reading file: %s\n", inputfilename.Data());
 		TFile inputfile(inputfilename);
 		TFile *inputfile_nominal = 0;
-		if(!analysis->nominaltree && framework == "tthML") inputfile_nominal = new TFile(inputfilename_nominal,"read");
+		if(!analysis->nominaltree && framework == "tthML") {
+			printf("reading nominal file to get truth: %s\n", inputfilename_nominal.Data());
+			inputfile_nominal = new TFile(inputfilename_nominal,"read");
+		}
 		for(auto reg : regions){
 			printf("Loop region: %s\n", reg.Data());
 
