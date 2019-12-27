@@ -342,13 +342,28 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
 
     for (int i = 0; i < fake_nregions; ++i)
     {
-      outputtree[fake_regions[i]] = new TTree(fake_regions[i],fake_regions[i]);
-      definetree(outputtree[fake_regions[i]]);
+      if(debug) printf("init sample:: get region: %s\n", fake_regions[i].Data());
+      TTree* target = 0;
+      if (outputtreefile->Get(fake_regions[i])) {
+        target = (TTree*)(outputtreefile->Get(fake_regions[i]));
+        Init(target);
+      }else{
+        target = new TTree(fake_regions[i],fake_regions[i]);
+        definetree(target);
+        target->Branch("taumatchwjet", &taumatchwjet);
+      }
+      outputtree[fake_regions[i]] = target;
     }
     for (int i = 0; i < fake_nregions_notau; ++i)
     {
-      outputtree[fake_regions_notau[i]] = new TTree(fake_regions_notau[i],fake_regions_notau[i]);
-      definetree(outputtree[fake_regions_notau[i]]);
+      if(debug) printf("init sample:: get region: %s\n", fake_regions_notau[i].Data());
+      if (outputtreefile->Get(fake_regions_notau[i])) {
+        outputtree[fake_regions_notau[i]] = (TTree*)(outputtreefile->Get(fake_regions_notau[i]));
+        Init(outputtree[fake_regions_notau[i]]);
+      }else{
+        outputtree[fake_regions_notau[i]] = new TTree(fake_regions_notau[i],fake_regions_notau[i]);
+        definetree(outputtree[fake_regions_notau[i]]);
+      }
     }
   }
 //==========================init output histogram==========================

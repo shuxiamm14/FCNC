@@ -42,7 +42,7 @@ ulimit -n 32000
 
 rm sublocal.sh
 
-for i in {1..3}
+for i in {1..4}
 do
 	if [[ $1 =~ $i ]] ; then
 		echo "reduce_run tthML $i"' $1'" $systname"  >> bulkreduce.sh

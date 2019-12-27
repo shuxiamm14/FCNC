@@ -17,7 +17,7 @@ int main(int argc, char const *argv[])
 	bool doplot = reduce == 3 ? 1 : 0;
 	bool tthdofcnc = 1;
 	bool plot_sys = 1;
-	bool dofake = 1;
+	bool dofake = 0;
 	bool onlyMajorNP = 1; // set to 0 for current xTFW analysis.
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
@@ -25,6 +25,11 @@ int main(int argc, char const *argv[])
 	if(reduce == 3) {
 		dofake = 0;
 		tthdofcnc = 1;
+	}
+	if(reduce == 4){
+		dofake = 1;
+		tthdofcnc = 0;
+		reduce = 2;
 	}
 	TString samplefile = argv[3];
 	TString systname = argv[4];
@@ -91,9 +96,6 @@ int main(int argc, char const *argv[])
 			regions_fake.push_back("reg1l1tau2b_os");
 			regions_fake.push_back("reg1l1tau2b_ss");
 			regions_fake.push_back("reg1e1mu1tau1b");
-			regions_notau.push_back("reg1e1mu2bnj");
-			regions_notau.push_back("reg1l2b2j");
-			regions_notau.push_back("reg1e1mu2b");
 		}
 
 	}
