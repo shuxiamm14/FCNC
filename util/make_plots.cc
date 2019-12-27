@@ -300,20 +300,12 @@ void plot(int iNP, TString framework)
 			for(int i = 0; i < 3; i++){
 				if(mergeprong) { if(i != 2) continue; }
 				else { if(i == 2) continue; }
-				//vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b3j_" + fitcharge + nprong[i], "reg1l1tau2b1j_" + fitcharge + nprong[i],"reg1e1mu1tau1b" + nprong[i],"reg1e1mu1tau2b" + nprong[i]};
+/*
 				vector<TString> fit_regions = {
 					"reg1l1tau2b2j_os" + nprong[i], "reg1l1tau2b3j_os" + nprong[i], "reg1l1tau2b1j_os" + nprong[i],
 					"reg1l1tau2b2j_ss" + nprong[i], "reg1l1tau2b3j_ss" + nprong[i], "reg1l1tau2b1j_ss" + nprong[i],
 					"reg1e1mu1tau1b" + nprong[i],"reg1e1mu1tau2b" + nprong[i]
 				};
-				//vector<TString> postfit_regions = fit_regions;
-				//postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + nprong[i]);
-				//postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + nprong[i]);
-				//postfit_regions.push_back("reg1l1tau1b2j_os" + nprong[i]);
-				//postfit_regions.push_back("reg1l1tau1b3j_os" + nprong[i]);
-				//postfit_regions.push_back("reg1l1tau1b2j_ss" + nprong[i]);
-				//postfit_regions.push_back("reg1l1tau1b3j_ss" + nprong[i]);
-				//vector<TString> scalesamples = {"wjet-fake","fake"};
 				map<TString,map<TString,vector<TString>>> scalesamples;
 				scalesamples["fake"];
 				scalesamples["wjet-fake"] = {
@@ -325,12 +317,22 @@ void plot(int iNP, TString framework)
 				postfit_regions["wjet-fake"]["ss"].push_back("reg1l1tau1b2j_ss");
 				postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b3j_os");
 				postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b2j_os");
+*/
+				vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b3j_" + fitcharge + nprong[i], "reg1l1tau2b1j_" + fitcharge + nprong[i],"reg1e1mu1tau1b" + nprong[i],"reg1e1mu1tau2b" + nprong[i]};
+				vector<TString> postfit_regions = fit_regions;
+				postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + nprong[i]);
+				postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + nprong[i]);
+				postfit_regions.push_back("reg1l1tau1b2j_os" + nprong[i]);
+				postfit_regions.push_back("reg1l1tau1b3j_os" + nprong[i]);
+				postfit_regions.push_back("reg1l1tau1b2j_ss" + nprong[i]);
+				postfit_regions.push_back("reg1l1tau1b3j_ss" + nprong[i]);
+				vector<TString> scalesamples = {"wjet-fake","fake"};
 				vector<double> slices = {25,35,45,125};
 				TString varname = "taupt_0";
 				map<TString,vector<observable>> *SFs = tau_plots->fit_scale_factor(&fit_regions, &varname, &scalesamples, &slices, &histmiddlename, &postfit_regions);
 
-				//TFile SFfile("scale_factors_" + fitcharge + ".root","update");
-				TFile SFfile("scale_factors.root","update");
+				TFile SFfile("scale_factors_" + fitcharge + ".root","update");
+				//TFile SFfile("scale_factors.root","update");
 				TString prefix = "Fit" + nprong[i] + "_";
 				TH1D* SFhist; 
 				for (int i = 0; i < 3; ++i)	//3 pt bins
