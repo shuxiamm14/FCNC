@@ -276,9 +276,9 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
       if(debug) printf("init sample:: get region: %s\n",fcnc_regions[i].Data());
       TTree *target = new TTree(fcnc_regions[i],fcnc_regions[i]);
       outputtree[fcnc_regions[i]] = target;
-      if(reduce==1 && nominaltree) {
+      if(reduce==1) {
         definetree(target);
-        target->Branch("taumatchwjet", &taumatchwjet);
+        if(nominaltree) target->Branch("taumatchwjet", &taumatchwjet);
       }
       if(reduce==2 ){
         if(sample.Contains("data")) target->Branch("runNumber", &runNumber);
