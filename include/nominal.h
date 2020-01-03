@@ -84,6 +84,7 @@ public :
   double leptonicw;
   bool fcnc;
   bool doBDT;
+  bool dofit;
   double BDTG_train;
   double BDTG_test;
   int debug;
