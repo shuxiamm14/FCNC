@@ -452,7 +452,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
   if (samplename.Contains("ttbar")) sample = "ttbar";
   else if (!samplename.Contains("data")) 
       sample.Remove(0,6);
-  gM = initgM();
+  if(dofit) gM = initgM();
   fstream evtfile;
   if(dumpeventnumber) evtfile.open((samplename+"_evt.txt").Data(), fstream:: in | fstream::out | fstream::app);
   if (dumptruth) {
@@ -785,7 +785,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         if (nJets_OR_T >= 2) cjet_v = ljets_v[ljet_indice[0]];
         mets.SetXYZ(met_met*cos(met_phi), met_met*sin(met_phi), MET_RefFinal_sumet);
         //==  =============================fit neutrino===============================
-        if(nTaus_OR_Pt25 == 1 || dofit1l2tau){
+        if(dofit && (nTaus_OR_Pt25 == 1 || dofit1l2tau)){
           if (nTaus_OR_Pt25 >= 2) {
             gM->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
             gM->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
