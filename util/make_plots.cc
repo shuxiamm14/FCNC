@@ -44,7 +44,7 @@ void plot(int iNP, TString framework)
 	bool scaletodata = 0;
 	bool mergeprong = 1;
 	int plot_option = 2;
-	bool fittodata = 0;
+	bool fittodata = 1;
 	TString fitcharge = "os";
 	if(framework == "xTFW") calculate_fake_calibration = 0;
 	histSaver *tau_plots = new histSaver("dummy");
@@ -423,10 +423,10 @@ void plot(int iNP, TString framework)
 
 		gSystem->mkdir(("output_"+to_string(iNP)).c_str());
 		if(!calculate_fake_calibration)
-		  for (int i = samples.size()-6; i < samples.size(); ++i)
-		  {
-  		  	tau_plots->overlay(samples[i].name);
-		  }
+			for (int i = samples.size()-6; i < samples.size(); ++i)
+			{
+  				tau_plots->overlay(samples[i].name);
+			}
 		tau_plots->plot_stack(histmiddlename, NPname);
 		
 	}

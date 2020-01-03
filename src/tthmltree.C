@@ -161,7 +161,7 @@ void tthmltree::init_hist(TString outputfilename){
 
   TString nprong[] = {"1prong","3prong"};
   
-  if(reduce == 3){
+  if(reduce == 3 && doBDT){
     initMVA("reg1l2tau1bnj_os");
     initMVA("reg1l1tau1b2j_os");
     initMVA("reg1l1tau1b3j_os");
@@ -170,8 +170,8 @@ void tthmltree::init_hist(TString outputfilename){
     fcnc_plots = new histSaver(outputfilename + "_fcnc");
     fcnc_plots->set_weight(&weight);
     fcnc_plots->debug = !!debug;
-    if(reduce == 3) fcnc_plots->add(100,-1.,1.,"BDT discriminant","BDTG_train",&BDTG_train,false,"");
-    if(reduce == 3) fcnc_plots->add(100,-1.,1.,"BDT discriminant","BDTG_test",&BDTG_test,false,"");
+    if(reduce == 3 && doBDT) fcnc_plots->add(100,-1.,1.,"BDT discriminant","BDTG_train",&BDTG_train,false,"");
+    if(reduce == 3 && doBDT) fcnc_plots->add(100,-1.,1.,"BDT discriminant","BDTG_test",&BDTG_test,false,"");
     if(reduce >= 2) {
       fcnc_plots->add(100,5.,55.,"#chi^2","chi2",&chi2,false,"");
       fcnc_plots->add(500,200.,1200.,"m_{all}","allmass",&allmass,true,"GeV");
@@ -606,7 +606,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         ifregions["reg1e1mu1tau1b"] = nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T == 1 && nTaus_OR_Pt25 == 1;
         ifregions["reg1e1mu2b"] = nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 0;
       }
-      for (iter = ifregions.begin(); iter != ifregions.end();iter++){
+      for (iter = ifregions.begin(); iter != ifregions.end(); iter++){
         if(debug == 2) 
           printf("region: %s, %d\n", iter->first.Data(), iter->second);
         if (iter->second && (find(fcnc_regions.begin(),fcnc_regions.end(),iter->first) != fcnc_regions.end() || find(fake_regions.begin(),fake_regions.end(),iter->first) != fake_regions.end() || find(fake_regions_notau.begin(),fake_regions_notau.end(),iter->first) != fake_regions_notau.end() ) ) {
@@ -971,14 +971,15 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         tthcutflow.fill();
       }
       allpz = fabs(allpz);
-      if(debug) printf("eval BDTG\n");
-
-      if(fcncreg=="1l2tau") BDTG_test  = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
-      if(fcncreg=="lh3j"  ) BDTG_test  = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
-      if(fcncreg=="lh4j"  ) BDTG_test  = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
-      if(fcncreg=="1l2tau") BDTG_train = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
-      if(fcncreg=="lh3j"  ) BDTG_train = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
-      if(fcncreg=="lh4j"  ) BDTG_train = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+      if(doBDT){
+        if(debug) printf("eval BDTG\n");
+        if(fcncreg=="1l2tau") BDTG_test  = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+        if(fcncreg=="lh3j"  ) BDTG_test  = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+        if(fcncreg=="lh4j"  ) BDTG_test  = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+        if(fcncreg=="1l2tau") BDTG_train = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+        if(fcncreg=="lh3j"  ) BDTG_train = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+        if(fcncreg=="lh4j"  ) BDTG_train = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+      }
       if(dumpeventnumber) {
         for(auto reg : ifregions){
           if(reg.second == 0) continue;
@@ -1046,8 +1047,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     if(debug) printf("calc SF\n");
     if(reduce == 1){
       weights->clear();
+      addweights(weight,"NOMINAL");
       if(mc_channel_number){
-        addweights(weight,"NOMINAL");
         calcfakesf(origintag,vtaupt,vtauprong);
         if(nominaltree){
           if(!addWeightSys()) {
@@ -1055,8 +1056,6 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
             continue;
           }
         }
-      }else{
-        weights->push_back(weight);
       }
     }
 

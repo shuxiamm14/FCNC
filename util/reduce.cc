@@ -112,6 +112,7 @@ int main(int argc, char const *argv[])
 	}
 	analysis->SystematicsName = systname;
 	analysis->dumptruth = 0;
+	analysis->doBDT = 0;
 	analysis->reduce = reduce;
 	analysis->debug = debug;
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
