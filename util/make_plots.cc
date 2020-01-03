@@ -323,10 +323,6 @@ void plot(int iNP, TString framework)
 				vector<TString> postfit_regions = fit_regions;
 				postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + nprong[i]);
 				postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + nprong[i]);
-				postfit_regions.push_back("reg1l1tau1b2j_os" + nprong[i]);
-				postfit_regions.push_back("reg1l1tau1b3j_os" + nprong[i]);
-				postfit_regions.push_back("reg1l1tau1b2j_ss" + nprong[i]);
-				postfit_regions.push_back("reg1l1tau1b3j_ss" + nprong[i]);
 				vector<TString> scalesamples = {"wjet-fake","fake"};
 				vector<double> slices = {25,35,45,125};
 				TString varname = "taupt_0";
