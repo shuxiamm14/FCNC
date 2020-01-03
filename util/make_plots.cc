@@ -32,11 +32,11 @@ void plot(int iNP, TString framework)
 {
 	TString dirname;
 	TString NPname = findNPname(dirname,iNP,framework);
-	TString nominalname = "fakeSF_tthML";
+	TString nominalname = "NOMINAL";
 	TString histmiddlename =  dirname==NPname? nominalname:NPname;
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 1;
-	bool wfake = 0;
+	bool wfake = 1;
 	bool mergeFake = 0;
 	bool doTrex = 0;
 	bool plotnj = 0;
@@ -45,7 +45,7 @@ void plot(int iNP, TString framework)
 	bool mergeprong = 1;
 	int plot_option = 2;
 	bool fittodata = 1;
-	TString fitcharge = "ss";
+	TString fitcharge = "os";
 	if(framework == "xTFW") calculate_fake_calibration = 0;
 	histSaver *tau_plots = new histSaver("dummy");
 	tau_plots->doROC = 0;
@@ -422,10 +422,11 @@ void plot(int iNP, TString framework)
 		}
 
 		gSystem->mkdir(("output_"+to_string(iNP)).c_str());
-		for (int i = samples.size()-6; i < samples.size(); ++i)
-		{
-  			tau_plots->overlay(samples[i].name);
-		}
+		if(!calculate_fake_calibration)
+			for (int i = samples.size()-6; i < samples.size(); ++i)
+			{
+  				tau_plots->overlay(samples[i].name);
+			}
 		tau_plots->plot_stack(histmiddlename, NPname);
 		
 	}
