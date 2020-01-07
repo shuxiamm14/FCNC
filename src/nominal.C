@@ -1,5 +1,6 @@
 #include "nominal.h"
 #include "fcnc_include.h"
+#include "commen.h"
 using namespace std;
 int nominal::GeV = 0;
 
@@ -433,6 +434,54 @@ void nominal::calcfakesf(std::vector<int> origin, std::vector<float> pt, std::ve
     }
   }
 
+}
+
+double nominal::FindNewFakeSF(TString NP, TString tauorigin, float taupt, TString region){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
+  if(!newFakeSF.size()) {
+    printf("nominal::FindNewFakeSF() Error : newFakeSF is Empty, please call nominal::ConfigNewFakeSF() first\n");
+    exit(0);
+  }
+  if(tauorigin.Contains("real") || tauorigin.Contains("lep")) return 1;
+  bool isOs = region.Contains("os");
+  bool iswjet = tauorigin.Contains("wjet");
+  int slice = 0;
+  for (int islice = 0; islice < fakePtSlices.size(); ++islice)
+  {
+    if(taupt<fakePtSlices[islice]) {
+      slice = islice-1;
+      break;
+    }
+  }
+  return newFakeSF[NP][isOs][iswjet][slice].nominal;
+}
+
+void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
+  TFile *sfFile[2];
+  newFakeSF.clear();
+  sfFile[0] = new TFile("scale_factors_ss.root");
+  sfFile[1] = new TFile("scale_factors_os.root");
+  
+  string iswjetstring[2] = {"fake", "wjet-fake"};
+  for (int iswjet = 0; iswjet < 2; ++iswjet)
+  {
+    for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
+    {
+      for (int isOs = 0; isOs < 2; ++isOs)
+      {
+        TString histname = ( "Fit_sf_" + iswjetstring[iswjet] + "_pt" + to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) ).c_str();
+        TH1D *SFhist = (TH1D*)sfFile[isOs]->Get(histname);
+        if(!SFhist) printf("histogram not found in SF file: %s\n", histname.Data());
+        TAxis *xaxis = SFhist->GetXaxis();
+        for (int ibin = 1; ibin <= SFhist->GetNbinsX(); ++ibin)
+        {
+          TString NPname = xaxis->GetBinLabel(ibin);
+          if(find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) continue;
+          newFakeSF[NPname][isOs][iswjet][islice] = observable(SFhist->GetBinContent(ibin),SFhist->GetBinError(ibin));
+        }
+      }
+    }
+  }
+  applyNewFakeSF = 1;
 }
 
 void nominal::calcfakesf_pdg(std::vector<int> originpdg, std::vector<float> pt, std::vector<int> prong){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j

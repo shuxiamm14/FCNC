@@ -13,6 +13,7 @@
 #include "TMVA/Reader.h"
 #include "TLorentzVector.h"
 #include "TVector3.h"
+#include "observable.h"
 // Header file for the classes stored in the TTree if any.
 
 #ifndef NO_TMINUIT
@@ -76,9 +77,11 @@ public :
 
   static int GeV;
   std::vector<TString> plotNPs;
+  std::map<TString,std::vector<std::vector<std::vector<observable>>>> newFakeSF;
   Int_t ierflg;
   int ifill = 0;
   bool dumptruth;
+  bool applyNewFakeSF;
   double nonfcncmatched;
   double fcncmatched;
   double leptonicw;
@@ -149,6 +152,8 @@ public :
   void plot();
   std::map<TString, TTree*> outputtree;
   void init_dsid();
+  void ConfigNewFakeSF();
+  double FindNewFakeSF(TString NP, TString tauorigin, float taupt, TString region);
   void addweights(double weight, TString name);
   void saveweightslist(TString filename);
   void readTFmeanstd(TString filename);

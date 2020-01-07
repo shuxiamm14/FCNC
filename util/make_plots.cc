@@ -6,6 +6,7 @@
 #include <sys/ioctl.h>
 #include "fcnc_include.h"
 #include "weightsys_list.h"
+#include "commen.h"
 using namespace std;
 
 class sample
@@ -323,9 +324,8 @@ void plot(int iNP, TString framework)
 				postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + nprong[i]);
 				postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + nprong[i]);
 				vector<TString> scalesamples = {"wjet-fake","fake"};
-				vector<double> slices = {25,35,45,125};
 				TString varname = "taupt_0";
-				map<TString,vector<observable>> *SFs = tau_plots->fit_scale_factor(&fit_regions, &varname, &scalesamples, &slices, &histmiddlename, &postfit_regions);
+				map<TString,vector<observable>> *SFs = tau_plots->fit_scale_factor(&fit_regions, &varname, &scalesamples, &fakePtSlices, &histmiddlename, &postfit_regions);
 
 				TFile SFfile("scale_factors_" + fitcharge + ".root","update");
 				//TFile SFfile("scale_factors.root","update");
@@ -335,7 +335,7 @@ void plot(int iNP, TString framework)
 				{
 					for (auto SF : *SFs) //3 parameters
 					{
-						TString histname = prefix + SF.first + "_pt" + (to_string(int(slices[i])) + to_string(int(slices[i+1]))).c_str();
+						TString histname = prefix + SF.first + "_pt" + (to_string(int(fakePtSlices[i])) + to_string(int(fakePtSlices[i+1]))).c_str();
 						SFhist = (TH1D*)SFfile.Get(histname);
 						if(!SFhist) {
 							SFhist = new TH1D(histname,histname,300,0,300);
@@ -349,24 +349,24 @@ void plot(int iNP, TString framework)
 			}
 		}
   		if(scaletodata){
-  			double slices[] = {25,35,45,125};
+  			double fakePtSlices[] = {25,35,45,125};
 			for(int i = 0; i < 3; i++){
 				if(mergeprong) { if(i != 2) continue; }
 				else { if(i == 2) continue; }
 				if(calculate_fake_calibration){
-					tau_plots->scale_to_data("reg1l1tau2b1j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
-					tau_plots->scale_to_data("reg1l1tau2b1j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
-					tau_plots->scale_to_data("reg1l1tau2b_os" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
-					tau_plots->scale_to_data("reg1l1tau2b_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
+					tau_plots->scale_to_data("reg1l1tau2b1j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
+					tau_plots->scale_to_data("reg1l1tau2b1j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
+					tau_plots->scale_to_data("reg1l1tau2b_os" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
+					tau_plots->scale_to_data("reg1l1tau2b_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
 				}else{
-					tau_plots->scale_to_data("reg1l1tau2b2j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
-					tau_plots->scale_to_data("reg1l1tau2b3j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
-					tau_plots->scale_to_data("reg1l1tau2b2j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
-					tau_plots->scale_to_data("reg1l1tau2b3j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
-					tau_plots->scale_to_data("reg1l1tau1b2j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
-					tau_plots->scale_to_data("reg1l1tau1b3j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
-					tau_plots->scale_to_data("reg1l1tau1b2j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
-					tau_plots->scale_to_data("reg1l1tau1b3j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",slices,3);
+					tau_plots->scale_to_data("reg1l1tau2b2j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
+					tau_plots->scale_to_data("reg1l1tau2b3j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
+					tau_plots->scale_to_data("reg1l1tau2b2j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
+					tau_plots->scale_to_data("reg1l1tau2b3j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
+					tau_plots->scale_to_data("reg1l1tau1b2j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
+					tau_plots->scale_to_data("reg1l1tau1b3j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
+					tau_plots->scale_to_data("reg1l1tau1b2j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
+					tau_plots->scale_to_data("reg1l1tau1b3j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
 				}
 			}
   		}

@@ -19,6 +19,7 @@ int main(int argc, char const *argv[])
 	bool plot_sys = 1;
 	bool dofake = 1;
 	bool onlyMajorNP = 1; // set to 0 for current xTFW analysis.
+	bool applynewSF = 0; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	TString framework = argv[1];
@@ -159,6 +160,7 @@ int main(int argc, char const *argv[])
 				else analysis->plotNPs.push_back("NOMINAL");
 			}else analysis->plotNPs.push_back("NOMINAL");
 			for(auto NPs: analysis->plotNPs) printf("Plotting NPs: %s\n",NPs.Data());
+			if(applynewSF) analysis->ConfigNewFakeSF();
 			analysis->init_hist(inputconfig);
 		}
 		analysis->init_sample(inputconfig,inputconfig);
