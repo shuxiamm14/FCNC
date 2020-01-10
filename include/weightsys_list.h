@@ -175,7 +175,11 @@ std::vector<TString> theoryNPlist = {
 	"PDFset=260097",
 	"PDFset=260098",
 	"PDFset=260099",
-	"PDFset=260100"
+	"PDFset=260100",
+	"ISR_up",
+	"ISR_down",
+	"FSR_up",
+	"FSR_down"
 };
 
 std::vector<TString> xTFWNPlist = {
@@ -467,7 +471,6 @@ std::vector<TString> xTFWtreeNPlist = {
 std::vector<TString> sampleNPlist = {
 	"ttbarsys_frag",
 	"ttbarsys_hscatter",
-	"ttbarsys_ISR"
 };
 
 std::vector<TString> tthMLmajorNPlist = {
