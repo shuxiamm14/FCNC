@@ -195,7 +195,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     //if(mc_channel_number == 411172 || mc_channel_number == 411173 || mc_channel_number == 411176 || mc_channel_number == 411177)
     //  continue;
     if ((jentry % 100000 == 0) || debug)
-      std::cout << " I am here event " << jentry << " Event " << event_number << " Run " << run_number << " ismc " << mc_channel_number << " Filled events "<< ifill<<std::endl;
+      std::cout << " I am here event " << jentry << " Event " << eventNumber << " Run " << run_number << " ismc " << mc_channel_number << " Filled events "<< ifill<<std::endl;
 /*
     if(year == 2015) passtrigger = HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1TAU20IM_2TAU12IM || HLT_tau35_loose1_tracktwo_tau25_loose1_tracktwo;
     if(year == 2016) passtrigger = HLT_tau35_loose1_tracktwo_tau25_loose1_tracktwo || HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo || HLT_tau80_medium1_TAU60_tau50_medium1_L1TAU12 || HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo;
@@ -271,7 +271,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       if(!ifregions.size()) continue;
       hadcutflow.fill();
       if(debug){
-        printf("event: %llu\n",event_number);
+        printf("event: %llu\n",eventNumber);
         printf("weight_mc: %f\n",weight_mc);
         printf("weight_pileup: %f\n",weight_pileup);
         printf("lepton_SF: %f\n",lepton_SF);
@@ -361,14 +361,14 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     }
     if(reduce == 3){
       if(ifregions["reg2mtau1b3jos"] || ifregions["reg2mtau1b3jss"] || ifregions["reg2mtau2b3jos"] || ifregions["reg2mtau2b3jss"]) {
-        BDTG_test = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2) );
-        BDTG_train = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(event_number%2)) );
+        BDTG_test = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2) );
+        BDTG_train = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)) );
       }
       if(ifregions["reg2mtau1b2jos"] || ifregions["reg2mtau1b2jss"] || ifregions["reg2mtau2b2jos"] || ifregions["reg2mtau2b2jss"]) {
-        BDTG_test = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + event_number%2) );
-        BDTG_train = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(event_number%2)) );
+        BDTG_test = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2) );
+        BDTG_train = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)) );
       }
-      if(ifregions["reg2mtau1b3jos"] || ifregions["reg2mtau1b2jos"]) if(samplename.Contains("fcnc") && BDTG_test > 0.5) signalevtnb<<mc_channel_number<<" "<<event_number<<endl;
+      if(ifregions["reg2mtau1b3jos"] || ifregions["reg2mtau1b2jos"]) if(samplename.Contains("fcnc") && BDTG_test > 0.5) signalevtnb<<mc_channel_number<<" "<<eventNumber<<endl;
     }
     TString tauorigin;
     int faketau = -1;
@@ -452,6 +452,10 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
             calcfakesf_pdg(vtaupdg,vtaupt,vtauprong);
             if(nominaltree){
               if(!addWeightSys()) continue;
+              if(!AddTheorySys()) {
+                printf("Warning: cannot add weight systematics\n");
+                continue;
+              }
             }
           }else{
             addweights(1,"NOMINAL");

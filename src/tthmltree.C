@@ -530,7 +530,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         (RunYear >= 2016 && (HLT_2e17_lhvloose_nod0 || HLT_e17_lhloose_nod0_mu14 || HLT_mu22_mu8noL1));
 
       if(nTaus_OR_Pt25) basic_selection = basic_selection && (tau_numTrack_0 == 1 || tau_numTrack_0 == 3); // assuming triggers for 2017 is same for 2016 
-      weight = mc_channel_number > 0 ? mc_norm*mcWeightOrg*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight: 1.0;
+      weight = mc_channel_number > 0 ? mc_norm*weight_mc*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight: 1.0;
       if( mc_channel_number > 0) weight*=tightLep?lepSFObjLoose:lepSFIDLoose*lepSFTrigLoose;
       if(nTaus_OR_Pt25 &&  mc_channel_number >0) weight*=tightTau?tauSFLoose:tauSFTight; // stupid and confusing but this is how it is.
       if(weight == 0) continue;
@@ -1052,6 +1052,10 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         calcfakesf(origintag,vtaupt,vtauprong);
         if(nominaltree){
           if(!addWeightSys()) {
+            printf("Warning: cannot add weight systematics\n");
+            continue;
+          }
+          if(!AddTheorySys()) {
             printf("Warning: cannot add weight systematics\n");
             continue;
           }

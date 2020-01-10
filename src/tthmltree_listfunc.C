@@ -341,22 +341,6 @@ bool tthmltree::addWeightSys(){
   addweights(bTagSF_weight_MV2c10_FixedCutBEff_70_extrapolation_from_charm_down,"btag_extrapolation_from_charm_down");
   addweights(pileupEventWeight_UP,"PRW_up");
   addweights(pileupEventWeight_DOWN,"PRW_down");
-
-  if(weight_mc_v){
-    for (int i = 1; i <= theoryweightsum->GetNbinsX(); ++i)
-    {
-      if(theoryweightsum->GetXaxis()->GetBinLabel(i))
-        if((TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("muR=") && TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("muF=")) || TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("PDFset=260") )
-          addweights(weight_mc_v->at(i-1)/mcWeightOrg*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),theoryweightsum->GetXaxis()->GetBinLabel(i));
-    }
-  }
-
-  for(int i = 0; i < weights->size(); i++){
-    if(weights->at(i)!=weights->at(i)) {
-      printf("weight is nan, eventNumber: %llu, n_weight: %d\n", eventNumber, i);
-      return 0;
-    }
-  }
   return 1;
 }
 
@@ -769,7 +753,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("met_phi", & met_phi);
   tree->SetBranchAddress("triggers", & triggers);
   tree->SetBranchAddress("loose", & loose);
-  tree->SetBranchAddress("mcWeightOrg", & mcWeightOrg);
+  tree->SetBranchAddress("mcWeightOrg", & weight_mc);
   tree->SetBranchAddress("mcEventWeights", &weight_mc_v);
   tree->SetBranchAddress("pileupEventWeight_090", & pileupEventWeight_090);
   tree->SetBranchAddress("MV2c10_60_EventWeight", & MV2c10_60_EventWeight);
@@ -2512,7 +2496,7 @@ void tthmltree::definetree(TTree*tree) {
   tree->Branch("met_phi", & met_phi, "met_phi/F");
   tree->Branch("triggers", & triggers, "triggers/I");
   tree->Branch("loose", & loose, "loose/I");
-  tree->Branch("mcWeightOrg", & mcWeightOrg, "mcWeightOrg/D");
+  tree->Branch("mcWeightOrg", &weight_mc, "mcWeightOrg/D");
   tree->Branch("mcEventWeights", & weight_mc_v);
   tree->Branch("pileupEventWeight_090", & pileupEventWeight_090, "pileupEventWeight_090/D");
   tree->Branch("MV2c10_60_EventWeight", & MV2c10_60_EventWeight, "MV2c10_60_EventWeight/D");
