@@ -455,6 +455,35 @@ double nominal::FindNewFakeSF(TString NP, TString tauorigin, float taupt, TStrin
   return newFakeSF[NP][isOs][iswjet][slice].nominal;
 }
 
+bool nominal::AddTheorySys(){
+  if(weight_mc_v){
+    for (int i = 1; i <= theoryweightsum->GetNbinsX(); ++i)
+    {
+      TString weightName = theoryweightsum->GetXaxis()->GetBinLabel(i);
+      if(weightName!=""){ //https://twiki.cern.ch/twiki/bin/view/AtlasProtected/PmgTopProcesses, Top, Single Top, ttH
+        if((weightName.Contains("muR=") && weightName.Contains(",muF=")) || weightName.Contains("PDFset=260") ){
+          addweights(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),weightName);
+        }else if(weightName.Contains("isr:muRfac=10_fsr:muRfac=20")){
+          addweights(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),"FSR_up");
+        }else if(weightName.Contains("isr:muRfac=10_fsr:muRfac=05")){
+          addweights(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),"FSR_down");
+        }else if(weightName.Contains("Var3cUp")){
+          addweights(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),"ISR_up");
+        }else if(weightName.Contains("Var3cDown")){
+          addweights(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),"ISR_down");
+        }
+      }
+    }
+  }
+  for(int i = 0; i < weights->size(); i++){
+    if(weights->at(i)!=weights->at(i)) {
+      printf("weight is nan, eventNumber: %llu, n_weight: %d\n", eventNumber, i);
+      return 0;
+    }
+  }
+  return 1;
+}
+
 void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
   TFile *sfFile[2];
   newFakeSF.clear();

@@ -175,6 +175,7 @@ public :
   void calcfakesf(std::vector<int> origin, std::vector<float> pt, std::vector<int> prong);
   void calcfakesf_pdg(std::vector<int> originpdg, std::vector<float> pt, std::vector<int> prong);
   void defGeV(int _GeV);
+  bool AddTheorySys();
   virtual void init_reduce1(){ printf("WARNING: virtual function init_reduce1() is used\n");};
   virtual void init_reduce2(){ printf("WARNING: virtual function init_reduce2() is used\n");};
   virtual void init_hist(TString histfilename){ printf("WARNING: virtual function init_hist is used\n");};
@@ -184,6 +185,10 @@ public :
   static void printv(TLorentzVector v);
   int leading_b = -1 ;
   int leading_ljet = -1 ;
+
+  ULong64_t       eventNumber;
+  int runNumber;
+  double weight_mc;
   std::vector<float> *weight_mc_v;
   std::vector<double>           *weights;
   std::vector<int>    ljet_indice;

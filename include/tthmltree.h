@@ -43,8 +43,6 @@ public:
    const bool tightTau = 0;
    bool taumatchwjet = 0;
 
-   ULong64_t       eventNumber;
-   UInt_t          runNumber;
    UInt_t          randomRunNumber;
    UInt_t          mcChannelNumber;
    Float_t         mu;
@@ -120,7 +118,6 @@ public:
    Char_t          HLT_e7_lhmedium_nod0_mu24;
    Char_t          HLT_e5_loose;
    Char_t          HLT_e300_etcut;
-   Double_t        mcWeightOrg;
    Double_t        pileupEventWeight_090;
    Double_t        MV2c10_60_EventWeight;
    Double_t        MV2c10_70_EventWeight;
@@ -732,8 +729,6 @@ public:
    std::vector<float>   *m_mcevt_pdf_Q;
    std::vector<float>   *m_mcevt_pdf_XF1;
    std::vector<float>   *m_mcevt_pdf_XF2;
-   ULong64_t       EventNumber;
-   UInt_t          RunNumber;
    UInt_t          lbn;
    UInt_t          bcid;
    Bool_t          passEventCleaning;
@@ -1895,8 +1890,6 @@ public:
    Double_t        BdtvsttV;
 
    // List of branches
-   TBranch        *b_eventNumber;   //!
-   TBranch        *b_runNumber;   //!
    TBranch        *b_randomRunNumber;   //!
    TBranch        *b_mcChannelNumber;   //!
    TBranch        *b_mu;   //!
@@ -1975,7 +1968,6 @@ public:
    TBranch        *b_HLT_e7_lhmedium_nod0_mu24;   //!
    TBranch        *b_HLT_e5_loose;   //!
    TBranch        *b_HLT_e300_etcut;   //!
-   TBranch        *b_mcWeightOrg;   //!
    TBranch        *b_pileupEventWeight_090;   //!
    TBranch        *b_MV2c10_60_EventWeight;   //!
    TBranch        *b_MV2c10_70_EventWeight;   //!
@@ -2587,8 +2579,6 @@ public:
    TBranch        *b_m_mcevt_pdf_Q;   //!
    TBranch        *b_m_mcevt_pdf_XF1;   //!
    TBranch        *b_m_mcevt_pdf_XF2;   //!
-   TBranch        *b_EventNumber;   //!
-   TBranch        *b_RunNumber;   //!
    TBranch        *b_lbn;   //!
    TBranch        *b_bcid;   //!
    TBranch        *b_passEventCleaning;   //!

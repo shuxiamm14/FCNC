@@ -144,7 +144,6 @@ public :
    Float_t         ditau_qxq;
    Float_t         ditau_scal_sum_pt;
    UInt_t          event_clean_EC_TightBad;
-   ULong64_t       event_number;
    UInt_t          higgs;
    UInt_t          higgs_child1;
    Int_t           higgs_child1_classifierParticleOrigin;
@@ -1146,7 +1145,6 @@ public :
    Int_t           top_status;
    Int_t           top_type;
    UInt_t          truth_passedVBFFilter;
-   Double_t        weight_mc;
    UInt_t          wm_childq1;
    Int_t           wm_childq1_classifierParticleOrigin;
    Int_t           wm_childq1_classifierParticleType;

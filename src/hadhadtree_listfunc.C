@@ -1,9 +1,9 @@
 #define NO_TMINUIT
 #include "hadhadtree.h"
 void hadhadtree::definetree(TTree * tree) {
-  tree->Branch("eventNumber", &event_number);
+  tree->Branch("eventNumber", &eventNumber);
   tree->Branch("mc_channel_number", &mc_channel_number);
-  tree->Branch("runNumber",&run_number);
+  tree->Branch("runNumber",&runNumber);
   tree->Branch("weights",&weights);
   if(reduce == 1){
     tree->Branch("tau_pt_0",&tau_pt_0);
@@ -541,21 +541,6 @@ bool hadhadtree::addWeightSys(){
   //addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT,"tauTrigger_SYST2016_down");
   //addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT,"tauTrigger_SYST2017_up");
   //addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT,"tauTrigger_SYST2017_down");
-  if(weight_mc_v){
-    for (int i = 1; i <= theoryweightsum->GetNbinsX(); ++i)
-    {
-      if(theoryweightsum->GetXaxis()->GetBinLabel(i))
-        if((TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("LHE3Weight_muR=") && TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("muF=")) || TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("LHE3Weight_PDFset=260") )
-          addweights(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),theoryweightsum->GetXaxis()->GetBinLabel(i));
-    }
-  }
-
-  for(int i = 0; i < weights->size(); i++){
-    if(weights->at(i)!=weights->at(i)) {
-      printf("weight is nan, eventNumber: %llu, n_weight: %d\n", event_number, i);
-      return 0;
-    }
-  }
   return 1;
 }
 
@@ -577,9 +562,9 @@ void hadhadtree::Init(TTree *tree)
    tree->SetBranchAddress("taus_b_tagged",&taus_b_tagged);
    tree->SetBranchAddress("taus_n_charged_tracks",&taus_n_charged_tracks);
    tree->SetBranchAddress("tauabspdg",&tauabspdg);
-   tree->SetBranchAddress("eventNumber", &event_number);
+   tree->SetBranchAddress("eventNumber", &eventNumber);
    tree->SetBranchAddress("mc_channel_number", &mc_channel_number);
-   tree->SetBranchAddress("runNumber", &run_number);
+   tree->SetBranchAddress("runNumber", &runNumber);
    tree->SetBranchAddress("weights", &weights);
    tree->SetBranchAddress("tauabspdg", &tauabspdg);
    tree->SetBranchAddress("tau_pt_0", &tau_pt_0);
@@ -632,9 +617,9 @@ void hadhadtree::Init(TTree *tree)
     jets_q = 0;
     jets_type = 0;
     jets_width = 0;
-    tree->SetBranchAddress("eventNumber", &event_number);
+    tree->SetBranchAddress("eventNumber", &eventNumber);
     tree->SetBranchAddress("mc_channel_number", &mc_channel_number);
-    tree->SetBranchAddress("runNumber", &run_number);
+    tree->SetBranchAddress("runNumber", &runNumber);
     tree->SetBranchAddress("weights", &weights);
     tree->SetBranchAddress("tau_pt_0", &tau_pt_0);
     tree->SetBranchAddress("tau_pt_1", &tau_pt_1);
@@ -798,7 +783,7 @@ void hadhadtree::Init(TTree *tree)
   tree->SetBranchAddress("ditau_qxq", &ditau_qxq, &b_ditau_qxq);
   tree->SetBranchAddress("ditau_scal_sum_pt", &ditau_scal_sum_pt, &b_ditau_scal_sum_pt);
   tree->SetBranchAddress("event_clean_EC_TightBad", &event_clean_EC_TightBad, &b_event_clean_EC_TightBad);
-  tree->SetBranchAddress("event_number", &event_number, &b_event_number);
+  tree->SetBranchAddress("eventNumber", &eventNumber, &b_event_number);
   tree->SetBranchAddress("is_dijet_centrality", &is_dijet_centrality, &b_is_dijet_centrality);
   tree->SetBranchAddress("jet_0_b_tagged", &jet_0_b_tagged, &b_jet_0_b_tagged);
   tree->SetBranchAddress("jet_0_fjvt", &jet_0_fjvt, &b_jet_0_fjvt);
@@ -968,7 +953,7 @@ void hadhadtree::Init(TTree *tree)
   tree->SetBranchAddress("primary_vertex", &primary_vertex, &b_primary_vertex);
   tree->SetBranchAddress("primary_vertex_v", &primary_vertex_v, &b_primary_vertex_v);
   tree->SetBranchAddress("pt_total", &pt_total, &b_pt_total);
-  tree->SetBranchAddress("run_number", &run_number, &b_run_number);
+  tree->SetBranchAddress("runNumber", &runNumber, &b_run_number);
   tree->SetBranchAddress("scalar_sum_pt", &scalar_sum_pt, &b_scalar_sum_pt);
   tree->SetBranchAddress("tau_0", &tau_0, &b_tau_0);
   tree->SetBranchAddress("tau_0_allTrk_eta", &tau_0_allTrk_eta, &b_tau_0_allTrk_eta);
