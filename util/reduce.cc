@@ -18,7 +18,7 @@ int main(int argc, char const *argv[])
 	bool tthdofcnc = 1;
 	bool plot_sys = 1;
 	bool dofake = 0;
-	bool onlyMajorNP = 1; // set to 0 for current xTFW analysis.
+	bool onlyMajorNP = 0; // set to 0 for current xTFW analysis.
 	bool applynewSF = 0; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
@@ -147,7 +147,7 @@ int main(int argc, char const *argv[])
 		if(doplot) {
 			if(!inputconfig.Contains("data")){
 				if(analysis->nominaltree == 1 ){
-					for(auto v: fakeNPlist) analysis->plotNPs.push_back(v);
+					//for(auto v: fakeNPlist) analysis->plotNPs.push_back(v);
 					if(plot_sys){
 						if(onlyMajorNP){
 							if(framework == "tthML") for(auto v: tthMLmajorNPlist) analysis->plotNPs.push_back(v);
@@ -156,6 +156,7 @@ int main(int argc, char const *argv[])
 							if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
 							else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
 							for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
+							for(auto v: commonNPlist) analysis->plotNPs.push_back(v);
 						}
 					}
 				}

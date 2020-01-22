@@ -1,7 +1,6 @@
 #include <iostream>
 
 std::vector<TString> fakeNPlist = {
-	"NOMINAL",
 	"fakeSF_tthML",
 	"fakeSF_origin",
 	"fakeSFNP_tthML_ptbin0_prongbin0",
@@ -21,6 +20,7 @@ std::vector<TString> fakeNPlist = {
 };
 
 std::vector<TString> commonNPlist = {
+	"NOMINAL",
 	"PRW_up",
 	"PRW_down",
 	"jvt_up",
