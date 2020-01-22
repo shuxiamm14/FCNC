@@ -487,9 +487,10 @@ bool nominal::AddTheorySys(){
 void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
   TFile *sfFile[2];
   newFakeSF.clear();
-  sfFile[0] = new TFile("scale_factors_ss.root");
-  sfFile[1] = new TFile("scale_factors_os.root");
-  
+  TString prefix = PACKAGE_DIR;
+  prefix += "/data/";
+  sfFile[0] = new TFile(prefix + "scale_factors_ss.root");
+  sfFile[1] = new TFile(prefix + "scale_factors_os.root");
   string iswjetstring[2] = {"fake", "wjet-fake"};
   for (int iswjet = 0; iswjet < 2; ++iswjet)
   {
@@ -505,6 +506,7 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
         {
           TString NPname = xaxis->GetBinLabel(ibin);
           if(find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) continue;
+          if(!newFakeSF[NPname].size()) newFakeSF[NPname] = {{{0,0},{0,0}},{{0,0},{0,0}}};
           newFakeSF[NPname][isOs][iswjet][islice] = observable(SFhist->GetBinContent(ibin),SFhist->GetBinError(ibin));
         }
       }

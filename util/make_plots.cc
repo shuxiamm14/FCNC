@@ -322,10 +322,11 @@ void plot(int iNP, TString framework)
 				vector<TString> scalesamples = {"wjet-fake","fake"};
 				TString varname = "taupt_0";
 				map<TString,vector<observable>> *SFs = tau_plots->fit_scale_factor(&fit_regions, &varname, &scalesamples, &fakePtSlices, &histmiddlename, &postfit_regions);
-
-				TFile SFfile("scale_factors_" + fitcharge + ".root","update");
-				//TFile SFfile("scale_factors.root","update");
-				TString prefix = "Fit" + nprong[i] + "_";
+				TString prefix = PACKAGE_DIR;
+				prefix += "/data/";
+				TFile SFfile(prefix + "scale_factors_" + fitcharge + ".root","update");
+				//TFile SFfile(prefix + "scale_factors.root","update");
+				prefix = "Fit" + nprong[i] + "_";
 				TH1D* SFhist; 
 				for (int i = 0; i < 3; ++i)	//3 pt bins
 				{
