@@ -19,7 +19,7 @@ int main(int argc, char const *argv[])
 	bool plot_sys = 1;
 	bool dofake = 0;
 	bool onlyMajorNP = 0; // set to 0 for current xTFW analysis.
-	bool applynewSF = 0; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
+	bool applynewSF = 1; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	TString framework = argv[1];
@@ -155,7 +155,7 @@ int main(int argc, char const *argv[])
 						}else{
 							if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
 							else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
-							for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
+						//	for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
 							for(auto v: commonNPlist) analysis->plotNPs.push_back(v);
 						}
 					}
