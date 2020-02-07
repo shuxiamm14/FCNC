@@ -62,14 +62,10 @@ void plot(int iNP, TString framework)
 	samples.push_back(sample("diboson","Diboson",(enum EColor)7));
 	samples.push_back(sample("zll","Z#rightarrowll",kBlue));
 	samples.push_back(sample("ztautau","Z#rightarrow#tau#tau",kGreen));
-	if(framework=="tthML"){
-		samples.push_back(sample("top","Top rare",kWhite));
-		samples.push_back(sample("others","Rare",kTeal));
-		samples.push_back(sample("ttbar","t#bar{t}",kYellow));
-		samples.push_back(sample("ttV","t#bar{t}V",kAzure));
-	}else{
-		samples.push_back(sample("top","Top production",kYellow));
-	}
+	samples.push_back(sample("othertop","Top rare",kWhite));
+	samples.push_back(sample("others","Rare",kTeal));
+	samples.push_back(sample("ttbar","t#bar{t}",kYellow));
+	samples.push_back(sample("ttV","t#bar{t}V",kAzure));
 	if(!calculate_fake_calibration){
 		stringstream ss;
 		ss<<"(BR=" << BRbenchmark << "%)";
@@ -93,7 +89,7 @@ void plot(int iNP, TString framework)
 	};
 	TString samplesys = "";
 	if(NPname.Contains("ttbar")){
-		samplesys = "top";
+		samplesys = "ttbar";
 	}
 
 	if(framework == "tthML"){
@@ -326,10 +322,11 @@ void plot(int iNP, TString framework)
 				vector<TString> scalesamples = {"wjet-fake","fake"};
 				TString varname = "taupt_0";
 				map<TString,vector<observable>> *SFs = tau_plots->fit_scale_factor(&fit_regions, &varname, &scalesamples, &fakePtSlices, &histmiddlename, &postfit_regions);
-
-				TFile SFfile("scale_factors_" + fitcharge + ".root","update");
-				//TFile SFfile("scale_factors.root","update");
-				TString prefix = "Fit" + nprong[i] + "_";
+				TString prefix = PACKAGE_DIR;
+				prefix += "/data/";
+				TFile SFfile(prefix + "scale_factors_" + fitcharge + ".root","update");
+				//TFile SFfile(prefix + "scale_factors.root","update");
+				prefix = "Fit" + nprong[i] + "_";
 				TH1D* SFhist; 
 				for (int i = 0; i < 3; ++i)	//3 pt bins
 				{
@@ -372,8 +369,8 @@ void plot(int iNP, TString framework)
   		}
   		if(!mergeFake && framework == "xTFW") {
   			tau_plots->stackorder.push_back("fakeSS");
-  			tau_plots->templatesample("reg2mtau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b3jos","fakeSS","Fake",kYellow,0,1.31597);
-  			tau_plots->templatesample("reg2mtau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau1b2jos","fakeSS","Fake",kYellow,0,1.31597);
+  			tau_plots->templatesample("reg2mtau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 othertop -1 fake","reg2mtau1b3jos","fakeSS","Fake",kYellow,0,1.31597);
+  			tau_plots->templatesample("reg2mtau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 othertop -1 fake","reg2mtau1b2jos","fakeSS","Fake",kYellow,0,1.31597);
   			//tau_plots->templatesample("reg2mtau2b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b3jos","fakeSS","Fake",kYellow,1);
   			//tau_plots->templatesample("reg2mtau2b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b2jos","fakeSS","Fake",kYellow,1);
 

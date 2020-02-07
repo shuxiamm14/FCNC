@@ -42,20 +42,18 @@ ulimit -n 32000
 
 rm sublocal.sh
 
-for i in {1..3}
-do
-	if [[ $1 =~ $i ]] ; then
-		echo "reduce_run tthML $i"' $1'" $systname"  >> bulkreduce.sh
-		echo "reduce_run tthML $i"' $1'" $systname"  >> sublocal.sh
-	fi
-done
-chmod +x sublocal.sh
-echo "date"   >> bulkreduce.sh
-chmod +x bulkreduce.sh
+#for i in {1..4}
+#do
+#	if [[ $1 =~ $i ]] ; then
+#		echo "reduce_run tthML $i"' $1'" $systname"  >> bulkreduce.sh
+#		echo "reduce_run tthML $i"' $1'" $systname"  >> sublocal.sh
+#	fi
+#done
 
 if [[ $2 =~ "sub" ]] ; then
 	for lines in `ls $ttH_fakes_DIR/datafiles/tthML/v2/run/{mc*,data*}  | xargs -n 1 basename`
 	do
+		touch ../done.txt
 		donefind=`grep $lines ../done.txt`
 		if [[ $donefind == $lines ]] ; then
 			continue
@@ -65,11 +63,15 @@ if [[ $2 =~ "sub" ]] ; then
 		fi
 		name=${lines/.txt}
 		touch $name.out
+<<<<<<< HEAD
 		if [ -n "$4" ] && [[ $4 != $lines ]] ; then
 			continue
 		fi
 		rm $name.out
 		rm ${name}_evt.txt
+=======
+		rm $name.out
+>>>>>>> 331f940d486a08101f32c0cb14c56dfd81eedd02
 		for i in {1..4}
 		do
 			if [[ $1 =~ $i ]] ; then
