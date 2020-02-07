@@ -66,7 +66,15 @@ if [[ $2 =~ "sub" ]] ; then
 		fi
 		name=${lines/.txt}
 		touch $name.out
+<<<<<<< HEAD
+		if [ -n "$4" ] && [[ $4 != $lines ]] ; then
+			continue
+		fi
 		rm $name.out
+		rm ${name}_evt.txt
+=======
+		rm $name.out
+>>>>>>> 331f940d486a08101f32c0cb14c56dfd81eedd02
 		for i in {1..4}
 		do
 			if [[ $1 =~ $i ]] ; then
@@ -91,13 +99,13 @@ chmod +x sublocal.sh
 echo "date"   >> bulkreduce.sh
 chmod +x bulkreduce.sh
 
-#if [[ $2 =~ "local" ]] ; then
-#	./sublocal.sh 2>&1 &
-#else
-#	sbatch --job-name=${systname} --output=job.out --error=job.err slurmscript.sh
-#	#echo "sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines"
-#	#sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines
-#fi
+if [[ $2 =~ "local" ]] ; then
+	./sublocal.sh 2>&1 &
+else
+	sbatch --job-name=${systname} --output=job.out --error=job.err slurmscript.sh
+	#echo "sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines"
+	#sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines
+fi
 
 
 cd ..
