@@ -16,6 +16,12 @@ do
 if [ -n "$3" ] ; then
 	systname=$3
 fi
+
+test=`echo $systname | awk -F " " '{print $1}'| grep "#"`
+if [ "$test" != "" ]; then
+	continue;
+fi
+
 mkdir -p $systname
 cd $systname
 echo '#!/bin/bash
