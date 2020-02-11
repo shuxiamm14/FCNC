@@ -46,7 +46,7 @@ cd '`pwd`"
 ulimit -n 32000
 . $ttH_fakes_DIR/env.sh" > bulkreduce.sh
 
-rm sublocal.sh
+rm -f sublocal.sh
 
 #for i in {1..4}
 #do
@@ -72,21 +72,15 @@ if [[ $2 =~ "sub" ]] ; then
 		fi
 		name=${lines/.txt}
 		touch $name.out
-<<<<<<< HEAD
 		if [ -n "$4" ] && [[ $4 != $lines ]] ; then
 			continue
 		fi
-		rm $name.out
-		rm ${name}_evt.txt
-=======
-		rm $name.out
->>>>>>> 331f940d486a08101f32c0cb14c56dfd81eedd02
-		for i in {1..4}
+		rm -f $name.out
+		rm -f ${name}_evt.txt
+		for i in `echo $1| sed -e 's/\(.\)/\1\n/g'`
 		do
-			if [[ $1 =~ $i ]] ; then
-				echo "reduce_run tthML $i $lines $systname >> $name.out"  >> bulkreduce.sh
-				echo "reduce_run tthML $i $lines $systname >> $name.out"  >> sublocal.sh
-			fi
+			echo "reduce_run tthML $i $lines $systname >> $name.out"  >> bulkreduce.sh
+			echo "reduce_run tthML $i $lines $systname >> $name.out"  >> sublocal.sh
 		done
 		#if [[ $2 =~ "local" ]] ; then
 		#	./sublocal.sh $lines > ${name}.out 2>&1 &
@@ -104,15 +98,19 @@ fi
 chmod +x sublocal.sh
 echo "date"   >> bulkreduce.sh
 chmod +x bulkreduce.sh
-
+if [[ $2 =~ "sub" ]] ; then
 if [[ $2 =~ "local" ]] ; then
 	./sublocal.sh 2>&1 &
 else
-	sbatch --job-name=${systname} --output=job.out --error=job.err slurmscript.sh
-	#echo "sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines"
-	#sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines
+	if [ -n "$4" ] ; then
+		sbatch --job-name=${systname}_$4 --output=$4.out  --error=$4.err slurmscript.sh
+	else
+		sbatch --job-name=${systname} --output=job.out --error=job.err slurmscript.sh
+		#echo "sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines"
+		#sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines
+	fi
 fi
-
+fi
 
 cd ..
 if [ -n "$3" ] ; then

@@ -9,20 +9,24 @@ int main(int argc, char const *argv[])
 {
 	if (argc < 5)
 	{
-		printf("Usage: reduce_run framework(xTFW/tthML) reduce(1/2/3) dataconfigfile(eg. mc16a_wjet.txt) systname(eg. NOMINAL) [optional: 1 for saveweightslist]\n");
+		printf("Usage: reduce_run framework(xTFW/tthML) reduce(1/2/3/4/5/6) dataconfigfile(eg. mc16a_wjet.txt) systname(eg. NOMINAL) [optional: 1 for saveweightslist]\n");
 		exit(1);
 	}
 	int debug = 0;
 	int reduce = *argv[2]-'0';
-	bool doplot = reduce == 3 ? 1 : 0;
+	bool doplot = reduce >= 3 ? 1 : 0;
 	bool tthdofcnc = 1;
 	bool plot_sys = 1;
 	bool dofake = 0;
 	bool onlyMajorNP = 0; // set to 0 for current xTFW analysis.
-	bool applynewSF = 1; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
+	bool applynewSF = 0; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	TString framework = argv[1];
+	if(reduce > 4){
+		reduce-=2;
+		applynewSF = 1;
+	}
 	if(reduce == 3) {
 		dofake = 0;
 		tthdofcnc = 1;
@@ -113,8 +117,8 @@ int main(int argc, char const *argv[])
 	}
 	analysis->SystematicsName = systname;
 	analysis->dumptruth = 0;
-	analysis->doBDT = 0;
-	analysis->dofit = 0;
+	analysis->doBDT = 1;
+	analysis->dofit = 1;
 	analysis->reduce = reduce;
 	analysis->debug = debug;
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
