@@ -407,7 +407,7 @@ void plot(int iNP, TString framework)
 		if(NPname.Contains("PDF")) tau_plots->trexdir = "PDF_trexinputs";
 		else if(NPname.Contains("muR")) tau_plots->trexdir = "scale_trexinputs";
 		else tau_plots->trexdir = "trexinputs";
-		tau_plots->write_trexinput(NPname,"update");
+		tau_plots->write_trexinput(histmiddlename,NPname);
 	}
 	if(doPlots){
 		for (int j = 0; j < nregions; ++j){
