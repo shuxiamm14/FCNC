@@ -53,7 +53,15 @@ void plot(int iNP, TString framework)
 	TString lumitag = "#it{#sqrt{s}} = 13TeV, ";
 	lumitag += framework == "xTFW" ? "140 fb^{-1}" : "80 fb^{-1}";
 	tau_plots->SetLumiAnaWorkflow(lumitag,"FCNC tqH H#rightarrow tautau","Internal");
-	tau_plots->debug = 1;
+	tau_plots->debug = 0;
+
+	tau_plots->checkread = 1;
+	tau_plots->checkread_sample = "fake";
+	tau_plots->checkread_region = "reg1l1tau1b2j_os_1prong_below35_vetobtagwp70";
+	tau_plots->checkread_variation = "NOMINAL";
+	tau_plots->checkread_variable = 0;
+	tau_plots->checkread_ibin = 1;
+
 	vector<sample> samples;
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kMagenta, kSpring, kTeal, kAzure};
 
@@ -265,6 +273,7 @@ void plot(int iNP, TString framework)
 						if(i == 0) inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 						else inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 						tau_plots->read_sample( samples[j].name, samplename + "_real", histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
+						tau_plots->read_sample( samples[j].name, samplename + "_lep", histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
 						if (mergeFake) {
 							for (int i = 0; i < 6; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], histmiddlename, "Fake MC, 1 truth #tau", kMagenta, samples[j].norm, inputfile);
 							tau_plots->read_sample( "fake0truth", samplename + "_" + origin[8], histmiddlename, "fake, 0 truth #tau", kTeal, samples[j].norm,inputfile);
@@ -272,7 +281,7 @@ void plot(int iNP, TString framework)
 							for (int i = 0; i < 6; i++) {
 								if(origin[i] == "wjet")
 									tau_plots->read_sample( "wjet-fake", samplename + "_" + origin[i], histmiddlename, "W-jet Fake #tau", kRed, samples[j].norm, inputfile);
-								else 
+								else if(origin[i] != "lep")
 									tau_plots->read_sample( "fake", samplename + "_" + origin[i], histmiddlename, "MC Fake #tau", kTeal, samples[j].norm, inputfile);
 							}
 						}else{
@@ -407,11 +416,12 @@ void plot(int iNP, TString framework)
 	if(doTrex){
   		std::string nptmp = NPname.Data();
   		findAndReplaceAll(nptmp,"__1down","_down");
-  		findAndReplaceAll(nptmp,"_1up","_up");
+  		findAndReplaceAll(nptmp,"__1up","_up");
   		findAndReplaceAll(nptmp,"JET_EffectiveNP","JET_EFF");
   		findAndReplaceAll(nptmp,"JET_JER_EffectiveNP","JER");
   		findAndReplaceAll(nptmp,"JET_EtaIntercalibration","JET_EtaInt");
 		findAndReplaceAll(nptmp,"TAUS_TRUEHADTAU_SME_TES","TES");
+		findAndReplaceAll(nptmp,"JET_CategoryReduction_","");
 		NPname = nptmp;
 		if(NPname.Contains("PDF")) tau_plots->trexdir = "PDF_trexinputs";
 		else if(NPname.Contains("muR")) tau_plots->trexdir = "scale_trexinputs";
