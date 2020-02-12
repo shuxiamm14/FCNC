@@ -41,12 +41,12 @@ void plot(int iNP, TString framework)
 	bool mergeFake = 0;
 	bool doTrex = 1;
 	bool plotnj = 0;
-	bool doPlots = 0;
+	bool doPlots = 1;
 	bool scaletodata = 0;
 	bool mergeprong = 1;
 	int plot_option = 2;
 	bool fittodata = 0;
-	TString fitcharge = "ss";
+	TString fitcharge = "os";
 	if(framework == "xTFW") calculate_fake_calibration = 0;
 	histSaver *tau_plots = new histSaver("dummy");
 	tau_plots->doROC = 0;
@@ -125,9 +125,9 @@ void plot(int iNP, TString framework)
 			tau_plots->muteregion("3j");
 			tau_plots->muteregion("2j");
 		}else{
-			tau_plots->sensitivevariable = "BDTG_test";
-			tau_plots->add("BDT discriminant","BDTG_test","",10);
-  			//tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
+			//tau_plots->sensitivevariable = "BDTG_test";
+			//tau_plots->add("BDT discriminant","BDTG_test","",10);
+  			tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
 			//tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
   			//tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
 			//tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
