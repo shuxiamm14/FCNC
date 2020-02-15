@@ -41,7 +41,7 @@ void plot(int iNP, TString framework)
 	bool mergeFake = 0;
 	bool doTrex = 1;
 	bool plotnj = 0;
-	bool doPlots = 1;
+	bool doPlots = 0;
 	bool scaletodata = 0;
 	bool mergeprong = 1;
 	int plot_option = 2;
@@ -54,14 +54,14 @@ void plot(int iNP, TString framework)
 	lumitag += framework == "xTFW" ? "140 fb^{-1}" : "80 fb^{-1}";
 	tau_plots->SetLumiAnaWorkflow(lumitag,"FCNC tqH H#rightarrow tautau","Internal");
 	tau_plots->debug = 0;
-
+/*
 	tau_plots->checkread = 1;
 	tau_plots->checkread_sample = "fake";
-	tau_plots->checkread_region = "reg1l1tau1b2j_os_1prong_below35_vetobtagwp70";
+	tau_plots->checkread_region = "reg1l1tau1b2j_os_1prong_above35_vetobtagwp70";
 	tau_plots->checkread_variation = "NOMINAL";
 	tau_plots->checkread_variable = 0;
-	tau_plots->checkread_ibin = 1;
-
+	tau_plots->checkread_ibin = 2;
+*/
 	vector<sample> samples;
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kMagenta, kSpring, kTeal, kAzure};
 
@@ -125,8 +125,8 @@ void plot(int iNP, TString framework)
 			tau_plots->muteregion("3j");
 			tau_plots->muteregion("2j");
 		}else{
-			//tau_plots->sensitivevariable = "BDTG_test";
-			//tau_plots->add("BDT discriminant","BDTG_test","",10);
+			tau_plots->sensitivevariable = "BDTG_test";
+			tau_plots->add("BDT discriminant","BDTG_test","",10);
   			tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
 			//tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
   			//tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);

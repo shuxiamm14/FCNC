@@ -192,11 +192,9 @@ int main(int argc, char const *argv[])
 		}
 		analysis->finalise_sample();
 		printf("finished reduce\n");
-		if(reduce == 3) {
 			printf("We need a crash here to terminate the job. Otherwise the destruction of the histograms takes forever. This is on purpose, don't worry.\n");
 			std::vector<int> crasher;
 			crasher.at(1);
-		}
 		delete analysis;
 		return 0;
 	}

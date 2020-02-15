@@ -447,7 +447,7 @@ double nominal::FindNewFakeSF(TString NP, TString tauorigin, float taupt, TStrin
   int slice = 0;
   for (int islice = 0; islice < fakePtSlices.size(); ++islice)
   {
-    if(taupt<fakePtSlices[islice]) {
+    if(taupt/GeV<fakePtSlices[islice]) {
       slice = islice-1;
       break;
     }
@@ -502,7 +502,7 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
         TH1D *SFhist = (TH1D*)sfFile[isOs]->Get(histname);
         if(!SFhist) printf("histogram not found in SF file: %s\n", histname.Data());
         TAxis *xaxis = SFhist->GetXaxis();
-        for (int ibin = 1; ibin <= SFhist->GetNbinsX(); ++ibin)
+        for (int ibin = 2; ibin <= SFhist->GetNbinsX(); ++ibin)
         {
           TString NPname = xaxis->GetBinLabel(ibin);
           if(find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) continue;
