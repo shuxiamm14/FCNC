@@ -441,9 +441,9 @@ double nominal::FindNewFakeSF(TString NP, TString tauorigin, float taupt, TStrin
     printf("nominal::FindNewFakeSF() Error : newFakeSF is Empty, please call nominal::ConfigNewFakeSF() first\n");
     exit(0);
   }
-  if(tauorigin.Contains("real") || tauorigin.Contains("lep")) return 1;
+  if(tauorigin.Contains("_real") || tauorigin.Contains("_lep")) return 1;
   bool isOs = region.Contains("os");
-  bool iswjet = tauorigin.Contains("wjet");
+  bool iswjet = tauorigin.Contains("_wjet");
   int slice = 0;
   for (int islice = 0; islice < fakePtSlices.size(); ++islice)
   {
@@ -512,6 +512,28 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
       }
     }
   }
+  printf("new SFs: \n");
+  for (int isOS = 0; isOS < 2; ++isOS)
+  {
+    printf("isOs: %d\n", isOS);
+    printf("Slices: ");
+    for (int islice = 0; islice < fakePtSlices.size(); ++islice)
+    {
+      printf(" %s ", ( to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) ).c_str());
+    }
+    printf("\n");
+    for (int iswjet = 0; iswjet < 2; ++iswjet)
+    {
+      printf("%s", iswjetstring[iswjet]);
+      for (int islice = 0; islice < fakePtSlices.size(); ++islice)
+      {
+        printf(" %s ", newFakeSF[NPname][isOs][iswjet][islice].nominal);
+      }
+      printf("\n");
+    }
+  }
+  delete sfFile[0];
+  delete sfFile[1];
   applyNewFakeSF = 1;
 }
 
