@@ -13,7 +13,7 @@
 mkdir -p /tmp/boyang/boyang
 for systname in `cat $ttH_fakes_DIR/config/tthMLtreeSys.txt`
 do
-if [ -n "$3" ] ; then
+if [ -n "$3" ] && [[ $3 != "all" ]] ; then
 	systname=$3
 fi
 
@@ -113,7 +113,7 @@ fi
 fi
 
 cd ..
-if [ -n "$3" ] ; then
+if [ -n "$3" ] && [[ $3 != "all" ]] ; then
 	break
 fi
 done

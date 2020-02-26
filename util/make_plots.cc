@@ -6,7 +6,7 @@
 #include <sys/ioctl.h>
 #include "fcnc_include.h"
 #include "weightsys_list.h"
-#include "commen.h"
+#include "common.h"
 using namespace std;
 
 class sample
@@ -56,11 +56,19 @@ void plot(int iNP, TString framework)
 	tau_plots->debug = 0;
 /*
 	tau_plots->checkread = 1;
+<<<<<<< HEAD
 	tau_plots->checkread_sample = "fake";
 	tau_plots->checkread_region = "reg1l1tau1b2j_os_1prong_above35_vetobtagwp70";
 	tau_plots->checkread_variation = "NOMINAL";
 	tau_plots->checkread_variable = 0;
 	tau_plots->checkread_ibin = 2;
+=======
+	tau_plots->checkread_sample = "others";
+	tau_plots->checkread_region = "reg1l1tau1b2j_os_1prong_below35_vetobtagwp70";
+	tau_plots->checkread_variation = "NOMINAL";
+	tau_plots->checkread_variable = 1;
+	tau_plots->checkread_ibin = 1;
+>>>>>>> master
 */
 	vector<sample> samples;
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kMagenta, kSpring, kTeal, kAzure};
@@ -71,7 +79,11 @@ void plot(int iNP, TString framework)
 	samples.push_back(sample("zll","Z#rightarrowll",kBlue));
 	samples.push_back(sample("ztautau","Z#rightarrow#tau#tau",kGreen));
 	if(framework=="tthML"){
+<<<<<<< HEAD
 		samples.push_back(sample("top","Top rare",kWhite));
+=======
+		//samples.push_back(sample("top","Top rare",kWhite));
+>>>>>>> master
 		samples.push_back(sample("others","Rare",kMagenta));
 		samples.push_back(sample("ttbar","t#bar{t}",kYellow));
 		samples.push_back(sample("ttV","t#bar{t}V",kAzure));
@@ -104,10 +116,24 @@ void plot(int iNP, TString framework)
 		{"fcnc_prod_uh",{"fcnc_prod_uh"}},
 	};
 	TString samplesys = "";
-	if(NPname.Contains("ttbar")){
+	if(NPname.Contains("ttbarsys")){
 		samplesys = "ttbar";
 	}
-
+	if(NPname.Contains("Xsec")){
+		bool applied = 0;
+		for(auto &samp : samples){
+			if(NPname.Contains(samp.name)){
+				if(NPname.Contains("_up")) samp.norm *= 1+XsecErr.at(samp.name)[0];
+				else samp.norm *= 1+XsecErr.at(samp.name)[1];
+				applied = 1;
+				break;
+			}
+		}
+		if(applied == 0) {
+			printf("Error: Xsec uncertainty %s is not applied\n", NPname.Data());
+			exit(0);
+		}
+	}
 	if(framework == "tthML"){
 		if(calculate_fake_calibration){
 			tau_plots->add("p_{T,#tau}","taupt_0","GeV");
@@ -363,25 +389,37 @@ void plot(int iNP, TString framework)
 				}
 			}
 		}
+
+
+  		if(NPname == "fake_mismodelling"){
+			for(int i = 0; i < 3; i++){
+				if(mergeprong) { if(i != 2) continue; }
+				else { if(i == 2) continue; }
+				vector<observable> mismodel2j = tau_plots->scale_to_data("reg1l1tau1b2j_ss" + nprong[i],"1 fake","BDTG_test");
+				vector<observable> mismodel3j = tau_plots->scale_to_data("reg1l1tau1b3j_ss" + nprong[i],"1 fake","BDTG_test");
+				tau_plots->scale_sample("reg1l1tau1b2j_os" + nprong[i],"1 fake","BDTG_test",mismodel2j);
+				tau_plots->scale_sample("reg1l1tau1b3j_os" + nprong[i],"1 fake","BDTG_test",mismodel3j);
+			}
+  		}
+
   		if(scaletodata){
-  			double fakePtSlices[] = {25,35,45,125};
 			for(int i = 0; i < 3; i++){
 				if(mergeprong) { if(i != 2) continue; }
 				else { if(i == 2) continue; }
 				if(calculate_fake_calibration){
-					tau_plots->scale_to_data("reg1l1tau2b1j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
-					tau_plots->scale_to_data("reg1l1tau2b1j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
-					tau_plots->scale_to_data("reg1l1tau2b_os" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
-					tau_plots->scale_to_data("reg1l1tau2b_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
+					tau_plots->scale_to_data("reg1l1tau2b1j_os" + nprong[i],"1 fake","taupt_0",fakePtSlices);
+					tau_plots->scale_to_data("reg1l1tau2b1j_ss" + nprong[i],"1 fake","taupt_0",fakePtSlices);
+					tau_plots->scale_to_data("reg1l1tau2b_os" + nprong[i],"1 fake","taupt_0",fakePtSlices);
+					tau_plots->scale_to_data("reg1l1tau2b_ss" + nprong[i],"1 fake","taupt_0",fakePtSlices);
 				}else{
-					tau_plots->scale_to_data("reg1l1tau2b2j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
-					tau_plots->scale_to_data("reg1l1tau2b3j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
-					tau_plots->scale_to_data("reg1l1tau2b2j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
-					tau_plots->scale_to_data("reg1l1tau2b3j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
-					tau_plots->scale_to_data("reg1l1tau1b2j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
-					tau_plots->scale_to_data("reg1l1tau1b3j_os" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
-					tau_plots->scale_to_data("reg1l1tau1b2j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
-					tau_plots->scale_to_data("reg1l1tau1b3j_ss" + nprong[i],"NOMINAL","1 fake","taupt_0",fakePtSlices,3);
+					tau_plots->scale_to_data("reg1l1tau2b2j_os" + nprong[i],"1 fake","taupt_0",fakePtSlices);
+					tau_plots->scale_to_data("reg1l1tau2b3j_os" + nprong[i],"1 fake","taupt_0",fakePtSlices);
+					tau_plots->scale_to_data("reg1l1tau2b2j_ss" + nprong[i],"1 fake","taupt_0",fakePtSlices);
+					tau_plots->scale_to_data("reg1l1tau2b3j_ss" + nprong[i],"1 fake","taupt_0",fakePtSlices);
+					tau_plots->scale_to_data("reg1l1tau1b2j_os" + nprong[i],"1 fake","taupt_0",fakePtSlices);
+					tau_plots->scale_to_data("reg1l1tau1b3j_os" + nprong[i],"1 fake","taupt_0",fakePtSlices);
+					tau_plots->scale_to_data("reg1l1tau1b2j_ss" + nprong[i],"1 fake","taupt_0",fakePtSlices);
+					tau_plots->scale_to_data("reg1l1tau1b3j_ss" + nprong[i],"1 fake","taupt_0",fakePtSlices);
 				}
 			}
   		}

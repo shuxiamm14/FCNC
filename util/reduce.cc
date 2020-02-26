@@ -161,6 +161,7 @@ int main(int argc, char const *argv[])
 							else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
 						//	for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
 							for(auto v: commonNPlist) analysis->plotNPs.push_back(v);
+							analysis->plotNPs.push_back("fakeSF");
 						}
 					}
 				}
