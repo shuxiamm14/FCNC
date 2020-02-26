@@ -1,26 +1,33 @@
 #include <iostream>
 
 std::vector<TString> fakeNPlist = {
-	"NOMINAL",
-	"fakeSF_tthML",
-	"fakeSF_origin",
-	"fakeSFNP_tthML_ptbin0_prongbin0",
-	"fakeSFNP_tthML_ptbin1_prongbin0",
-	"fakeSFNP_tthML_ptbin2_prongbin0",
-	"fakeSFNP_tthML_ptbin0_prongbin1",
-	"fakeSFNP_tthML_ptbin1_prongbin1",
-	"fakeSFNP_tthML_ptbin2_prongbin1",
-	"fakeSFNP_origin_0",
-	"fakeSFNP_origin_1",
-	"fakeSFNP_origin_2",
-	"fakeSFNP_origin_3",
-	"fakeSFNP_origin_4",
-	"fakeSFNP_origin_5",
-	"fakeSFNP_origin_6",
-	"fakeSFNP_origin_7"
+	//"fakeSF_tthML",
+	//"fakeSF_origin",
+	//"fakeSFNP_tthML_ptbin0_prongbin0",
+	//"fakeSFNP_tthML_ptbin1_prongbin0",
+	//"fakeSFNP_tthML_ptbin2_prongbin0",
+	//"fakeSFNP_tthML_ptbin0_prongbin1",
+	//"fakeSFNP_tthML_ptbin1_prongbin1",
+	//"fakeSFNP_tthML_ptbin2_prongbin1",
+	//"fakeSFNP_origin_0",
+	//"fakeSFNP_origin_1",
+	//"fakeSFNP_origin_2",
+	//"fakeSFNP_origin_3",
+	//"fakeSFNP_origin_4",
+	//"fakeSFNP_origin_5",
+	//"fakeSFNP_origin_6",
+	//"fakeSFNP_origin_7"
+	"fakeSFNP_ptbin0", //fitting stats. uncertainty, 6 parameters for OS regions in total
+	"fakeSFNP_ptbin1",
+	"fakeSFNP_ptbin2",
+	"fakeSFNP_ptbin0_wjet",
+	"fakeSFNP_ptbin1_wjet",
+	"fakeSFNP_ptbin2_wjet",
+	"fake_mismodelling" //mis-modelling in SS region, the data-MC difference is added to OS w-jet faking uncertainty.
 };
 
-std::vector<TString> commonNPlist = {
+std::vector<TString> commonNPlist = { //common NP for both tthML and xTFW
+	"NOMINAL",
 	"PRW_up",
 	"PRW_down",
 	"jvt_up",
@@ -67,7 +74,7 @@ std::vector<TString> commonNPlist = {
 	"btag_extrapolation_from_charm_down",
 };
 
-std::vector<TString> theoryNPlist = {
+std::vector<TString> theoryNPlist = { // theory uncertainties, the recipe is changed, need to ask conveners.
 	"muR=100,muF=200",
 	"muR=100,muF=050",
 	"muR=200,muF=100",
@@ -473,6 +480,13 @@ std::vector<TString> sampleNPlist = {
 	"ttbarsys_hscatter",
 };
 
+std::vector<TString> xsecNPlist = {
+	"ztautauXsec_up",
+	"ztautauXsec_down",
+	"ttbarXsec_up",
+	"ttbarXsec_down",
+};
+
 std::vector<TString> tthMLmajorNPlist = {
 	"tauEveto_TOTAL_up",
 	"tauEveto_TOTAL_down",
@@ -525,7 +539,7 @@ void printNPindex(TString framework = "tthML"){
 	std::vector<TString> *specNPlist = framework == "xTFW"?&xTFWNPlist:&tthMLNPlist;
 	std::vector<TString> *treeNPlist = framework == "xTFW"?&xTFWtreeNPlist:&tthMLtreeNPlist;
 
-	std::vector<std::vector<TString>*> nlist = {&fakeNPlist,&commonNPlist,&theoryNPlist,specNPlist,treeNPlist,&sampleNPlist};
+	std::vector<std::vector<TString>*> nlist = {&fakeNPlist,&commonNPlist,&theoryNPlist,specNPlist,treeNPlist,&sampleNPlist,&xsecNPlist};
 	//17 + 44 + 108 + 34 + 83 + 3
 	int iNP = 0;
 	std::ofstream file;
