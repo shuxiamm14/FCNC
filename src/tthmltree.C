@@ -1089,16 +1089,39 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
             for (int iNP = 0; iNP < plotNPs.size(); ++iNP){
               auto theNP = plotNPs.at(iNP);
               if(debug) printf("fill NP %s\n", theNP.Data());
-              std::vector<TString>::iterator it = std::find(weightvec.begin(), weightvec.end(), theNP);
-              int index = 2;
-              if(it != weightvec.end()) index = std::distance(weightvec.begin(), it);
-              else continue;
-              if(index<3) weight = weights->at(index);
-              else if(index > 8 && index < 17)
-                weight = weights->at(2) * weights->at(index);
-              else
-                weight = weights->at(0) * weights->at(index);
-              if(applyNewFakeSF) weight *= FindNewFakeSF(theNP, tauorigin, tau_pt_0, iter->first);
+              weight = weights->at(0);
+
+              if(applyNewFakeSF){
+                if(theNP.Contains("fakeSF")){
+                  TString SFname;
+                  observable thefakeSF = FindNewFakeSF("NOMINAL", tauorigin, tau_pt_0, iter->first,SFname);
+                  double nominalweight = weight;
+                  if(theNP.Contains(SFname))
+                  {
+                    weight = nominalweight*(thefakeSF.nominal + thefakeSF.error);
+                  }else{
+                    weight *= thefakeSF.nominal;
+                  }
+                }else{
+                  if(nominaltree) 
+                    weight *= FindNewFakeSF(theNP, tauorigin, tau_pt_0, iter->first).nominal;
+                  else if(theNP == "NOMINAL")
+                    weight *= FindNewFakeSF(SystematicsName, tauorigin, tau_pt_0, iter->first).nominal;
+                }
+              }
+
+              if(!theNP.Contains("Xsec")) {
+                std::vector<TString>::iterator it = std::find(weightvec.begin(), weightvec.end(), theNP);
+                int index = 2;
+                if(it != weightvec.end()) index = std::distance(weightvec.begin(), it);
+                else continue;
+                if(index<3) weight = weights->at(index);
+                else if(index > 8 && index < 17)
+                  weight = weights->at(2) * weights->at(index);
+                else
+                  weight *= weights->at(index);
+              }
+              
               if (fcnc) fillhist(fcnc_plots, iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, theNP);
               else if(iter->first.Contains("tau")) fillhist(fake_plots, iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, theNP);
               else fill_notau(iter->first, sample, theNP);

@@ -1,6 +1,6 @@
 #include "nominal.h"
 #include "fcnc_include.h"
-#include "commen.h"
+#include "common.h"
 using namespace std;
 int nominal::GeV = 0;
 
@@ -436,13 +436,13 @@ void nominal::calcfakesf(std::vector<int> origin, std::vector<float> pt, std::ve
 
 }
 
-double nominal::FindNewFakeSF(TString NP, TString tauorigin, float taupt, TString region){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
+observable nominal::FindNewFakeSF(TString NP, TString tauorigin, float taupt, TString region, TString &name){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
   if(!newFakeSF.size()) {
     printf("nominal::FindNewFakeSF() Error : newFakeSF is Empty, please call nominal::ConfigNewFakeSF() first\n");
     exit(0);
   }
   if(tauorigin.Contains("_real") || tauorigin.Contains("_lep")) return 1;
-  bool isOs = region.Contains("os");
+  bool isOS = region.Contains("os");
   bool iswjet = tauorigin.Contains("_wjet");
   int slice = 0;
   for (int islice = 0; islice < fakePtSlices.size(); ++islice)
@@ -452,7 +452,14 @@ double nominal::FindNewFakeSF(TString NP, TString tauorigin, float taupt, TStrin
       break;
     }
   }
-  return newFakeSF[NP][isOs][iswjet][slice].nominal;
+  string ss = "ptbin" + to_string(slice) + iswjet?"_wjet":"";
+  name = ss.c_str();
+  return newFakeSF[NP][isOS][iswjet][slice];
+}
+
+observable nominal::FindNewFakeSF(TString NP, TString tauorigin, float taupt, TString region){
+  TString name;
+  return FindNewFakeSF(NP, tauorigin, taupt, region, name);
 }
 
 bool nominal::AddTheorySys(){
@@ -496,10 +503,10 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
   {
     for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
     {
-      for (int isOs = 0; isOs < 2; ++isOs)
+      for (int isOS = 0; isOS < 2; ++isOS)
       {
         TString histname = ( "Fit_sf_" + iswjetstring[iswjet] + "_pt" + to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) ).c_str();
-        TH1D *SFhist = (TH1D*)sfFile[isOs]->Get(histname);
+        TH1D *SFhist = (TH1D*)sfFile[isOS]->Get(histname);
         if(!SFhist) printf("histogram not found in SF file: %s\n", histname.Data());
         TAxis *xaxis = SFhist->GetXaxis();
         for (int ibin = 1; ibin <= SFhist->GetNbinsX(); ++ibin)
@@ -507,7 +514,7 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
           TString NPname = xaxis->GetBinLabel(ibin);
           if(find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) continue;
           if(!newFakeSF[NPname].size()) newFakeSF[NPname] = {{{0,0},{0,0}},{{0,0},{0,0}}};
-          newFakeSF[NPname][isOs][iswjet][islice] = observable(SFhist->GetBinContent(ibin),SFhist->GetBinError(ibin));
+          newFakeSF[NPname][isOS][iswjet][islice] = observable(SFhist->GetBinContent(ibin),SFhist->GetBinError(ibin));
         }
       }
     }
@@ -515,7 +522,7 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
   printf("new SFs: \n");
   for (int isOS = 0; isOS < 2; ++isOS)
   {
-    printf("isOs: %d\n", isOS);
+    printf("isOS: %d\n", isOS);
     printf("Slices: ");
     for (int islice = 0; islice < fakePtSlices.size(); ++islice)
     {
@@ -524,10 +531,10 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
     printf("\n");
     for (int iswjet = 0; iswjet < 2; ++iswjet)
     {
-      printf("%s", iswjetstring[iswjet]);
+      printf("%s", iswjetstring[iswjet].c_str());
       for (int islice = 0; islice < fakePtSlices.size(); ++islice)
       {
-        printf(" %s ", newFakeSF[NPname][isOs][iswjet][islice].nominal);
+        printf(" %f ", newFakeSF["NOMINAL"][isOS][iswjet][islice].nominal);
       }
       printf("\n");
     }

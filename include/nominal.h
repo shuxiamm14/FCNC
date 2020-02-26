@@ -153,7 +153,8 @@ public :
   std::map<TString, TTree*> outputtree;
   void init_dsid();
   void ConfigNewFakeSF();
-  double FindNewFakeSF(TString NP, TString tauorigin, float taupt, TString region);
+  observable FindNewFakeSF(TString NP, TString tauorigin, float taupt, TString region, TString &name);
+  observable FindNewFakeSF(TString NP, TString tauorigin, float taupt, TString region);
   void addweights(double weight, TString name);
   void saveweightslist(TString filename);
   void readTFmeanstd(TString filename);
