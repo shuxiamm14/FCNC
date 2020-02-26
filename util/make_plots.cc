@@ -36,7 +36,7 @@ void plot(int iNP, TString framework)
 	TString nominalname = "NOMINAL";
 	TString histmiddlename =  dirname==NPname? nominalname:NPname;
 	float BRbenchmark = 0.2;
-	bool calculate_fake_calibration = 0;
+	bool calculate_fake_calibration = 1;
 	bool wfake = 1;
 	bool mergeFake = 0;
 	bool doTrex = 1;
@@ -45,7 +45,7 @@ void plot(int iNP, TString framework)
 	bool scaletodata = 0;
 	bool mergeprong = 1;
 	int plot_option = 2;
-	bool fittodata = 0;
+	bool fittodata = 1;
 	TString fitcharge = "os";
 	if(framework == "xTFW") calculate_fake_calibration = 0;
 	histSaver *tau_plots = new histSaver("dummy");
@@ -56,19 +56,11 @@ void plot(int iNP, TString framework)
 	tau_plots->debug = 0;
 /*
 	tau_plots->checkread = 1;
-<<<<<<< HEAD
 	tau_plots->checkread_sample = "fake";
 	tau_plots->checkread_region = "reg1l1tau1b2j_os_1prong_above35_vetobtagwp70";
 	tau_plots->checkread_variation = "NOMINAL";
 	tau_plots->checkread_variable = 0;
 	tau_plots->checkread_ibin = 2;
-=======
-	tau_plots->checkread_sample = "others";
-	tau_plots->checkread_region = "reg1l1tau1b2j_os_1prong_below35_vetobtagwp70";
-	tau_plots->checkread_variation = "NOMINAL";
-	tau_plots->checkread_variable = 1;
-	tau_plots->checkread_ibin = 1;
->>>>>>> master
 */
 	vector<sample> samples;
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kMagenta, kSpring, kTeal, kAzure};
@@ -79,11 +71,7 @@ void plot(int iNP, TString framework)
 	samples.push_back(sample("zll","Z#rightarrowll",kBlue));
 	samples.push_back(sample("ztautau","Z#rightarrow#tau#tau",kGreen));
 	if(framework=="tthML"){
-<<<<<<< HEAD
-		samples.push_back(sample("top","Top rare",kWhite));
-=======
 		//samples.push_back(sample("top","Top rare",kWhite));
->>>>>>> master
 		samples.push_back(sample("others","Rare",kMagenta));
 		samples.push_back(sample("ttbar","t#bar{t}",kYellow));
 		samples.push_back(sample("ttV","t#bar{t}V",kAzure));

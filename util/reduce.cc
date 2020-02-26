@@ -159,9 +159,10 @@ int main(int argc, char const *argv[])
 						}else{
 							if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
 							else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
-						//	for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
+							//for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
 							for(auto v: commonNPlist) analysis->plotNPs.push_back(v);
-							analysis->plotNPs.push_back("fakeSF");
+							for(auto v: xsecNPlist) analysis->plotNPs.push_back(v);
+							for(auto v: fakeNPlist) if(v.Contains("fakeSFNP")) analysis->plotNPs.push_back(v);
 						}
 					}
 				}
