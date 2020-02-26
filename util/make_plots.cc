@@ -54,14 +54,14 @@ void plot(int iNP, TString framework)
 	lumitag += framework == "xTFW" ? "140 fb^{-1}" : "80 fb^{-1}";
 	tau_plots->SetLumiAnaWorkflow(lumitag,"FCNC tqH H#rightarrow tautau","Internal");
 	tau_plots->debug = 0;
-
+/*
 	tau_plots->checkread = 1;
-	tau_plots->checkread_sample = "fake";
+	tau_plots->checkread_sample = "others";
 	tau_plots->checkread_region = "reg1l1tau1b2j_os_1prong_below35_vetobtagwp70";
 	tau_plots->checkread_variation = "NOMINAL";
-	tau_plots->checkread_variable = 0;
+	tau_plots->checkread_variable = 1;
 	tau_plots->checkread_ibin = 1;
-
+*/
 	vector<sample> samples;
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kMagenta, kSpring, kTeal, kAzure};
 
@@ -70,10 +70,18 @@ void plot(int iNP, TString framework)
 	samples.push_back(sample("diboson","Diboson",(enum EColor)7));
 	samples.push_back(sample("zll","Z#rightarrowll",kBlue));
 	samples.push_back(sample("ztautau","Z#rightarrow#tau#tau",kGreen));
-	samples.push_back(sample("othertop","Top rare",kWhite));
-	samples.push_back(sample("others","Rare",kTeal));
-	samples.push_back(sample("ttbar","t#bar{t}",kYellow));
-	samples.push_back(sample("ttV","t#bar{t}V",kAzure));
+	if(framework=="tthML"){
+		//samples.push_back(sample("top","Top rare",kWhite));
+		samples.push_back(sample("others","Rare",kMagenta));
+		samples.push_back(sample("ttbar","t#bar{t}",kYellow));
+		samples.push_back(sample("ttV","t#bar{t}V",kAzure));
+	}else{
+		samples.push_back(sample("top","Top production",kYellow));
+	}
+	//samples.push_back(sample("othertop","Top rare",kWhite));
+	//samples.push_back(sample("others","Rare",kTeal));
+	//samples.push_back(sample("ttbar","t#bar{t}",kYellow));
+	//samples.push_back(sample("ttV","t#bar{t}V",kAzure));
 	if(!calculate_fake_calibration){
 		stringstream ss;
 		ss<<"(BR=" << BRbenchmark << "%)";
@@ -131,37 +139,37 @@ void plot(int iNP, TString framework)
 			tau_plots->muteregion("3j");
 			tau_plots->muteregion("2j");
 		}else{
-  			tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
+			//tau_plots->sensitivevariable = "BDTG_test";
+			//tau_plots->add("BDT discriminant","BDTG_test","",10);
+  			//tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
 			tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
   			tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
-			tau_plots->sensitivevariable = "BDTG_test";
-			tau_plots->add("BDT discriminant","BDTG_test","",10);
-			tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
-			tau_plots->add("#chi^{2}","chi2","",5);
-			tau_plots->add("M_{all}","allmass","",5);
-			tau_plots->add("p_{Z,all}","allpz","",5);
-			tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
-  			tau_plots->add("m_{t,SM}","t1mass","GeV",5);
-  			tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
+			//tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
+  			//tau_plots->add("m_{t,SM}","t1mass","GeV",5);
+  			//tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
   			tau_plots->add("m_{W}","wmass","GeV",5);
-  			tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
   			tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",10);
-  			tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
-  			tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
-  			tau_plots->add("m^{T}_{W}","mtw","GeV",10);
-  			tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",15);
+  			//tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
+  			//tau_plots->add("m^{T}_{W}","mtw","GeV",10);
   			tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",5);
   			tau_plots->add("#eta_{#tau,max}","etamax","",10);
-  			tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
-  			tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
-  			tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
-  			tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-  			tau_plots->add("M(#tau#tau#light-jet,min)","mtaujmin","",5);
-			tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
-			tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
-  			tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
-  			tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
-  			tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
+  			//tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
+  			//tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
+  			//tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",15);
+			//tau_plots->add("#chi^{2}","chi2","",5);
+			//tau_plots->add("M_{all}","allmass","",5);
+			//tau_plots->add("p_{Z,all}","allpz","",5);
+			//tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
+  			//tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
+  			//tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
+  			//tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
+  			//tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
+  			//tau_plots->add("M(#tau#tau#light-jet,min)","mtaujmin","",5);
+			//tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
+			//tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
+  			//tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
+  			//tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
+  			//tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
   		}
   	}else{
 		tau_plots->sensitivevariable = "BDTG_test";

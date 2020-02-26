@@ -519,12 +519,16 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
       }
     }
   }
-  printf("new SFs: \n");
+  printf("saved SF for NP:");
+  for(auto iter : newFakeSF){
+    printf(" %s", iter.first.Data());
+  }
+  printf("\nnew SFs: \n");
   for (int isOS = 0; isOS < 2; ++isOS)
   {
     printf("isOS: %d\n", isOS);
     printf("Slices: ");
-    for (int islice = 0; islice < fakePtSlices.size(); ++islice)
+    for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
     {
       printf(" %s ", ( to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) ).c_str());
     }
@@ -532,15 +536,13 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
     for (int iswjet = 0; iswjet < 2; ++iswjet)
     {
       printf("%s", iswjetstring[iswjet].c_str());
-      for (int islice = 0; islice < fakePtSlices.size(); ++islice)
+      for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
       {
         printf(" %f ", newFakeSF["NOMINAL"][isOS][iswjet][islice].nominal);
       }
       printf("\n");
     }
   }
-  delete sfFile[0];
-  delete sfFile[1];
   applyNewFakeSF = 1;
 }
 
