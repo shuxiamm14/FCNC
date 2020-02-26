@@ -21,7 +21,7 @@ public:
 };
 
 TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir, TString nominalname){
-	TFile *inputfile = new TFile(NPdir + "/" + sample + "_" + (NPdir==nominaldir? NPname : nominalname) + ".root");
+	TFile *inputfile = new TFile(NPdir + "/" + sample + "_" + (NPdir==nominaldir && ? NPname : nominalname) + ".root");
 	if(inputfile->IsZombie()) {
 		deletepointer(inputfile);
 		inputfile = new TFile(nominaldir + "/" + sample + "_" + nominalname + ".root");
@@ -34,7 +34,7 @@ void plot(int iNP, TString framework)
 	TString dirname;
 	TString NPname = findNPname(dirname,iNP,framework);
 	TString nominalname = "NOMINAL";
-	TString histmiddlename =  dirname==NPname? nominalname:NPname;
+	TString histmiddlename =  (dirname==NPname || NPname.Contains("fakeSFNP") || NPname.Contains("Xsec"))? nominalname:NPname;
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 0;
 	bool wfake = 0;
