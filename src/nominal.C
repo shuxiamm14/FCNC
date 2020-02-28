@@ -445,7 +445,7 @@ observable nominal::FindNewFakeSF(TString NP, TString tauorigin, float taupt, TS
   bool isOS = region.Contains("os");
   bool iswjet = tauorigin.Contains("_wjet");
   int slice = 0;
-  for (int islice = 0; islice < fakePtSlices.size(); ++islice)
+  for (int islice = 1; islice < fakePtSlices.size(); ++islice)
   {
     if(taupt/GeV<fakePtSlices[islice]) {
       slice = islice-1;

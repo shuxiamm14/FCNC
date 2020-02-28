@@ -161,7 +161,6 @@ int main(int argc, char const *argv[])
 							else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
 							//for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
 							for(auto v: commonNPlist) analysis->plotNPs.push_back(v);
-							for(auto v: xsecNPlist) analysis->plotNPs.push_back(v);
 							for(auto v: fakeNPlist) if(v.Contains("fakeSFNP")) analysis->plotNPs.push_back(v);
 						}
 					}
@@ -176,7 +175,7 @@ int main(int argc, char const *argv[])
 		TString inputfilename = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/" + analysis->SystematicsName + "/" + inputconfig + "_tree.root";
 		TString inputfilename_nominal = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/nominal/" + inputconfig + "_tree.root";
 		printf("reading file: %s\n", inputfilename.Data());
-		TFile inputfile(inputfilename);
+		TFile inputfile(inputfilename,"read");
 		TFile *inputfile_nominal = 0;
 		if(!analysis->nominaltree && framework == "tthML" && reduce == 2) {
 			printf("reading nominal file to get truth: %s\n", inputfilename_nominal.Data());
