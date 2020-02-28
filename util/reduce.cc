@@ -155,6 +155,7 @@ int main(int argc, char const *argv[])
 							else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
 							//for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
 							for(auto v: commonNPlist) analysis->plotNPs.push_back(v);
+                                                        if(applynewSF) for(auto v: xsecNPlist) analysis->plotNPs.push_back(v);
 							for(auto v: fakeNPlist) if(v.Contains("fakeSFNP")) analysis->plotNPs.push_back(v);
 						}
 					}
