@@ -1109,7 +1109,6 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
 		  }
                 }
               }
-	      
               if(!theNP.Contains("Xsec") && !theNP.Contains("fakeSF")) {
                 std::vector<TString>::iterator it = std::find(weightvec.begin(), weightvec.end(), theNP);
                 int index = 2;
