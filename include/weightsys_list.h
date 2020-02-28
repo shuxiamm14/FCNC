@@ -518,7 +518,7 @@ TString findNPname(TString &dirname, int iNP = 0, TString framework = "tthML"){
 	std::vector<TString> *specNPlist = framework == "xTFW"?&xTFWNPlist:&tthMLNPlist;
 	std::vector<TString> *treeNPlist = framework == "xTFW"?&xTFWtreeNPlist:&tthMLtreeNPlist;
 
-	std::vector<std::vector<TString>*> nlist = {&fakeNPlist,&commonNPlist,&theoryNPlist,specNPlist,treeNPlist,&sampleNPlist};
+	std::vector<std::vector<TString>*> nlist = {&fakeNPlist,&commonNPlist,&theoryNPlist,specNPlist,treeNPlist,&sampleNPlist,&xsecNPlist};
 	//17 + 44 + 108 + 34 + 83 + 3
 	int totalNP = 0;
 	for (int i = 0; i < nlist.size(); ++i)
