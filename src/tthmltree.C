@@ -1104,23 +1104,23 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
                 }else{
                   if(nominaltree) 
                     weight *= FindNewFakeSF(theNP, tauorigin, tau_pt_0, iter->first).nominal;
-                  else if(theNP == "NOMINAL")
+                  else if(theNP == "NOMINAL"){
                     weight *= FindNewFakeSF(SystematicsName, tauorigin, tau_pt_0, iter->first).nominal;
+		  }
                 }
               }
-
+	      
               if(!theNP.Contains("Xsec") && !theNP.Contains("fakeSF")) {
                 std::vector<TString>::iterator it = std::find(weightvec.begin(), weightvec.end(), theNP);
                 int index = 2;
                 if(it != weightvec.end()) index = std::distance(weightvec.begin(), it);
                 else continue;
-                if(index<3) weight = weights->at(index);
+                if(index==2 || index==1) weight = weights->at(index);
                 else if(index > 8 && index < 17)
                   weight = weights->at(2) * weights->at(index);
-                else
+                else if(index !=0)
                   weight *= weights->at(index);
               }
-              
               if (fcnc) fillhist(fcnc_plots, iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, theNP);
               else if(iter->first.Contains("tau")) fillhist(fake_plots, iter->first, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, theNP);
               else fill_notau(iter->first, sample, theNP);
