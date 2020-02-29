@@ -513,7 +513,6 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
         for (int ibin = 1; ibin <= SFhist->GetNbinsX(); ++ibin)
         {
           TString NPname = xaxis->GetBinLabel(ibin);
-          printf(" %s\n",NPname.Data());
           if((find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) && SystematicsName!=NPname) continue;
           if(!newFakeSF[NPname].size()) newFakeSF[NPname] = {{{0,0},{0,0}},{{0,0},{0,0}}};
           newFakeSF[NPname][isOS][iswjet][islice] = observable(SFhist->GetBinContent(ibin),SFhist->GetBinError(ibin));
