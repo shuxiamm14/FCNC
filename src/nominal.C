@@ -492,30 +492,33 @@ bool nominal::AddTheorySys(){
 }
 
 void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
-  TFile *sfFile[2];
-  newFakeSF.clear();
   TString prefix = PACKAGE_DIR;
   prefix += "/data/";
-  sfFile[0] = new TFile(prefix + "scale_factors_ss.root");
-  sfFile[1] = new TFile(prefix + "scale_factors_os.root");
+  newFakeSF.clear();
   string iswjetstring[2] = {"fake", "wjet-fake"};
-  for (int iswjet = 0; iswjet < 2; ++iswjet)
+  for (int isOS = 0; isOS < 2; ++isOS)
   {
-    for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
+    TFile sfFile(prefix + (isOS?"scale_factors_os.root" : "scale_factors_ss.root"));
+    TH1D *SFhist = 0;
+    for (int iswjet = 0; iswjet < 2; ++iswjet)
     {
-      for (int isOS = 0; isOS < 2; ++isOS)
+      for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
       {
         TString histname = ( "Fit_sf_" + iswjetstring[iswjet] + "_pt" + to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) ).c_str();
-        TH1D *SFhist = (TH1D*)sfFile[isOS]->Get(histname);
+        printf("reading histogram %s\n",histname.Data());
+        sfFile.GetObject(histname,SFhist);
+        printf("done reading\n");
         if(!SFhist) printf("histogram not found in SF file: %s\n", histname.Data());
         TAxis *xaxis = SFhist->GetXaxis();
         for (int ibin = 1; ibin <= SFhist->GetNbinsX(); ++ibin)
         {
           TString NPname = xaxis->GetBinLabel(ibin);
+          printf(" %s\n",NPname.Data());
           if((find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) && SystematicsName!=NPname) continue;
           if(!newFakeSF[NPname].size()) newFakeSF[NPname] = {{{0,0},{0,0}},{{0,0},{0,0}}};
           newFakeSF[NPname][isOS][iswjet][islice] = observable(SFhist->GetBinContent(ibin),SFhist->GetBinError(ibin));
         }
+        printf("done processing histogram %s\n",histname.Data());
       }
     }
   }
@@ -538,7 +541,7 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
       printf("%s", iswjetstring[iswjet].c_str());
       for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
       {
-        printf(" %f ", newFakeSF["NOMINAL"][isOS][iswjet][islice].nominal);
+        printf(" %f ", newFakeSF.begin()->second[isOS][iswjet][islice].nominal);
       }
       printf("\n");
     }
