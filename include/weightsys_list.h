@@ -17,13 +17,13 @@ std::vector<TString> fakeNPlist = {
 	//"fakeSFNP_origin_5",
 	//"fakeSFNP_origin_6",
 	//"fakeSFNP_origin_7"
-	"fakeSFNP_ptbin0", //fitting stats. uncertainty, 6 parameters for OS regions in total
+	"fakeSFNP_ptbin0", //fitting stats. uncertainty, 6 parameters for OS regions in total, reduce_run 56 to apply
 	"fakeSFNP_ptbin1",
 	"fakeSFNP_ptbin2",
 	"fakeSFNP_ptbin0_wjet",
 	"fakeSFNP_ptbin1_wjet",
 	"fakeSFNP_ptbin2_wjet",
-	"fake_mismodelling" //mis-modelling in SS region, the data-MC difference is added to OS w-jet faking uncertainty.
+	"fake_mismodelling" //mis-modelling in SS region, the data-MC difference is added to OS w-jet faking uncertainty, make_plots (2nd time) to apply.
 };
 
 std::vector<TString> commonNPlist = { //common NP for both tthML and xTFW
@@ -510,21 +510,22 @@ std::vector<TString> tthMLmajortreeNPlist = {
 	"TAUS_TRUEHADTAU_SME_TES_MODEL_1down",
 	"TAUS_TRUEHADTAU_SME_TES_MODEL_1up"
 };
+
 std::vector<TString> xTFWmajorNPlist = {};
+
 
 TString findNPname(TString &dirname, int iNP = 0, TString framework = "tthML"){
 
 	int npidx = iNP;
 	std::vector<TString> *specNPlist = framework == "xTFW"?&xTFWNPlist:&tthMLNPlist;
 	std::vector<TString> *treeNPlist = framework == "xTFW"?&xTFWtreeNPlist:&tthMLtreeNPlist;
-
-	std::vector<std::vector<TString>*> nlist = {&fakeNPlist,&commonNPlist,&theoryNPlist,specNPlist,treeNPlist,&sampleNPlist,&xsecNPlist};
-	//17 + 44 + 108 + 34 + 83 + 3
+	std::vector<std::vector<TString>*> nlist = {&commonNPlist,specNPlist,treeNPlist,&fakeNPlist,&xsecNPlist,&theoryNPlist,&sampleNPlist};
+	//except fakeNP, rerun from reduce 3 to update NPs.
 	int totalNP = 0;
 	for (int i = 0; i < nlist.size(); ++i)
 	{
 		if(npidx < nlist[i]->size()) {
-			if(i == 4) dirname = nlist[i]->at(npidx);
+			if(i == 2) dirname = nlist[i]->at(npidx);
 			else dirname = framework == "tthML"? "nominal" : "NOMINAL";
 			return nlist[i]->at(npidx);
 		}
@@ -535,11 +536,15 @@ TString findNPname(TString &dirname, int iNP = 0, TString framework = "tthML"){
 	return "";
 }
 
+//root -l
+//.L weightsys_list.h
+//printNPindex("tthML")
 void printNPindex(TString framework = "tthML"){
+
 	std::vector<TString> *specNPlist = framework == "xTFW"?&xTFWNPlist:&tthMLNPlist;
 	std::vector<TString> *treeNPlist = framework == "xTFW"?&xTFWtreeNPlist:&tthMLtreeNPlist;
+	std::vector<std::vector<TString>*> nlist = {&commonNPlist,specNPlist,treeNPlist,&fakeNPlist,&xsecNPlist,&theoryNPlist,&sampleNPlist};
 
-	std::vector<std::vector<TString>*> nlist = {&fakeNPlist,&commonNPlist,&theoryNPlist,specNPlist,treeNPlist,&sampleNPlist,&xsecNPlist};
 	//17 + 44 + 108 + 34 + 83 + 3
 	int iNP = 0;
 	std::ofstream file;
