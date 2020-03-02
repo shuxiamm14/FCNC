@@ -1089,18 +1089,11 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
               auto theNP = plotNPs.at(iNP);
               if(debug) printf("fill NP %s\n", theNP.Data());
               weight = weights->at(0);
-
               if(applyNewFakeSF){
                 if(theNP.Contains("fakeSF")){
                   TString SFname;
                   observable thefakeSF = FindNewFakeSF("NOMINAL", tauorigin, tau_pt_0, iter->first,SFname);
-                  double nominalweight = weight;
-                  if(theNP.Contains(SFname))
-                  {
-                    weight = nominalweight*(thefakeSF.nominal + thefakeSF.error);
-                  }else{
-                    weight *= thefakeSF.nominal;
-                  }
+                  weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);
                 }else{
                   if(nominaltree) 
                     weight *= FindNewFakeSF(theNP, tauorigin, tau_pt_0, iter->first).nominal;
@@ -1109,7 +1102,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
                   }
                 }
               }
-              if(!theNP.Contains("Xsec") && !theNP.Contains("fakeSF")) {
+              if(!theNP.Contains("Xsec") && !theNP.Contains("fakeSF") && nominaltree) {
                 std::vector<TString>::iterator it = std::find(weightvec.begin(), weightvec.end(), theNP);
                 int index = 2;
                 if(it != weightvec.end()) index = std::distance(weightvec.begin(), it);

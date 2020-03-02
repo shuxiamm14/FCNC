@@ -454,6 +454,7 @@ observable nominal::FindNewFakeSF(TString NP, TString tauorigin, float taupt, TS
   }
   string ss = "ptbin" + to_string(slice) + iswjet?"_wjet":"";
   name = ss.c_str();
+  if(!newFakeSF[NP].size()) printf("nominal::FindNewFakeSF : NP %s not found\n", NP.Data());
   return newFakeSF[NP][isOS][iswjet][slice];
 }
 
@@ -507,13 +508,14 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
         TString histname = ( "Fit_sf_" + iswjetstring[iswjet] + "_pt" + to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) ).c_str();
         printf("reading histogram %s\n",histname.Data());
         sfFile.GetObject(histname,SFhist);
+        SFhist->SetDirectory(0);  //It crashes without this line!
         printf("done reading\n");
         if(!SFhist) printf("histogram not found in SF file: %s\n", histname.Data());
         TAxis *xaxis = SFhist->GetXaxis();
         for (int ibin = 2; ibin <= SFhist->GetNbinsX(); ++ibin)
         {
           TString NPname = xaxis->GetBinLabel(ibin);
-          if((find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) && SystematicsName!=NPname) continue;
+          if((find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) && SystematicsName!=NPname && NPname!="NOMINAL") continue;
           if(!newFakeSF[NPname].size()) newFakeSF[NPname] = {{{0,0},{0,0}},{{0,0},{0,0}}};
           newFakeSF[NPname][isOS][iswjet][islice] = observable(SFhist->GetBinContent(ibin),SFhist->GetBinError(ibin));
         }
