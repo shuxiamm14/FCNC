@@ -34,10 +34,10 @@ void plot(int iNP, TString framework)
 	TString dirname;
 	TString NPname = findNPname(dirname,iNP,framework);
 	TString nominalname = "NOMINAL";
-	TString histmiddlename =  (dirname==NPname || NPname.Contains("fakeSFNP") || NPname.Contains("Xsec"))? nominalname:NPname;
+	TString histmiddlename =  dirname==NPname? nominalname:NPname;
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 0;
-	bool wfake = 1;
+	bool wfake = 0;
 	bool mergeFake = 0;
 	bool doTrex = 0;
 	bool plotnj = 0;
@@ -45,8 +45,8 @@ void plot(int iNP, TString framework)
 	bool scaletodata = 0;
 	bool mergeprong = 1;
 	int plot_option = 2;
-	bool fittodata = 0;
-	TString fitcharge = "os";
+	bool fittodata = 1;
+	TString fitcharge = "ss";
 	if(framework == "xTFW") calculate_fake_calibration = 0;
 	histSaver *tau_plots = new histSaver("dummy");
 	tau_plots->doROC = 0;
@@ -382,10 +382,10 @@ void plot(int iNP, TString framework)
 			for(int i = 0; i < 3; i++){
 				if(mergeprong) { if(i != 2) continue; }
 				else { if(i == 2) continue; }
-				vector<observable> mismodel2j = tau_plots->scale_to_data("reg1l1tau1b2j_ss" + nprong[i],"1 fake","BDTG_test");
-				vector<observable> mismodel3j = tau_plots->scale_to_data("reg1l1tau1b3j_ss" + nprong[i],"1 fake","BDTG_test");
-				tau_plots->scale_sample("reg1l1tau1b2j_os" + nprong[i],"1 fake","BDTG_test",mismodel2j);
-				tau_plots->scale_sample("reg1l1tau1b3j_os" + nprong[i],"1 fake","BDTG_test",mismodel3j);
+				vector<observable> mismodel2j = tau_plots->scale_to_data("reg1l1tau1b2j_ss" + nprong[i],"1 wjet-fake","BDTG_test");
+				vector<observable> mismodel3j = tau_plots->scale_to_data("reg1l1tau1b3j_ss" + nprong[i],"1 wjet-fake","BDTG_test");
+				tau_plots->scale_sample("reg1l1tau1b2j_os" + nprong[i],"1 wjet-fake","BDTG_test",mismodel2j);
+				tau_plots->scale_sample("reg1l1tau1b3j_os" + nprong[i],"1 wjet-fake","BDTG_test",mismodel3j);
 			}
   		}
 
