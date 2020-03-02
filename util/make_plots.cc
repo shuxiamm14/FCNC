@@ -29,7 +29,7 @@ TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir
 	return inputfile;
 }
 
-void plot(int iNP, TString framework)
+void plot(int iNP, TString framework, TString method) //method = fitss / fitos / plot / trex
 {
 	TString dirname;
 	TString NPname = findNPname(dirname,iNP,framework);
@@ -37,7 +37,7 @@ void plot(int iNP, TString framework)
 	TString histmiddlename =  dirname==NPname? nominalname:NPname;
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 0;
-	bool wfake = 0;
+	bool wfake = 1;
 	bool mergeFake = 0;
 	bool doTrex = 0;
 	bool plotnj = 0;
@@ -45,8 +45,22 @@ void plot(int iNP, TString framework)
 	bool scaletodata = 0;
 	bool mergeprong = 1;
 	int plot_option = 2;
-	bool fittodata = 1;
-	TString fitcharge = "ss";
+	bool fittodata = 0;
+	TString fitcharge = "os";
+	if(method == "plot"){
+		doTrex = 0;
+		doPlots = 1;
+	}
+	if(method.Contains("fit")){
+		calculate_fake_calibration = 1;
+		wfake = 1;
+		doTrex = 0;
+		fittodata = 1;
+		fitcharge = method.Contains("os")?"os":"ss";
+	}
+	if(fittodata == 1 && NPname.Contains("Xsec")) {
+		histmiddlename = nominalname;
+	}
 	if(framework == "xTFW") calculate_fake_calibration = 0;
 	histSaver *tau_plots = new histSaver("dummy");
 	tau_plots->doROC = 0;
@@ -482,10 +496,11 @@ int main(int argc, char const *argv[])
 	int from = atoi(argv[2]);
 	int to = atoi(argv[3]);
 	TString dirname;
+        TString method = argv[4];
 	for (int i = from; i <= to; ++i)
 	{
 		printf("=============================generating NP %d : %s=============================\n", i, findNPname(dirname,i,framework).Data());
-		plot(i,framework);
+		plot(i,framework,method);
 	}
 	return 0;
 }
