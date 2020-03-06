@@ -16,8 +16,8 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 #EIGEN3 package needed if dont have one, go git checkout and put the package path here
-set(TOOLDIR /global/projecta/projectdirs/atlas/boyang/tools)
-set(PLOTTOOLDIR /global/projecta/projectdirs/atlas/boyang/plotTools)
+set(TOOLDIR /Users/Liby/work/tools)
+set(PLOTTOOLDIR /Users/Liby/work/tau_analysis/FCNC/plotTools)
 FILE(GLOB PLOTTOOLINC ${PLOTTOOLDIR}/include/ ${PLOTTOOLDIR}/include/* )
 FILE(GLOB PLOTTOOLLIB ${PLOTTOOLDIR}/lib/*)
 # The following folder will be included
