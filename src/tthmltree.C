@@ -1092,8 +1092,10 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
               if(applyNewFakeSF){
                 if(theNP.Contains("fakeSF")){
                   TString SFname;
+                  if(debug) printf("weight = %f\nPlotNP = %s\n",weight,theNP.Data());
                   observable thefakeSF = FindNewFakeSF("NOMINAL", tauorigin, tau_pt_0, iter->first,SFname);
                   weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);
+                  if(debug) printf("weight = %f after apply fakeSF\n",weight);
                 }else{
                   if(nominaltree) 
                     weight *= FindNewFakeSF(theNP, tauorigin, tau_pt_0, iter->first).nominal;
@@ -1165,6 +1167,10 @@ void tthmltree::constructTruth(){
     deletepointer(parts);
   }
   truthparticles.clear();
+  if(!m_truth_pdgId) {
+    printf("tthmltree::constructTruth() : WARNING: m_truth is not saved in the n-tuple, cannot reconstruct truth\n");
+    return;
+  }
   //===========================save all particle information==============================
   for (int itruth = 0; itruth < m_truth_pdgId->size(); ++itruth) {
     TLorentzVector truthpartp4;
