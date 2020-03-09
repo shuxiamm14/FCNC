@@ -1097,7 +1097,9 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
                   weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);
                   if(debug) printf("weight = %f after apply fakeSF\n",weight);
                 }else{
-                  if(nominaltree) 
+                  if(doubleCounting){
+                    weight *= FindNewFakeSF("NOMINAL", tauorigin, tau_pt_0, iter->first).nominal;
+                  }else if(nominaltree) 
                     weight *= FindNewFakeSF(theNP, tauorigin, tau_pt_0, iter->first).nominal;
                   else if(theNP == "NOMINAL"){
                     weight *= FindNewFakeSF(SystematicsName, tauorigin, tau_pt_0, iter->first).nominal;

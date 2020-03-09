@@ -452,9 +452,10 @@ observable nominal::FindNewFakeSF(TString NP, TString tauorigin, float taupt, TS
       break;
     }
   }
+
+  observable result = doubleCounting? newFakeSFSys[isOS][iswjet][slice] : newFakeSF[NP][isOS][iswjet][slice];
   string ss = "fakeSFNP_ptbin" + to_string(slice) + (iswjet?"_wjet":"");
   name = ss.c_str();
-  observable result = newFakeSF[NP][isOS][iswjet][slice];
   if(!newFakeSF[NP].size()) printf("nominal::FindNewFakeSF : NP %s not found\n", NP.Data());
   if(debug) printf("%s = %f +/- %f\n", name.Data(), result.nominal, result.error);
   return result;
@@ -498,6 +499,7 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
   TString prefix = PACKAGE_DIR;
   prefix += "/data/";
   newFakeSF.clear();
+  newFakeSFSys.clear();
   string iswjetstring[2] = {"fake", "wjet-fake"};
   for (int isOS = 0; isOS < 2; ++isOS)
   {
@@ -512,15 +514,32 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
         SFhist->SetDirectory(0);  //It crashes without this line!
         if(!SFhist) printf("histogram not found in SF file: %s\n", histname.Data());
         TAxis *xaxis = SFhist->GetXaxis();
+        double newFakeSFnominal;
+        double err2 = 0;
+        for (int ibin = 1; ibin <= SFhist->GetNbinsX(); ++ibin)
+        {
+          if(!strncmp(xaxis->GetBinLabel(ibin),"NOMINAL",100)){
+            newFakeSFnominal = SFhist->GetBinContent(ibin);
+            err2 += pow(SFhist->GetBinError(ibin),2);
+            break;
+          }
+        }
         for (int ibin = 1; ibin <= SFhist->GetNbinsX(); ++ibin)
         {
           TString NPname = xaxis->GetBinLabel(ibin);
+          double content = SFhist->GetBinContent(ibin);
+          double err = SFhist->GetBinError(ibin);
+          if(!content) continue;
+          if(NPname != "NOMINAL" && !NPname.Contains("fake")){
+            err2 += pow(content - newFakeSFnominal, 2);
+          }
           if((find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) && SystematicsName!=NPname && NPname!="NOMINAL") {
             continue;
           }
           if(!newFakeSF[NPname].size()) newFakeSF[NPname] = {{{0,0},{0,0}},{{0,0},{0,0}}};
-          newFakeSF[NPname][isOS][iswjet][islice] = observable(SFhist->GetBinContent(ibin),SFhist->GetBinError(ibin));
+          newFakeSF[NPname][isOS][iswjet][islice] = observable(content,err);
         }
+        newFakeSFSys[isOS][iswjet][islice] = observable(newFakeSFnominal,sqrt(err2));
       }
     }
   }
@@ -543,7 +562,7 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
       printf("%s", iswjetstring[iswjet].c_str());
       for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
       {
-        printf(" %f ", newFakeSF.begin()->second[isOS][iswjet][islice].nominal);
+        printf(" %f+/-%f ", newFakeSFSys[isOS][iswjet][islice].nominal, newFakeSFSys[isOS][iswjet][islice].error);
       }
       printf("\n");
     }
