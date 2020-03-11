@@ -25,6 +25,7 @@ class nominal {
 public :
   std::map<TString,bool> dobwp;
   std::map<TString,bool> dovetobwp;
+  bool doubleCounting = 0;
   bool dumpeventnumber;
   TString SystematicsName = "NOMINAL";
 // Fixed size dimensions of array or collections stored in the TTree if any.
@@ -78,6 +79,7 @@ public :
   static int GeV;
   std::vector<TString> plotNPs;
   std::map<TString,std::vector<std::vector<std::vector<observable>>>> newFakeSF;
+  std::vector<std::vector<std::vector<observable>>> newFakeSFSys;
   Int_t ierflg;
   int ifill = 0;
   bool dumptruth;
