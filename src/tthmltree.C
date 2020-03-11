@@ -412,23 +412,6 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
   bool cutPIV = 1;
   bool cutmass = 0;
   bool cutmet = 1;
-  TString cutflowregion = "";
-  double cutflow[] = {
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-  };
   fcnc = 0;
   if (reduce > 1) {
     ifregions.clear();
