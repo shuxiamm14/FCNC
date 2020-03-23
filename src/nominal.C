@@ -496,6 +496,7 @@ bool nominal::AddTheorySys(){
 }
 
 void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
+  printf("nominal::ConfigNewFakeSF() : Starting\n");
   TString prefix = PACKAGE_DIR;
   prefix += "/data/";
   newFakeSF.clear();
@@ -503,16 +504,21 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
   string iswjetstring[2] = {"fake", "wjet-fake"};
   for (int isOS = 0; isOS < 2; ++isOS)
   {
-    TFile sfFile(prefix + (isOS?"scale_factors_os.root" : "scale_factors_ss.root"));
+    TString filename = prefix + (isOS?"scale_factors_os.root" : "scale_factors_ss.root");
+    printf("nominal::ConfigNewFakeSF() : Reading file %s\n",filename.Data());
+    TFile *sfFile =  TFile::Open(filename);
+    printf("nominal::ConfigNewFakeSF() : Done reading\n");
     TH1D *SFhist = 0;
-    for (int iswjet = 0; iswjet < 2; ++iswjet)
+    for (int iswjet = 0; iswjet < 2 ; ++iswjet)
     {
       for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
       {
-        TString histname = ( "Fit_sf_" + iswjetstring[iswjet] + "_pt" + to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) ).c_str();
-        sfFile.GetObject(histname,SFhist);
+        string histname = ( "Fit_sf_" + iswjetstring[iswjet] + "_pt" + to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) );
+        printf("nominal::ConfigNewFakeSF() : Read histogram %s\n", histname.c_str());
+        //SFhist = (TH1D*)(sfFile.Get(histname.c_str())->Clone((histname+"_buffer").c_str()));
+        sfFile->GetObject(histname.c_str(),SFhist);
         SFhist->SetDirectory(0);  //It crashes without this line!
-        if(!SFhist) printf("histogram not found in SF file: %s\n", histname.Data());
+        if(!SFhist) printf("histogram not found in SF file: %s\n", histname.c_str());
         TAxis *xaxis = SFhist->GetXaxis();
         double newFakeSFnominal;
         double err2 = 0;
@@ -529,17 +535,19 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
           TString NPname = xaxis->GetBinLabel(ibin);
           double content = SFhist->GetBinContent(ibin);
           double err = SFhist->GetBinError(ibin);
-          if(!content) continue;
+          if(!content || NPname.Contains("Punch")) continue;
           if(NPname != "NOMINAL" && !NPname.Contains("fake")){
             err2 += pow(content - newFakeSFnominal, 2);
           }
           if((find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) && SystematicsName!=NPname && NPname!="NOMINAL") {
             continue;
           }
-          if(!newFakeSF[NPname].size()) newFakeSF[NPname] = {{{0,0},{0,0}},{{0,0},{0,0}}};
+          if(!newFakeSF[NPname].size()) newFakeSF[NPname] = {{{0,0,0},{0,0,0}},{{0,0,0},{0,0,0}}};
           newFakeSF[NPname][isOS][iswjet][islice] = observable(content,err);
         }
+	if(!newFakeSFSys.size()) newFakeSFSys = {{{0,0,0},{0,0,0}},{{0,0,0},{0,0,0}}};
         newFakeSFSys[isOS][iswjet][islice] = observable(newFakeSFnominal,sqrt(err2));
+        deletepointer(SFhist);
       }
     }
   }
@@ -568,6 +576,7 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
     }
   }
   applyNewFakeSF = 1;
+  printf("nominal::ConfigNewFakeSF() : End\n");
 }
 
 void nominal::calcfakesf_pdg(std::vector<int> originpdg, std::vector<float> pt, std::vector<int> prong){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j

@@ -277,10 +277,6 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 					TString samplename = (samplesys==samples[j].name ? NPname : samples[j].name);
 					inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 					double norm = samples[j].norm;
-					if(framework == "tthML" && dirname!= "nominal"){
-						if(samples[j].name=="diboson" && mc_campaign == "mc16d_") norm*=0.83274;
-						if(samples[j].name=="ttbar" && mc_campaign == "mc16a_") norm*=0.99115;
-					}
 					tau_plots->read_sample( origin[i], samples[j].name + "_" + origin[i], histmiddlename, origintitle[i], (enum EColor)colors[i], norm,inputfile);
 					deletepointer(inputfile);
 				}
@@ -307,10 +303,6 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 						if(i == 0) inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 						else inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 						double norm = samples[j].norm;
-						if(framework == "tthML" && dirname!= "nominal"){
-							if(samples[j].name=="diboson" && mc_campaign == "mc16d_") norm*=0.83274;
-							if(samples[j].name=="ttbar" && mc_campaign == "mc16a_") norm*=0.99115;
-						}
 						tau_plots->read_sample( samples[j].name, samplename + "_real", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 						tau_plots->read_sample( samples[j].name, samplename + "_lep", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 						if (mergeFake) {
