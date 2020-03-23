@@ -79,8 +79,8 @@ if [[ $2 =~ "sub" ]] ; then
 		rm -f ${name}_evt.txt
 		for i in `echo $1| sed -e 's/\(.\)/\1\n/g'`
 		do
-			echo "reduce_run tthML $i $lines $systname >> $name.out"  >> bulkreduce.sh
-			echo "reduce_run tthML $i $lines $systname >> $name.out"  >> sublocal.sh
+			echo "reduce_run tthML $i $lines $systname >> $name$i.out"  >> bulkreduce.sh
+			echo "reduce_run tthML $i $lines $systname >> $name$i.out"  >> sublocal.sh
 		done
 		#if [[ $2 =~ "local" ]] ; then
 		#	./sublocal.sh $lines > ${name}.out 2>&1 &
