@@ -41,7 +41,7 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 	bool mergeFake = 0;
 	bool doTrex = 1;
 	bool plotnj = 0;
-	bool doPlots = 0;
+	bool doPlots = 1;
 	bool scaletodata = 0;
 	bool mergeprong = 1;
 	int plot_option = 2;
@@ -156,35 +156,35 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		}else{
 			tau_plots->sensitivevariable = "BDTG_test";
 			tau_plots->add("BDT discriminant","BDTG_test","",10);
-  			tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
-			tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
-  			tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
-			tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
-			tau_plots->add("#chi^{2}","chi2","",5);
-			tau_plots->add("M_{all}","allmass","",5);
-			tau_plots->add("p_{Z,all}","allpz","",5);
-			tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
-  			tau_plots->add("m_{t,SM}","t1mass","GeV",5);
-  			tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
-  			tau_plots->add("m_{W}","wmass","GeV",5);
-  			tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
-  			tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",10);
-  			tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
-  			tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
-  			tau_plots->add("m^{T}_{W}","mtw","GeV",10);
-  			tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",15);
-  			tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",5);
-  			tau_plots->add("#eta_{#tau,max}","etamax","",10);
-  			tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
-  			tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
-  			tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
-  			tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-  			tau_plots->add("M(#tau#tau light-jet,min)","mtaujmin","",5);
-			tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
-			tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
-  			tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
-  			tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
-  			tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
+  			//tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
+			//tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
+  			//tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
+			//tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
+			//tau_plots->add("#chi^{2}","chi2","",5);
+			//tau_plots->add("M_{all}","allmass","",5);
+			//tau_plots->add("p_{Z,all}","allpz","",5);
+			//tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
+  			//tau_plots->add("m_{t,SM}","t1mass","GeV",5);
+  			//tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
+  			//tau_plots->add("m_{W}","wmass","GeV",5);
+  			//tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
+  			//tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",10);
+  			//tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
+  			//tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
+  			//tau_plots->add("m^{T}_{W}","mtw","GeV",10);
+  			//tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",15);
+  			//tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",5);
+  			//tau_plots->add("#eta_{#tau,max}","etamax","",10);
+  			//tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
+  			//tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
+  			//tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
+  			//tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
+  			//tau_plots->add("M(#tau#tau light-jet,min)","mtaujmin","",5);
+			//tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
+			//tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
+  			//tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
+  			//tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
+  			//tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
   		}
   	}else{
 		tau_plots->sensitivevariable = "BDTG_test";
@@ -277,10 +277,6 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 					TString samplename = (samplesys==samples[j].name ? NPname : samples[j].name);
 					inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 					double norm = samples[j].norm;
-					if(framework == "tthML" && dirname!= "nominal"){
-						if(samples[j].name=="diboson" && mc_campaign == "mc16d_") norm*=0.83274;
-						if(samples[j].name=="ttbar" && mc_campaign == "mc16a_") norm*=0.99115;
-					}
 					tau_plots->read_sample( origin[i], samples[j].name + "_" + origin[i], histmiddlename, origintitle[i], (enum EColor)colors[i], norm,inputfile);
 					deletepointer(inputfile);
 				}
@@ -307,10 +303,6 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 						if(i == 0) inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 						else inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 						double norm = samples[j].norm;
-						if(framework == "tthML" && dirname!= "nominal"){
-							if(samples[j].name=="diboson" && mc_campaign == "mc16d_") norm*=0.83274;
-							if(samples[j].name=="ttbar" && mc_campaign == "mc16a_") norm*=0.99115;
-						}
 						tau_plots->read_sample( samples[j].name, samplename + "_real", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 						tau_plots->read_sample( samples[j].name, samplename + "_lep", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 						if (mergeFake) {
