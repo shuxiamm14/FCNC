@@ -47,7 +47,7 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 	int plot_option = 2;
 	bool fittodata = 0;
 	TString fitcharge = "os";
-	if(method == "plot"){
+	if(method.Contains("plot")){
 		doTrex = 0;
 		doPlots = 1;
 	}
@@ -103,10 +103,10 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		ss>>tmp;
 		double signorm = BRbenchmark*(framework == "xTFW"? 1:5);
 		samples.push_back(sample("fcnc_ch","#bar{t}t#rightarrowbWcH"+tmp,kRed,signorm));
-		samples.push_back(sample("fcnc_prod_ch","ctH Prod Mode"+tmp,kRed,signorm));
+		samples.push_back(sample("fcnc_prod_ch","cg#rightarrowtH"+tmp,kRed,signorm));
 		samples.push_back(sample("tcH","tcH merged signal"+tmp,kRed,signorm));
 		samples.push_back(sample("fcnc_uh","#bar{t}t#rightarrowbWuH"+tmp,kRed,signorm));
-		samples.push_back(sample("fcnc_prod_uh","utH Prod Mode"+tmp,kRed,signorm));
+		samples.push_back(sample("fcnc_prod_uh","ug#rightarrowtH"+tmp,kRed,signorm));
 		samples.push_back(sample("tuH","tuH merged signal"+tmp,kRed,signorm));
 	}
 	map<TString,vector<TString>> signalmap = {
@@ -491,7 +491,7 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
   				tau_plots->overlay(samples[i].name);
 			}
 		TString savename = NPname;
-		if(fittodata) NPname += "_fit" + fitcharge;
+		if(fittodata) savename += "_fit" + fitcharge;
 		tau_plots->plot_stack(histmiddlename, savename);
 		
 	}
