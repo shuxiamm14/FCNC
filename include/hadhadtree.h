@@ -31,7 +31,7 @@ public :
    TMinuit* initgM();
    bool isData = 0;
    int tauabspdg = 0;
-   cutflow hadcutflow;
+   CutFlow hadcutflow;
    std::vector<Int_t>           *taus_id = 0;
    std::vector<Int_t>           *taus_b_tagged = 0;
    std::vector<UInt_t>          *taus_decay_mode = 0;

@@ -8,7 +8,7 @@ using namespace std;
 
 hadhadtree::hadhadtree() : nominal::nominal(){
   defGeV(1);
-  hadcutflow.set_weight(&weight);
+  hadcutflow.setWeight(&weight);
 }
 
 void hadhadtree::init_reduce2(){
@@ -189,6 +189,8 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
   printf("nentries: %d\n", nloop);
   if(nentries == 0) return;
   float droppedweight = 0;
+  hadcutflow.sample = samplename;
+  hadcutflow.region = reduce==1? "all" : (inputtree->GetName());
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     hadcutflow.newEvent();
     inputtree->GetEntry(jentry);
@@ -218,13 +220,13 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       float weight_pileup = NOMINAL_pileup_combined_weight;
       weight = isData?1:weight_mc*weight_pileup*jetSFs*globalweight;
       if(weight == 0) continue;
-      hadcutflow.fill();
+      hadcutflow.fill("n-tuple");
       if(!tau_0_trig_trigger_matched || !tau_1_trig_trigger_matched) continue;
-      hadcutflow.fill();
+      hadcutflow.fill("trigger matching");
       if((tau_1_allTrk_n!=1 && tau_1_allTrk_n!=3) || (tau_0_allTrk_n!=1 && tau_0_allTrk_n!=3)) continue;
-      hadcutflow.fill();
+      hadcutflow.fill("ntrack = 1,3");
       if(!isData/*This is wrong but eveto is buggy for data, waiting for new n-tuples*/ && (!tau_0_ele_bdt_medium_retuned || !tau_0_ele_bdt_medium_retuned)) continue;
-      hadcutflow.fill();
+      hadcutflow.fill("ele veto");
       if(fabs(weight) > 5) {
         droppedweight+=weight;
         continue;
@@ -269,7 +271,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           ifregions.erase(iter.first);
 
       if(!ifregions.size()) continue;
-      hadcutflow.fill();
+      hadcutflow.fill("SR+CR");
       if(debug){
         printf("event: %llu\n",eventNumber);
         printf("weight_mc: %f\n",weight_mc);
@@ -285,17 +287,17 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     }
     //===============================pre-selections===============================
     if(reduce == 2) {
-      hadcutflow.fill();
+      hadcutflow.fill("this region");
       if(!isData && sample.Contains("fcnc") && !(abs(taus_matched_pdgId->at(0)) == 15 && abs(taus_matched_pdgId->at(1)) == 15)) continue;
-      hadcutflow.fill();
+      hadcutflow.fill("Only real tau");
       if(campaign !=1 && jets_p4->at(0)->Pt() < 50 && bjets_p4->at(0)->Pt() < 50) continue;
-      hadcutflow.fill();
+      hadcutflow.fill("year1718 Jet pt<50");
       bool passbjetcut = 0;
       for(auto bjet : *bjets_p4){
         if(bjet->Pt() > 30 && abs(bjet->Eta()) < 2.5) passbjetcut = 1;
       }
       if(!passbjetcut) continue;
-      hadcutflow.fill();
+      hadcutflow.fill("bjet pt>30 eta<2.5");
       etmiss = met_p4->Pt();
       ttvismass = (*(taus_p4->at(0)) + *(taus_p4->at(1))).M();
       dphitauetmiss = fabs(met_p4->DeltaPhi(*(taus_p4->at(0)) + *(taus_p4->at(1))));
@@ -306,11 +308,11 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
           drtaujmin = (*(taus_p4->at(0)) + *(taus_p4->at(1))).DeltaR(*jetp4);
       }
       if(ttvismass < 50) continue;
-      hadcutflow.fill();
+      hadcutflow.fill("$m_{\\tau\\tau$,vis}>50");
       if(ttvismass > 130) continue;
-      hadcutflow.fill();
+      hadcutflow.fill("$m_{\\tau\\tau$,vis}<130");
       if(drtautau > 3.4) continue;
-      hadcutflow.fill();
+      hadcutflow.fill("\\Delta R(\\tau,\\tau)>3.4");
   
       phicent = phi_centrality(taus_p4->at(0)->Phi(),taus_p4->at(1)->Phi(),met_p4->Phi());
   
@@ -494,11 +496,10 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     ifill ++;
   }
   printf("dropped events total weight: %f\n", droppedweight);
-  if(reduce <=2){
-    printf("%s \n", inputtree->GetName());
-    hadcutflow.print();
-    hadcutflow.clear();
-  }
+  printf("%s \n", inputtree->GetName());
+  hadcutflow.print();
+  hadcutflow.save(20);
+  hadcutflow.clear();
 }
 
 void hadhadtree::fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag, TString NPname){
