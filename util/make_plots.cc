@@ -9,17 +9,6 @@
 #include "common.h"
 using namespace std;
 
-class sample
-{
-public:
-	sample(TString _name, TString _title, enum EColor _color, double _norm = 1): name(_name), title(_title), color(_color), norm(_norm) {};
-	~sample(){};
-	TString name;
-	TString title;
-	double norm;
-	enum EColor color;
-};
-
 TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir, TString nominalname){
 	TFile *inputfile = new TFile(NPdir + "/" + sample + "_" + (NPdir==nominaldir? NPname : nominalname) + ".root");
 	if(inputfile->IsZombie()) {
@@ -76,38 +65,12 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 	tau_plots->checkread_variable = 0;
 	tau_plots->checkread_ibin = 2;
 */
-	vector<sample> samples;
+	vector<sample> samples = getBkgSamples(framework);
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kMagenta, kSpring, kTeal, kAzure};
 
-	samples.push_back(sample("smhiggs","SM Higgs",kViolet));
-	samples.push_back(sample("wjet","W+jets",kOrange));
-	samples.push_back(sample("diboson","Diboson",(enum EColor)7));
-	samples.push_back(sample("zll","Z#rightarrowll",kBlue));
-	samples.push_back(sample("ztautau","Z#rightarrow#tau#tau",kGreen));
-	if(framework=="tthML"){
-		//samples.push_back(sample("top","Top rare",kWhite));
-		samples.push_back(sample("others","Rare",kMagenta));
-		samples.push_back(sample("ttbar","t#bar{t}",kYellow));
-		samples.push_back(sample("ttV","t#bar{t}V",kAzure));
-	}else{
-		samples.push_back(sample("top","Top production",kYellow));
-	}
-	//samples.push_back(sample("othertop","Top rare",kWhite));
-	//samples.push_back(sample("others","Rare",kTeal));
-	//samples.push_back(sample("ttbar","t#bar{t}",kYellow));
-	//samples.push_back(sample("ttV","t#bar{t}V",kAzure));
 	if(!calculate_fake_calibration){
-		stringstream ss;
-		ss<<"(BR=" << BRbenchmark << "%)";
-		TString tmp;
-		ss>>tmp;
-		double signorm = BRbenchmark*(framework == "xTFW"? 1:5);
-		samples.push_back(sample("fcnc_ch","#bar{t}t#rightarrowbWcH"+tmp,kRed,signorm));
-		samples.push_back(sample("fcnc_prod_ch","cg#rightarrowtH"+tmp,kRed,signorm));
-		samples.push_back(sample("tcH","tcH merged signal"+tmp,kRed,signorm));
-		samples.push_back(sample("fcnc_uh","#bar{t}t#rightarrowbWuH"+tmp,kRed,signorm));
-		samples.push_back(sample("fcnc_prod_uh","ug#rightarrowtH"+tmp,kRed,signorm));
-		samples.push_back(sample("tuH","tuH merged signal"+tmp,kRed,signorm));
+		vector<sample> sigsamples = getSigSamples(framework, BRbenchmark);
+		samples.insert(samples.begin(),sigsamples.begin(),sigsamples.end());
 	}
 	map<TString,vector<TString>> signalmap = {
 		{"tcH",{"fcnc_ch_lv","fcnc_ch_qq","fcnc_prod_ch"}},
@@ -253,7 +216,6 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 	TFile *datafile[3] = {0,0,0};
 	TFile *datafile_fake[3] = {0,0,0};
 	TString datafilesname[3] = {"data1516","data17","data18"};
-	TString campaigns[] = {"mc16a_","mc16d_","mc16e_"};
 	for (int i = 0; i < 3; ++i)
 	{
 		if(framework == "tthML" && i == 2) continue;
@@ -273,9 +235,9 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 			for (int i = 0; i < 8; ++i){
 				for (int icamp = 0; icamp < (framework == "tthML"? 2:3); ++icamp)
 				{
-					TString mc_campaign = campaigns[icamp];
+					TString mc_campaign = mc_campaigns[icamp];
 					TString samplename = (samplesys==samples[j].name ? NPname : samples[j].name);
-					inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
+					inputfile = getFile(mc_campaign + "_" + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 					double norm = samples[j].norm;
 					tau_plots->read_sample( origin[i], samples[j].name + "_" + origin[i], histmiddlename, origintitle[i], (enum EColor)colors[i], norm,inputfile);
 					deletepointer(inputfile);
@@ -288,10 +250,10 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		for (int j = 0; j < samples.size(); ++j){
 			for (int icamp = 0; icamp < (framework == "tthML"? 2:3); ++icamp)
 			{
-				TString mc_campaign = campaigns[icamp];
+				TString mc_campaign = mc_campaigns[icamp];
 				if(!calculate_fake_calibration && signalmap.find(samples[j].name) != signalmap.end()){
 					for(auto signalsamp : signalmap[samples[j].name]){
-						inputfile = getFile(mc_campaign + signalsamp + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
+						inputfile = getFile(mc_campaign + "_" + signalsamp + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 						for (int i = 0; i < 7; i++) tau_plots->read_sample( samples[j].name, signalsamp + "_" + origin[i], histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
 						deletepointer(inputfile);
 					}
@@ -300,8 +262,8 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 					{
 						if(i == 1 && !fittodata) break;
 						TString samplename = (samplesys==samples[j].name ? NPname : samples[j].name);
-						if(i == 0) inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
-						else inputfile = getFile(mc_campaign + samplename + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
+						if(i == 0) inputfile = getFile(mc_campaign + "_" + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
+						else inputfile = getFile(mc_campaign + "_" + samplename + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 						double norm = samples[j].norm;
 						tau_plots->read_sample( samples[j].name, samplename + "_real", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 						tau_plots->read_sample( samples[j].name, samplename + "_lep", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
