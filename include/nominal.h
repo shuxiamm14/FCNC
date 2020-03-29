@@ -14,6 +14,7 @@
 #include "TLorentzVector.h"
 #include "TVector3.h"
 #include "observable.h"
+#include "cutflow.h"
 // Header file for the classes stored in the TTree if any.
 
 #ifndef NO_TMINUIT
@@ -28,6 +29,7 @@ public :
   bool doubleCounting = 0;
   bool dumpeventnumber;
   TString SystematicsName = "NOMINAL";
+  CutFlow cut_flow;
 // Fixed size dimensions of array or collections stored in the TTree if any.
   const double btagwpCut[4]={0.94,0.83,0.64,0.11};
   //const double fakeSFs[4][4] = {

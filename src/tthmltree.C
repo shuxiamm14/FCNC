@@ -12,8 +12,6 @@ tthmltree::tthmltree():nominal::nominal(){
   dofit1l2tau = 0;
   weights = new vector<double> ();
   initialize_fit(TString(PACKAGE_DIR) + "/data/tau_pars.root");
-  tthcutflow.setWeight(&weight);
-  tthcutflow.setEventNumber(&eventNumber);
 }
 
 
@@ -485,11 +483,11 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
   }
   float ngluon = 0;
   float droppedweight = 0;
-  tthcutflow.sample = samplename;
-  tthcutflow.region = reduce==1? "all" : (inputtree->GetName());
+  cut_flow.sample = samplename;
+  cut_flow.region = reduce==1? "all" : (inputtree->GetName());
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     inputtree->GetEntry(jentry);
-    tthcutflow.newEvent();
+    cut_flow.newEvent();
     if ((jentry % 100000 == 0))
       std::cout << " I am here event " << jentry << " Event " << eventNumber << " Run " << mc_channel_number << " ismc " << mc_channel_number << " Filled events "<< ifill<<std::endl;
     //===============================pre-selections===============================
@@ -519,9 +517,9 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       if( mc_channel_number > 0) weight*=tightLep?lepSFObjLoose:lepSFIDLoose*lepSFTrigLoose;
       if(nTaus_OR_Pt25 &&  mc_channel_number >0) weight*=tightTau?tauSFLoose:tauSFTight; // stupid and confusing but this is how it is.
       if(weight == 0) continue;
-      tthcutflow.fill("n-tuple");
+      cut_flow.fill("n-tuple");
       if (!basic_selection) continue;
-      tthcutflow.fill("basic selection");
+      cut_flow.fill("basic selection");
 
       bool trig_match = (lep_isTrigMatch_0 || lep_isTrigMatch_1 || lep_isTrigMatch_2 || lep_isTrigMatch_3 || matchDLTll01 || matchDLTll02 || matchDLTll12 || matchDLTll03 || matchDLTll13 || matchDLTll23);
       bool SLtrig_match =
@@ -622,7 +620,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         }
       }
       if(!passtight) continue;
-      tthcutflow.fill("tight tau");
+      cut_flow.fill("tight tau");
     }
     else weight = weights->at(0);
 
@@ -630,7 +628,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       if(!nominaltree && nTaus_OR_Pt25) {
         taumatchwjet = taumatchmap[eventNumber];
       }
-      tthcutflow.fill("this region");
+      cut_flow.fill("this region");
       if (debug == 2) printf("event weight: %f\n", weight);
       if (debug == 2) {
         for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
@@ -644,7 +642,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         droppedweight+=weight;
         continue;
       }
-      //tthcutflow.fill("fabs(weight) > 2");
+      //cut_flow.fill("fabs(weight) > 2");
       if(  mc_channel_number <= 0 ) weight = 1;
 
       if (onelep_type || dilep_type) {
@@ -730,7 +728,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
 //          if(debug) printf("drtaujmin<0.4\n");
 //          continue;
 //        }
-//        tthcutflow.fill();
+//        cut_flow.fill();
       }
       if(subhighscore_b<0 && (defaultbtagwp == btagwpCut[1] ? nJets_OR_T_MV2c10_70 >=2 : nJets_OR_T_MV2c10_85 >=2)){
         printf("ERROR: bjet not found\n");
@@ -746,7 +744,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       if (fcnc) {
         if (tau_MV2c10_0 > btagwpCut[1]) continue;
         if (nTaus_OR_Pt25 == 2 && tau_MV2c10_1 > btagwpCut[1]) continue;
-        tthcutflow.fill("tau b-veto");
+        cut_flow.fill("tau b-veto");
         if (nTaus_OR_Pt25 >= 2) {
           if (nljet > 1)
             //ljet_indice = findcjetML("lep2tau",ljets_v,bjet_v,lep_v,taus_v,eventNumber%2);
@@ -942,18 +940,18 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     if((reduce == 3 && fcnc)|| (reduce == 2 && !fcnc)){
       if (cutPIV == 1 && ((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 > -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 > -0.5))) continue; 
       if (cutmet == 1 && etmiss<30*GeV) continue;
-      tthcutflow.fill("PIV and MET<30");
+      cut_flow.fill("PIV and MET<30");
     }
     if(reduce == 3){
       if (ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"])
         if(t1vismass > 190*GeV )
           continue;
-      tthcutflow.fill("$m_{l,b}>190$");
+      cut_flow.fill("$m_{l,b}>190$");
       if(cutmass == 1){
         if(ttvismass > 125*GeV ) continue;
-        tthcutflow.fill("$m_{\\tau\\tau$,vis}<125");
+        cut_flow.fill("$m_{\\tau\\tau$,vis}<125");
         if(ttvismass < 25*GeV ) continue;      
-        tthcutflow.fill("$m_{\\tau\\tau$,vis}>25");
+        cut_flow.fill("$m_{\\tau\\tau$,vis}>25");
       }
       allpz = fabs(allpz);
       if(doBDT){
@@ -1126,9 +1124,11 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
   }
   printf("dropped events total weight: %f\n", droppedweight);
   if(reduce > 1) printf("%s ", inputtree->GetName());
-  tthcutflow.print();
-  tthcutflow.save(20);
-  tthcutflow.clear();
+  if(reduce != 1){
+    cut_flow.print();
+    cut_flow.save(20);
+    cut_flow.clear();
+  }
   if(dumpeventnumber) evtfile.close();
   if (dumptruth) {
     if (TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) {

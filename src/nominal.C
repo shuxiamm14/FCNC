@@ -151,6 +151,9 @@ nominal::nominal(){
   fake_plots = 0;
   fake_notau_plots = 0;
   gM = 0;
+  
+  cut_flow.setWeight(&weight);
+  cut_flow.setEventNumber(&eventNumber);
 }
 
 void nominal::defGeV(int _GeV){

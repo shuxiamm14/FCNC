@@ -1,5 +1,4 @@
 #include "nominal.h"
-#include "cutflow.h"
 #include "truthpart.h"
 class tthmltree : public nominal{
 public:
@@ -23,7 +22,6 @@ public:
    truthpart* truthmatch(TLorentzVector p4);
    void constructwmatchmap(TTree *tree);
    std::vector<truthpart*> truthparticles;
-   CutFlow tthcutflow;
    bool dofit1l2tau = 0;
    bool applyfakeSF = 0;
    std::map<ULong64_t, bool> taumatchmap;

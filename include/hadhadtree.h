@@ -1,11 +1,9 @@
-
 #ifndef hadhadtree_h
 #define hadhadtree_h
 #include "nominal.h"
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
-#include "cutflow.h"
 // Header file for the classes stored in the TTree if any.
 #include "TLorentzVector.h"
 #include "TVector3.h"
@@ -31,7 +29,6 @@ public :
    TMinuit* initgM();
    bool isData = 0;
    int tauabspdg = 0;
-   CutFlow hadcutflow;
    std::vector<Int_t>           *taus_id = 0;
    std::vector<Int_t>           *taus_b_tagged = 0;
    std::vector<UInt_t>          *taus_decay_mode = 0;

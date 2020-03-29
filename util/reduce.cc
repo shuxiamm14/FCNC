@@ -406,6 +406,9 @@ int main(int argc, char const *argv[])
 		inputfile.Close();
 		lastdsid = dsid;
 	}
+	analysis->cut_flow.print();
+  	analysis->cut_flow.save(5);
+  	analysis->cut_flow.clear();
 	if(inputconfig.Contains("mc16a")) {
 		gSystem->mkdir(prefix + "/config/theoryweightlist");
 		if(analysis->nominaltree) analysis->saveweightslist(prefix + "/config/theoryweightlist/" + framework + "_" + to_string(lastdsid) + ".txt");
