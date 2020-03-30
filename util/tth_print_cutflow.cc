@@ -27,8 +27,25 @@ int main(int argc, char const *argv[])
 			LatexChart* chart = new LatexChart(label.Data());
 			charts.push_back(chart);
 			for(auto sample : samples){
-				TFile inputfile(mc_campaigns[icamp] + "_" + sample.name + ".root");
-				TH1D *cutflow_hist = (TH1D*) inputfile.Get(region[ireg]);
+				TFile *inputfile = 0;
+				TH1D *cutflow_hist = 0;
+				if(signalmap.find(sample.name) != signalmap.end()){
+					for(auto subsamp : signalmap.at(sample.name)){
+						inputfile = new TFile(mc_campaigns[icamp] + "_" + subsamp + ".root");
+						if(!cutflow_hist) {
+							cutflow_hist = (TH1D*)inputfile->Get(region[ireg]);
+							cutflow_hist->SetDirectory(0);
+						}else{
+							cutflow_hist->Add((TH1D*)inputfile->Get(region[ireg]));
+						}
+						deletepointer(inputfile);
+					}
+				}else{
+					inputfile = new TFile(mc_campaigns[icamp] + "_" + sample.name + ".root");
+					TH1D *cutflow_hist = (TH1D*) inputfile->Get(region[ireg]);
+					cutflow_hist->SetDirectory(0);
+					deletepointer(inputfile);
+				}
 				TAxis *xaxis = cutflow_hist->GetXaxis();
 				for (int ibin = 1; ibin <= cutflow_hist->GetNbinsX(); ++ibin)
 				{

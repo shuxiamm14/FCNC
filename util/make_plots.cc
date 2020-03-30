@@ -72,14 +72,6 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		vector<sample> sigsamples = getSigSamples(framework, BRbenchmark);
 		samples.insert(samples.begin(),sigsamples.begin(),sigsamples.end());
 	}
-	map<TString,vector<TString>> signalmap = {
-		{"tcH",{"fcnc_ch_lv","fcnc_ch_qq","fcnc_prod_ch"}},
-		{"tuH",{"fcnc_uh_lv","fcnc_uh_qq","fcnc_prod_uh"}},
-		{"fcnc_ch",{"fcnc_ch_lv","fcnc_ch_qq"}},
-		{"fcnc_uh",{"fcnc_uh_lv","fcnc_uh_qq"}},
-		{"fcnc_prod_ch",{"fcnc_prod_ch"}},
-		{"fcnc_prod_uh",{"fcnc_prod_uh"}},
-	};
 	TString samplesys = "";
 	if(NPname.Contains("ttbarsys")){
 		samplesys = "ttbar";
@@ -252,7 +244,7 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 			{
 				TString mc_campaign = mc_campaigns[icamp];
 				if(!calculate_fake_calibration && signalmap.find(samples[j].name) != signalmap.end()){
-					for(auto signalsamp : signalmap[samples[j].name]){
+					for(auto signalsamp : signalmap.at(samples[j].name)){
 						inputfile = getFile(mc_campaign + "_" + signalsamp + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 						for (int i = 0; i < 7; i++) tau_plots->read_sample( samples[j].name, signalsamp + "_" + origin[i], histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
 						deletepointer(inputfile);

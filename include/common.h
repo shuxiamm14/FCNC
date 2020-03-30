@@ -10,6 +10,14 @@ const std::map<TString,std::vector<double>> XsecErr = {
 
 const std::vector<TString> mc_campaigns = {"mc16a", "mc16d", "mc16e"};
 const std::vector<TString> data_campaigns = {"data1516", "data17", "data18"};
+const std::map<TString,std::vector<TString>> signalmap = {
+	{"tcH",{"fcnc_ch_lv","fcnc_ch_qq","fcnc_prod_ch"}},
+	{"tuH",{"fcnc_uh_lv","fcnc_uh_qq","fcnc_prod_uh"}},
+	{"fcnc_ch",{"fcnc_ch_lv","fcnc_ch_qq"}},
+	{"fcnc_uh",{"fcnc_uh_lv","fcnc_uh_qq"}},
+	{"fcnc_prod_ch",{"fcnc_prod_ch"}},
+	{"fcnc_prod_uh",{"fcnc_prod_uh"}},
+};
 
 class sample
 {
