@@ -90,7 +90,7 @@ int main(int argc, char const *argv[])
 		}
 		sum->label = ("cutflow_" + region[ireg]).Data();
 		sum->caption = sum->label;
-		translateRegion(sum->caption)
+		translateRegion(sum->caption);
 		sum->print("cutflow/" + sum->label);
 		deletepointer(sum);
 		charts.clear();

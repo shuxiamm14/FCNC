@@ -40,6 +40,7 @@ std::vector<sample> getSigSamples(TString framework, float BRbenchmark){
 	return samples;
 }
 void translateRegion(std::string &regtitle){
+	findAndReplaceAll(regtitle,"_","~");
 	findAndReplaceAll(regtitle,"reg1l1tau1b3j_","TTH $\\tlhad$ ");
 	findAndReplaceAll(regtitle,"reg1l1tau1b2j_","STH $\\tlhad$ ");
 	findAndReplaceAll(regtitle,"reg1l1tau2b3j_","TTH $\\tlhad$ 2b ");
