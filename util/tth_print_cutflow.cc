@@ -10,7 +10,7 @@ int main(int argc, char const *argv[])
 	//	printf("start\n");
 	//}
 	TString framework = "tthML";
-	vector<TString> region = {"reg1l1tau1b2j_os","reg1l1tau1b2j_ss"};
+	vector<TString> region = {"all","reg1l1tau1b2j_os","reg1l1tau1b2j_ss"};
 	float BR = 0.2;
 
 	vector<sample> bkg_samples = getBkgSamples(framework);
@@ -34,7 +34,7 @@ int main(int argc, char const *argv[])
 		for (int icamp = 0; icamp < 3; ++icamp)
 		{
 			if(framework == "tthML" && icamp == 2) continue; //tthML only has 80fb-1
-			TString label = framework+"_cutflow_"+mc_campaigns[icamp];
+			TString label = region[ireg]+"_cutflow_"+mc_campaigns[icamp];
 			LatexChart* chart = new LatexChart(label.Data());
 			charts.push_back(chart);
 			for(auto sample : samples){
@@ -76,7 +76,8 @@ int main(int argc, char const *argv[])
 			chart->print(chart->label);
 			deletepointer(chart);
 		}
-		sum->print((framework+"_cutflow").Data());
+		sum->label = region[ireg]+"_cutflow_";
+		sum->print((region[ireg]+"_cutflow").Data());
 		deletepointer(sum);
 		charts.clear();
 	}
