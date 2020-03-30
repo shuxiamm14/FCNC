@@ -5,14 +5,24 @@ using namespace std;
 
 int main(int argc, char const *argv[])
 {
-	//if (argc != 2)
-	//{
-	//	printf("start\n");
-	//}
-	TString framework = "tthML";
-	vector<TString> region = {"all","reg1l1tau1b2j_os","reg1l1tau1b2j_ss"};
+	if (argc != 2)
+	{
+		printf("Please specify the framework\n");
+	}
+	TString framework = argv[1];
+	vector<TString> region_tthML = {
+		"all","reg1l1tau1b2j_os","reg1l1tau1b2j_ss","reg1l2tau1bnj_os","reg1l2tau1bnj_ss",
+		"reg1l1tau2b2j_os","reg1l1tau2b2j_ss","reg1l2tau2bnj_os","reg1l2tau2bnj_ss"
+	};
+	vector<TString> region_xTFW = {
+		"all","reg2mtau1b2j_os","reg2mtau1b2j_ss",
+		"reg2mtau2b2j_os","reg2mtau2b2j_ss"
+	};
+	vector<TString> region;
+	if(framework == "tthML") region = region_tthML;
+	else region = region_xTFW;
 	float BR = 0.2;
-
+	gROOT->mkdir("cutflow");
 	vector<sample> bkg_samples = getBkgSamples(framework);
 	vector<sample> sig_samples = getSigSamples(framework,BR);
 	vector<sample> samples = bkg_samples;
@@ -73,11 +83,11 @@ int main(int argc, char const *argv[])
 		for(auto &chart : charts) {
 			if(!sum) sum = chart->clone();
 			else sum->add(chart);
-			chart->print(chart->label);
+			chart->print("cutflow/" + chart->label);
 			deletepointer(chart);
 		}
 		sum->label = ("cutflow_" + region[ireg]).Data();
-		sum->print(sum->label);
+		sum->print("cutflow/" + sum->label);
 		deletepointer(sum);
 		charts.clear();
 	}
