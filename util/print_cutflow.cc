@@ -83,10 +83,14 @@ int main(int argc, char const *argv[])
 		for(auto &chart : charts) {
 			if(!sum) sum = chart->clone();
 			else sum->add(chart);
+			chart->caption = chart->label;
+			translateRegion(chart->caption);
 			chart->print("cutflow/" + chart->label);
 			deletepointer(chart);
 		}
 		sum->label = ("cutflow_" + region[ireg]).Data();
+		sum->caption = sum->label;
+		translateRegion(sum->caption)
 		sum->print("cutflow/" + sum->label);
 		deletepointer(sum);
 		charts.clear();
