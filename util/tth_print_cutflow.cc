@@ -34,7 +34,7 @@ int main(int argc, char const *argv[])
 		for (int icamp = 0; icamp < 3; ++icamp)
 		{
 			if(framework == "tthML" && icamp == 2) continue; //tthML only has 80fb-1
-			TString label = region[ireg]+"_cutflow_"+mc_campaigns[icamp];
+			TString label = "cutflow_"+region[ireg] + "_" + mc_campaigns[icamp];
 			LatexChart* chart = new LatexChart(label.Data());
 			charts.push_back(chart);
 			for(auto sample : samples){
@@ -76,8 +76,8 @@ int main(int argc, char const *argv[])
 			chart->print(chart->label);
 			deletepointer(chart);
 		}
-		sum->label = region[ireg]+"_cutflow_";
-		sum->print((region[ireg]+"_cutflow").Data());
+		sum->label = ("cutflow_" + region[ireg]).Data();
+		sum->print(sum->label);
 		deletepointer(sum);
 		charts.clear();
 	}
