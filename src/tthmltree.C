@@ -944,9 +944,11 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     }
     if(reduce == 3){
       if (ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"] || ifregions["reg1l2tau2bnj_os"] || ifregions["reg1l2tau2bnj_ss"])
+      {
         if(t1vismass > 190*GeV )
           continue;
-      cut_flow.fill("$m_{l,b}>190$");
+        cut_flow.fill("$m_{l,b}>190$");
+      }
       if(cutmass == 1){
         if(ttvismass > 125*GeV ) continue;
         cut_flow.fill("$m_{\\tau\\tau$,vis}<125");

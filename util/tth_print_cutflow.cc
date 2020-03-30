@@ -29,11 +29,12 @@ int main(int argc, char const *argv[])
 			for(auto sample : samples){
 				TFile *inputfile = 0;
 				TH1D *cutflow_hist = 0;
+				TString filename = "cutflow_" + mc_campaigns[icamp] + "_";
 				if(signalmap.find(sample.name) != signalmap.end()){
 					for(auto subsamp : signalmap.at(sample.name)){
-						inputfile = new TFile(mc_campaigns[icamp] + "_" + subsamp + ".root");
+						inputfile = new TFile(filename + subsamp + ".root");
 						if(!cutflow_hist) {
-							cutflow_hist = (TH1D*)inputfile->Get(region[ireg]);
+							cutflow_hist = (TH1D*)(inputfile->Get(region[ireg])->Clone());
 							cutflow_hist->SetDirectory(0);
 						}else{
 							cutflow_hist->Add((TH1D*)inputfile->Get(region[ireg]));
@@ -41,11 +42,12 @@ int main(int argc, char const *argv[])
 						deletepointer(inputfile);
 					}
 				}else{
-					inputfile = new TFile(mc_campaigns[icamp] + "_" + sample.name + ".root");
-					TH1D *cutflow_hist = (TH1D*) inputfile->Get(region[ireg]);
+					inputfile = new TFile(filename + sample.name + ".root");
+					cutflow_hist = (TH1D*)( inputfile->Get(region[ireg])->Clone());
 					cutflow_hist->SetDirectory(0);
 					deletepointer(inputfile);
 				}
+				if(!cutflow_hist) printf("grab cutflow histogram failed: %s, %s\n", (mc_campaigns[icamp] + "_" + sample.name).Data(),region[ireg].Data());
 				TAxis *xaxis = cutflow_hist->GetXaxis();
 				for (int ibin = 1; ibin <= cutflow_hist->GetNbinsX(); ++ibin)
 				{
