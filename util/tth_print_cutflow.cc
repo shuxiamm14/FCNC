@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
 	if(framework == "tthML") region = region_tthML;
 	else region = region_xTFW;
 	float BR = 0.2;
-	gROOT->mkdir("cutflow");
+	gSystem->mkdir("cutflow");
 	vector<sample> bkg_samples = getBkgSamples(framework);
 	vector<sample> sig_samples = getSigSamples(framework,BR);
 	vector<sample> samples = bkg_samples;
