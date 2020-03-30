@@ -11,8 +11,8 @@ int main(int argc, char const *argv[])
 	}
 	TString framework = argv[1];
 	vector<TString> region_tthML = {
-		"all","reg1l1tau1b2j_os","reg1l1tau1b2j_ss","reg1l2tau1bnj_os","reg1l2tau1bnj_ss",
-		"reg1l1tau2b2j_os","reg1l1tau2b2j_ss","reg1l2tau2bnj_os","reg1l2tau2bnj_ss"
+		"all","reg1l1tau1b2j_os","reg1l1tau1b2j_ss","reg1l1tau1b3j_os","reg1l1tau1b3j_ss","reg1l2tau1bnj_os","reg1l2tau1bnj_ss",
+		"reg1l1tau2b2j_os","reg1l1tau2b2j_ss","reg1l1tau2b3j_os","reg1l1tau2b3j_ss","reg1l2tau2bnj_os","reg1l2tau2bnj_ss"
 	};
 	vector<TString> region_xTFW = {
 		"all","reg2mtau1b2j_os","reg2mtau1b2j_ss",
