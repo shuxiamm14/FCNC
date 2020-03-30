@@ -17,8 +17,19 @@ int main(int argc, char const *argv[])
 	vector<sample> sig_samples = getSigSamples(framework,BR);
 	vector<sample> samples = bkg_samples;
 	samples.insert(samples.end(),sig_samples.begin(),sig_samples.end());
+
+	for(auto &sample : samples){
+		string samptitle = sample.title.Data();
+		findAndReplaceAll(samptitle," ","~");
+		if(samptitle.find("#") != string::npos) samptitle = "$"+samptitle+"$";
+		findAndReplaceAll(samptitle,"#","\\");
+		findAndReplaceAll(samptitle,"%","\\%");
+		findAndReplaceAll(samptitle,"rightarrow","to ");
+		sample.title = samptitle.c_str();
+	}
 	for (int ireg = 0; ireg < region.size(); ++ireg)
 	{
+
 		vector<LatexChart*> charts;
 		for (int icamp = 0; icamp < 3; ++icamp)
 		{
@@ -27,6 +38,7 @@ int main(int argc, char const *argv[])
 			LatexChart* chart = new LatexChart(label.Data());
 			charts.push_back(chart);
 			for(auto sample : samples){
+
 				TFile *inputfile = 0;
 				TH1D *cutflow_hist = 0;
 				TString filename = "cutflow_" + mc_campaigns[icamp] + "_";
