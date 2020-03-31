@@ -67,9 +67,8 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 */
 	vector<sample> samples = getBkgSamples(framework);
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kMagenta, kSpring, kTeal, kAzure};
-
+	vector<sample> sigsamples = getSigSamples(framework, BRbenchmark);
 	if(!calculate_fake_calibration){
-		vector<sample> sigsamples = getSigSamples(framework, BRbenchmark);
 		samples.insert(samples.begin(),sigsamples.begin(),sigsamples.end());
 	}
 	TString samplesys = "";
@@ -440,9 +439,9 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		}
 
 		if(!calculate_fake_calibration)
-			for (int i = samples.size()-6; i < samples.size(); ++i)
+			for (auto samp : sigsamples)
 			{
-  				tau_plots->overlay(samples[i].name);
+  				tau_plots->overlay(samp.name);
 			}
 		TString savename = NPname;
 		if(fittodata) savename += "_fit" + fitcharge;
