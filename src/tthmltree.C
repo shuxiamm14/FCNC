@@ -947,7 +947,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       {
         if(t1vismass > 190*GeV )
           continue;
-        cut_flow.fill("$m_{l,b}>190$");
+        cut_flow.fill("$m_{l,b}<190$");
       }
       if(cutmass == 1){
         if(ttvismass > 125*GeV ) continue;

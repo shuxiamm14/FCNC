@@ -31,12 +31,12 @@ std::vector<sample> getSigSamples(TString framework, float BRbenchmark){
 	TString tmp;
 	ss>>tmp;
 	double signorm = BRbenchmark*(framework == "xTFW"? 1:5);
-	samples.push_back(sample("fcnc_ch","#bar{t}t#rightarrowbWcH"+tmp,kRed,signorm));
-	samples.push_back(sample("fcnc_prod_ch","cg#rightarrowtH"+tmp,kRed,signorm));
-	samples.push_back(sample("tcH","tcH merged signal"+tmp,kRed,signorm));
-	samples.push_back(sample("fcnc_uh","#bar{t}t#rightarrowbWuH"+tmp,kRed,signorm));
-	samples.push_back(sample("fcnc_prod_uh","ug#rightarrowtH"+tmp,kRed,signorm));
-	samples.push_back(sample("tuH","tuH merged signal"+tmp,kRed,signorm));
+	samples.emplace_back("fcnc_ch","#bar{t}t#rightarrowbWcH"+tmp,kRed,signorm);
+	samples.emplace_back("fcnc_prod_ch","cg#rightarrowtH"+tmp,kRed,signorm);
+	samples.emplace_back("tcH","tcH merged signal"+tmp,kRed,signorm);
+	samples.emplace_back("fcnc_uh","#bar{t}t#rightarrowbWuH"+tmp,kRed,signorm);
+	samples.emplace_back("fcnc_prod_uh","ug#rightarrowtH"+tmp,kRed,signorm);
+	samples.emplace_back("tuH","tuH merged signal"+tmp,kRed,signorm);
 	return samples;
 }
 void translateRegion(std::string &regtitle){

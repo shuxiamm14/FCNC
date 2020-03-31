@@ -18,6 +18,7 @@ int main(int argc, char const *argv[])
 		"all","reg2mtau1b2j_os","reg2mtau1b2j_ss",
 		"reg2mtau2b2j_os","reg2mtau2b2j_ss"
 	};
+	vector<TString> datayear = {"1516","17","18"};
 	vector<TString> region;
 	if(framework == "tthML") region = region_tthML;
 	else region = region_xTFW;
@@ -27,7 +28,7 @@ int main(int argc, char const *argv[])
 	vector<sample> sig_samples = getSigSamples(framework,BR);
 	vector<sample> samples = bkg_samples;
 	samples.insert(samples.end(),sig_samples.begin(),sig_samples.end());
-
+	samples.emplace_back("data","Data",kBlack);
 	for(auto &sample : samples){
 		string samptitle = sample.title.Data();
 		findAndReplaceAll(samptitle," ","~");
@@ -64,7 +65,11 @@ int main(int argc, char const *argv[])
 						deletepointer(inputfile);
 					}
 				}else{
-					inputfile = new TFile(filename + sample.name + ".root");
+					if(sample.name == "data"){
+						inputfile = new TFile("cutflow_data" + datayear[icamp]);
+					}else{
+						inputfile = new TFile(filename + sample.name + ".root");
+					}
 					cutflow_hist = (TH1D*)( inputfile->Get(region[ireg])->Clone());
 					cutflow_hist->SetDirectory(0);
 					deletepointer(inputfile);
