@@ -225,7 +225,7 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
       cut_flow.fill("trigger matching");
       if((tau_1_allTrk_n!=1 && tau_1_allTrk_n!=3) || (tau_0_allTrk_n!=1 && tau_0_allTrk_n!=3)) continue;
       cut_flow.fill("ntrack = 1,3");
-      if(!isData/*This is wrong but eveto is buggy for data, waiting for new n-tuples*/ && (!tau_0_ele_bdt_medium_retuned || !tau_0_ele_bdt_medium_retuned)) continue;
+      if(!isData/*This is wrong but eveto is buggy for data, waiting for new n-tuples*/ && (!tau_0_ele_bdt_medium_retuned || !tau_1_ele_bdt_medium_retuned)) continue;
       cut_flow.fill("ele veto");
       if(fabs(weight) > 5) {
         droppedweight+=weight;
