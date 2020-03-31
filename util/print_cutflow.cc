@@ -66,7 +66,7 @@ int main(int argc, char const *argv[])
 					}
 				}else{
 					if(sample.name == "data"){
-						inputfile = new TFile("cutflow_data" + datayear[icamp]);
+						inputfile = new TFile("cutflow_data" + datayear[icamp] + ".root");
 					}else{
 						inputfile = new TFile(filename + sample.name + ".root");
 					}
