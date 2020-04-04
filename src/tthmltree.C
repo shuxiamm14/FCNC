@@ -276,11 +276,15 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
       outputtree[fcnc_regions[i]] = target;
       if(reduce==1) {
         definetree(target);
-        if(nominaltree) target->Branch("taumatchwjet", &taumatchwjet);
+        if(nominaltree) {
+          target->Branch("taumatchwjet", &taumatchwjet);
+          if(fcnc_regions[i].Contains("2tau")) target->Branch("subtaumatchwjet", &subtaumatchwjet);
+        }
       }
       if(reduce==2 ){
         if(sample.Contains("data")) target->Branch("runNumber", &runNumber);
         target->Branch("taumatchwjet", &taumatchwjet);
+        if(fcnc_regions[i].Contains("2tau")) target->Branch("subtaumatchwjet", &subtaumatchwjet);
         target->Branch("chi2",&chi2);
         target->Branch("allmass", &allmass);
         target->Branch("allpz", &allpz);
@@ -349,6 +353,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         target = new TTree(fake_regions[i],fake_regions[i]);
         definetree(target);
         target->Branch("taumatchwjet", &taumatchwjet);
+        if(fake_regions[i].Contains("2tau")) target->Branch("subtaumatchwjet", &subtaumatchwjet);
       }
       outputtree[fake_regions[i]] = target;
     }
@@ -383,6 +388,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         fcnc_plots->init_sample(sample + "_real",plotNPs[0],sampletitle + "(real #tau)",kRed);
         fcnc_plots->init_sample(sample + "_c",plotNPs[0],sampletitle + "(c-jets fake #tau)",kOrange);
         fcnc_plots->init_sample(sample + "_wjet",plotNPs[0],sampletitle + "(w-jet matched fake #tau)",kGray);
+        fcnc_plots->init_sample(sample + "_doublefake",plotNPs[0],sampletitle + "double fake #tau)",kGray);
       }
       if(fake_nregions){
         fake_plots->init_sample(sample + "_g","NOMINAL",sampletitle + "(gluon fake #tau)",(enum EColor)7);
@@ -392,6 +398,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         fake_plots->init_sample(sample + "_real","NOMINAL",sampletitle + "(real #tau)",kRed);
         fake_plots->init_sample(sample + "_c","NOMINAL",sampletitle + "(c-jets fake #tau)",kOrange);
         fake_plots->init_sample(sample + "_wjet","NOMINAL",sampletitle + "(w-jet matched fake #tau)",kGray);
+        fake_plots->init_sample(sample + "_doublefake","NOMINAL",sampletitle + "(double fake #tau)",kGray);
       }
       if(fake_nregions_notau) fake_notau_plots->init_sample(sample,"NOMINAL",sampletitle,kRed);
     }
@@ -604,11 +611,16 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       if(nominaltree && nTaus_OR_Pt25){
         constructTruth();
         taumatchwjet = 0;
-        TLorentzVector leadtau;
+        subtaumatchwjet = 0;
+        TLorentzVector leadtau, subleadtau;
         leadtau.SetPtEtaPhiE(tau_pt_0,tau_eta_0,tau_phi_0,tau_E_0);
+        if(nTaus_OR_Pt25 >= 2) subleadtau.SetPtEtaPhiE(tau_pt_1,tau_eta_1,tau_phi_1,tau_E_1);
         if(truthmatch(leadtau))
           if(truthmatch(leadtau)->mother)
             taumatchwjet = abs(truthmatch(leadtau)->mother->pdg) == 24;
+        if(truthmatch(subleadtau))
+          if(truthmatch(subleadtau)->mother)
+            subtaumatchwjet = abs(truthmatch(subleadtau)->mother->pdg) == 24;
       }
 
     }else if(tightTau) {
@@ -627,6 +639,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     if (reduce == 2) {
       if(!nominaltree && nTaus_OR_Pt25) {
         taumatchwjet = taumatchmap[eventNumber];
+        subtaumatchwjet = subtaumatchmap[eventNumber];
       }
       cut_flow.fill("this region");
       if (debug == 2) printf("event weight: %f\n", weight);
@@ -996,18 +1009,27 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           origintag.push_back(0);
           break;
         case 4:
-          tauorigin = sample + "_c";
-          if(taumatchwjet) tauorigin = sample + "_wjet";
-          origintag.push_back(1);
+          if(taumatchwjet) {
+            tauorigin = sample + "_wjet";
+            origintag.push_back(4);
+          }else{
+            tauorigin = sample + "_c";
+            origintag.push_back(1);
+          }
           break;
         case 21:
           tauorigin = sample + "_g";
           origintag.push_back(2);
           break;
         default:
-          tauorigin = sample + "_j";
-          if(taumatchwjet) tauorigin = sample + "_wjet";
-          origintag.push_back(3);
+          if(taumatchwjet) {
+            tauorigin = sample + "_wjet";
+            origintag.push_back(4);
+          }
+          else {
+            tauorigin = sample + "_j";
+            origintag.push_back(3);
+          }
         }
       if(ifregions["reg1l2tau1bnj_os"] || ifregions["reg1l2tau1bnj_ss"]){
         vtaupt.push_back(tau_pt_1);
@@ -1016,16 +1038,30 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         else
           switch (tau_truthJetFlavour_1) {
             case 5:
+              if(tauorigin.Contains("real") || tauorigin.Contains("lep")) tauorigin = sample + "_b";
+              else tauorigin = sample + "_doublefake";
               origintag.push_back(0);
               break;
             case 4:
-              origintag.push_back(1);
+              if(tauorigin.Contains("real") || tauorigin.Contains("lep")) {
+                if(subtaumatchwjet) tauorigin = sample + "_wjet";
+                else tauorigin = sample + "_c";
+              } else tauorigin = sample + "_doublefake";
+              if(subtaumatchwjet) origintag.push_back(4);
+              else origintag.push_back(1);
               break;
             case 21:
+              if(tauorigin.Contains("real") || tauorigin.Contains("lep")) tauorigin = sample + "_g";
+              else tauorigin = sample + "_doublefake";
               origintag.push_back(2);
               break;
             default:
-              origintag.push_back(3);
+              if(tauorigin.Contains("real") || tauorigin.Contains("lep")) {
+                if(subtaumatchwjet) tauorigin = sample + "_wjet";
+                else tauorigin = sample + "_j";
+              }else tauorigin = sample + "_doublefake";
+              if(subtaumatchwjet)  origintag.push_back(4);
+              else origintag.push_back(3);
           }
       }
     }
@@ -1075,19 +1111,25 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
               if(debug) printf("fill NP %s\n", theNP.Data());
               weight = weights->at(0);
               if(applyNewFakeSF){
+                vector<bool> isOS;
+                isOS.push_back(tau_charge_0*lep_ID_0<0);
+                if(nTaus_OR_Pt25 >= 2) isOS.push_back(tau_charge_1*lep_ID_0<0);
+
                 if(theNP.Contains("fakeSF")){
                   TString SFname;
                   if(debug) printf("weight = %f\nPlotNP = %s\n",weight,theNP.Data());
-                  observable thefakeSF = FindNewFakeSF("NOMINAL", tauorigin, tau_pt_0, iter->first,SFname);
+                  observable thefakeSF = FindNewFakeSF("NOMINAL", origintag[0], vtaupt[0], isOS[0],SFname);
+                  weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);
+                  if(nTaus_OR_Pt25 >= 2) thefakeSF = FindNewFakeSF("NOMINAL", origintag[1], vtaupt[1], isOS[1], SFname);
                   weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);
                   if(debug) printf("weight = %f after apply fakeSF\n",weight);
                 }else{
                   if(doubleCounting){
-                    weight *= FindNewFakeSF("NOMINAL", tauorigin, tau_pt_0, iter->first).nominal;
+                    weight *= FindNewFakeSF("NOMINAL", origintag, vtaupt, isOS).nominal;
                   }else if(nominaltree) 
-                    weight *= FindNewFakeSF(theNP, tauorigin, tau_pt_0, iter->first).nominal;
+                    weight *= FindNewFakeSF(theNP, origintag, vtaupt, isOS).nominal;
                   else if(theNP == "NOMINAL"){
-                    weight *= FindNewFakeSF(SystematicsName, tauorigin, tau_pt_0, iter->first).nominal;
+                    weight *= FindNewFakeSF(SystematicsName, origintag, vtaupt, isOS).nominal;
                   }
                 }
               }
@@ -1372,16 +1414,21 @@ bool tthmltree::SelectTLepid(int id) {
 
 void tthmltree::constructwmatchmap(TTree *tree){
   ULong64_t eventnumber;
-  bool matched;
+  bool matched,submatched;
   tree->SetBranchStatus("*",0);
   tree->SetBranchStatus("eventNumber",1);
   tree->SetBranchStatus("taumatchwjet",1);
   tree->SetBranchAddress("eventNumber",&eventnumber);
   tree->SetBranchAddress("taumatchwjet",&matched);
+  if(TString(tree->GetName()).Contains("2tau")) {
+    tree->SetBranchStatus("subtaumatchwjet",1);
+    tree->SetBranchAddress("subtaumatchwjet",&submatched);
+  }
   Long64_t nentries = tree->GetEntriesFast();
   for (int i = 0; i < nentries; ++i)
   {
     tree->GetEntry(i);
     taumatchmap[eventnumber] = matched;
+    if(TString(tree->GetName()).Contains("2tau")) subtaumatchmap[eventnumber] = submatched;
   }
 }

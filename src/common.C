@@ -4,18 +4,18 @@
 
 std::vector<sample> getBkgSamples(TString framework){
 	std::vector<sample> samples;
-	samples.push_back(sample("smhiggs","SM Higgs",kViolet));
-	samples.push_back(sample("wjet","W+jets",kOrange));
-	samples.push_back(sample("diboson","Diboson",(enum EColor)7));
-	samples.push_back(sample("zll","Z#rightarrowll",kBlue));
-	samples.push_back(sample("ztautau","Z#rightarrow#tau#tau",kGreen));
+	samples.emplace_back("smhiggs","SM Higgs",kViolet);
+	samples.emplace_back("wjet","W+jets",kOrange);
+	samples.emplace_back("diboson","Diboson",(enum EColor)7);
+	samples.emplace_back("zll","Z#rightarrowll",kBlue);
+	samples.emplace_back("ztautau","Z#rightarrow#tau#tau",kGreen);
 	if(framework=="tthML"){
 		//samples.push_back(sample("top","Top rare",kWhite));
-		samples.push_back(sample("others","Rare",kMagenta));
-		samples.push_back(sample("ttbar","t#bar{t}",kYellow));
-		samples.push_back(sample("ttV","t#bar{t}V",kAzure));
+		samples.emplace_back("others","Rare",kMagenta);
+		samples.emplace_back("ttbar","t#bar{t}",kYellow);
+		samples.emplace_back("ttV","t#bar{t}V",(enum EColor)((kAzure)+1));
 	}else{
-		samples.push_back(sample("top","Top production",kYellow));
+		samples.emplace_back("top","Top production",kYellow);
 	}
 	//samples.push_back(sample("othertop","Top rare",kWhite));
 	//samples.push_back(sample("others","Rare",kTeal));

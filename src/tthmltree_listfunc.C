@@ -609,7 +609,10 @@ void tthmltree::Init(TTree*tree) {
 
   tree->SetBranchAddress("mc_channel_number", & mc_channel_number);
   if(reduce>=1) {
-    if(nominaltree || reduce >=2) tree->SetBranchAddress("taumatchwjet", &taumatchwjet);
+    if(nominaltree || reduce >=2) {
+      tree->SetBranchAddress("taumatchwjet", &taumatchwjet);
+      if(TString(tree->GetName()).Contains("2tau")) tree->SetBranchAddress("subtaumatchwjet", &subtaumatchwjet);
+    }
     tree->SetBranchAddress("weights", & weights);
   }
 

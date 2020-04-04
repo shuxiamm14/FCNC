@@ -439,14 +439,22 @@ void nominal::calcfakesf(std::vector<int> origin, std::vector<float> pt, std::ve
 
 }
 
-observable nominal::FindNewFakeSF(TString NP, TString tauorigin, float taupt, TString region, TString &name){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
+observable nominal::FindNewFakeSF(TString NP, vector<int> origintag, vector<float> taupt, vector<bool> isOS){ //origin=-1,0,1,2,3,4 for real/lep,b,c,g,j,wjet
+  observable result = 1;
+  for (int i = 0; i < origintag.size(); ++i)
+  {
+    result *= FindNewFakeSF(NP, origintag[i], taupt[i], isOS[i]);
+  }
+  return result;
+}
+
+observable nominal::FindNewFakeSF(TString NP, int origintag, float taupt, bool isOS, TString &name){ //origin=-1,0,1,2,3,4 for real/lep,b,c,g,j,wjet
   if(!newFakeSF.size()) {
     printf("nominal::FindNewFakeSF() Error : newFakeSF is Empty, please call nominal::ConfigNewFakeSF() first\n");
     exit(0);
   }
-  if(tauorigin.Contains("_real") || tauorigin.Contains("_lep")) return 1;
-  bool isOS = region.Contains("os");
-  bool iswjet = tauorigin.Contains("_wjet");
+  if(origintag < 0) return 1;
+  bool iswjet = origintag == 4;
   int slice = 0;
   for (int islice = 1; islice < fakePtSlices.size(); ++islice)
   {
@@ -464,9 +472,9 @@ observable nominal::FindNewFakeSF(TString NP, TString tauorigin, float taupt, TS
   return result;
 }
 
-observable nominal::FindNewFakeSF(TString NP, TString tauorigin, float taupt, TString region){
+observable nominal::FindNewFakeSF(TString NP, int origintag, float taupt, bool isOS){
   TString name;
-  return FindNewFakeSF(NP, tauorigin, taupt, region, name);
+  return FindNewFakeSF(NP, origintag, taupt, isOS, name);
 }
 
 bool nominal::AddTheorySys(){
