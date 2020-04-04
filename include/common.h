@@ -19,6 +19,8 @@ const std::map<TString,std::vector<TString>> signalmap = {
 	{"fcnc_prod_uh",{"fcnc_prod_uh"}},
 };
 
+void translateRegion(std::string &regtitle);
+
 class sample
 {
 public:

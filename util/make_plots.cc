@@ -67,9 +67,8 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 */
 	vector<sample> samples = getBkgSamples(framework);
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kMagenta, kSpring, kTeal, kAzure};
-
+	vector<sample> sigsamples = getSigSamples(framework, BRbenchmark);
 	if(!calculate_fake_calibration){
-		vector<sample> sigsamples = getSigSamples(framework, BRbenchmark);
 		samples.insert(samples.begin(),sigsamples.begin(),sigsamples.end());
 	}
 	TString samplesys = "";
@@ -228,6 +227,14 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 				for (int icamp = 0; icamp < (framework == "tthML"? 2:3); ++icamp)
 				{
 					TString mc_campaign = mc_campaigns[icamp];
+					if(signalmap.find(samples[j].name) != signalmap.end()){
+						for(auto signalsamp : signalmap.at(samples[j].name)){
+							inputfile = getFile(mc_campaign + "_" + signalsamp + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
+							double norm = samples[j].norm;
+							tau_plots->read_sample( origin[i], signalsamp + "_" + origin[i], histmiddlename, origintitle[i], (enum EColor)colors[i], norm,inputfile);
+							deletepointer(inputfile);
+						}
+					}
 					TString samplename = (samplesys==samples[j].name ? NPname : samples[j].name);
 					inputfile = getFile(mc_campaign + "_" + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 					double norm = samples[j].norm;
@@ -433,9 +440,9 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		}
 
 		if(!calculate_fake_calibration)
-			for (int i = samples.size()-6; i < samples.size(); ++i)
+			for (auto samp : sigsamples)
 			{
-  				tau_plots->overlay(samples[i].name);
+  				tau_plots->overlay(samp.name);
 			}
 		TString savename = NPname;
 		if(fittodata) savename += "_fit" + fitcharge;

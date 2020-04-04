@@ -25,6 +25,7 @@ public:
    bool dofit1l2tau = 0;
    bool applyfakeSF = 0;
    std::map<ULong64_t, bool> taumatchmap;
+   std::map<ULong64_t, bool> subtaumatchmap;
 
    static TH2F* prob_20_40;
    static TH2F* prob_40_60;
@@ -40,6 +41,7 @@ public:
    const bool tightLep = 1;
    const bool tightTau = 0;
    bool taumatchwjet = 0;
+   bool subtaumatchwjet = 0;
 
    UInt_t          randomRunNumber;
    UInt_t          mcChannelNumber;
