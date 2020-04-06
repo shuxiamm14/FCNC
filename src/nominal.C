@@ -571,7 +571,8 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
   printf("\nnew SFs: \n");
   for (int isOS = 0; isOS < 2; ++isOS)
   {
-    chart[isOS] = new LatexChart(isOS?"scale_factors_os" : "scale_factors_ss");
+    string chartname = isOS?"scale_factors_os" : "scale_factors_ss";
+    if(access( chartname.c_str(), F_OK ) == -1) chart[isOS] = new LatexChart(chartname);
     printf("isOS: %d\n", isOS);
     printf("Slices: ");
     for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
@@ -585,14 +586,16 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
       for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
       {
         printf(" %f+/-%f ", newFakeSFSys[isOS][iswjet][islice].nominal, newFakeSFSys[isOS][iswjet][islice].error);
-        string rowname = iswjet? "$\tau_{W}$" : "non-$\tau_{W}$ fakes";
-        string columnname = "$" + to_string(int(fakePtSlices[islice])) + "-" + to_string(int(fakePtSlices[islice+1])) + "$~GeV";
-        if(islice == fakePtSlices.size()-2) columnname = to_string(int(fakePtSlices[islice])) + "GeV$-$";
-        chart[isOS]->set(rowname, columnname, newFakeSFSys[isOS][iswjet][islice]);
+        if(chart[isOS]){
+          string rowname = iswjet? "$\tau_{W}$" : "non-$\tau_{W}$ fakes";
+          string columnname = "$" + to_string(int(fakePtSlices[islice])) + "-" + to_string(int(fakePtSlices[islice+1])) + "$~GeV";
+          if(islice == fakePtSlices.size()-2) columnname = to_string(int(fakePtSlices[islice])) + "GeV$-$";
+          chart[isOS]->set(rowname, columnname, newFakeSFSys[isOS][iswjet][islice]);
+        }
       }
       printf("\n");
     }
-    chart[isOS]->print(chart[isOS]->label);
+    if(chart[isOS]) chart[isOS]->print(chart[isOS]->label);
     deletepointer(chart[isOS]);
   }
   applyNewFakeSF = 1;
