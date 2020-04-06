@@ -595,8 +595,10 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
       }
       printf("\n");
     }
-    if(chart[isOS]) chart[isOS]->print(chart[isOS]->label);
-    deletepointer(chart[isOS]);
+    if(chart[isOS]) {
+      chart[isOS]->print(chart[isOS]->label);
+      deletepointer(chart[isOS]);
+    }
   }
   applyNewFakeSF = 1;
   printf("nominal::ConfigNewFakeSF() : End\n");
