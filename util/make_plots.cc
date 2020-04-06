@@ -6,6 +6,7 @@
 #include <sys/ioctl.h>
 #include "fcnc_include.h"
 #include "weightsys_list.h"
+#include "makechart.h"
 #include "common.h"
 using namespace std;
 
@@ -75,7 +76,6 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 	if(NPname.Contains("ttbarsys")){
 		samplesys = "ttbar";
 	}
-                
 	if(NPname.Contains("Xsec")){
 		bool applied = 0;
 		for(auto &samp : samples){
@@ -191,14 +191,14 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 	TString nprong[] = {"_1prong","_3prong",""};
 	for (int j = 0; j < nregions; ++j)
 	  for (int k = 0; k < 2; ++k)
-	    for (int i = 1; i < 2; i+=2){
-	    	//TString addedregion = regions[j] + nprong[k] + "_veto";
-	      	//printf("adding region: %s\n", addedregion.Data());
-	      	//tau_plots->add_region(addedregion);
-//	    	tau_plots->add_region(regions[j] + nprong[k] + "_");
-	    	tau_plots->add_region(regions[j] + nprong[k] + "_above35_vetobtagwp70");
-	    	tau_plots->add_region(regions[j] + nprong[k] + "_below35_vetobtagwp70");
-	    }
+		for (int i = 1; i < 2; i+=2){
+			//TString addedregion = regions[j] + nprong[k] + "_veto";
+		  	//printf("adding region: %s\n", addedregion.Data());
+		  	//tau_plots->add_region(addedregion);
+//			tau_plots->add_region(regions[j] + nprong[k] + "_");
+			tau_plots->add_region(regions[j] + nprong[k] + "_above35_vetobtagwp70");
+			tau_plots->add_region(regions[j] + nprong[k] + "_below35_vetobtagwp70");
+		}
 	if(mergeprong) tau_plots->muteregion("prong");
 	if(!mergeprong) tau_plots->muteregion("35");
 	TString origin[] = {"b", "c", "g", "j", "lep", "wjet", "real", "data","doublefake"};
@@ -338,11 +338,22 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 				TFile SFfile(prefix + "scale_factors_" + fitcharge + ".root","update");
 				//TFile SFfile(prefix + "scale_factors.root","update");
 				prefix = "Fit" + nprong[i] + "_";
-				TH1D* SFhist; 
+				TH1D* SFhist;
+				LatexChart *chart = 0;
+				if(NPname == "NOMINAL") {
+					chart = new LatexChart(("scale_factor_" + fitcharge).Data());
+				}
 				for (int i = 0; i < 3; ++i)	//3 pt bins
 				{
-					for (auto SF : *SFs) //3 parameters
+					for (auto SF : *SFs) //parameters
 					{
+						if(chart) {
+							string rowname = SF.first.Contains("wjet")? "$\tau_{W}$" : "non-$\tau_{W}$ fakes";
+							string columnname = "$" + to_string(int(fakePtSlices[i])) + "-" + to_string(int(fakePtSlices[i+1])) + "$~GeV";
+							if(i == fakePtSlices.size()-2) columnname = to_string(int(fakePtSlices[i])) + "GeV$-$";
+							chart->set(rowname,columnname,SF.second[i]);
+						}
+				
 						TString histname = prefix + SF.first + "_pt" + (to_string(int(fakePtSlices[i])) + to_string(int(fakePtSlices[i+1]))).c_str();
 						SFhist = (TH1D*)SFfile.Get(histname);
 						if(!SFhist) {
@@ -353,6 +364,9 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 						SFhist -> GetXaxis() -> SetBinLabel(iNP+1,NPname);
 						SFhist -> Write(histname, TObject::kWriteDelete);
 					}
+				}
+				if(chart){
+					chart->print(chart->label + "_statonly");
 				}
 			}
 		}
@@ -464,7 +478,7 @@ int main(int argc, char const *argv[])
 	int from = atoi(argv[2]);
 	int to = atoi(argv[3]);
 	TString dirname;
-        TString method = argv[4];
+	TString method = argv[4];
 	for (int i = from; i <= to; ++i)
 	{
 		printf("=============================generating NP %d : %s=============================\n", i, findNPname(dirname,i,framework).Data());
