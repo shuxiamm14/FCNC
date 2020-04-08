@@ -547,8 +547,9 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
           double content = SFhist->GetBinContent(ibin);
           double err = SFhist->GetBinError(ibin);
           if(!content || NPname.Contains("Punch")) continue;
-          if(NPname != "NOMINAL" && !NPname.Contains("fake")){
+          if(NPname != "NOMINAL" && !NPname.Contains("fake") && !NPname.Contains("down")){
             err2 += pow(content - newFakeSFnominal, 2);
+            printf("NP %s, diff %f, err2 %f\n", NPname.Data(),content - newFakeSFnominal, err2);
           }
           if((find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) && SystematicsName!=NPname && NPname!="NOMINAL") {
             continue;

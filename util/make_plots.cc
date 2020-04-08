@@ -25,8 +25,8 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 	TString nominalname = "NOMINAL";
 	TString histmiddlename =  (dirname==NPname || NPname.Contains("fake_mismodelling"))? nominalname:NPname;
 	float BRbenchmark = 0.2;
-	bool calculate_fake_calibration = 1;
-	bool wfake = 0;
+	bool calculate_fake_calibration = 0;
+	bool wfake = 1;
 	bool mergeFake = 0;
 	bool doTrex = 1;
 	bool plotnj = 0;
