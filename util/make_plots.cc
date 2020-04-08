@@ -201,8 +201,8 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		}
 	if(mergeprong) tau_plots->muteregion("prong");
 	if(!mergeprong) tau_plots->muteregion("35");
-	TString origin[] = {"b", "c", "g", "j", "lep", "wjet", "real", "data","doublefake"};
-	TString origintitle[] = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "(no truth matched fake #tau)", "real #tau"};
+	vector<TString> origin = {"b", "c", "g", "j", "lep", "wjet","doublefake", "real", "data"};
+	vector<TString> origintitle = {"(b-jets fake #tau)", "(c-jets fake #tau)", "(gluon-jets fake #tau)", "(light-jets fake #tau)", "(lepton fake #tau)", "#tau_{W}", "double fake #tau", "real #tau", "data"};
 
 	TFile *datafile[3] = {0,0,0};
 	TFile *datafile_fake[3] = {0,0,0};
@@ -223,7 +223,7 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 //============================ merge_sample============================
 	if(plot_option == 1){
 		for (int j = 0; j < samples.size(); ++j){
-			for (int i = 0; i < 8; ++i){
+			for (int i = 0; i < origin.size(); ++i){
 				for (int icamp = 0; icamp < (framework == "tthML"? 2:3); ++icamp)
 				{
 					TString mc_campaign = mc_campaigns[icamp];
@@ -253,7 +253,7 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 				if(!calculate_fake_calibration && signalmap.find(samples[j].name) != signalmap.end()){
 					for(auto signalsamp : signalmap.at(samples[j].name)){
 						inputfile = getFile(mc_campaign + "_" + signalsamp + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
-						for (int i = 0; i < 7; i++) tau_plots->read_sample( samples[j].name, signalsamp + "_" + origin[i], histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
+						for (int i = 0; i < origin.size(); i++) tau_plots->read_sample( samples[j].name, signalsamp + "_" + origin[i], histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
 						deletepointer(inputfile);
 					}
 				}else{
@@ -267,17 +267,21 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 						tau_plots->read_sample( samples[j].name, samplename + "_real", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 						tau_plots->read_sample( samples[j].name, samplename + "_lep", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 						if (mergeFake) {
-							for (int i = 0; i < 6; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], histmiddlename, "Fake MC, 1 truth #tau", kMagenta, norm, inputfile);
-							tau_plots->read_sample( "fake0truth", samplename + "_" + origin[8], histmiddlename, "fake, 0 truth #tau", kTeal, norm,inputfile);
+							for (int i = 0; i < origin.size() - 3; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], histmiddlename, "Fake MC, 1 truth #tau", kMagenta, norm, inputfile);
+							tau_plots->read_sample( "fake0truth", samplename + "_" + origin[origin.size() - 3], histmiddlename, "fake, 0 truth #tau", kTeal, norm,inputfile);
 						}else if(wfake){
-							for (int i = 0; i < 6; i++) {
+							for (int i = 0; i < origin.size() - 2; i++) {
 								if(origin[i] == "wjet")
 									tau_plots->read_sample( "wjet-fake", samplename + "_" + origin[i], histmiddlename, "W-jet Fake #tau", kRed, norm, inputfile);
-								else if(origin[i] != "lep")
-									tau_plots->read_sample( "fake", samplename + "_" + origin[i], histmiddlename, "MC Fake #tau", kTeal, norm, inputfile);
+								else if(origin[i] == "lep")
+									tau_plots->read_sample( "lep-fake", samplename + "_" + origin[i], histmiddlename, "Lep Fake #tau", kTeal, norm, inputfile);
+								else if(origin[i] == "doublefake")
+									tau_plots->read_sample( "doublefake", samplename + "_" + origin[i], histmiddlename, "Double Fake #tau", kTeal, norm, inputfile);
+								else
+									tau_plots->read_sample( "other-fake", samplename + "_" + origin[i], histmiddlename, "Other Fake #tau", kTeal, norm, inputfile);
 							}
 						}else{
-							for (int i = 0; i < 6; i++)
+							for (int i = 0; i < origin.size(); i++)
 								tau_plots->read_sample( samples[j].name, samplename + "_" + origin[i], histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 						}
 						deletepointer(inputfile);
@@ -299,7 +303,8 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
   			if(signalmap.find(samp.name) == signalmap.end()) tau_plots->stackorder.push_back(samp.name);
   		}
   		if(!mergeFake && wfake) {
-			tau_plots->stackorder.push_back("fake");
+			tau_plots->stackorder.push_back("lep-fake");
+			tau_plots->stackorder.push_back("other-fake");
 			tau_plots->stackorder.push_back("wjet-fake");
 		}
 		if(fittodata){
@@ -330,7 +335,7 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 				vector<TString> postfit_regions = fit_regions;
 				postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + nprong[i]);
 				postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + nprong[i]);
-				vector<TString> scalesamples = {"wjet-fake","fake"};
+				vector<TString> scalesamples = {"wjet-fake","other-fake"};
 				TString varname = "taupt_0";
 				map<TString,vector<observable>> *SFs = tau_plots->fit_scale_factor(&fit_regions, &varname, &scalesamples, &fakePtSlices, &histmiddlename, &postfit_regions);
 				TString prefix = PACKAGE_DIR;
