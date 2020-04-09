@@ -274,11 +274,11 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 								if(origin[i] == "wjet")
 									tau_plots->read_sample( "wjet-fake", samplename + "_" + origin[i], histmiddlename, "W-jet Fake #tau", kRed, norm, inputfile);
 								else if(origin[i] == "lep")
-									tau_plots->read_sample( "lep-fake", samplename + "_" + origin[i], histmiddlename, "Lep Fake #tau", kTeal, norm, inputfile);
+									tau_plots->read_sample( "lep-fake", samplename + "_" + origin[i], histmiddlename, "Lep Fake #tau", (enum EColor)(kTeal-2), norm, inputfile);
 								else if(origin[i] == "doublefake")
-									tau_plots->read_sample( "doublefake", samplename + "_" + origin[i], histmiddlename, "Double Fake #tau", kTeal, norm, inputfile);
+									tau_plots->read_sample( "doublefake", samplename + "_" + origin[i], histmiddlename, "Double Fake #tau", (enum EColor)(kTeal-4), norm, inputfile);
 								else
-									tau_plots->read_sample( "other-fake", samplename + "_" + origin[i], histmiddlename, "Other Fake #tau", kTeal, norm, inputfile);
+									tau_plots->read_sample( "other-fake", samplename + "_" + origin[i], histmiddlename, "Other Fake #tau", (enum EColor)(kTeal-6), norm, inputfile);
 							}
 						}else{
 							for (int i = 0; i < origin.size(); i++)
