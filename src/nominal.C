@@ -440,7 +440,7 @@ void nominal::calcfakesf(std::vector<int> origin, std::vector<float> pt, std::ve
 
 }
 
-observable nominal::FindNewFakeSF(TString NP, vector<int> origintag, vector<float> taupt, vector<bool> isOS){ //origin=-1,0,1,2,3,4 for real/lep,b,c,g,j,wjet
+observable nominal::FindNewFakeSF(TString NP, vector<int> origintag, vector<float> taupt, vector<int> isOS){ //origin=-1,0,1,2,3,4 for real/lep,b,c,g,j,wjet
   observable result = 1;
   for (int i = 0; i < origintag.size(); ++i)
   {
@@ -449,7 +449,7 @@ observable nominal::FindNewFakeSF(TString NP, vector<int> origintag, vector<floa
   return result;
 }
 
-observable nominal::FindNewFakeSF(TString NP, int origintag, float taupt, bool isOS, TString &name){ //origin=-1,0,1,2,3,4 for real/lep,b,c,g,j,wjet
+observable nominal::FindNewFakeSF(TString NP, int origintag, float taupt, int isOS, TString &name){ //origin=-1,0,1,2,3,4 for real/lep,b,c,g,j,wjet
   if(!newFakeSF.size()) {
     printf("nominal::FindNewFakeSF() Error : newFakeSF is Empty, please call nominal::ConfigNewFakeSF() first\n");
     exit(0);
@@ -473,7 +473,7 @@ observable nominal::FindNewFakeSF(TString NP, int origintag, float taupt, bool i
   return result;
 }
 
-observable nominal::FindNewFakeSF(TString NP, int origintag, float taupt, bool isOS){
+observable nominal::FindNewFakeSF(TString NP, int origintag, float taupt, int isOS){
   TString name;
   return FindNewFakeSF(NP, origintag, taupt, isOS, name);
 }
@@ -550,7 +550,6 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
           if(!content || NPname.Contains("Punch")) continue;
           if(NPname != "NOMINAL" && !NPname.Contains("fake") && !NPname.Contains("down")){
             err2 += pow(content - newFakeSFnominal, 2);
-            printf("NP %s, diff %f, err2 %f\n", NPname.Data(),content - newFakeSFnominal, err2);
           }
           if((find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) && SystematicsName!=NPname && NPname!="NOMINAL") {
             continue;
@@ -588,7 +587,7 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
       {
         printf(" %f+/-%f ", newFakeSFSys[isOS][iswjet][islice].nominal, newFakeSFSys[isOS][iswjet][islice].error);
         if(chart[isOS]){
-          string rowname = iswjet? "$\tau_{W}$" : "non-$\tau_{W}$ fakes";
+          string rowname = iswjet? "$\\tau_{W}$" : "non-$\\tau_{W}$ fakes";
           string columnname = "$" + to_string(int(fakePtSlices[islice])) + "-" + to_string(int(fakePtSlices[islice+1])) + "$~GeV";
           if(islice == fakePtSlices.size()-2) columnname = to_string(int(fakePtSlices[islice])) + "GeV$-$";
           chart[isOS]->set(rowname, columnname, newFakeSFSys[isOS][iswjet][islice]);

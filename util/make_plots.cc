@@ -26,7 +26,7 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 	TString nominalname = "NOMINAL";
 	TString histmiddlename =  (dirname==NPname || NPname.Contains("fake_mismodelling"))? nominalname:NPname;
 	float BRbenchmark = 0.2;
-	bool calculate_fake_calibration = 0;
+	bool calculate_fake_calibration = 1;
 	bool wfake = 1;
 	bool mergeFake = 0;
 	bool doTrex = 1;
@@ -40,6 +40,8 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 	if(method.Contains("plot")){
 		doTrex = 0;
 		doPlots = 1;
+		if(method.Contains("fake")) calculate_fake_calibration = 1;
+		else calculate_fake_calibration = 0;
 	}
 	if(method.Contains("fit")){
 		calculate_fake_calibration = 1;
@@ -274,11 +276,11 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 								if(origin[i] == "wjet")
 									tau_plots->read_sample( "wjet-fake", samplename + "_" + origin[i], histmiddlename, "W-jet Fake #tau", kRed, norm, inputfile);
 								else if(origin[i] == "lep")
-									tau_plots->read_sample( "lep-fake", samplename + "_" + origin[i], histmiddlename, "Lep Fake #tau", kTeal, norm, inputfile);
+									tau_plots->read_sample( "lep-fake", samplename + "_" + origin[i], histmiddlename, "Lep Fake #tau", (enum EColor)(40), norm, inputfile);
 								else if(origin[i] == "doublefake")
-									tau_plots->read_sample( "doublefake", samplename + "_" + origin[i], histmiddlename, "Double Fake #tau", kTeal, norm, inputfile);
+									tau_plots->read_sample( "doublefake", samplename + "_" + origin[i], histmiddlename, "Double Fake #tau", (enum EColor)(41), norm, inputfile);
 								else
-									tau_plots->read_sample( "other-fake", samplename + "_" + origin[i], histmiddlename, "Other Fake #tau", kTeal, norm, inputfile);
+									tau_plots->read_sample( "other-fake", samplename + "_" + origin[i], histmiddlename, "Other Fake #tau", (enum EColor)(42), norm, inputfile);
 							}
 						}else{
 							for (int i = 0; i < origin.size(); i++)
@@ -304,6 +306,7 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
   		}
   		if(!mergeFake && wfake) {
 			tau_plots->stackorder.push_back("lep-fake");
+			tau_plots->stackorder.push_back("doublefake");
 			tau_plots->stackorder.push_back("other-fake");
 			tau_plots->stackorder.push_back("wjet-fake");
 		}
