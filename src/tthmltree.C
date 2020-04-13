@@ -1092,6 +1092,9 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         continue;
       }
     }
+    vector<int> isOS;
+    isOS.push_back(tau_charge_0*lep_ID_0>0);
+    if(nTaus_OR_Pt25 >= 2) isOS.push_back(tau_charge_1*lep_ID_0>0);
     for (iter = ifregions.begin(); iter != ifregions.end(); iter++) {
       if (iter->second == 1) {
         if (writetree) {
@@ -1111,17 +1114,15 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
               if(debug) printf("fill NP %s\n", theNP.Data());
               weight = weights->at(0);
               if(applyNewFakeSF){
-                vector<bool> isOS;
-                isOS.push_back(tau_charge_0*lep_ID_0<0);
-                if(nTaus_OR_Pt25 >= 2) isOS.push_back(tau_charge_1*lep_ID_0<0);
-
                 if(theNP.Contains("fakeSF")){
                   TString SFname;
                   if(debug) printf("weight = %f\nPlotNP = %s\n",weight,theNP.Data());
                   observable thefakeSF = FindNewFakeSF("NOMINAL", origintag[0], vtaupt[0], isOS[0],SFname);
                   weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);
-                  if(nTaus_OR_Pt25 >= 2) thefakeSF = FindNewFakeSF("NOMINAL", origintag[1], vtaupt[1], isOS[1], SFname);
-                  weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);
+                  if(nTaus_OR_Pt25 >= 2) {
+                    thefakeSF = FindNewFakeSF("NOMINAL", origintag[1], vtaupt[1], isOS[1], SFname);
+                    weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);
+                  }
                   if(debug) printf("weight = %f after apply fakeSF\n",weight);
                 }else{
                   if(doubleCounting){

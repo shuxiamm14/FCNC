@@ -157,9 +157,9 @@ public :
   std::map<TString, TTree*> outputtree;
   void init_dsid();
   void ConfigNewFakeSF();
-  observable FindNewFakeSF(TString NP, std::vector<int> origintag, std::vector<float> taupt, std::vector<bool> isOS);
-  observable FindNewFakeSF(TString NP, int origintag, float taupt, bool isOS, TString &name);
-  observable FindNewFakeSF(TString NP, int origintag, float taupt, bool isOS);
+  observable FindNewFakeSF(TString NP, std::vector<int> origintag, std::vector<float> taupt, std::vector<int> isOS);
+  observable FindNewFakeSF(TString NP, int origintag, float taupt, int isOS, TString &name);
+  observable FindNewFakeSF(TString NP, int origintag, float taupt, int isOS);
   void addweights(double weight, TString name);
   void saveweightslist(TString filename);
   void readTFmeanstd(TString filename);
