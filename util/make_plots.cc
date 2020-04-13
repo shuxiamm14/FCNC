@@ -144,7 +144,7 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		tau_plots->sensitivevariable = "BDTG_test";
 		tau_plots->add("BDT discriminant","BDTG_test","",5);
 		//tau_plots->add("BDT discriminant","BDTG_train","",5);
-  		//tau_plots->add("p_{T,lead-#tau}","tau_0_pt","GeV",5);
+  		//tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",5);
   		//tau_plots->add("p_{T,sublead-#tau}","tau_1_pt","GeV",5);
   		//tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",5);
   		//tau_plots->add("m_{#tau#tau,vis}","ttvismass","",5);

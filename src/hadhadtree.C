@@ -66,8 +66,8 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots->debug = debug;
   if(reduce == 3 && doBDT) fcnc_plots->add(100,-1.,1.,"BDT discriminant","BDTG_train",&BDTG_train,false,"");
   if(reduce == 3 && doBDT) fcnc_plots->add(100,-1.,1.,"BDT discriminant","BDTG_test",&BDTG_test,false,"");
-  fcnc_plots->add(100,40.,140.,"p_{T,lead-#tau}","tau_0_pt",&tau_pt_0,false,"GeV");
-  fcnc_plots->add(100,30.,80.,"p_{T,sublead-#tau}","tau_1_pt",&tau_pt_1,false,"GeV");
+  fcnc_plots->add(100,40.,140.,"p_{T,lead-#tau}","taupt_0",&tau_pt_0,false,"GeV");
+  fcnc_plots->add(100,30.,80.,"p_{T,sublead-#tau}","taupt_1",&tau_pt_1,false,"GeV");
   fcnc_plots->add(100,15.,115.,"E^{T}_{miss}","etmiss",&etmiss,false,"GeV");
   fcnc_plots->add(60,0.,3.,"#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss",&dphitauetmiss,false);
   fcnc_plots->add(80,50.,130.,"m_{#tau#tau,vis}","ttvismass",&ttvismass,false,"GeV");

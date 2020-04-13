@@ -597,6 +597,7 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
       printf("\n");
     }
     if(chart[isOS]) {
+      chart[isOS]->caption = "The results of the fit in di-lep and $2b" + string(isOS? "OS":"SS") + "$ regions."
       chart[isOS]->print(chart[isOS]->label);
       deletepointer(chart[isOS]);
     }
