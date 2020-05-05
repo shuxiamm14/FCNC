@@ -231,7 +231,7 @@ int main(int argc, char const *argv[])
       testeven->Draw();
       testodd->Draw("same");
       l1.Draw();
-      c1.SaveAs(catname+".pdf");
+      c1.SaveAs("roc_" + catname + ".pdf");
    }
    return 0;
 }

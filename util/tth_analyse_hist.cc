@@ -37,7 +37,7 @@ int main(int argc, char const *argv[])
 	//tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 	//notau_plots->add("p_{T,b}","bpt","GeV");
 	//notau_plots->add("p_{T,light-jet}","ljetpt","GeV");
-	TString regions[] = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1e1mu1tau1b","reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
+	TString regions[] = {"reg2l1tau2b","reg1l1tau2b1j_ss","reg2l1tau1b","reg2l2bnj","reg1l2b2j","reg2l2b"};
 
 	TString nprong[] = {"1prong_","3prong_",""};
 	TString abvorbl[] = {"below35_","above35_"};

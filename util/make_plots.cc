@@ -182,8 +182,8 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		"reg2mtau2b3jss",
 		"reg2mtau2b3jos",
 	};
-	vector<TString> regions_tthML = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os", "reg1l2tau2bnj_ss","reg1l2tau2bnj_os","reg1l1tau2b2j_ss","reg1l1tau2b2j_os","reg1l1tau2b3j_ss","reg1l1tau2b3j_os"};
-	vector<TString> regions_calc_fake = {"reg1e1mu1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_os","reg1e1mu1tau1b","reg1l1tau2b_os","reg1l1tau2b_ss"};//,"reg1e1mu2bnj","reg1l2b2j","reg1e1mu2b"};
+	vector<TString> regions_tthML = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os", "reg1l2tau2bnj_ss","reg1l2tau2bnj_os","reg1l1tau2b2j_ss","reg1l1tau2b2j_os","reg1l1tau2b3j_ss","reg1l1tau2b3j_os","reg2lSS1tau1bnj_os","reg2lSS1tau1bnj_ss","reg2lSS1tau2bnj_os","reg2lSS1tau2bnj_ss"};
+	vector<TString> regions_calc_fake = {"reg2l1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_os","reg2l1tau1b","reg1l1tau2b_os","reg1l1tau2b_ss"};//,"reg2l2bnj","reg1l2b2j","reg2l2b"};
 	vector<TString> regions = framework == "xTFW" ? regions_xTFW : regions_tthML;
 	if(calculate_fake_calibration) {
 		regions = regions_calc_fake;
@@ -318,13 +318,13 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 				vector<TString> fit_regions = {
 					"reg1l1tau2b2j_os" + nprong[i], "reg1l1tau2b3j_os" + nprong[i], "reg1l1tau2b1j_os" + nprong[i],
 					"reg1l1tau2b2j_ss" + nprong[i], "reg1l1tau2b3j_ss" + nprong[i], "reg1l1tau2b1j_ss" + nprong[i],
-					"reg1e1mu1tau1b" + nprong[i],"reg1e1mu1tau2b" + nprong[i]
+					"reg2l1tau1b" + nprong[i],"reg2l1tau2b" + nprong[i]
 				};
 				map<TString,map<TString,vector<TString>>> scalesamples;
 				scalesamples["fake"];
 				scalesamples["wjet-fake"] = {
 					{"ss", {"reg1l1tau2b2j_ss" + nprong[i], "reg1l1tau2b3j_ss" + nprong[i], "reg1l1tau2b1j_ss" + nprong[i]}},
-					{"os", {"reg1l1tau2b2j_os" + nprong[i], "reg1l1tau2b3j_os" + nprong[i], "reg1l1tau2b1j_os" + nprong[i], "reg1e1mu1tau1b" + nprong[i], "reg1e1mu1tau2b" + nprong[i]}},
+					{"os", {"reg1l1tau2b2j_os" + nprong[i], "reg1l1tau2b3j_os" + nprong[i], "reg1l1tau2b1j_os" + nprong[i], "reg2l1tau1b" + nprong[i], "reg2l1tau2b" + nprong[i]}},
 				};
 				map<TString,map<TString,vector<TString>>> postfit_regions = scalesamples;
 				postfit_regions["wjet-fake"]["ss"].push_back("reg1l1tau1b3j_ss");
@@ -332,9 +332,9 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 				postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b3j_os");
 				postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b2j_os");
 */
-//				vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b3j_" + fitcharge + nprong[i], "reg1l1tau2b1j_" + fitcharge + nprong[i],"reg1e1mu1tau1b" + nprong[i],"reg1e1mu1tau2b" + nprong[i]};
-				vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b3j_" + fitcharge + nprong[i],"reg1e1mu1tau1b" + nprong[i],"reg1e1mu1tau2b" + nprong[i]};
-				//vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b1j_" + fitcharge + nprong[i],"reg1e1mu1tau1b" + nprong[i],"reg1e1mu1tau2b" + nprong[i]};
+//				vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b3j_" + fitcharge + nprong[i], "reg1l1tau2b1j_" + fitcharge + nprong[i],"reg2l1tau1b" + nprong[i],"reg2l1tau2b" + nprong[i]};
+				vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b3j_" + fitcharge + nprong[i],"reg2l1tau1b" + nprong[i],"reg2l1tau2b" + nprong[i]};
+				//vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b1j_" + fitcharge + nprong[i],"reg2l1tau1b" + nprong[i],"reg2l1tau2b" + nprong[i]};
 				vector<TString> postfit_regions = fit_regions;
 				postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + nprong[i]);
 				postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + nprong[i]);

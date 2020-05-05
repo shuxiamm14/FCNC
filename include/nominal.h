@@ -1,5 +1,6 @@
 #ifndef NOMINAL
 #define NOMINAL
+#include "region.h"
 #include "applyTF.h"
 #include <TROOT.h>
 #include <TChain.h>
@@ -30,6 +31,7 @@ public :
   bool dumpeventnumber;
   TString SystematicsName = "NOMINAL";
   CutFlow cut_flow;
+  TMinuit* gMinside;
 // Fixed size dimensions of array or collections stored in the TTree if any.
   const double btagwpCut[4]={0.94,0.83,0.64,0.11};
   //const double fakeSFs[4][4] = {
@@ -149,7 +151,7 @@ public :
   bool writetree = 1;
   TString bwps[4] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
   TString ptbin[2] = {"below35","above35"};
-  std::map<TString, bool> ifregions;
+  BelongRegion belong_regions;
   Double_t _lum = 80.;
   nominal();
   virtual ~nominal();
@@ -157,6 +159,8 @@ public :
   std::map<TString, TTree*> outputtree;
   void init_dsid();
   void ConfigNewFakeSF();
+  void initReduce1();
+  static Float_t eval(const Float_t x, const Float_t y, const TH2F* h);
   observable FindNewFakeSF(TString NP, std::vector<int> origintag, std::vector<float> taupt, std::vector<int> isOS);
   observable FindNewFakeSF(TString NP, int origintag, float taupt, int isOS, TString &name);
   observable FindNewFakeSF(TString NP, int origintag, float taupt, int isOS);
@@ -168,10 +172,11 @@ public :
   void dumpTruth(int part);
   void readweightsysmap(int dsid,TString framework);
   TLorentzVector vectorPtEtaPhiE(std::vector<float> vec);
-  virtual std::vector<int> findcjet(TString channel, std::vector<TLorentzVector> ljet, TLorentzVector bjet, TLorentzVector lepton, std::vector<TLorentzVector> taus);
-  virtual std::vector<int> findcjetML(TString channel, std::vector<TLorentzVector> ljet, TLorentzVector bjet, TLorentzVector lepton, std::vector<TLorentzVector> taus, int part);
-  std::vector<int> findwpair(std::vector<TLorentzVector> lightjets, int cjet);
+  std::vector<int> findcjet();
+  std::vector<int> findcjetML(int part);
+  std::vector<int> findwpair(int cjet);
   static Float_t getHadTauProb(Float_t _dR, Float_t _p);
+  static Float_t getLepTauProb(Float_t _dR, Float_t _minv, Float_t _p);
   Double_t phi_centrality(Double_t aPhi, Double_t bPhi, Double_t cPhi);
   void finalise_sample();
   static  void    fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
@@ -182,13 +187,16 @@ public :
   void calcfakesf_pdg(std::vector<int> originpdg, std::vector<float> pt, std::vector<int> prong);
   void defGeV(int _GeV);
   bool AddTheorySys();
-  virtual void init_reduce1(){ printf("WARNING: virtual function init_reduce1() is used\n");};
-  virtual void init_reduce2(){ printf("WARNING: virtual function init_reduce2() is used\n");};
+  void initCommon();
+  void initFit();
   virtual void init_hist(TString histfilename){ printf("WARNING: virtual function init_hist is used\n");};
   virtual void Loop(TTree*inputtree, TString samplename, float globalweight){ printf("WARNING: virtual function Loop is used\n");};
   virtual void init_sample(TString sample, TString sampletitle){ printf("WARNING: virtual function init_sample is used\n");};
   virtual void constructwmatchmap(TTree *tree){ printf("WARNING: virtual function constructwmatchmap is used\n");};
   static void printv(TLorentzVector v);
+  void setVecBranch(TTree *tree);
+  void vecBranch(TTree *tree);
+
   int leading_b = -1 ;
   int leading_ljet = -1 ;
 
@@ -206,13 +214,30 @@ public :
   std::vector<float>  *tau_eta;
   std::vector<float>  *tau_phi;
   std::vector<float>  *tau_charge;
-  TLorentzVector bjet_v;
-  TLorentzVector cjet_v;
-  std::vector<TLorentzVector> taus_v;
-  TLorentzVector lep_v;
-  TVector3 mets;
-  TVector3 truth_mets;
-  TList forFit;
+  std::vector<UInt_t>          *taus_n_charged_tracks;
+  std::vector<Int_t>           *taus_b_tagged;
+  std::vector<Float_t>         *taus_q;
+  std::vector<TLorentzVector*> *taus_p4;
+  TLorentzVector               *met_p4;
+  std::vector<TLorentzVector*> *bjets_p4;
+  std::vector<TLorentzVector*> *ljets_p4;
+  std::vector<TLorentzVector*> *leps_p4;
+  std::vector<Int_t>           *leps_id;
+
+  static TH2F* prob_20_40;
+  static TH2F* prob_40_60;
+  static TH2F* prob_60_80;
+  static TH2F* prob_80_100;
+  static TH2F* prob_100_120;
+  static TH2F* prob_120_140;
+  static TH2F* prob_140_160;
+  static TH2F* prob_160_200;
+  static TH2F* prob_200_300;
+  static TH2F* prob_300_400;
+  static TH2F* prob_400;
+
+
+  std::map<TString,std::vector<TLorentzVector*>*> fitvec;
   float      t2vismass;
   float      t1vismass;
   float      ttvismass;

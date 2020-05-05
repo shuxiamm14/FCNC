@@ -127,10 +127,6 @@ nominal::nominal(){
   outputtreefile = 0;
   fake_plots = 0;
   fake_notau_plots = 0;
-  TLorentzVector v1;
-  for(int i = 0 ; i < 2 ; ++i){
-    taus_v.push_back(v1);
-  }
 
   for (int i = 0; i < 4; ++i)
   {
@@ -138,20 +134,13 @@ nominal::nominal(){
     dovetobwp[bwps[i]] = 0;
   }
 
-  forFit.Add(&(taus_v[0]));
-  forFit.Add(&(taus_v[1]));
-  forFit.Add(&bjet_v);
-  forFit.Add(&cjet_v);
-  forFit.Add(&lep_v);
-  forFit.Add(&mets);
-
   neutrino_pt  = new vector<float>();
   neutrino_eta = new vector<float>();
   neutrino_phi = new vector<float>();
   neutrino_m   = new vector<float>();
   fake_plots = 0;
   fake_notau_plots = 0;
-  gM = 0;
+  gMinside = initgM();
   
   cut_flow.setWeight(&weight);
   cut_flow.setEventNumber(&eventNumber);
@@ -178,6 +167,52 @@ nominal::~nominal(){
   deletepointer(neutrino_m   );
 }
 
+void nominal::initReduce1(){
+  taus_n_charged_tracks = new vector<UInt_t> ();
+  taus_b_tagged = new vector<Int_t> ();
+  taus_p4 = new vector<TLorentzVector*>();
+  taus_q = new vector<Float_t> ();
+  leps_id = new vector<Int_t> ();
+  bjets_p4 = new vector<TLorentzVector*>;
+  ljets_p4 = new vector<TLorentzVector*>();
+  leps_p4 = new vector<TLorentzVector*>();
+  met_p4 = new TLorentzVector();
+}
+
+void nominal::setVecBranch(TTree *tree){
+  tree->SetBranchAddress("leps_p4", &leps_p4);
+  tree->SetBranchAddress("leps_id", &leps_id);
+  tree->SetBranchAddress("bjets_p4", &bjets_p4);
+  tree->SetBranchAddress("met_p4", &met_p4);
+  tree->SetBranchAddress("taus_p4", &taus_p4);
+  tree->SetBranchAddress("ljets_p4", &ljets_p4);
+  tree->SetBranchAddress("taus_n_charged_tracks", &taus_n_charged_tracks);
+  tree->SetBranchAddress("taus_b_tagged", &taus_b_tagged);
+  tree->SetBranchAddress("taus_q", &taus_q);
+}
+
+void nominal::vecBranch(TTree *tree){
+  tree->Branch("leps_p4", &leps_p4);
+  tree->Branch("leps_id", &leps_id);
+  tree->Branch("bjets_p4", &bjets_p4);
+  tree->Branch("met_p4", &met_p4);
+  tree->Branch("taus_p4", &taus_p4);
+  tree->Branch("ljets_p4", &ljets_p4);
+  tree->Branch("taus_n_charged_tracks", &taus_n_charged_tracks);
+  tree->Branch("taus_b_tagged", &taus_b_tagged);
+  tree->Branch("taus_q", &taus_q);
+}
+
+
+void nominal::initFit(){
+  fitvec["taus"] = taus_p4;
+  fitvec["leps"] = leps_p4;
+  fitvec["bjets"] = bjets_p4;
+  fitvec["ljets"] = ljets_p4;
+  fitvec["met"] = new vector<TLorentzVector*>();
+  fitvec["met"]->push_back(met_p4);
+}
+
 void nominal::init_dsid(){
   ifill = 0;
   weightlist.clear();
@@ -199,145 +234,181 @@ void nominal::plot(){
 }
 
 void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag) {
-  if(!GeV) {
-    printf("Error: nominal::GeV not initialised\n");
-    exit(0);
-  }
-  TList *listforfit = (TList*) gM->GetObjectFit();
-  if (!listforfit)
+
+  auto *fitvec = (std::map<TString,std::vector<TLorentzVector*>*>*) gM->GetObjectFit();
+  if (!fitvec)
   {
     printf("list isnt found\n");
     exit(1);
   }
-  enum lorentzv{tau1,tau2,bj,cj,lep};
-  
-  TLorentzVector vectors[5];
+
+  std::vector<TLorentzVector*> *taus = fitvec->at("taus");
+  std::vector<TLorentzVector*> *leps = fitvec->at("leps");
+  std::vector<TLorentzVector*> *bjets = fitvec->at("bjets");
+  std::vector<TLorentzVector*> *ljets = fitvec->at("ljets");
+  std::vector<TLorentzVector*> *met = fitvec->at("met");
+  TString channel;
+  if(taus->size() == 2 && leps->size() == 0) channel = "hadhad";
+  else if(taus->size() == 1 && leps->size() == 1) channel = "lephad";
+  else if(taus->size() == 2 && leps->size() == 1) channel = "lep2tau";
+  else if(taus->size() == 1 && leps->size() == 2) channel = "2lSStau";
+  else {
+    printf("nominal::fcn() Error: Channel not found: %lu leptons, %lu taus\n", leps->size(), taus->size());
+    exit(1);
+  }
+
   TLorentzVector neutrino[3];
-  for( int i = 0; i<5 ; ++i) {
-    if (listforfit->At(i))
-    {
-      vectors[i] = *((TLorentzVector*)listforfit->At(i));
-    }else{
-      printf("i-th parameter is not found\n");
-      exit(1);
-    }
-  }
-  double met[3];
-  if (listforfit->At(5)) {
-    met[0] = ((TVector3*)listforfit->At(5))->x();
-    met[1] = ((TVector3*)listforfit->At(5))->y();
-    met[2] = ((TVector3*)listforfit->At(5))->z();
-  }
-  else { printf("met parameter is not found\n"); exit(1); }
+  //neutrino 0 is from leading tau. neutrino 1 is from subleading tau or leptonic tau.
 
-  neutrino[0].SetPtEtaPhiM(par[0]*vectors[tau1].Pt(),vectors[tau1].Eta(),vectors[tau1].Phi(),vectors[lep].Pt()==0?par[2]:0);
-  neutrino[1].SetPtEtaPhiM(par[1]*vectors[tau2].Pt(),vectors[tau2].Eta(),vectors[tau2].Phi(),0);
-  Float_t Hmass = (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]).M();
-  Float_t met_resol = 13.1*GeV+0.50*sqrt(met[2]*GeV);
-  Double_t chisq = 1e10;
+  if(channel == "lep2tau"){
 
-  if(vectors[lep].Pt()!=0){
+    neutrino[0].SetPtEtaPhiM(par[0]*taus->at(0)->Pt(),taus->at(0)->Eta(),taus->at(0)->Phi(),0);
+    neutrino[1].SetPtEtaPhiM(par[1]*taus->at(1)->Pt(),taus->at(1)->Eta(),taus->at(1)->Phi(),0);
+    Float_t Hmass = (*taus->at(0)+neutrino[0]+*taus->at(1)+neutrino[1]).M();
+    Float_t met_resol = 13.1*GeV+0.50*sqrt(met->at(0)->Pz()*GeV);
+    f = 1e10;
+  
     neutrino[2].SetPtEtaPhiM(par[2],par[3],par[4],0);
-  
-    TLorentzVector t1 = neutrino[2]+vectors[lep]+vectors[bj];
-  
-    Float_t t2mass= (vectors[tau1]+neutrino[0]+vectors[tau2]+neutrino[1]+vectors[cj]).M();
-    Float_t wmass = (vectors[lep] + neutrino[2]).M();
+    TLorentzVector t1 = neutrino[2]+*leps->at(0)+*bjets->at(0);
+    //Float_t t2mass= (*taus->at(0)+neutrino[0]+*taus->at(1)+neutrino[1]+*ljet->at(0)).M();
+    Float_t wmass = (*leps->at(0) + neutrino[2]).M();
     Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px()+neutrino[2].Px();
     Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py()+neutrino[2].Py();
-    Float_t pConstrain = (vectors[bj].Dot(vectors[lep])/100) + (vectors[bj].Dot(neutrino[2])/100);
-    chisq =  pow((wmass-81*GeV)/10*GeV,2) + pow((t1.M()-172500)/25*GeV,2) +pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2) + pow((Hmass-125*GeV)/10*GeV,2);// + pow((t2mass-172.5)/30,2);// + pow((pConstrain-110)/20,2);
+    //Float_t pConstrain = (bjets->at(0).Dot(leps->at(0))/100) + (bjets->at(0).Dot(neutrino[2])/100);
+    f =  pow((wmass-81*GeV)/10/GeV,2) + pow((t1.M()-172.5*GeV)/25/GeV,2) +pow((pxMiss-met->at(0)->Px())/met_resol,2) + pow((pyMiss-met->at(0)->Py())/met_resol,2) + pow((Hmass-125*GeV)/10/GeV,2);// + pow((t2mass-172.5)/30,2);// + pow((pConstrain-110)/20,2);
   }else{
-    Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px();
-    Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py();
-    chisq = pow((Hmass-125*GeV)/10*GeV,2) + pow((pxMiss-met[0])/met_resol,2) + pow((pyMiss-met[1])/met_resol,2);
+    neutrino[0].SetPtEtaPhiM(par[0],par[1],par[2],0);
+    neutrino[1].SetPtEtaPhiM(par[3],par[4],par[5],par[6]);
+  
+    Float_t prob1(0), prob2(0);
+    Float_t mass1, mass2, mass, pxMiss, pyMiss;
+  
+    prob1 = getHadTauProb(taus->at(0)->DeltaR(neutrino[0]),(*taus->at(0)+neutrino[0]).P()/GeV);
+    mass1 = (*taus->at(0)+neutrino[0]).M();
+  
+    if(channel == "lephad") {
+      prob2 = getLepTauProb(leps->at(0)->DeltaR(neutrino[1]),neutrino[1].M()/GeV,(*leps->at(0)+neutrino[1]).P()/GeV);
+      mass2 = (*leps->at(0)+neutrino[1]).M();
+      mass = (*taus->at(0)+neutrino[0]+*leps->at(0)+neutrino[1]).M();
+    }
+    else if(channel == "hadhad") {
+      prob2 = getHadTauProb(taus->at(1)->DeltaR(neutrino[1]),(*taus->at(1)+neutrino[1]).P()/GeV);
+      mass2 = (*taus->at(1)+neutrino[1]).M();
+      mass = (*taus->at(0)+neutrino[0]+*taus->at(1)+neutrino[1]).M();
+    }
+    pxMiss = neutrino[0].Px()+neutrino[1].Px();
+    pyMiss = neutrino[0].Py()+neutrino[1].Py();
+    
+    f = 1e10;
+    if(prob1>0 && prob2>0) {
+      Float_t met_resol = (13.1+0.50*sqrt(met->at(0)->Pz()/GeV))*GeV;
+      f = -2*log(prob1) -2*log(prob2) + pow((mass1-1.777*GeV)/1.777/GeV,2) + pow((mass2-1.777*GeV)/1.777/GeV,2) + pow((mass-125*GeV)/20/GeV,2) + pow((pxMiss-met->at(0)->Px())/met_resol,2) + pow((pyMiss-met->at(0)->Py())/met_resol,2);
+    }
   }
-  f = chisq;
 }
 
 
 
-vector<int> nominal::findcjet(TString channel, vector<TLorentzVector> ljet, TLorentzVector bjet, TLorentzVector lepton, vector<TLorentzVector> taus){
+vector<int> nominal::findcjet(){
   double m_w = 81*GeV;
   vector<int> output;
-  int nlightj = ljet.size();
+  TString channel;
+  if(taus_p4->size() + leps_p4->size() == 3) channel = "leponicW";
+  else if(taus_p4->size() + leps_p4->size() == 2) channel = "hadronicW";
+  else printf("ERROR: channel not recognized: %lu leptons and %lu taus\n", leps_p4->size(), taus_p4->size());
+  int nlightj = ljets_p4->size();
+  if(!nlightj) return output;
   if(debug) printf("nlightj: %d\n", nlightj); 
-  double smallDr = 999;
+  double smallDr = NAN;
+  TLorentzVector *closelep = 0;
   int fcjet = 0;
-
+  if(leps_p4->size() >= 1){
+    for(auto lep: *leps_p4){
+      double Dr = lep->DeltaR(*taus_p4->at(0));
+      if(Dr<smallDr || smallDr != smallDr) {
+        closelep = lep;
+        smallDr = Dr;
+      }
+    }
+  }
+  smallDr = NAN;
   for (int j = 0; j < nlightj; ++j){
-    double Dr = ljet[j].DeltaR(taus.size() == 2? taus[0] + taus[1] : taus[0] + lepton);
-    if(smallDr>Dr){
+    double Dr = ljets_p4->at(j)->DeltaR(taus_p4->size()>=2? *taus_p4->at(0) + *taus_p4->at(1) : *taus_p4->at(0) + *closelep);
+    if(smallDr>Dr || smallDr != smallDr){
       smallDr = Dr;
       fcjet = j;
     }
   }
   output.push_back(fcjet);
-  if (channel.Contains("had")){
+  if (channel == "hadronicW"){
     if(nlightj <= 3){
       for (int i = 0; i < nlightj; ++i){
         if(i!=fcjet) output.push_back(i);
       }
     }else{
-      vector<int> wpair = findwpair(ljet, fcjet);
+      vector<int> wpair = findwpair(fcjet);
       output.push_back(wpair[0]);
       output.push_back(wpair[1]);
     }
   }
   return output;
 }
-vector<int> nominal::findcjetML(TString channel, vector<TLorentzVector> pool, TLorentzVector bjet, TLorentzVector lepton, vector<TLorentzVector> taus, int trainpart){
-  int nlightj = taus.size()>=2?(pool.size()>3?3:pool.size()):(pool.size()>4?4:pool.size());
+
+vector<int> nominal::findcjetML(int trainpart){
+  int nlightj = taus_p4->size()>=2?(ljets_p4->size()>3?3:ljets_p4->size()):(ljets_p4->size()>4?4:ljets_p4->size());
   vector<int>  output;
   vector<float> MLinput[10];
   int nentryML = 0;
   TString modelname;
-  if(channel == "lephad"){
+  if(leps_p4->size() == 1 && taus_p4->size() == 1){
     modelname = "lephad";
   }
-  else if(channel == "lep2tau"){
+  else if(leps_p4->size() == 1 && taus_p4->size() == 2){
     modelname = "lep2tau";
-  }else if(channel == "hadhad"){
+  }else if(leps_p4->size() == 0 && taus_p4->size() == 2){
     modelname = "hadhad";
+  }else{
+    printf("channel not recognized: %lu leptons, %lu taus\n", leps_p4->size(), taus_p4->size());
+    exit(0);
   }
-  modelname = channel + char(nlightj + '0') + "j";
+  modelname = modelname + char(nlightj + '0') + "j";
   if(debug) printf("lightjet:\n");
   for (int i = 0; i < nlightj; ++i)
   {
-    if(debug) printv(pool[i]);
-    //MLinput[nentryML].push_back(pool[i].Pt());
-    MLinput[nentryML].push_back(pool[i].Eta());
-    MLinput[nentryML].push_back(pool[i].Phi());
-    MLinput[nentryML].push_back(pool[i].E());
+    if(debug) printv(*ljets_p4->at(i));
+    //MLinput[nentryML].push_back(ljets_p4->at(i)->Pt());
+    MLinput[nentryML].push_back(ljets_p4->at(i)->Eta());
+    MLinput[nentryML].push_back(ljets_p4->at(i)->Phi());
+    MLinput[nentryML].push_back(ljets_p4->at(i)->E());
     nentryML++;
   }
   if(debug) printf("bjet:\n");
   //printv(bjet);
-  //MLinput[nentryML].push_back(bjet.Pt ());
-  MLinput[nentryML].push_back(bjet.Eta());
-  MLinput[nentryML].push_back(bjet.Phi());
-  MLinput[nentryML].push_back(bjet.E  ());
+  //MLinput[nentryML].push_back(bjets_p4->at(0)->Pt ());
+  MLinput[nentryML].push_back(bjets_p4->at(0)->Eta());
+  MLinput[nentryML].push_back(bjets_p4->at(0)->Phi());
+  MLinput[nentryML].push_back(bjets_p4->at(0)->E  ());
   nentryML++;
 
   if(debug) printf("taus:\n");
-  for (int i = 0; i < taus.size(); ++i)
+  for (int i = 0; i < taus_p4->size(); ++i)
   {
-    if(debug) printv(taus[i]);
-    //MLinput[nentryML].push_back(taus[i].Pt());
-    MLinput[nentryML].push_back(taus[i].Eta());
-    MLinput[nentryML].push_back(taus[i].Phi());
-    MLinput[nentryML].push_back(taus[i].E());
+    if(debug) printv(*taus_p4->at(i));
+    //MLinput[nentryML].push_back(taus_p4->at(i)->Pt());
+    MLinput[nentryML].push_back(taus_p4->at(i)->Eta());
+    MLinput[nentryML].push_back(taus_p4->at(i)->Phi());
+    MLinput[nentryML].push_back(taus_p4->at(i)->E());
     nentryML++;
   }
-  if(channel.Contains("lep")){
+  if(modelname.Contains("lep")){
     if(debug) {
       printf("lepton:\n");
-      printv(lep_v);
+      printv(*leps_p4->at(0));
     }
-    //MLinput[nentryML].push_back(lep_v.Pt());
-    MLinput[nentryML].push_back(lep_v.Eta());
-    MLinput[nentryML].push_back(lep_v.Phi());
-    MLinput[nentryML].push_back(lep_v.E());
+    //MLinput[nentryML].push_back(leps_p4->at(0)->Pt());
+    MLinput[nentryML].push_back(leps_p4->at(0)->Eta());
+    MLinput[nentryML].push_back(leps_p4->at(0)->Phi());
+    MLinput[nentryML].push_back(leps_p4->at(0)->E());
     nentryML++;
   }
   modelname += trainpart ? "even" : "odd";
@@ -352,7 +423,7 @@ vector<int> nominal::findcjetML(TString channel, vector<TLorentzVector> pool, TL
   for (int j = 0; j < nlightj; ++j){
     ljets_score.push_back(predicted[j][0]);
     if(predicted[j][0]<0.1) continue;
-    double Dr = pool[j].DeltaR(taus.size() == 2? taus[0] + taus[1] : taus[0] + lepton);
+    double Dr = ljets_p4->at(j)->DeltaR(taus_p4->size() == 2? *taus_p4->at(0) + *taus_p4->at(1) : *taus_p4->at(0) + *leps_p4->at(0));
     if(smallDr>Dr){
       smallDr = Dr;
       cjettmp = j;
@@ -367,13 +438,13 @@ vector<int> nominal::findcjetML(TString channel, vector<TLorentzVector> pool, TL
       }
     }
   output.push_back(cjettmp);
-  if (channel.Contains("had")){
+  if (modelname.Contains("had")){
     if(nlightj <= 3){
       for (int i = 0; i < nlightj; ++i){
         if(i!=cjettmp) output.push_back(i);
       }
     }else{
-      vector<int> wpair = findwpair(pool, cjettmp);
+      vector<int> wpair = findwpair(cjettmp);
       output.push_back(wpair[0]);
       output.push_back(wpair[1]);
     }
@@ -596,7 +667,7 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
       printf("\n");
     }
     if(chart[isOS]) {
-      chart[isOS]->caption = "The results of the fit in di-lep and $2b" + string(isOS? "OS":"SS") + "$ regions."
+      chart[isOS]->caption = "The results of the fit in di-lep and $2b" + string(isOS? "OS":"SS") + "$ regions.";
       chart[isOS]->print(chart[isOS]->label);
       deletepointer(chart[isOS]);
     }
@@ -643,7 +714,7 @@ void nominal::saveweightslist(TString filename){
   out.close();
 }
 
-vector<int> nominal::findwpair(vector<TLorentzVector> lightjets, int cjet){
+vector<int> nominal::findwpair(int cjet){
   if(!GeV) {
     printf("Error: nominal::GeV not initialised\n");
     exit(0);
@@ -652,13 +723,13 @@ vector<int> nominal::findwpair(vector<TLorentzVector> lightjets, int cjet){
   float m_w = 81*GeV;
   vector<int> output;
   int wjet1,wjet2;
-  for (int i = 0; i < lightjets.size(); ++i)
+  for (int i = 0; i < (*ljets_p4).size(); ++i)
   {
     if (i == cjet) continue;
-    for (int j = 0; j < lightjets.size(); ++j)
+    for (int j = 0; j < (*ljets_p4).size(); ++j)
     {
       if(i <= j || j == cjet) continue;
-      float deltam = abs((lightjets[i] + lightjets[j]).M() - m_w);
+      float deltam = abs((*ljets_p4->at(i) + *ljets_p4->at(j)).M() - m_w);
       if(mindeltam<0 || mindeltam > deltam ){
         mindeltam = deltam;
         wjet1 = i; wjet2 = j;
@@ -713,7 +784,7 @@ void nominal::finalise_sample(){
 }
 
 TMinuit* nominal::initgM(){
-
+  deletepointer(gM);
   gM = new TMinuit(5);
   gM->SetFCN(fcn);
   gM->SetPrintLevel(-1);

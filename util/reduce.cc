@@ -93,14 +93,18 @@ int main(int argc, char const *argv[])
 			regions.push_back("reg1l2tau1bnj_ss");
 			regions.push_back("reg1l2tau2bnj_os");
 			regions.push_back("reg1l2tau2bnj_ss");
+			regions.push_back("reg2lSS1tau1bnj_ss");
+			regions.push_back("reg2lSS1tau1bnj_os");
+			regions.push_back("reg2lSS1tau2bnj_ss");
+			regions.push_back("reg2lSS1tau2bnj_os");
 		}
 		if(dofake || reduce == 1){
-			regions_fake.push_back("reg1e1mu1tau2b");
+			regions_fake.push_back("reg2l1tau2b");
 			regions_fake.push_back("reg1l1tau2b1j_os");
 			regions_fake.push_back("reg1l1tau2b1j_ss");
 			regions_fake.push_back("reg1l1tau2b_os");
 			regions_fake.push_back("reg1l1tau2b_ss");
-			regions_fake.push_back("reg1e1mu1tau1b");
+			regions_fake.push_back("reg2l1tau1b");
 		}
 
 	}
@@ -124,10 +128,7 @@ int main(int argc, char const *argv[])
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
 	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
 	analysis->doubleCounting = 1;
-	if(framework == "xTFW") {
-		if(reduce == 1) analysis->init_reduce1();
-		else analysis->init_reduce2();
-	}
+  	analysis->belong_regions.enable(regions);
 	char inputline[500];
 
 	if(reduce > 1){
@@ -142,8 +143,8 @@ int main(int argc, char const *argv[])
 				analysis->dovetobwp["btagwp70"] = 1;
 				analysis->dobwp["btagwp70"] = 1;
 				analysis->dobwp["btagwp85"] = 1;
-				regions.insert(regions.end(),regions_fake.begin(),regions_fake.end());
-				regions.insert(regions.end(),regions_notau.begin(),regions_notau.end());
+				analysis->belong_regions.enable(regions_fake);
+				analysis->belong_regions.enable(regions_notau);
 				analysis->fake_regions = regions_fake;
 				analysis->fake_regions_notau = regions_notau;
 			}
@@ -205,6 +206,9 @@ int main(int argc, char const *argv[])
 	if(framework == "tthML"){
 		analysis->fake_regions = regions_fake;
 		analysis->fake_regions_notau = regions_notau;
+		analysis->belong_regions.enable(regions_fake);
+		analysis->belong_regions.enable(regions_notau);
+
 	}
 	analysis->init_sample(inputconfig,inputconfig);
 

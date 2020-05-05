@@ -29,7 +29,7 @@ int main(int argc, char const *argv[])
 		TString jobname = variable + "_" + signals[isig];
 		setlimit(chart, jobname + "/Limits/" + jobname + ".root", signalstitle[isig].Data(), "Combined");
 	}
-
+	chart->caption="The limits derived from leptonic channels.";
 	chart->print("limits");
 	return 0;
 }

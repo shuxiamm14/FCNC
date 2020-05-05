@@ -9,8 +9,6 @@ public:
    void Loop(TTree *inputtree, TString samplename, float globalweight);
    void dumpTruth(int ipart);
    void init_sample(TString sample, TString sampletitle);
-   static  void     fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
-   TMinuit* initgM();
    void init_hist(TString outputhistfile);
    static Float_t getLepTauProb(Float_t _dR, Float_t _minv, Float_t _p) ;
    void initialize_fit(const char* input);
@@ -19,25 +17,13 @@ public:
    static void fillOverFlow(TH1F* h);
    bool addWeightSys();
    void constructTruth();
-   truthpart* truthmatch(TLorentzVector p4);
+   truthpart* truthmatch(TLorentzVector *p4);
    void constructwmatchmap(TTree *tree);
    std::vector<truthpart*> truthparticles;
    bool dofit1l2tau = 0;
    bool applyfakeSF = 0;
    std::map<ULong64_t, bool> taumatchmap;
    std::map<ULong64_t, bool> subtaumatchmap;
-
-   static TH2F* prob_20_40;
-   static TH2F* prob_40_60;
-   static TH2F* prob_60_80;
-   static TH2F* prob_80_100;
-   static TH2F* prob_100_120;
-   static TH2F* prob_120_140;
-   static TH2F* prob_140_160;
-   static TH2F* prob_160_200;
-   static TH2F* prob_200_300;
-   static TH2F* prob_300_400;
-   static TH2F* prob_400;
    const bool tightLep = 1;
    const bool tightTau = 0;
    bool taumatchwjet = 0;
