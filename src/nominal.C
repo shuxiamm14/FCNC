@@ -349,7 +349,17 @@ vector<int> nominal::findcjet(){
       vector<int> wpair = findwpair(fcjet);
       output.push_back(wpair[0]);
       output.push_back(wpair[1]);
+      wmass = (*ljets_p4->at(output[1]) + *ljets_p4->at(output[2])).M();
     }
+    TLorentzVector top = *bjets_p4->at(0);
+    for (int i = 1; i < output.size(); ++i)
+    {
+      top = top + *ljets_p4->at(output[i]);
+    }
+    t1vismass = top.M();
+    t1mass = t1vismass;
+  }else{
+    t1vismass = (*leps_p4->at(0) + *bjets_p4->at(0)).M();
   }
   return output;
 }
