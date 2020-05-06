@@ -567,7 +567,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       mtaujmin = 0;
       mjjmin = 0;
 
-      TLorentzVector *tau2,wlep;
+      TLorentzVector *tau2,*wlep;
       if(taus_p4->size() == 2) {
         tau2 = taus_p4->at(1);
         wlep = leps_p4->at(0);
@@ -716,8 +716,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           etamax = 0;
           drltau = 0;
         }else{
-          tau_pt_ss = wlep*tau_charge_0 > 0 ? tau_pt_0 : tau2->Pt();
-          tau_pt_os = wlep*tau_charge_0 < 0 ? tau_pt_0 : tau2->Pt();
+          tau_pt_ss = (wlep == leps_p4->at(0)? lep_ID_0 : lep_ID_1)*tau_charge_0 > 0 ? tau_pt_0 : tau2->Pt();
+          tau_pt_os = (wlep == leps_p4->at(0)? lep_ID_0 : lep_ID_1)*tau_charge_0 < 0 ? tau_pt_0 : tau2->Pt();
           drlbditau = (*wlep + *bjets_p4->at(0)).DeltaR(*taus_p4->at(0) + *tau2);
           drlb = wlep->DeltaR(*bjets_p4->at(0));
           drtaub = bjets_p4->at(0)->DeltaR(*taus_p4->at(0));
