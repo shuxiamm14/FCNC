@@ -477,7 +477,6 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		deletepointer(datafile[i]);
 		deletepointer(datafile_fake[i]);
 	}
-	
 }
 
 int main(int argc, char const *argv[])

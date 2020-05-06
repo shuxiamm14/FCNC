@@ -566,6 +566,26 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       drtaujmin = 10;
       mtaujmin = 0;
       mjjmin = 0;
+
+      TLorentzVector *tau2,wlep;
+      if(taus_p4->size() == 2) {
+        tau2 = taus_p4->at(1);
+        wlep = leps_p4->at(0);
+      }
+      else {
+        tau2 = leps_p4->at(0);
+        if(leps_p4->size() == 2){
+          if(tau2->DeltaR(*taus_p4->at(0)) > leps_p4->at(1)->DeltaR(*taus_p4->at(0))) {
+            tau2 = leps_p4->at(1);
+            wlep = leps_p4->at(0);
+          }else{
+            wlep = leps_p4->at(1);
+          }
+        }else{
+          wlep = 0;
+        }
+      }
+
       if (fcnc) {
         double tmpdr;
         double tmpm;
@@ -576,13 +596,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
               if(mjjmin > tmpmjj || mjjmin==0) mjjmin = tmpmjj;
             }
           }
-          if(taus_p4->size() == 2) {
-            tmpdr = min(taus_p4->at(0)->DeltaR(*lj1), taus_p4->at(1)->DeltaR(*lj1));
-            tmpm = min((*taus_p4->at(0)+*lj1).M(), (*taus_p4->at(1)+*lj1).M());
-          }else if(leps_p4->size() == 1){
-            tmpdr = min(taus_p4->at(0)->DeltaR(*lj1), leps_p4->at(0)->DeltaR(*lj1));
-            tmpm = min((*taus_p4->at(0)+*lj1).M(), (*leps_p4->at(0)+*lj1).M());
-          }
+          tmpdr = min(taus_p4->at(0)->DeltaR(*lj1), tau2->DeltaR(*lj1));
+          tmpm = min((*taus_p4->at(0)+*lj1).M(), (*tau2+*lj1).M());
           if (drtaujmin > tmpdr) {
             drtaujmin = tmpdr;
           }if(mtaujmin > tmpm){
@@ -598,6 +613,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         ljet_indice = findcjet();
 
         //==  =============================fit neutrino===============================
+        chi2 = 0;
         if(dofit && (taus_p4->size() + leps_p4->size() == 2 || dofit1l2tau)){
           if (taus_p4->size() >= 2) {
             gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
@@ -672,84 +688,67 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           TLorentzVector tauv1_v,tauv2_v,all;
           if(taus_p4->size() >= 2) {
             tauv1_v.SetPtEtaPhiM(val[0]*taus_p4->at(0)->Pt(), taus_p4->at(0)->Eta(), taus_p4->at(0)->Phi(), ljets_p4->size() >= 2 ? 0 : val[2]);
-            tauv2_v.SetPtEtaPhiM(val[1]*taus_p4->at(1)->Pt(), taus_p4->at(1)->Eta(), taus_p4->at(1)->Phi(), 0);
+            tauv2_v.SetPtEtaPhiM(val[1]*tau2->Pt(), tau2->Eta(), tau2->Phi(), 0);
             x1fit = 1 / (1 + val[0]);
             x2fit = 1 / (1 + val[1]);
             TLorentzVector wv_v;
             wv_v.SetPtEtaPhiM(val[2], val[3], val[4], 0);
-            t1mass = (*leps_p4->at(0) + wv_v + *bjets_p4->at(0)).M();
-            wmass = (*leps_p4->at(0) + wv_v).M();
-            t2mass = ljets_p4->size() ? (tauv2_v + *taus_p4->at(0) + tauv1_v + *taus_p4->at(1) + *ljets_p4->at(ljet_indice[0])).M() : 0;
-            tautaumass = (tauv2_v + *taus_p4->at(0) + tauv1_v + *taus_p4->at(1)).M();
-            all = *taus_p4->at(0)+ *taus_p4->at(1) + *bjets_p4->at(0);
+            t1mass = (*wlep + wv_v + *bjets_p4->at(0)).M();
+            wmass = (*wlep + wv_v).M();
           }
           else {
             tauv1_v.SetPtEtaPhiM(val[0],val[1],val[2],0);
             tauv2_v.SetPtEtaPhiM(val[3],val[4],val[5],val[6]);
             x1fit = taus_p4->at(0)->E() / (*taus_p4->at(0) + tauv1_v).E();
-            x2fit = leps_p4->at(0)->E() / (*leps_p4->at(0) + tauv2_v).E();
-            t2mass = ljets_p4->size() ? (tauv2_v + *taus_p4->at(0) + tauv1_v + *leps_p4->at(0) + *ljets_p4->at(ljet_indice[0])).M() : 0;
-            tautaumass = (tauv2_v + *taus_p4->at(0) + tauv1_v + *leps_p4->at(0)).M();
-            all = *taus_p4->at(0)+ *leps_p4->at(0) + *bjets_p4->at(0);
+            x2fit = tau2->E() / (*tau2 + tauv2_v).E();
           }
-          for (int i = 0; i < ljet_indice.size(); ++i)
-          {
-            all+=*ljets_p4->at(ljet_indice[i]);
-          }
-          allmass = all.M();
-          allpz = all.Pz();
-        }
 
-        if (taus_p4->size() == 2) {
-          tau_pt_ss = leps_id->at(0)*tau_charge_0 > 0 ? tau_pt_0 : tau_pt_1;
-          tau_pt_os = leps_id->at(0)*tau_charge_0 < 0 ? tau_pt_0 : tau_pt_1;
-          drlbditau = (*leps_p4->at(0) + *bjets_p4->at(0)).DeltaR(*taus_p4->at(0) + *taus_p4->at(1));
-          drlb = leps_p4->at(0)->DeltaR(*bjets_p4->at(0));
-          drtaub = bjets_p4->at(0)->DeltaR(*taus_p4->at(0));
-          t1vismass = (*leps_p4->at(0) + *bjets_p4->at(0)).M();
-          mtw = 2*leps_p4->at(0)->Pt()*MET_RefFinal_et*(1 - cos(MET_RefFinal_phi - leps_p4->at(0)->Phi()));
-          mtw = mtw > 0 ? sqrt(mtw) : 0.;
-          etamax = max(fabs(taus_p4->at(0)->Eta()),fabs(taus_p4->at(1)->Eta()));
-          drltau = min(taus_p4->at(0)->DeltaR(*leps_p4->at(0)), taus_p4->at(1)->DeltaR(*leps_p4->at(0)));
-          if(drltau < 0.2) {
-            printf("WARINING: Delta(l,tau) is less than 0.2, please check: eventNumber = %llu\n",eventNumber);
-            printv(*taus_p4->at(0));
-            printv(*taus_p4->at(1));
-            printv(*leps_p4->at(0));
-          }
-          TLorentzVector all = *taus_p4->at(0)+ *taus_p4->at(1) + *bjets_p4->at(0);
-          for (int i = 0; i < ljet_indice.size(); ++i)
-          {
-            all+=*ljets_p4->at(ljet_indice[i]);
-          }
-          allmass = all.M();
-          allpz = all.Pz();
-          phicent = 0;
-          ttvismass = (*taus_p4->at(0) + *taus_p4->at(1)).M();
-          tautauvispt = (*taus_p4->at(0) + *taus_p4->at(1)).Pt();
-          t2vismass = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *taus_p4->at(1) + *ljets_p4->at(ljet_indice[0])).M() : 0;
-          drtautau = taus_p4->at(0)->DeltaR(*taus_p4->at(1));
-          drtauj = ljets_p4->size() >= 2 ? (*taus_p4->at(0) + *taus_p4->at(1)).DeltaR(*ljets_p4->at(ljet_indice[0])) : 0;
-          dphitauetmiss = fabs(met_phi - (*taus_p4->at(0) + *taus_p4->at(1)).Phi());
-        } else if (leps_p4->size() == 1){
-          tau_pt_1 = leps_p4->at(0)->Pt();
-          phicent = phi_centrality(taus_p4->at(0)->Phi(),leps_p4->at(0)->Phi(),met_phi);
-          t1vismass = t1mass;
+          t2mass = ljets_p4->size() ? (tauv2_v + *taus_p4->at(0) + tauv1_v + *tau2 + *ljets_p4->at(ljet_indice[0])).M() : 0;
+          tautaumass = (tauv2_v + *taus_p4->at(0) + tauv1_v + *tau2).M();
+
+        }
+        if (taus_p4->size() == 1 && leps_p4->size() == 1){
+          tau_pt_1 = tau2->Pt();
+          tau_pt_ss = 0;
+          tau_pt_os = 0;
           drlbditau = 0;
           mtw = 0;
           etamax = 0;
-          tau_pt_ss = 0;
-          tau_pt_os = 0;
           drltau = 0;
-          ttvismass = (*taus_p4->at(0) + *leps_p4->at(0)).M();
-          tautauvispt = (*taus_p4->at(0) + *leps_p4->at(0)).Pt();
-          t2vismass = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *leps_p4->at(0) + *ljets_p4->at(ljet_indice[0])).M() : 0;
-          drtautau = taus_p4->at(0)->DeltaR(*leps_p4->at(0));
-          drtauj = ljets_p4->size() >= 2 ? (*taus_p4->at(0) + *leps_p4->at(0)).DeltaR(*ljets_p4->at(ljet_indice[0])) : 0;
-          dphitauetmiss = fabs(met_phi - (*taus_p4->at(0) + *leps_p4->at(0)).Phi());
+        }else{
+          tau_pt_ss = wlep*tau_charge_0 > 0 ? tau_pt_0 : tau2->Pt();
+          tau_pt_os = wlep*tau_charge_0 < 0 ? tau_pt_0 : tau2->Pt();
+          drlbditau = (*wlep + *bjets_p4->at(0)).DeltaR(*taus_p4->at(0) + *tau2);
+          drlb = wlep->DeltaR(*bjets_p4->at(0));
+          drtaub = bjets_p4->at(0)->DeltaR(*taus_p4->at(0));
+          t1vismass = (*wlep + *bjets_p4->at(0)).M();
+          mtw = 2*wlep->Pt()*MET_RefFinal_et*(1 - cos(MET_RefFinal_phi - wlep->Phi()));
+          mtw = mtw > 0 ? sqrt(mtw) : 0.;
+          etamax = max(fabs(taus_p4->at(0)->Eta()),fabs(tau2->Eta()));
+          drltau = min(taus_p4->at(0)->DeltaR(*wlep), tau2->DeltaR(*wlep));
+          if(drltau < 0.2) {
+            printf("WARINING: Delta(l,tau) is less than 0.2, please check: eventNumber = %llu\n",eventNumber);
+            printv(*taus_p4->at(0));
+            printv(*tau2);
+            printv(*wlep);
+          }
         }
+        phicent = phi_centrality(taus_p4->at(0)->Phi(),tau2->Phi(),met_phi);
+        ttvismass = (*taus_p4->at(0) + *tau2).M();
+        tautauvispt = (*taus_p4->at(0) + *tau2).Pt();
+        t2vismass = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2 + *ljets_p4->at(ljet_indice[0])).M() : 0;
+        drtautau = taus_p4->at(0)->DeltaR(*tau2);
+        drtauj = ljets_p4->size() >= 2 ? (*taus_p4->at(0) + *tau2).DeltaR(*ljets_p4->at(ljet_indice[0])) : 0;
+        dphitauetmiss = fabs(met_phi - (*taus_p4->at(0) + *tau2).Phi());
       }
       taulmass = 0;
+      TLorentzVector all = *taus_p4->at(0)+ *tau2 + *bjets_p4->at(0);
+      for (int i = 0; i < ljet_indice.size(); ++i)
+      {
+        all+=*ljets_p4->at(ljet_indice[i]);
+      }
+      allmass = all.M();
+      allpz = all.Pz();
       if (ljets_p4->size() && taus_p4->size()){
         for(auto jv: (*ljets_p4)){
           if(taulmass == 0 || taulmass > (*taus_p4->at(0) + *jv).M()){
@@ -777,6 +776,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         if(ttvismass < 25*GeV ) continue;      
         cut_flow.fill("$m_{\\tau\\tau$,vis}>25");
       }
+      BDTG_test  = 0;
+      BDTG_train  = 0;
       if(doBDT){
         if(debug) printf("eval BDTG\n");
         if(belong_regions.have("1l2tau")) BDTG_test  = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
