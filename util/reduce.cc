@@ -97,6 +97,8 @@ int main(int argc, char const *argv[])
 			regions.push_back("reg2lSS1tau1bnj_os");
 			regions.push_back("reg2lSS1tau2bnj_ss");
 			regions.push_back("reg2lSS1tau2bnj_os");
+			regions.push_back("reg2l1tau1bnj");
+			regions.push_back("reg2l1tau2bnj");
 		}
 		if(dofake || reduce == 1){
 			regions_fake.push_back("reg2l1tau2b");

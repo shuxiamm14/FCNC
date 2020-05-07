@@ -13,7 +13,7 @@ tthmltree::tthmltree():nominal::nominal(){
   weights = new vector<double> ();
   initialize_fit(TString(PACKAGE_DIR) + "/data/tau_pars.root");
 
-  belong_regions.m_region_map["SR"] = {"reg1l1tau1b2j_os","reg1l1tau1b3j_os","reg1l2tau1bnj_os","reg2lSS1tau1bnj_os","reg2lSS1tau1bnj_ss"};
+  belong_regions.m_region_map["SR"] = {"reg1l1tau1b2j_os","reg1l1tau1b3j_os","reg1l2tau1bnj_os","reg2lSS1tau1bnj_os","reg2lSS1tau1bnj_ss","reg2l1tau1bnj"};
   belong_regions.m_region_map["SRCR"] = {
     "reg1l1tau1b2j_ss",
     "reg1l1tau1b3j_ss",
@@ -29,7 +29,8 @@ tthmltree::tthmltree():nominal::nominal(){
     "reg1l2tau2bnj_os",
     "reg1l2tau2bnj_ss",
     "reg2lSS1tau2bnj_os",
-    "reg2lSS1tau2bnj_ss"
+    "reg2lSS1tau2bnj_ss",
+    "reg2l1tau2bnj"
   };
   belong_regions.m_region_map["FakeCR"] = {
     "reg1l1tau2b1j_os",
@@ -432,20 +433,24 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         if(onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 < 0) belong_regions.add("reg1l1tau2b_os");
         if(onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0) belong_regions.add("reg1l1tau2b_ss");
       }
-      if (trig_match && dilep_type && lep_Pt_0 > 20*GeV && lep_Pt_1 > 20*GeV &&
-        ((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5)) && (!tightLep || SelectTLepid(0)) &&
-        ((abs(lep_ID_1) == 11 && lep_promptLeptonVeto_TagWeight_1 < -0.7) || (abs(lep_ID_1) == 13 && lep_promptLeptonVeto_TagWeight_1 < -0.5)) && (!tightLep || SelectTLepid(1)) &&
-        (nTaus_OR_Pt25 == 0 || (tau_passEleBDT_0 && tau_passMuonOLR_0))) { //met>30 GeV ? ttbar vs z+bb:
-        if((dilep_type == 2 || ((dilep_type == 1 || dilep_type == 3) && (Mll01 < 80*GeV || Mll01 > 100*GeV))) && total_charge == 0){ //2l ttbar CR
-          if(nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau2b");
-          if(nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 == 0) belong_regions.add("reg2l2bnj");
-          if(nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T == 1 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau1b");
-          if(nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 0) belong_regions.add("reg2l2b");
+      if (trig_match && dilep_type && lep_Pt_0 > 20*GeV && lep_Pt_1 > 20*GeV && (nTaus_OR_Pt25 == 0 || (tau_passEleBDT_0 && tau_passMuonOLR_0))){
+        if(((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5)) && (!tightLep || SelectTLepid(0)) &&
+           ((abs(lep_ID_1) == 11 && lep_promptLeptonVeto_TagWeight_1 < -0.7) || (abs(lep_ID_1) == 13 && lep_promptLeptonVeto_TagWeight_1 < -0.5)) && (!tightLep || SelectTLepid(1))) { //tight lepton
+          if((dilep_type == 2 || ((dilep_type == 1 || dilep_type == 3) && (Mll01 < 80*GeV || Mll01 > 100*GeV))) && total_charge == 0){ //2l ttbar CR
+            if(nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau2b");
+            if(nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 == 0) belong_regions.add("reg2l2bnj");
+            if(nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T == 1 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau1b");
+            if(nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T >= 2 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau1bnj");
+            if(nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T >= 2 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau2bnj");
+            if(nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 0) belong_regions.add("reg2l2b");
+          }
+          if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau1bnj_os");
+          if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau1bnj_ss");
+          if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau2bnj_os");
+          if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau2bnj_ss");
+        }else{
+
         }
-        if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau1bnj_os");
-        if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau1bnj_ss");
-        if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau2bnj_os");
-        if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau2bnj_ss");
       }
       if(belong_regions.isEmpty()) continue;
       fcnc = belong_regions.isCategory("SR") || belong_regions.isCategory("SRCR");
@@ -575,7 +580,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       else {
         tau2 = leps_p4->at(0);
         if(leps_p4->size() == 2){
-          if(tau2->DeltaR(*taus_p4->at(0)) > leps_p4->at(1)->DeltaR(*taus_p4->at(0))) {
+          if((belong_regions.have("2lSS1tau") && tau2->DeltaR(*taus_p4->at(0)) > leps_p4->at(1)->DeltaR(*taus_p4->at(0)))
+            || (!belong_regions.have("2l1tau") && lep_ID_0*tau_charge_0 < 0) ){
             tau2 = leps_p4->at(1);
             wlep = leps_p4->at(0);
           }else{
