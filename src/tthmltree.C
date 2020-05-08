@@ -13,7 +13,7 @@ tthmltree::tthmltree():nominal::nominal(){
   weights = new vector<double> ();
   initialize_fit(TString(PACKAGE_DIR) + "/data/tau_pars.root");
 
-  belong_regions.m_region_map["SR"] = {"reg1l1tau1b2j_os","reg1l1tau1b3j_os","reg1l2tau1bnj_os","reg2lSS1tau1bnj_os","reg2lSS1tau1bnj_ss","reg2l1tau1bnj"};
+  belong_regions.m_region_map["SR"] = {"reg1l1tau1b2j_os","reg1l1tau1b3j_os","reg1l2tau1bnj_os","reg2lSS1tau1bnj_os","reg2l1tau1bnj"};
   belong_regions.m_region_map["SRCR"] = {
     "reg1l1tau1b2j_ss",
     "reg1l1tau1b3j_ss",
@@ -30,6 +30,11 @@ tthmltree::tthmltree():nominal::nominal(){
     "reg1l2tau2bnj_ss",
     "reg2lSS1tau2bnj_os",
     "reg2lSS1tau2bnj_ss",
+    "reg2lSS1tau1bnj_ss",
+    "reg2lSS1tau2bnj_os_antitight",
+    "reg2lSS1tau2bnj_ss_antitight",
+    "reg2lSS1tau1bnj_ss_antitight",
+    "reg2lSS1tau1bnj_os_antitight",
     "reg2l1tau2bnj"
   };
   belong_regions.m_region_map["FakeCR"] = {
@@ -449,7 +454,10 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau2bnj_os");
           if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau2bnj_ss");
         }else{
-
+          if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau1bnj_os_antitight");
+          if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau1bnj_ss_antitight");
+          if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau2bnj_os_antitight");
+          if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau2bnj_ss_antitight");
         }
       }
       if(belong_regions.isEmpty()) continue;
@@ -764,7 +772,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       }
     }
     if((reduce == 3 && fcnc)|| (reduce == 2 && !fcnc)){
-      if (cutPLV == 1 && ((lep_ID_0 == 11 && lep_promptLeptonVeto_TagWeight_0 > -0.7) || (lep_ID_0 == 13 && lep_promptLeptonVeto_TagWeight_0 > -0.5))) continue;
+      if (!belong_regions.have("antitight") && cutPLV == 1 && ((lep_ID_0 == 11 && lep_promptLeptonVeto_TagWeight_0 > -0.7) || (lep_ID_0 == 13 && lep_promptLeptonVeto_TagWeight_0 > -0.5))) continue;
       cut_flow.fill("PLV");
       if (cutmet == 1 && etmiss<30*GeV) continue;
       cut_flow.fill("MET>30");

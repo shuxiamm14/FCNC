@@ -182,7 +182,27 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		"reg2mtau2b3jss",
 		"reg2mtau2b3jos",
 	};
-	vector<TString> regions_tthML = {"reg1l2tau1bnj_ss","reg1l2tau1bnj_os","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_ss","reg1l1tau1b3j_os", "reg1l2tau2bnj_ss","reg1l2tau2bnj_os","reg1l1tau2b2j_ss","reg1l1tau2b2j_os","reg1l1tau2b3j_ss","reg1l1tau2b3j_os","reg2lSS1tau1bnj_os","reg2lSS1tau1bnj_ss","reg2lSS1tau2bnj_os","reg2lSS1tau2bnj_ss"};
+	vector<TString> regions_tthML = {"reg1l2tau1bnj_ss",
+		"reg1l2tau1bnj_os",
+		"reg1l1tau1b2j_ss",
+		"reg1l1tau1b2j_os",
+		"reg1l1tau1b3j_ss",
+		"reg1l1tau1b3j_os",
+		"reg1l2tau2bnj_ss",
+		"reg1l2tau2bnj_os",
+		"reg1l1tau2b2j_ss",
+		"reg1l1tau2b2j_os",
+		"reg1l1tau2b3j_ss",
+		"reg1l1tau2b3j_os",
+		"reg2lSS1tau1bnj_os",
+		"reg2lSS1tau1bnj_ss",
+		"reg2lSS1tau2bnj_os",
+		"reg2lSS1tau2bnj_ss",
+		"reg2lSS1tau1bnj_os_antitight",
+		"reg2lSS1tau1bnj_ss_antitight",
+		"reg2lSS1tau2bnj_os_antitight",
+		"reg2lSS1tau2bnj_ss_antitight",
+	};
 	vector<TString> regions_calc_fake = {"reg2l1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_os","reg2l1tau1b","reg1l1tau2b_os","reg1l1tau2b_ss"};//,"reg2l2bnj","reg1l2b2j","reg2l2b"};
 	vector<TString> regions = framework == "xTFW" ? regions_xTFW : regions_tthML;
 	if(calculate_fake_calibration) {

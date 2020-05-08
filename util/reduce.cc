@@ -97,6 +97,10 @@ int main(int argc, char const *argv[])
 			regions.push_back("reg2lSS1tau1bnj_os");
 			regions.push_back("reg2lSS1tau2bnj_ss");
 			regions.push_back("reg2lSS1tau2bnj_os");
+			regions.push_back("reg2lSS1tau1bnj_ss_antitight");
+			regions.push_back("reg2lSS1tau1bnj_os_antitight");
+			regions.push_back("reg2lSS1tau2bnj_ss_antitight");
+			regions.push_back("reg2lSS1tau2bnj_os_antitight");
 			regions.push_back("reg2l1tau1bnj");
 			regions.push_back("reg2l1tau2bnj");
 		}
