@@ -558,7 +558,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     if (reduce == 2) {
       etmiss = met_p4->Pt();
       lep_pt_0 = leps_p4->at(0)->Pt();
-      lep_pt_1 = leps_p4->at(1)->Pt();
+      lep_pt_1 = leps_p4->size() == 1? 0 : leps_p4->at(1)->Pt();
       if(bjets_p4->size() == 0){
         printf("ERROR: bjet not found\n");
         continue;
