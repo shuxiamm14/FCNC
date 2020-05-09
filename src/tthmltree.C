@@ -76,7 +76,9 @@ void tthmltree::init_hist(TString outputfilename){
       fcnc_plots->add(20,20.,120.,"m_{#tau,light-jet}","taulmass",&taulmass,true,"GeV");
     }
     fcnc_plots->add(10,25.,125.,"p_{T,#tau}","taupt_0",&tau_pt_0,true,"GeV");
-    fcnc_plots->add(10,25.,125.,"p_{T,#tau}","taupt_1",&tau_pt_1,true,"GeV");
+    fcnc_plots->add(10,25.,125.,"p_{T,sub-#tau}","taupt_1",&tau_pt_1,true,"GeV");
+    fcnc_plots->add(10,25.,125.,"p_{T,l}","lep_pt_0",&lep_pt_0,true,"GeV");
+    fcnc_plots->add(10,25.,125.,"p_{T,sub-l}","lep_pt_1",&lep_pt_1,true,"GeV");
     fcnc_plots->add(10,25.,125.,"p_{T,SS#tau}","tauptss",&tau_pt_ss,true,"GeV");
     fcnc_plots->add(10,25.,125.,"p_{T,OS#tau}","tauptos",&tau_pt_os,true,"GeV");
     fcnc_plots->add(100,100.,300.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
@@ -234,6 +236,8 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         target->Branch("PLV_1", &lep_promptLeptonVeto_TagWeight_1);
         target->Branch("lep_ID_0",&lep_ID_0);
         target->Branch("lep_ID_1",&lep_ID_1);
+        target->Branch("lep_pt_0",&lep_pt_0);
+        target->Branch("lep_pt_1",&lep_pt_1);
         target->Branch("taulmass", &taulmass);
         target->Branch("nTaus_OR_Pt25", &nTaus_OR_Pt25);
       }
@@ -553,6 +557,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
 
     if (reduce == 2) {
       etmiss = met_p4->Pt();
+      lep_pt_0 = leps_p4->at(0)->Pt();
+      lep_pt_1 = leps_p4->at(1)->Pt();
       if(bjets_p4->size() == 0){
         printf("ERROR: bjet not found\n");
         continue;
@@ -632,18 +638,18 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           if (taus_p4->size() >= 2) {
             gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
             gMinside->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
-            gMinside->mnparm(2, "pt3", 10000, 10000, 0., 1000000., ierflg);
+            gMinside->mnparm(2, "pt3", 10*GeV, 10*GeV, 0., 1000*GeV, ierflg);
             gMinside->mnparm(3, "eta3", 0, 0.1, -5, 5, ierflg);
             gMinside->mnparm(4, "phi3", 0, 0.1, -PI, PI, ierflg);
             arglist[0] = 5;
           } else {
-            gMinside->mnparm(0, "v1pt",  tau_pt_0, 1, 0., 1000000, ierflg);
+            gMinside->mnparm(0, "v1pt",  tau_pt_0, 1, 0., 1000*GeV, ierflg);
             gMinside->mnparm(1, "v1eta", taus_p4->at(0)->Eta(), 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
             gMinside->mnparm(2, "v1phi", taus_p4->at(0)->Phi(), 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
-            gMinside->mnparm(3, "v2pt",  leps_p4->at(0)->Pt(), 1, 0., 1000000, ierflg);
+            gMinside->mnparm(3, "v2pt",  leps_p4->at(0)->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
             gMinside->mnparm(4, "v2eta", leps_p4->at(0)->Eta(), 0.01, leps_p4->at(0)->Eta()-0.25, leps_p4->at(0)->Eta()+0.25, ierflg);
             gMinside->mnparm(5, "v2phi", leps_p4->at(0)->Phi(), 0.01, leps_p4->at(0)->Phi()-0.25, leps_p4->at(0)->Phi()+0.25, ierflg);
-            gMinside->mnparm(6, "v2m", 500, 0.01, 0, 1776, ierflg);
+            gMinside->mnparm(6, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
             arglist[0] = 7;
           }
   

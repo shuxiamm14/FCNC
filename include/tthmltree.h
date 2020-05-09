@@ -28,7 +28,8 @@ public:
    const bool tightTau = 0;
    bool taumatchwjet = 0;
    bool subtaumatchwjet = 0;
-
+   float lep_pt_0;
+   float lep_pt_1;
    UInt_t          randomRunNumber;
    UInt_t          mcChannelNumber;
    Float_t         mu;
