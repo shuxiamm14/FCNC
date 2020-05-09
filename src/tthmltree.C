@@ -552,7 +552,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
     else weight = weights->at(0);
 
     if (reduce == 2) {
-      etmiss = met_p4->Pz();
+      etmiss = met_p4->Pt();
       if(bjets_p4->size() == 0){
         printf("ERROR: bjet not found\n");
         continue;
@@ -729,6 +729,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           mtw = 0;
           etamax = 0;
           drltau = 0;
+          drlb = leps_p4->at(0)->DeltaR(*bjets_p4->at(0));
         }else{
           tau_pt_ss = (wlep == leps_p4->at(0)? lep_ID_0 : lep_ID_1)*tau_charge_0 > 0 ? tau_pt_0 : tau2->Pt();
           tau_pt_os = (wlep == leps_p4->at(0)? lep_ID_0 : lep_ID_1)*tau_charge_0 < 0 ? tau_pt_0 : tau2->Pt();
@@ -762,7 +763,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         all+=*ljets_p4->at(ljet_indice[i]);
       }
       allmass = all.M();
-      allpz = all.Pz();
+      allpz = fabs(all.Pz());
       if (ljets_p4->size() && taus_p4->size()){
         for(auto jv: (*ljets_p4)){
           if(taulmass == 0 || taulmass > (*taus_p4->at(0) + *jv).M()){
