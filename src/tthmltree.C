@@ -42,10 +42,7 @@ tthmltree::tthmltree():nominal::nominal(){
     "reg1l1tau2b1j_ss",
     "reg1l1tau2b_os",
     "reg1l1tau2b_ss",
-    "reg2l1tau2b",
     "reg2l2bnj",
-    "reg2l1tau1b",
-    "reg2l2b"
   };
 
 }
@@ -446,12 +443,9 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         if(((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5)) && (!tightLep || SelectTLepid(0)) &&
            ((abs(lep_ID_1) == 11 && lep_promptLeptonVeto_TagWeight_1 < -0.7) || (abs(lep_ID_1) == 13 && lep_promptLeptonVeto_TagWeight_1 < -0.5)) && (!tightLep || SelectTLepid(1))) { //tight lepton
           if((dilep_type == 2 || ((dilep_type == 1 || dilep_type == 3) && (Mll01 < 80*GeV || Mll01 > 100*GeV))) && total_charge == 0){ //2l ttbar CR
-            if(nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau2b");
-            if(nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T >= 3 && nTaus_OR_Pt25 == 0) belong_regions.add("reg2l2bnj");
-            if(nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T == 1 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau1b");
-            if(nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T >= 2 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau1bnj");
-            if(nJets_OR_T_MV2c10_70 == 1 && nJets_OR_T >= 2 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau2bnj");
-            if(nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 0) belong_regions.add("reg2l2b");
+            if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau2b");
+            if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau1bnj");
+            if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 0) belong_regions.add("reg2l2bnj");
           }
           if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau1bnj_os");
           if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau1bnj_ss");
