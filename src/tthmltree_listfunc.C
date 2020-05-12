@@ -454,6 +454,8 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("tau_pt_os", & tau_pt_os);
     tree->SetBranchAddress("tau_pt_0", & tau_pt_0);
     tree->SetBranchAddress("tau_pt_1", & tau_pt_1);
+    tree->SetBranchAddress("lep_pt_0", & lep_pt_0);
+    tree->SetBranchAddress("lep_pt_1", & lep_pt_1);
     tree->SetBranchAddress("mtw", & mtw);
     tree->SetBranchAddress("etamax", & etamax);
     tree->SetBranchAddress("drltau", & drltau);

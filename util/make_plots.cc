@@ -113,6 +113,7 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 			tau_plots->sensitivevariable = "BDTG_test";
 			tau_plots->add("BDT discriminant","BDTG_test","",10);
   			tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
+  			tau_plots->add("p_{T,lead-l}","lep_pt_0","GeV",1);
 			tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
   			tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
 			tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
@@ -139,6 +140,7 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 			tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
 			tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
   			tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
+  			tau_plots->add("p_{T,sublead-l}","lep_pt_1","GeV",1);
   			tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
   			tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
   		}
@@ -194,6 +196,8 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		"reg1l1tau2b2j_os",
 		"reg1l1tau2b3j_ss",
 		"reg1l1tau2b3j_os",
+		"reg2l1tau1bnj",
+		"reg2l1tau2bnj",
 		"reg2lSS1tau1bnj_os",
 		"reg2lSS1tau1bnj_ss",
 		"reg2lSS1tau2bnj_os",
@@ -465,11 +469,11 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
   		std::string nptmp = NPname.Data();
   		findAndReplaceAll(nptmp,"__1down","_down");
   		findAndReplaceAll(nptmp,"__1up","_up");
-  		findAndReplaceAll(nptmp,"JET_EffectiveNP","JET_EFF");
+  		findAndReplaceAll(nptmp,"JET_EffectiveNP","JES");
+		findAndReplaceAll(nptmp,"JET_CategoryReduction_","JES");
   		findAndReplaceAll(nptmp,"JET_JER_EffectiveNP","JER");
   		findAndReplaceAll(nptmp,"JET_EtaIntercalibration","JET_EtaInt");
 		findAndReplaceAll(nptmp,"TAUS_TRUEHADTAU_SME_TES","TES");
-		findAndReplaceAll(nptmp,"JET_CategoryReduction_","");
 		NPname = nptmp;
 		if(NPname.Contains("PDF")) tau_plots->trexdir = "PDF_trexinputs";
 		else if(NPname.Contains("muR")) tau_plots->trexdir = "scale_trexinputs";
