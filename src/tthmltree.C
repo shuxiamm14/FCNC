@@ -31,10 +31,10 @@ tthmltree::tthmltree():nominal::nominal(){
     "reg2lSS1tau2bnj_os",
     "reg2lSS1tau2bnj_ss",
     "reg2lSS1tau1bnj_ss",
-    "reg2lSS1tau2bnj_os_antitight",
-    "reg2lSS1tau2bnj_ss_antitight",
-    "reg2lSS1tau1bnj_ss_antitight",
-    "reg2lSS1tau1bnj_os_antitight",
+    "reg2lSS1tau2bnj_os_antiiso",
+    "reg2lSS1tau2bnj_ss_antiiso",
+    "reg2lSS1tau1bnj_ss_antiiso",
+    "reg2lSS1tau1bnj_os_antiiso",
     "reg2l1tau2bnj"
   };
   belong_regions.m_region_map["FakeCR"] = {
@@ -104,17 +104,20 @@ void tthmltree::init_hist(TString outputfilename){
     fcnc_plots->add(60,0.,3.,"#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss",&dphitauetmiss,false);
     fcnc_plots->add(60,-1.5,1.5,"E^{T}_{miss} centrality","phicent",&phicent,false,"");
     for (int j = 0; j < fcnc_nregions; ++j){
-      for (int k = 0; k < 2; ++k)
-      {
-        for (int i = 0; i < 4; ++i)
+      if(plotTauFake){
+        for (int k = 0; k < 2; ++k)
         {
-          for (int iptbin = 0; iptbin < 2; ++iptbin)
+          for (int i = 0; i < 4; ++i)
           {
-            if(debug) printf("adding region: %s\n", (fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i]).Data());
-            if(dobwp[bwps[i]]) fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
-            if(dovetobwp[bwps[i]]) fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+            for (int iptbin = 0; iptbin < 2; ++iptbin)
+            {
+              if(dobwp[bwps[i]]) fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
+              if(dovetobwp[bwps[i]]) fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+            }
           }
         }
+      }else{
+        fcnc_plots->add_region(fcnc_regions[j]);
       }
     }
   }
@@ -142,14 +145,18 @@ void tthmltree::init_hist(TString outputfilename){
     fake_plots->add(20,20.,120.,"m_{#tau,light-jet}","taulmass",&taulmass,true,"GeV");
     fake_plots->add(100,0.,100.,"E_{miss}^{T}","met",&MET_RefFinal_et,true,"GeV");
     for (int j = 0; j < fake_nregions; ++j){
-      for (int k = 0; k < 2; ++k){
-        for (int i = 0; i < 4; i+=1){
-          for (int iptbin = 0; iptbin < 2; ++iptbin)
-          {
-            if(dobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
-            if(dovetobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+      if(plotTauFake){
+        for (int k = 0; k < 2; ++k){
+          for (int i = 0; i < 4; i+=1){
+            for (int iptbin = 0; iptbin < 2; ++iptbin)
+            {
+              if(dobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[i]);
+              if(dovetobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[i]);
+            }
           }
         }
+      }else{
+        fake_plots->add_region(fake_regions[j]);
       }
     }
   }
@@ -235,6 +242,10 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         target->Branch("lep_ID_1",&lep_ID_1);
         target->Branch("lep_pt_0",&lep_pt_0);
         target->Branch("lep_pt_1",&lep_pt_1);
+        target->Branch("lep_truthType_0",&lep_truthType_0);
+        target->Branch("lep_truthType_1",&lep_truthType_1);
+        target->Branch("lep_truthPdgId_0",&lep_truthPdgId_0);
+        target->Branch("lep_truthPdgId_1",&lep_truthPdgId_1);
         target->Branch("taulmass", &taulmass);
         target->Branch("nTaus_OR_Pt25", &nTaus_OR_Pt25);
       }
@@ -278,25 +289,42 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
     }else{
       if(sample.Contains("ttbar")) sample = "ttbar";
       else sample.Remove(0,6);
-      if(fcnc_nregions){
-        fcnc_plots->init_sample(sample + "_g",plotNPs[0],sampletitle + "(gluon fake #tau)",(enum EColor)7);
-        fcnc_plots->init_sample(sample + "_j",plotNPs[0],sampletitle + "(light-jet fake #tau)",kBlue);
-        fcnc_plots->init_sample(sample + "_b",plotNPs[0],sampletitle + "(b-jets fake #tau)",kViolet);
-        fcnc_plots->init_sample(sample + "_lep",plotNPs[0],sampletitle + "(lepton fake #tau)",kGreen);
-        fcnc_plots->init_sample(sample + "_real",plotNPs[0],sampletitle + "(real #tau)",kRed);
-        fcnc_plots->init_sample(sample + "_c",plotNPs[0],sampletitle + "(c-jets fake #tau)",kOrange);
-        fcnc_plots->init_sample(sample + "_wjet",plotNPs[0],sampletitle + "(w-jet matched fake #tau)",kGray);
-        fcnc_plots->init_sample(sample + "_doublefake",plotNPs[0],sampletitle + "double fake #tau)",kGray);
-      }
-      if(fake_nregions){
-        fake_plots->init_sample(sample + "_g","NOMINAL",sampletitle + "(gluon fake #tau)",(enum EColor)7);
-        fake_plots->init_sample(sample + "_j","NOMINAL",sampletitle + "(light-jet fake #tau)",kBlue);
-        fake_plots->init_sample(sample + "_b","NOMINAL",sampletitle + "(b-jets fake #tau)",kViolet);
-        fake_plots->init_sample(sample + "_lep","NOMINAL",sampletitle + "(lepton fake #tau)",kGreen);
-        fake_plots->init_sample(sample + "_real","NOMINAL",sampletitle + "(real #tau)",kRed);
-        fake_plots->init_sample(sample + "_c","NOMINAL",sampletitle + "(c-jets fake #tau)",kOrange);
-        fake_plots->init_sample(sample + "_wjet","NOMINAL",sampletitle + "(w-jet matched fake #tau)",kGray);
-        fake_plots->init_sample(sample + "_doublefake","NOMINAL",sampletitle + "(double fake #tau)",kGray);
+      if(plotTauFake){
+        if(fcnc_nregions){
+          fcnc_plots->init_sample(sample + "_g",plotNPs[0],sampletitle + "(gluon fake #tau)",(enum EColor)7);
+          fcnc_plots->init_sample(sample + "_j",plotNPs[0],sampletitle + "(light-jet fake #tau)",kBlue);
+          fcnc_plots->init_sample(sample + "_b",plotNPs[0],sampletitle + "(b-jets fake #tau)",kViolet);
+          fcnc_plots->init_sample(sample + "_lep",plotNPs[0],sampletitle + "(lepton fake #tau)",kGreen);
+          fcnc_plots->init_sample(sample + "_real",plotNPs[0],sampletitle + "(real #tau)",kRed);
+          fcnc_plots->init_sample(sample + "_c",plotNPs[0],sampletitle + "(c-jets fake #tau)",kOrange);
+          fcnc_plots->init_sample(sample + "_wjet",plotNPs[0],sampletitle + "(w-jet matched fake #tau)",kGray);
+          fcnc_plots->init_sample(sample + "_doublefake",plotNPs[0],sampletitle + "double fake #tau)",kGray);
+        }
+        if(fake_nregions){
+          fake_plots->init_sample(sample + "_g","NOMINAL",sampletitle + "(gluon fake #tau)",(enum EColor)7);
+          fake_plots->init_sample(sample + "_j","NOMINAL",sampletitle + "(light-jet fake #tau)",kBlue);
+          fake_plots->init_sample(sample + "_b","NOMINAL",sampletitle + "(b-jets fake #tau)",kViolet);
+          fake_plots->init_sample(sample + "_lep","NOMINAL",sampletitle + "(lepton fake #tau)",kGreen);
+          fake_plots->init_sample(sample + "_real","NOMINAL",sampletitle + "(real #tau)",kRed);
+          fake_plots->init_sample(sample + "_c","NOMINAL",sampletitle + "(c-jets fake #tau)",kOrange);
+          fake_plots->init_sample(sample + "_wjet","NOMINAL",sampletitle + "(w-jet matched fake #tau)",kGray);
+          fake_plots->init_sample(sample + "_doublefake","NOMINAL",sampletitle + "(double fake #tau)",kGray);
+        }
+      }else{
+        if(fcnc_nregions){
+          fcnc_plots->init_sample(sample + "_reallep",plotNPs[0],sampletitle + "(real lepton)",(enum EColor)7);
+          fcnc_plots->init_sample(sample + "_chargeflip",plotNPs[0],sampletitle + "(lepton charge flip)",kBlue);
+          fcnc_plots->init_sample(sample + "_misid",plotNPs[0],sampletitle + "(lepton flavor flip)",kViolet);
+          fcnc_plots->init_sample(sample + "_non_prompt",plotNPs[0],sampletitle + "(non-prompt lepton)",kGreen);
+          fcnc_plots->init_sample(sample + "_fakelep",plotNPs[0],sampletitle + "(fake lepton)",kOrange);
+        }
+        if(fake_nregions){
+          fake_plots->init_sample(sample + "_reallep","NOMINAL",sampletitle + "(real lepton)",(enum EColor)7);
+          fake_plots->init_sample(sample + "_chargeflip","NOMINAL",sampletitle + "(lepton charge flip)",kBlue);
+          fake_plots->init_sample(sample + "_misid","NOMINAL",sampletitle + "(lepton flavor flip)",kViolet);
+          fake_plots->init_sample(sample + "_non_prompt","NOMINAL",sampletitle + "(non-prompt lepton)",kGreen);
+          fake_plots->init_sample(sample + "_fakelep","NOMINAL",sampletitle + "(fake lepton)",kOrange);
+        }
       }
       if(fake_nregions_notau) fake_notau_plots->init_sample(sample,"NOMINAL",sampletitle,kRed);
     }
@@ -443,7 +471,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         if(((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5)) && (!tightLep || SelectTLepid(0)) &&
            ((abs(lep_ID_1) == 11 && lep_promptLeptonVeto_TagWeight_1 < -0.7) || (abs(lep_ID_1) == 13 && lep_promptLeptonVeto_TagWeight_1 < -0.5)) && (!tightLep || SelectTLepid(1))) { //tight lepton
           if((dilep_type == 2 || ((dilep_type == 1 || dilep_type == 3) && (Mll01 < 80*GeV || Mll01 > 100*GeV))) && total_charge == 0){ //2l ttbar CR
-            if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau2b");
+            if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau2bnj");
             if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau1bnj");
             if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 0) belong_regions.add("reg2l2bnj");
           }
@@ -451,11 +479,11 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau1bnj_ss");
           if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau2bnj_os");
           if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau2bnj_ss");
-        }else{
-          if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau1bnj_os_antitight");
-          if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau1bnj_ss_antitight");
-          if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau2bnj_os_antitight");
-          if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau2bnj_ss_antitight");
+        }else if(((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5)) && tightLep && SelectTLepid(0) && lep_isTightLH_1){ //reverse iso only
+          if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau1bnj_os_antiiso");
+          if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau1bnj_ss_antiiso");
+          if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau2bnj_os_antiiso");
+          if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau2bnj_ss_antiiso");
         }
       }
       if(belong_regions.isEmpty()) continue;
@@ -721,8 +749,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           tautaumass = (tauv2_v + *taus_p4->at(0) + tauv1_v + *tau2).M();
 
         }
+        tau_pt_1 = tau2->Pt();
         if (taus_p4->size() == 1 && leps_p4->size() == 1){
-          tau_pt_1 = tau2->Pt();
           tau_pt_ss = 0;
           tau_pt_os = 0;
           drlbditau = 0;
@@ -753,7 +781,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         tautauvispt = (*taus_p4->at(0) + *tau2).Pt();
         t2vismass = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2 + *ljets_p4->at(ljet_indice[0])).M() : 0;
         drtautau = taus_p4->at(0)->DeltaR(*tau2);
-        drtauj = ljets_p4->size() >= 2 ? (*taus_p4->at(0) + *tau2).DeltaR(*ljets_p4->at(ljet_indice[0])) : 0;
+        drtauj = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2).DeltaR(*ljets_p4->at(ljet_indice[0])) : 0;
         dphitauetmiss = fabs(met_phi - (*taus_p4->at(0) + *tau2).Phi());
       }
       taulmass = 0;
@@ -773,7 +801,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       }
     }
     if((reduce == 3 && fcnc)|| (reduce == 2 && !fcnc)){
-      if (!belong_regions.have("antitight") && cutPLV == 1 && ((lep_ID_0 == 11 && lep_promptLeptonVeto_TagWeight_0 > -0.7) || (lep_ID_0 == 13 && lep_promptLeptonVeto_TagWeight_0 > -0.5))) continue;
+      if (!belong_regions.have("antiiso") && cutPLV == 1 && ((lep_ID_0 == 11 && lep_promptLeptonVeto_TagWeight_0 > -0.7) || (lep_ID_0 == 13 && lep_promptLeptonVeto_TagWeight_0 > -0.5))) continue;
       cut_flow.fill("PLV");
       if (cutmet == 1 && etmiss<30*GeV) continue;
       cut_flow.fill("MET>30");
@@ -814,78 +842,90 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       //===============================fill histograms, fill tree===============================
     if(debug) printf("derive origin\n");
     TString tauorigin;
+    TString leporigin;
     std::vector<float> vtaupt;
     std::vector<int> vtauprong;
     vector<int> origintag;
     if (sample.Contains("data")) {
       tauorigin = "data";
       sample = "data";
-    } else if (nTaus_OR_Pt25 >= 1) {
-      vtaupt.push_back(tau_pt_0);
-      vtauprong.push_back(tau_numTrack_0);
-      if (tau_truthType_0 == 10) {tauorigin = sample + "_real"; origintag.push_back(-1);}
-      else if (tau_truthJetFlavour_0 < 0 && (tau_truthType_0 == 2 || tau_truthType_0 == 6)) {tauorigin = sample + "_lep"; origintag.push_back(-1);}
-      else
-        switch (tau_truthJetFlavour_0) {
-        case 5:
-          tauorigin = sample + "_b";
-          origintag.push_back(0);
-          break;
-        case 4:
-          if(taumatchwjet) {
-            tauorigin = sample + "_wjet";
-            origintag.push_back(4);
-          }else{
-            tauorigin = sample + "_c";
-            origintag.push_back(1);
-          }
-          break;
-        case 21:
-          tauorigin = sample + "_g";
-          origintag.push_back(2);
-          break;
-        default:
-          if(taumatchwjet) {
-            tauorigin = sample + "_wjet";
-            origintag.push_back(4);
-          }
-          else {
-            tauorigin = sample + "_j";
-            origintag.push_back(3);
-          }
-        }
-      if(belong_regions.have("1l2tau1bnj")){
-        vtaupt.push_back(tau_pt_1);
-        vtauprong.push_back(tau_numTrack_1);
-        if (tau_truthType_1 == 10 || (tau_truthJetFlavour_1 < 0 && (tau_truthType_1 == 2 || tau_truthType_1 == 6))) origintag.push_back(-1);
+    } else {
+      if (nTaus_OR_Pt25 >= 1) {
+        vtaupt.push_back(tau_pt_0);
+        vtauprong.push_back(tau_numTrack_0);
+        if (tau_truthType_0 == 10) {tauorigin = sample + "_real"; origintag.push_back(-1);}
+        else if (tau_truthJetFlavour_0 < 0 && (tau_truthType_0 == 2 || tau_truthType_0 == 6)) {tauorigin = sample + "_lep"; origintag.push_back(-1);}
         else
-          switch (tau_truthJetFlavour_1) {
-            case 5:
-              if(tauorigin.Contains("real") || tauorigin.Contains("lep")) tauorigin = sample + "_b";
-              else tauorigin = sample + "_doublefake";
-              origintag.push_back(0);
-              break;
-            case 4:
-              if(tauorigin.Contains("real") || tauorigin.Contains("lep")) {
-                if(subtaumatchwjet) tauorigin = sample + "_wjet";
-                else tauorigin = sample + "_c";
-              } else tauorigin = sample + "_doublefake";
-              if(subtaumatchwjet) origintag.push_back(4);
-              else origintag.push_back(1);
-              break;
-            case 21:
-              if(tauorigin.Contains("real") || tauorigin.Contains("lep")) tauorigin = sample + "_g";
-              else tauorigin = sample + "_doublefake";
-              origintag.push_back(2);
-              break;
-            default:
-              if(tauorigin.Contains("real") || tauorigin.Contains("lep")) {
-                if(subtaumatchwjet) tauorigin = sample + "_wjet";
-                else tauorigin = sample + "_j";
-              }else tauorigin = sample + "_doublefake";
-              if(subtaumatchwjet)  origintag.push_back(4);
-              else origintag.push_back(3);
+          switch (tau_truthJetFlavour_0) {
+          case 5:
+            tauorigin = sample + "_b";
+            origintag.push_back(0);
+            break;
+          case 4:
+            if(taumatchwjet) {
+              tauorigin = sample + "_wjet";
+              origintag.push_back(4);
+            }else{
+              tauorigin = sample + "_c";
+              origintag.push_back(1);
+            }
+            break;
+          case 21:
+            tauorigin = sample + "_g";
+            origintag.push_back(2);
+            break;
+          default:
+            if(taumatchwjet) {
+              tauorigin = sample + "_wjet";
+              origintag.push_back(4);
+            }
+            else {
+              tauorigin = sample + "_j";
+              origintag.push_back(3);
+            }
           }
+        if(belong_regions.have("1l2tau1bnj")){
+          vtaupt.push_back(tau_pt_1);
+          vtauprong.push_back(tau_numTrack_1);
+          if (tau_truthType_1 == 10 || (tau_truthJetFlavour_1 < 0 && (tau_truthType_1 == 2 || tau_truthType_1 == 6))) origintag.push_back(-1);
+          else
+            switch (tau_truthJetFlavour_1) {
+              case 5:
+                if(tauorigin.Contains("real") || tauorigin.Contains("lep")) tauorigin = sample + "_b";
+                else tauorigin = sample + "_doublefake";
+                origintag.push_back(0);
+                break;
+              case 4:
+                if(tauorigin.Contains("real") || tauorigin.Contains("lep")) {
+                  if(subtaumatchwjet) tauorigin = sample + "_wjet";
+                  else tauorigin = sample + "_c";
+                } else tauorigin = sample + "_doublefake";
+                if(subtaumatchwjet) origintag.push_back(4);
+                else origintag.push_back(1);
+                break;
+              case 21:
+                if(tauorigin.Contains("real") || tauorigin.Contains("lep")) tauorigin = sample + "_g";
+                else tauorigin = sample + "_doublefake";
+                origintag.push_back(2);
+                break;
+              default:
+                if(tauorigin.Contains("real") || tauorigin.Contains("lep")) {
+                  if(subtaumatchwjet) tauorigin = sample + "_wjet";
+                  else tauorigin = sample + "_j";
+                }else tauorigin = sample + "_doublefake";
+                if(subtaumatchwjet)  origintag.push_back(4);
+                else origintag.push_back(3);
+            }
+        }
+      }
+      if(dilep_type){
+        if(lep_truthType_1 == 2 || lep_truthType_1 == 6) {
+          if(lep_truthPdgId_1 == lep_ID_1) leporigin = sample + "_real";
+          else if(lep_truthPdgId_1 == -lep_ID_1) leporigin = sample + "_chargeflip";
+          else leporigin = sample + "_misid";
+        }
+        else if(lep_truthType_1<=8) leporigin = sample + "_non_prompt";
+        else leporigin = sample + "_fakelep";
       }
     }
     if(debug) printf("calc SF\n");
@@ -967,13 +1007,19 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
               else if(index !=0)
                 weight *= weights->at(index);
             }
-            if (fcnc) fillhist(fcnc_plots, region, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, theNP);
+            if (fcnc) {
+              if(plotTauFake) fillhist(fcnc_plots, region, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, theNP);
+              else if(tau_MV2c10_0<defaultbtagwp) fcnc_plots->fill_hist(leporigin,region,theNP);
+            }
             else if(region.Contains("tau")) fillhist(fake_plots, region, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, theNP);
             else fill_notau(region, sample, theNP);
           }
         }else{ //data
           if (region.Contains("tau")) {
-            if (fcnc) fillhist(fcnc_plots, region, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, "NOMINAL");
+            if (fcnc) {
+              if(plotTauFake) fillhist(fcnc_plots, region, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, "NOMINAL");
+              else if(tau_MV2c10_0<defaultbtagwp) fcnc_plots->fill_hist(leporigin,region,"NOMINAL");
+            }
             else fillhist(fake_plots, region, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, "NOMINAL");
           } else fill_notau(region, sample, "NOMINAL");
         }

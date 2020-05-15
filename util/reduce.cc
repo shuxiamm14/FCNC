@@ -97,10 +97,10 @@ int main(int argc, char const *argv[])
 			regions.push_back("reg2lSS1tau1bnj_os");
 			regions.push_back("reg2lSS1tau2bnj_ss");
 			regions.push_back("reg2lSS1tau2bnj_os");
-			regions.push_back("reg2lSS1tau1bnj_ss_antitight");
-			regions.push_back("reg2lSS1tau1bnj_os_antitight");
-			regions.push_back("reg2lSS1tau2bnj_ss_antitight");
-			regions.push_back("reg2lSS1tau2bnj_os_antitight");
+			regions.push_back("reg2lSS1tau1bnj_ss_antiiso");
+			regions.push_back("reg2lSS1tau1bnj_os_antiiso");
+			regions.push_back("reg2lSS1tau2bnj_ss_antiiso");
+			regions.push_back("reg2lSS1tau2bnj_os_antiiso");
 			regions.push_back("reg2l1tau1bnj");
 			regions.push_back("reg2l1tau2bnj");
 		}
@@ -131,6 +131,7 @@ int main(int argc, char const *argv[])
 	analysis->dofit = 1;
 	analysis->reduce = reduce;
 	analysis->debug = debug;
+	analysis->plotTauFake = 0;
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
 	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
 	analysis->doubleCounting = 1;

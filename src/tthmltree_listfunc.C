@@ -481,6 +481,10 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("lep_ID_0", &lep_ID_0);
     tree->SetBranchAddress("lep_ID_1", &lep_ID_1);
     tree->SetBranchAddress("taulmass", &taulmass);
+    tree->SetBranchAddress("lep_truthType_0",&lep_truthType_0);
+    tree->SetBranchAddress("lep_truthType_1",&lep_truthType_1);
+    tree->SetBranchAddress("lep_truthPdgId_0",&lep_truthPdgId_0);
+    tree->SetBranchAddress("lep_truthPdgId_1",&lep_truthPdgId_1);
     
     return;
   }

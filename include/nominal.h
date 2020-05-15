@@ -25,10 +25,32 @@ const double btag70wt = 0.8303;
 
 class nominal {
 public :
+
+  //=============================configurations===============================
   std::map<TString,bool> dobwp;
   std::map<TString,bool> dovetobwp;
   bool doubleCounting = 0;
   bool dumpeventnumber;
+  bool dumptruth;
+  bool applyNewFakeSF;
+  double nonfcncmatched;
+  double fcncmatched;
+  double leptonicw;
+  bool fcnc;
+  bool doBDT;
+  bool dofit;
+  double BDTG_train;
+  double BDTG_test;
+  int debug;
+  bool dosys;
+  int reduce;
+  bool initdata;
+  bool initttbar;
+  bool dohist;
+  int version;
+  bool plotTauFake;
+  //=============================configurations===============================
+
   TString SystematicsName = "NOMINAL";
   CutFlow cut_flow;
   TMinuit* gMinside;
@@ -86,23 +108,7 @@ public :
   std::vector<std::vector<std::vector<observable>>> newFakeSFSys;
   Int_t ierflg;
   int ifill = 0;
-  bool dumptruth;
-  bool applyNewFakeSF;
-  double nonfcncmatched;
-  double fcncmatched;
-  double leptonicw;
-  bool fcnc;
-  bool doBDT;
-  bool dofit;
-  double BDTG_train;
-  double BDTG_test;
-  int debug;
-  bool dosys;
-  int reduce;
-  bool initdata;
-  bool initttbar;
-  bool dohist;
-  int version;
+
   float pt_b;
   float pt_ljet;
   float taulmass;

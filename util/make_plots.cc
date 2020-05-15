@@ -118,8 +118,8 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
   			tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
 			tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
 			tau_plots->add("#chi^{2}","chi2","",5);
-			tau_plots->add("M_{all}","allmass","",5);
-			tau_plots->add("p_{Z,all}","allpz","",5);
+			tau_plots->add("M_{all}","allmass","GeV",25);
+			tau_plots->add("p_{Z,all}","allpz","GeV",25);
 			tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
   			tau_plots->add("m_{t,SM}","t1mass","GeV",5);
   			tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
@@ -202,10 +202,10 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		"reg2lSS1tau1bnj_ss",
 		"reg2lSS1tau2bnj_os",
 		"reg2lSS1tau2bnj_ss",
-		"reg2lSS1tau1bnj_os_antitight",
-		"reg2lSS1tau1bnj_ss_antitight",
-		"reg2lSS1tau2bnj_os_antitight",
-		"reg2lSS1tau2bnj_ss_antitight",
+		"reg2lSS1tau1bnj_os_antiiso",
+		"reg2lSS1tau1bnj_ss_antiiso",
+		"reg2lSS1tau2bnj_os_antiiso",
+		"reg2lSS1tau2bnj_ss_antiiso",
 	};
 	vector<TString> regions_calc_fake = {"reg2l1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_os","reg2l1tau1b","reg1l1tau2b_os","reg1l1tau2b_ss"};//,"reg2l2bnj","reg1l2b2j","reg2l2b"};
 	vector<TString> regions = framework == "xTFW" ? regions_xTFW : regions_tthML;

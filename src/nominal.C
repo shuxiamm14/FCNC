@@ -278,7 +278,7 @@ void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t 
     f =  pow((wmass-81*GeV)/10/GeV,2) + pow((t1.M()-172.5*GeV)/25/GeV,2) +pow((pxMiss-met->at(0)->Px())/met_resol,2) + pow((pyMiss-met->at(0)->Py())/met_resol,2) + pow((Hmass-125*GeV)/10/GeV,2);// + pow((t2mass-172.5)/30,2);// + pow((pConstrain-110)/20,2);
   }else{
     neutrino[0].SetPtEtaPhiM(par[0],par[1],par[2],0);
-    neutrino[1].SetPtEtaPhiM(par[3],par[4],par[5],par[6]);
+    neutrino[1].SetPtEtaPhiM(par[3],par[4],par[5],channel == "lephad" ? par[6] : 0);
   
     Float_t prob1(0), prob2(0);
     Float_t mass1, mass2, mass, pxMiss, pyMiss;
