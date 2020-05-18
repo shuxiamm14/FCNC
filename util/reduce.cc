@@ -124,6 +124,7 @@ int main(int argc, char const *argv[])
 	else if(framework == "tthML") {
 		analysis = new tthmltree();
 		analysis->version = 7;
+		if(inputconfig.Contains("fcnc_ml")) analysis->version = 6;
 	}
 	analysis->SystematicsName = systname;
 	analysis->dumptruth = 0;

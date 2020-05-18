@@ -433,6 +433,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       if( mc_channel_number > 0) weight*=tightLep?lepSFObjLoose:lepSFIDLoose*lepSFTrigLoose;
       if(nTaus_OR_Pt25 &&  mc_channel_number >0) weight*=tightTau?tauSFLoose:tauSFTight; // stupid and confusing but this is how it is.
       if(weight == 0) continue;
+      if(sample.Contains("fcnc_ml") && higgsDecayMode == 6) continue;
       cut_flow.fill("n-tuple");
       if (!basic_selection) continue;
       cut_flow.fill("basic selection");
