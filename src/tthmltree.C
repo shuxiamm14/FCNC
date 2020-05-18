@@ -1009,7 +1009,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
             }
             if (fcnc) {
               if(plotTauFake) fillhist(fcnc_plots, region, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, theNP);
-              else if(tau_MV2c10_0<defaultbtagwp) fcnc_plots->fill_hist(leporigin,region,theNP);
+              else if(tau_MV2c10_0<defaultbtagwp && dilep_type) fcnc_plots->fill_hist(leporigin,region,theNP);
             }
             else if(region.Contains("tau")) fillhist(fake_plots, region, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, theNP);
             else fill_notau(region, sample, theNP);
@@ -1018,7 +1018,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           if (region.Contains("tau")) {
             if (fcnc) {
               if(plotTauFake) fillhist(fcnc_plots, region, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, "NOMINAL");
-              else if(tau_MV2c10_0<defaultbtagwp) fcnc_plots->fill_hist(leporigin,region,"NOMINAL");
+              else if(tau_MV2c10_0<defaultbtagwp && dilep_type) fcnc_plots->fill_hist(leporigin,region,"NOMINAL");
             }
             else fillhist(fake_plots, region, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, "NOMINAL");
           } else fill_notau(region, sample, "NOMINAL");
