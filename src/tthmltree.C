@@ -920,7 +920,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       }
       if(belong_regions.have("2l")){
         if(lep_truthType_1 == 2 || lep_truthType_1 == 6) {
-          if(lep_truthPdgId_1 == lep_ID_1) leporigin = sample + "_real";
+          if(lep_truthPdgId_1 == lep_ID_1) leporigin = sample + "_reallep";
           else if(lep_truthPdgId_1 == -lep_ID_1) leporigin = sample + "_chargeflip";
           else leporigin = sample + "_misid";
         }
