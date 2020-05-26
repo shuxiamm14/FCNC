@@ -569,7 +569,7 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("DL1_77_EventWeight", & DL1_77_EventWeight);
     tree->SetBranchAddress("DL1_85_EventWeight", & DL1_85_EventWeight);
     tree->SetBranchAddress("DL1_Continuous_EventWeight", & DL1_Continuous_EventWeight);
-    if(reduce == 0) tree->SetBranchAddress("bTagSF_weight_Continuous", & bTagSF_weight_DL1_Continuous);
+    if(reduce == 0) tree->SetBranchAddress("bTagSF_weight_Continuous", &bTagSF_weight_MV2c10_Continuous);
   }
   tree->SetBranchAddress("backgroundFlags", & backgroundFlags);
   tree->SetBranchAddress("triggers", & triggers);
@@ -1192,8 +1192,6 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("m_truth_parents", & m_truth_parents);
     tree->SetBranchAddress("m_truth_children", & m_truth_children);
   }
-  tree->SetBranchAddress("eventNumber", & eventNumber);
-  tree->SetBranchAddress("runNumber", & runNumber);
   if (reduce == 0) {
     if(!(version == 5)){
       tree->SetBranchAddress("m_mcevt_pdf_X1", & m_mcevt_pdf_X1);
@@ -1456,9 +1454,7 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("m_beam_sigmaz", & m_beam_sigmaz);
     tree->SetBranchAddress("m_hasMEphoton", & m_hasMEphoton);
     tree->SetBranchAddress("m_hasMEphoton_DRgt02_nonhad", & m_hasMEphoton_DRgt02_nonhad);
-    tree->SetBranchAddress("m_MEphoton_e", & m_MEphoton_e);
     tree->SetBranchAddress("m_MEphoton_pt", & m_MEphoton_pt);
-    if(version != 5) tree->SetBranchAddress("m_MEphoton_eta", & m_MEphoton_eta);
     tree->SetBranchAddress("m_MEphoton_phi", & m_MEphoton_phi);
     tree->SetBranchAddress("m_MEphoton_mother_pdgId", & m_MEphoton_mother_pdgId);
     if(version != 5) tree->SetBranchAddress("m_MEphoton_mother_e", & m_MEphoton_mother_e);
@@ -1589,7 +1585,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("lep_chargeIDBDTMedium_0", & lep_chargeIDBDTMedium_0);
   tree->SetBranchAddress("lep_chargeIDBDTTight_0", & lep_chargeIDBDTTight_0);
   tree->SetBranchAddress("lep_promptLeptonIso_TagWeight_0", & lep_promptLeptonIso_TagWeight_0);
-  tree->SetBranchAddress("lep_promptLeptonVeto_TagWeight_0", & lep_promptLeptonVeto_TagWeight_0);
+  if(!(version == 5)) tree->SetBranchAddress("lep_promptLeptonVeto_TagWeight_0", & lep_promptLeptonVeto_TagWeight_0);
   tree->SetBranchAddress("lep_jet_Pt_0", & lep_jet_Pt_0);
   tree->SetBranchAddress("lep_jet_nTrk_0", & lep_jet_nTrk_0);
   tree->SetBranchAddress("lep_jet_sumPtTrk_0", & lep_jet_sumPtTrk_0);
@@ -1613,7 +1609,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("lep_truthM_0", & lep_truthM_0);
   tree->SetBranchAddress("lep_truthE_0", & lep_truthE_0);
   tree->SetBranchAddress("lep_truthRapidity_0", & lep_truthRapidity_0);
-  tree->SetBranchAddress("lep_ambiguityType_0", & lep_ambiguityType_0);
+  if(!(version== 5))tree->SetBranchAddress("lep_ambiguityType_0", & lep_ambiguityType_0);
   tree->SetBranchAddress("lep_nInnerPix_0", & lep_nInnerPix_0);
   tree->SetBranchAddress("lep_ID_1", & lep_ID_1);
   tree->SetBranchAddress("lep_Index_1", & lep_Index_1);
@@ -1661,7 +1657,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("lep_chargeIDBDTMedium_1", & lep_chargeIDBDTMedium_1);
   tree->SetBranchAddress("lep_chargeIDBDTTight_1", & lep_chargeIDBDTTight_1);
   tree->SetBranchAddress("lep_promptLeptonIso_TagWeight_1", & lep_promptLeptonIso_TagWeight_1);
-  tree->SetBranchAddress("lep_promptLeptonVeto_TagWeight_1", & lep_promptLeptonVeto_TagWeight_1);
+  if(!(version == 5)) tree->SetBranchAddress("lep_promptLeptonVeto_TagWeight_1", & lep_promptLeptonVeto_TagWeight_1);
   tree->SetBranchAddress("lep_jet_Pt_1", & lep_jet_Pt_1);
   tree->SetBranchAddress("lep_jet_nTrk_1", & lep_jet_nTrk_1);
   tree->SetBranchAddress("lep_jet_sumPtTrk_1", & lep_jet_sumPtTrk_1);
@@ -1685,7 +1681,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("lep_truthM_1", & lep_truthM_1);
   tree->SetBranchAddress("lep_truthE_1", & lep_truthE_1);
   tree->SetBranchAddress("lep_truthRapidity_1", & lep_truthRapidity_1);
-  tree->SetBranchAddress("lep_ambiguityType_1", & lep_ambiguityType_1);
+  if(!(version== 5))tree->SetBranchAddress("lep_ambiguityType_1", & lep_ambiguityType_1);
   tree->SetBranchAddress("lep_nInnerPix_1", & lep_nInnerPix_1);
   tree->SetBranchAddress("lep_ID_2", & lep_ID_2);
   tree->SetBranchAddress("lep_Index_2", & lep_Index_2);
@@ -1733,7 +1729,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("lep_chargeIDBDTMedium_2", & lep_chargeIDBDTMedium_2);
   tree->SetBranchAddress("lep_chargeIDBDTTight_2", & lep_chargeIDBDTTight_2);
   tree->SetBranchAddress("lep_promptLeptonIso_TagWeight_2", & lep_promptLeptonIso_TagWeight_2);
-  tree->SetBranchAddress("lep_promptLeptonVeto_TagWeight_2", & lep_promptLeptonVeto_TagWeight_2);
+  if(!(version == 5)) tree->SetBranchAddress("lep_promptLeptonVeto_TagWeight_2", & lep_promptLeptonVeto_TagWeight_2);
   tree->SetBranchAddress("lep_jet_Pt_2", & lep_jet_Pt_2);
   tree->SetBranchAddress("lep_jet_nTrk_2", & lep_jet_nTrk_2);
   tree->SetBranchAddress("lep_jet_sumPtTrk_2", & lep_jet_sumPtTrk_2);
@@ -1757,7 +1753,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("lep_truthM_2", & lep_truthM_2);
   tree->SetBranchAddress("lep_truthE_2", & lep_truthE_2);
   tree->SetBranchAddress("lep_truthRapidity_2", & lep_truthRapidity_2);
-  tree->SetBranchAddress("lep_ambiguityType_2", & lep_ambiguityType_2);
+  if(!(version== 5))tree->SetBranchAddress("lep_ambiguityType_2", & lep_ambiguityType_2);
   tree->SetBranchAddress("lep_nInnerPix_2", & lep_nInnerPix_2);
   tree->SetBranchAddress("lep_ID_3", & lep_ID_3);
   tree->SetBranchAddress("lep_Index_3", & lep_Index_3);
@@ -1805,7 +1801,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("lep_chargeIDBDTMedium_3", & lep_chargeIDBDTMedium_3);
   tree->SetBranchAddress("lep_chargeIDBDTTight_3", & lep_chargeIDBDTTight_3);
   tree->SetBranchAddress("lep_promptLeptonIso_TagWeight_3", & lep_promptLeptonIso_TagWeight_3);
-  tree->SetBranchAddress("lep_promptLeptonVeto_TagWeight_3", & lep_promptLeptonVeto_TagWeight_3);
+  if(!(version == 5)) tree->SetBranchAddress("lep_promptLeptonVeto_TagWeight_3", & lep_promptLeptonVeto_TagWeight_3);
   tree->SetBranchAddress("lep_jet_Pt_3", & lep_jet_Pt_3);
   tree->SetBranchAddress("lep_jet_nTrk_3", & lep_jet_nTrk_3);
   tree->SetBranchAddress("lep_jet_sumPtTrk_3", & lep_jet_sumPtTrk_3);
@@ -1829,7 +1825,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("lep_truthM_3", & lep_truthM_3);
   tree->SetBranchAddress("lep_truthE_3", & lep_truthE_3);
   tree->SetBranchAddress("lep_truthRapidity_3", & lep_truthRapidity_3);
-  tree->SetBranchAddress("lep_ambiguityType_3", & lep_ambiguityType_3);
+  if(!(version== 5))tree->SetBranchAddress("lep_ambiguityType_3", & lep_ambiguityType_3);
   tree->SetBranchAddress("lep_nInnerPix_3", & lep_nInnerPix_3);
   tree->SetBranchAddress("lep_ID_4", & lep_ID_4);
   tree->SetBranchAddress("lep_Index_4", & lep_Index_4);
@@ -1877,7 +1873,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("lep_chargeIDBDTMedium_4", & lep_chargeIDBDTMedium_4);
   tree->SetBranchAddress("lep_chargeIDBDTTight_4", & lep_chargeIDBDTTight_4);
   tree->SetBranchAddress("lep_promptLeptonIso_TagWeight_4", & lep_promptLeptonIso_TagWeight_4);
-  tree->SetBranchAddress("lep_promptLeptonVeto_TagWeight_4", & lep_promptLeptonVeto_TagWeight_4);
+  if(!(version == 5)) tree->SetBranchAddress("lep_promptLeptonVeto_TagWeight_4", & lep_promptLeptonVeto_TagWeight_4);
   tree->SetBranchAddress("lep_jet_Pt_4", & lep_jet_Pt_4);
   tree->SetBranchAddress("lep_jet_nTrk_4", & lep_jet_nTrk_4);
   tree->SetBranchAddress("lep_jet_sumPtTrk_4", & lep_jet_sumPtTrk_4);
@@ -1901,7 +1897,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("lep_truthM_4", & lep_truthM_4);
   tree->SetBranchAddress("lep_truthE_4", & lep_truthE_4);
   tree->SetBranchAddress("lep_truthRapidity_4", & lep_truthRapidity_4);
-  tree->SetBranchAddress("lep_ambiguityType_4", & lep_ambiguityType_4);
+  if(!(version== 5))tree->SetBranchAddress("lep_ambiguityType_4", & lep_ambiguityType_4);
   tree->SetBranchAddress("lep_nInnerPix_4", & lep_nInnerPix_4);
   tree->SetBranchAddress("tau_pt_0", & tau_pt_0);
   tree->SetBranchAddress("tau_eta_0", & tau_eta_0);
@@ -1915,7 +1911,7 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("tau_numTrack_0", & tau_numTrack_0);
   tree->SetBranchAddress("tau_isHadronic_0", & tau_isHadronic_0);
   tree->SetBranchAddress("tau_tagWeightBin_0", & tau_tagWeightBin_0);
-  tree->SetBranchAddress("tau_MV2c10_0", & tau_MV2c10_0);
+  if(!(version == 5)) tree->SetBranchAddress("tau_MV2c10_0", & tau_MV2c10_0);
   tree->SetBranchAddress("tau_fromPV_0", & tau_fromPV_0);
   if(reduce == 0){
     tree->SetBranchAddress("lep_SFIDLoose_0", & lep_SFIDLoose_0);
@@ -1986,9 +1982,11 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("lepSFObjTight", & lepSFObjTight);
     tree->SetBranchAddress("tauSFTight", & tauSFTight);
     tree->SetBranchAddress("tauSFLoose", & tauSFLoose);
-    tree->SetBranchAddress("lepSFIDLoose", & lepSFIDLoose);
-    tree->SetBranchAddress("lepSFIDTight", & lepSFIDTight);
-    tree->SetBranchAddress("lepSFIsoLoose", & lepSFIsoLoose);
+    if(!(version == 5)){
+      tree->SetBranchAddress("lepSFIDLoose", & lepSFIDLoose);
+      tree->SetBranchAddress("lepSFIDTight", & lepSFIDTight);
+      tree->SetBranchAddress("lepSFIsoLoose", & lepSFIsoLoose);
+    }
     tree->SetBranchAddress("lepSFIsoTight", & lepSFIsoTight);
     tree->SetBranchAddress("lepSFReco", & lepSFReco);
     tree->SetBranchAddress("lepSFTTVA", & lepSFTTVA);
