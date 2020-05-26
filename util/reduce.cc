@@ -124,7 +124,9 @@ int main(int argc, char const *argv[])
 	else if(framework == "tthML") {
 		analysis = new tthmltree();
 		analysis->version = 7;
-		if(inputconfig.Contains("fcnc_ml")) analysis->version = 6;
+		if(inputconfig.Contains("fcnc_ml")) {
+			analysis->version = 5;
+		}
 	}
 	analysis->SystematicsName = systname;
 	analysis->dumptruth = 0;
@@ -231,7 +233,7 @@ int main(int argc, char const *argv[])
 		exit(0);
 	}
 	map<int, float> xsecs;
-	if(!isData && framework == "xTFW"){
+	if(!isData){          //Register Xsections
 		printf("reading cross section file: %s\n", (prefix + "/config/Xsecs.txt").Data());
 		ifstream xsecfile(prefix + "/config/Xsecs.txt");
 		while(!xsecfile.eof()){
@@ -356,10 +358,13 @@ int main(int argc, char const *argv[])
 			}
 			vector<float>* weightsum = new vector<float>();
 			vector<string>* weightname = new vector<string>();
+			float totalEventsWeighted = 0;
 			weighttree->SetBranchAddress("names_mc_generator_weights",&weightname);
 			weighttree->SetBranchAddress("totalEventsWeighted_mc_generator_weights", &weightsum);
+			weighttree->SetBranchAddress("totalEventsWeighted", &totalEventsWeighted);
 			int nentries = weighttree->GetEntries();
 			printf("Loop over %d entries for weight sum\n", nentries);
+			float mc_norm = 0;
 			for (int i = 0; i < nentries; ++i)
 			{
 				weighttree->GetEntry(i);
@@ -368,7 +373,12 @@ int main(int argc, char const *argv[])
 					theoryweightsum[dsid]->SetDirectory(gROOT);
 					for(int j = 0; j<weightname->size(); j++) theoryweightsum[dsid]->GetXaxis()->SetBinLabel(j+1,weightname->at(j).c_str());
 				}
+				mc_norm += totalEventsWeighted;
 				for(int j = 0; j<weightname->size(); j++) theoryweightsum[dsid]->Fill(j,weightsum->at(j));
+			}
+			if(framework == "tthML" && inputconfig.Contains("fcnc_ml")) {
+				if(xsecs.find(dsid) == xsecs.end()) printf("ERROR: Xsection for DSID %d not found.\n", dsid); 
+				((tthmltree*)analysis)->mc_norm = xsecs.find(dsid)->second * luminosity / mc_norm;
 			}
 		}
 	}
