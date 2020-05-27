@@ -433,9 +433,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       if( mc_channel_number > 0) weight*=tightLep?lepSFObjLoose:lepSFIDLoose*lepSFTrigLoose;
       if(nTaus_OR_Pt25 &&  mc_channel_number >0) weight*=tightTau?tauSFLoose:tauSFTight; // stupid and confusing but this is how it is.
       if(weight == 0 || debug) {
-        if(debug){
-          printf("weights:\nmc_norm=%f\nweight_mc=%f\npileupEventWeight_090=%f\nbtag=%f\nJVT_EventWeight=%f\nSherpaNJetWeight=%f\n\n", mc_norm,weight_mc,pileupEventWeight_090,(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous),JVT_EventWeight,SherpaNJetWeight);
-        }
+        printf("weights:\nmc_norm=%f\nweight_mc=%f\npileupEventWeight_090=%f\nbtag=%f\nJVT_EventWeight=%f\nSherpaNJetWeight=%f\n\n", mc_norm,weight_mc,pileupEventWeight_090,(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous),JVT_EventWeight,SherpaNJetWeight);
         if(weight == 0) continue;
       }
       if(sample.Contains("fcnc_ml") && higgsDecayMode == 6) continue;
