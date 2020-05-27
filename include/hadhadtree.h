@@ -23,7 +23,6 @@ public :
    void fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag, TString NPname);
    void definetree(TTree *tree);
    bool addWeightSys();
-   bool isData = 0;
    int tauabspdg = 0;
    std::vector<Int_t>           *taus_id = 0;
    std::vector<UInt_t>          *taus_decay_mode = 0;

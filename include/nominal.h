@@ -49,6 +49,7 @@ public :
   bool dohist;
   int version;
   bool plotTauFake;
+  bool isData;
   //=============================configurations===============================
 
   TString SystematicsName = "NOMINAL";

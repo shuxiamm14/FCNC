@@ -786,8 +786,12 @@ void nominal::finalise_sample(){
   if (writetree) {
     outputtreefile->cd();
     map < TString, TTree*> ::iterator iter;
-    for (iter = outputtree.begin(); iter != outputtree.end(); ++iter)
-      iter->second->Write(iter->first, TObject::kWriteDelete);
+    for (iter = outputtree.begin(); iter != outputtree.end(); ++iter){
+      if(iter->second->GetEntries() != 0)
+        iter->second->Write(iter->first, TObject::kWriteDelete);
+      else
+        printf("Output tree %s is empty\n", iter->first.Data());
+    }
     outputtreefile->Close();
     deletepointer(outputtreefile);
   }

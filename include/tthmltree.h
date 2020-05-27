@@ -4,6 +4,7 @@ class tthmltree : public nominal{
 public:
    tthmltree();
    bool SelectTLepid(int id);
+   bool IsoLepid(int id);
    void definetree(TTree *tree);
    virtual void     Init(TTree *tree);
    void Loop(TTree *inputtree, TString samplename, float globalweight);

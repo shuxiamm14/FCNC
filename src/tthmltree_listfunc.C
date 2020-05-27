@@ -456,7 +456,7 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("tau_JetBDTSigTight_0", & tau_JetBDTSigTight_0);
     tree->SetBranchAddress("tau_JetBDTSigTight_1", & tau_JetBDTSigTight_1);
     tree->SetBranchAddress("eventNumber", & eventNumber);
-    tree->SetBranchAddress("runNumber", & runNumber);
+    if(isData) tree->SetBranchAddress("runNumber", & runNumber);
     tree->SetBranchAddress("drtaujmin", & drtaujmin);
     tree->SetBranchAddress("mtaujmin", & mtaujmin);
     tree->SetBranchAddress("etmiss",&etmiss);
@@ -549,12 +549,13 @@ void tthmltree::Init(TTree*tree) {
   }
   if(version == 5){
     tree->SetBranchAddress("EventNumber", & eventNumber);
-    tree->SetBranchAddress("RunNumber", & runNumber);
+    if(isData) tree->SetBranchAddress("RunNumber", & runNumber);
     tree->SetBranchAddress("MET_RefFinal_et", & met_met);
     tree->SetBranchAddress("MET_RefFinal_phi", & met_phi);
+    if(reduce == 0) tree->SetBranchAddress("bTagSF_weight_Continuous", &bTagSF_weight_MV2c10_Continuous);
   }else{
     tree->SetBranchAddress("eventNumber", & eventNumber);
-    tree->SetBranchAddress("runNumber", & runNumber);
+    if(isData) tree->SetBranchAddress("runNumber", & runNumber);
     tree->SetBranchAddress("randomRunNumber", & randomRunNumber);
     tree->SetBranchAddress("mu", & mu);
     tree->SetBranchAddress("hasBadMuon", & hasBadMuon);
@@ -569,7 +570,6 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("DL1_77_EventWeight", & DL1_77_EventWeight);
     tree->SetBranchAddress("DL1_85_EventWeight", & DL1_85_EventWeight);
     tree->SetBranchAddress("DL1_Continuous_EventWeight", & DL1_Continuous_EventWeight);
-    if(reduce == 0) tree->SetBranchAddress("bTagSF_weight_Continuous", &bTagSF_weight_MV2c10_Continuous);
   }
   tree->SetBranchAddress("backgroundFlags", & backgroundFlags);
   tree->SetBranchAddress("triggers", & triggers);
@@ -1986,10 +1986,10 @@ void tthmltree::Init(TTree*tree) {
       tree->SetBranchAddress("lepSFIDLoose", & lepSFIDLoose);
       tree->SetBranchAddress("lepSFIDTight", & lepSFIDTight);
       tree->SetBranchAddress("lepSFIsoLoose", & lepSFIsoLoose);
+      tree->SetBranchAddress("lepSFIsoTight", & lepSFIsoTight);
+      tree->SetBranchAddress("lepSFReco", & lepSFReco);
+      tree->SetBranchAddress("lepSFTTVA", & lepSFTTVA);
     }
-    tree->SetBranchAddress("lepSFIsoTight", & lepSFIsoTight);
-    tree->SetBranchAddress("lepSFReco", & lepSFReco);
-    tree->SetBranchAddress("lepSFTTVA", & lepSFTTVA);
     tree->SetBranchAddress("lepSFTrigLoose", & lepSFTrigLoose);
     tree->SetBranchAddress("lepSFTrigTight", & lepSFTrigTight);
     tree->SetBranchAddress("lepSFTrigTightLoose", & lepSFTrigTightLoose);
@@ -2006,13 +2006,20 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("tau_passEleOLR_0", & tau_passEleOLR_0);
   tree->SetBranchAddress("tau_passEleBDT_0", & tau_passEleBDT_0);
   tree->SetBranchAddress("tau_passMuonOLR_0", & tau_passMuonOLR_0);
-  tree->SetBranchAddress("tau_BDTEleScoreSigTrans_0", & tau_BDTEleScoreSigTrans_0);
-  tree->SetBranchAddress("tau_BDTJetScoreSigTrans_0", & tau_BDTJetScoreSigTrans_0);
+  if(!(version == 5)){
+    tree->SetBranchAddress("tau_BDTEleScoreSigTrans_0", & tau_BDTEleScoreSigTrans_0);
+    tree->SetBranchAddress("tau_BDTJetScoreSigTrans_0", & tau_BDTJetScoreSigTrans_0);
+    tree->SetBranchAddress("tau_promptTauVeto_0", & tau_promptTauVeto_0);
+    tree->SetBranchAddress("tau_promptTauIso_0", & tau_promptTauIso_0);
+    tree->SetBranchAddress("tau_MV2c10_1", & tau_MV2c10_1);
+    tree->SetBranchAddress("tau_BDTEleScoreSigTrans_1", & tau_BDTEleScoreSigTrans_1);
+    tree->SetBranchAddress("tau_BDTJetScoreSigTrans_1", & tau_BDTJetScoreSigTrans_1);
+    tree->SetBranchAddress("tau_promptTauVeto_1", & tau_promptTauVeto_1);
+    tree->SetBranchAddress("tau_promptTauIso_1", & tau_promptTauIso_1);
+  }
   tree->SetBranchAddress("tau_truthOrigin_0", & tau_truthOrigin_0);
   tree->SetBranchAddress("tau_truthType_0", & tau_truthType_0);
   tree->SetBranchAddress("tau_truthJetFlavour_0", & tau_truthJetFlavour_0);
-  tree->SetBranchAddress("tau_promptTauVeto_0", & tau_promptTauVeto_0);
-  tree->SetBranchAddress("tau_promptTauIso_0", & tau_promptTauIso_0);
   tree->SetBranchAddress("tau_pt_1", & tau_pt_1);
   tree->SetBranchAddress("tau_eta_1", & tau_eta_1);
   tree->SetBranchAddress("tau_phi_1", & tau_phi_1);
@@ -2025,18 +2032,13 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("tau_numTrack_1", & tau_numTrack_1);
   tree->SetBranchAddress("tau_isHadronic_1", & tau_isHadronic_1);
   tree->SetBranchAddress("tau_tagWeightBin_1", & tau_tagWeightBin_1);
-  tree->SetBranchAddress("tau_MV2c10_1", & tau_MV2c10_1);
   tree->SetBranchAddress("tau_fromPV_1", & tau_fromPV_1);
   tree->SetBranchAddress("tau_passEleOLR_1", & tau_passEleOLR_1);
   tree->SetBranchAddress("tau_passEleBDT_1", & tau_passEleBDT_1);
   tree->SetBranchAddress("tau_passMuonOLR_1", & tau_passMuonOLR_1);
-  tree->SetBranchAddress("tau_BDTEleScoreSigTrans_1", & tau_BDTEleScoreSigTrans_1);
-  tree->SetBranchAddress("tau_BDTJetScoreSigTrans_1", & tau_BDTJetScoreSigTrans_1);
   tree->SetBranchAddress("tau_truthOrigin_1", & tau_truthOrigin_1);
   tree->SetBranchAddress("tau_truthType_1", & tau_truthType_1);
   tree->SetBranchAddress("tau_truthJetFlavour_1", & tau_truthJetFlavour_1);
-  tree->SetBranchAddress("tau_promptTauVeto_1", & tau_promptTauVeto_1);
-  tree->SetBranchAddress("tau_promptTauIso_1", & tau_promptTauIso_1);
   tree->SetBranchAddress("onelep_type", & onelep_type);
   tree->SetBranchAddress("dilep_type", & dilep_type);
   tree->SetBranchAddress("trilep_type", & trilep_type);
@@ -2224,7 +2226,7 @@ void tthmltree::Init(TTree*tree) {
 void tthmltree::definetree(TTree*tree) {
   tree->Branch("weights", &weights);
   tree->Branch("eventNumber", & eventNumber, "eventNumber/l");
-  tree->Branch("runNumber", & runNumber, "runNumber/i");
+  if(isData) tree->Branch("runNumber", & runNumber, "runNumber/i");
   tree->Branch("randomRunNumber", & randomRunNumber, "randomRunNumber/i");
   tree->Branch("mc_channel_number", & mc_channel_number);
   tree->Branch("mu", & mu, "mu/F");
@@ -2270,7 +2272,6 @@ void tthmltree::definetree(TTree*tree) {
     tree->Branch("m_truth_children", & m_truth_children);
   }
   tree->Branch("eventNumber", & eventNumber, "eventNumber/l");
-  tree->Branch("runNumber", & runNumber, "runNumber/i");
   tree->Branch("mc_channel_number", & mc_channel_number, "mc_channel_number/i");
   tree->Branch("m_jet_pt", & m_jet_pt);
   tree->Branch("m_jet_eta", & m_jet_eta);

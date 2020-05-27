@@ -165,7 +165,6 @@ void hadhadtree::Loop(TTree* inputtree, TString samplename, float globalweight)
     exit(0);
   }
   if(debug && dohist) for (int iNP = 0; iNP < plotNPs.size(); ++iNP) fcnc_plots->show();
-  isData = samplename.Contains("data");
   int campaign = 0;
   if(isData) {
     campaign = samplename.Contains("1516") ? 1: (samplename.Contains("17")? 2:3);

@@ -432,11 +432,23 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       weight = mc_channel_number > 0 ? mc_norm*weight_mc*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight: 1.0;
       if( mc_channel_number > 0) weight*=tightLep?lepSFObjLoose:lepSFIDLoose*lepSFTrigLoose;
       if(nTaus_OR_Pt25 &&  mc_channel_number >0) weight*=tightTau?tauSFLoose:tauSFTight; // stupid and confusing but this is how it is.
-      if(weight == 0) continue;
+      if(weight == 0 || debug) {
+        if(debug){
+          printf("weights:\nmc_norm=%f\nweight_mc=%f\npileupEventWeight_090=%f\nbtag=%f\nJVT_EventWeight=%f\nSherpaNJetWeight=%f\n\n", mc_norm,weight_mc,pileupEventWeight_090,(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous),JVT_EventWeight,SherpaNJetWeight);
+        }
+        if(weight == 0) continue;
+      }
       if(sample.Contains("fcnc_ml") && higgsDecayMode == 6) continue;
       cut_flow.fill("n-tuple");
       if (!basic_selection) continue;
       cut_flow.fill("basic selection");
+      if(version == 5){
+        lep_promptLeptonVeto_TagWeight_0  = lep_promptLeptonIso_TagWeight_0;
+        lep_promptLeptonVeto_TagWeight_1  = lep_promptLeptonIso_TagWeight_1;
+        lep_promptLeptonVeto_TagWeight_2  = lep_promptLeptonIso_TagWeight_2;
+        lep_promptLeptonVeto_TagWeight_3  = lep_promptLeptonIso_TagWeight_3;
+        lep_promptLeptonVeto_TagWeight_4  = lep_promptLeptonIso_TagWeight_4;
+      }
 
       bool trig_match = (lep_isTrigMatch_0 || lep_isTrigMatch_1 || lep_isTrigMatch_2 || lep_isTrigMatch_3 || matchDLTll01 || matchDLTll02 || matchDLTll12 || matchDLTll03 || matchDLTll13 || matchDLTll23);
       bool SLtrig_match =
@@ -469,8 +481,8 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
         if(onelep_type && SLtrig_match && nJets_OR_T_MV2c10_70 == 2 && nJets_OR_T == 2 && nTaus_OR_Pt25 == 1 && (lep_ID_0 > 0 ? -1 : 1)*tau_charge_0 > 0) belong_regions.add("reg1l1tau2b_ss");
       }
       if (trig_match && dilep_type && lep_Pt_0 > 20*GeV && lep_Pt_1 > 20*GeV && (nTaus_OR_Pt25 == 0 || (tau_passEleBDT_0 && tau_passMuonOLR_0))){
-        if(((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5)) && (!tightLep || SelectTLepid(0)) &&
-           ((abs(lep_ID_1) == 11 && lep_promptLeptonVeto_TagWeight_1 < -0.7) || (abs(lep_ID_1) == 13 && lep_promptLeptonVeto_TagWeight_1 < -0.5)) && (!tightLep || SelectTLepid(1))) { //tight lepton
+        if( IsoLepid(0) && (!tightLep || SelectTLepid(0)) &&
+            IsoLepid(1) && (!tightLep || SelectTLepid(1))) { //tight lepton
           if((dilep_type == 2 || ((dilep_type == 1 || dilep_type == 3) && (Mll01 < 80*GeV || Mll01 > 100*GeV))) && total_charge == 0){ //2l ttbar CR
             if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau2bnj");
             if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1) belong_regions.add("reg2l1tau1bnj");
@@ -480,7 +492,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau1bnj_ss");
           if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau2bnj_os");
           if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau2bnj_ss");
-        }else if(((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5)) && tightLep && SelectTLepid(0) && lep_isTightLH_1){ //reverse iso only
+        }else if(IsoLepid(0) && tightLep && SelectTLepid(0) && lep_isTightLH_1){ //reverse iso only for 2nd lepton
           if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau1bnj_os_antiiso");
           if(nJets_OR_T_MV2c10_70 == 1 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 < 0) belong_regions.add("reg2lSS1tau1bnj_ss_antiiso");
           if(nJets_OR_T_MV2c10_70 == 2 && nTaus_OR_Pt25 == 1 && lep_ID_0 * lep_ID_1 > 0 && tau_charge_0*lep_ID_0 > 0) belong_regions.add("reg2lSS1tau2bnj_os_antiiso");
@@ -802,7 +814,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
       }
     }
     if((reduce == 3 && fcnc)|| (reduce == 2 && !fcnc)){
-      if (!belong_regions.have("antiiso") && cutPLV == 1 && ((lep_ID_0 == 11 && lep_promptLeptonVeto_TagWeight_0 > -0.7) || (lep_ID_0 == 13 && lep_promptLeptonVeto_TagWeight_0 > -0.5))) continue;
+      if (!belong_regions.have("antiiso") && cutPLV == 1 && IsoLepid(0)) continue;
       cut_flow.fill("PLV");
       if (cutmet == 1 && etmiss<30*GeV) continue;
       cut_flow.fill("MET>30");
@@ -1019,7 +1031,7 @@ void tthmltree::Loop(TTree* inputtree, TString samplename, float globalweight) {
           if (region.Contains("tau")) {
             if (fcnc) {
               if(plotTauFake) fillhist(fcnc_plots, region, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, "NOMINAL");
-              else if(tau_MV2c10_0<defaultbtagwp && region.Contains("2l")) fcnc_plots->fill_hist(leporigin,region,"NOMINAL");
+              else if(tau_MV2c10_0<defaultbtagwp && region.Contains("2l")) fcnc_plots->fill_hist("data",region,"NOMINAL");
             }
             else fillhist(fake_plots, region, tau_numTrack_0, tauorigin, tau_pt_0 / GeV > 35, tau_MV2c10_0, "NOMINAL");
           } else fill_notau(region, sample, "NOMINAL");
@@ -1272,6 +1284,21 @@ bool tthmltree::SelectTLepid(int id) {
     pass = lep_isolationFixedCutLoose_4 && (abs(lep_ID_4) == 13 || ((abs(lep_ID_4) == 11) && lep_isTightLH_4));
   }
   return pass;
+}
+
+bool tthmltree::IsoLepid(int id) {
+  if (id == 0) {
+    return (abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(lep_ID_0) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5);
+  } else if (id == 1) {
+    return (abs(lep_ID_1) == 11 && lep_promptLeptonVeto_TagWeight_1 < -0.7) || (abs(lep_ID_1) == 13 && lep_promptLeptonVeto_TagWeight_1 < -0.5);
+  } else if (id == 2) {
+    return (abs(lep_ID_2) == 11 && lep_promptLeptonVeto_TagWeight_2 < -0.7) || (abs(lep_ID_2) == 13 && lep_promptLeptonVeto_TagWeight_2 < -0.5);
+  } else if (id == 3) {
+    return (abs(lep_ID_3) == 11 && lep_promptLeptonVeto_TagWeight_3 < -0.7) || (abs(lep_ID_3) == 13 && lep_promptLeptonVeto_TagWeight_3 < -0.5);
+  } else if (id == 4) {
+    return (abs(lep_ID_4) == 11 && lep_promptLeptonVeto_TagWeight_4 < -0.7) || (abs(lep_ID_4) == 13 && lep_promptLeptonVeto_TagWeight_4 < -0.5);
+  } else return 0;
+
 }
 
 void tthmltree::constructwmatchmap(TTree *tree){

@@ -232,6 +232,7 @@ int main(int argc, char const *argv[])
 		printf("Wrong config file name, cannot recognise mc campaign: %s\n", inputconfig.Data());
 		exit(0);
 	}
+	analysis->isData = isData;
 	map<int, float> xsecs;
 	if(!isData){          //Register Xsections
 		printf("reading cross section file: %s\n", (prefix + "/config/Xsecs.txt").Data());
