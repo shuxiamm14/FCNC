@@ -579,6 +579,9 @@ void tthmltree::Init(TTree*tree) {
   tree->SetBranchAddress("MV2c10_85_EventWeight", & MV2c10_85_EventWeight);
   tree->SetBranchAddress("JVT_EventWeight", & JVT_EventWeight);
   tree->SetBranchAddress("MV2c10_Continuous_EventWeight", & MV2c10_Continuous_EventWeight);
+  tree->SetBranchAddress("MET_RefFinal_et", & MET_RefFinal_et);
+  tree->SetBranchAddress("MET_RefFinal_phi", & MET_RefFinal_phi);
+  tree->SetBranchAddress("MET_RefFinal_sumet", & MET_RefFinal_sumet);
   if (nominaltree && reduce == 0){
     tree->SetBranchAddress("pileupEventWeight_UP", & pileupEventWeight_UP);
     tree->SetBranchAddress("pileupEventWeight_DOWN", & pileupEventWeight_DOWN);
@@ -1457,9 +1460,6 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("m_MEphoton_mother_pt", & m_MEphoton_mother_pt);
     tree->SetBranchAddress("m_MEphoton_mother_eta", & m_MEphoton_mother_eta);
     tree->SetBranchAddress("m_MEphoton_mother_phi", & m_MEphoton_mother_phi);
-    tree->SetBranchAddress("MET_RefFinal_et", & MET_RefFinal_et);
-    tree->SetBranchAddress("MET_RefFinal_phi", & MET_RefFinal_phi);
-    tree->SetBranchAddress("MET_RefFinal_sumet", & MET_RefFinal_sumet);
     tree->SetBranchAddress("MET_RefFinal_softTrk_et", & MET_RefFinal_softTrk_et);
     tree->SetBranchAddress("MET_RefFinal_softTrk_phi", & MET_RefFinal_softTrk_phi);
     tree->SetBranchAddress("MET_RefFinal_softClus_et", & MET_RefFinal_softClus_et);
@@ -2236,6 +2236,9 @@ void tthmltree::definetree(TTree*tree) {
   tree->Branch("loose", & loose, "loose/I");
   tree->Branch("mcWeightOrg", &weight_mc, "mcWeightOrg/D");
   tree->Branch("mcEventWeights", & weight_mc_v);
+  tree->Branch("MET_RefFinal_et", & MET_RefFinal_et);
+  tree->Branch("MET_RefFinal_phi", & MET_RefFinal_phi);
+  tree->Branch("MET_RefFinal_sumet", & MET_RefFinal_sumet);
   tree->Branch("pileupEventWeight_090", & pileupEventWeight_090, "pileupEventWeight_090/D");
   tree->Branch("MV2c10_60_EventWeight", & MV2c10_60_EventWeight, "MV2c10_60_EventWeight/D");
   tree->Branch("MV2c10_70_EventWeight", & MV2c10_70_EventWeight, "MV2c10_70_EventWeight/D");
