@@ -550,8 +550,6 @@ void tthmltree::Init(TTree*tree) {
   if(version == 5){
     tree->SetBranchAddress("EventNumber", & eventNumber);
     if(isData) tree->SetBranchAddress("RunNumber", & runNumber);
-    tree->SetBranchAddress("MET_RefFinal_et", & met_met);
-    tree->SetBranchAddress("MET_RefFinal_phi", & met_phi);
     if(reduce == 0) tree->SetBranchAddress("bTagSF_weight_Continuous", &bTagSF_weight_MV2c10_Continuous);
   }else{
     tree->SetBranchAddress("eventNumber", & eventNumber);
@@ -563,8 +561,6 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("tau_eta", & tau_eta);
     tree->SetBranchAddress("tau_phi", & tau_phi);
     tree->SetBranchAddress("tau_charge", & tau_charge);
-    tree->SetBranchAddress("met_met", & met_met);
-    tree->SetBranchAddress("met_phi", & met_phi);
     tree->SetBranchAddress("DL1_60_EventWeight", & DL1_60_EventWeight);
     tree->SetBranchAddress("DL1_70_EventWeight", & DL1_70_EventWeight);
     tree->SetBranchAddress("DL1_77_EventWeight", & DL1_77_EventWeight);
@@ -2236,8 +2232,6 @@ void tthmltree::definetree(TTree*tree) {
   tree->Branch("tau_eta", & tau_eta);
   tree->Branch("tau_phi", & tau_phi);
   tree->Branch("tau_charge", & tau_charge);
-  tree->Branch("met_met", & met_met, "met_met/F");
-  tree->Branch("met_phi", & met_phi, "met_phi/F");
   tree->Branch("triggers", & triggers, "triggers/I");
   tree->Branch("loose", & loose, "loose/I");
   tree->Branch("mcWeightOrg", &weight_mc, "mcWeightOrg/D");
