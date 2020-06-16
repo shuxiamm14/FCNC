@@ -35,8 +35,6 @@ public:
    UInt_t          mcChannelNumber;
    Float_t         mu;
    UInt_t          hasBadMuon;
-   Float_t         met_met;
-   Float_t         met_phi;
    Int_t           triggers;
    Int_t           loose;
    Char_t          HLT_mu40;
@@ -1886,8 +1884,6 @@ public:
    TBranch        *b_tau_eta;   //!
    TBranch        *b_tau_phi;   //!
    TBranch        *b_tau_charge;   //!
-   TBranch        *b_met_met;   //!
-   TBranch        *b_met_phi;   //!
    TBranch        *b_triggers;   //!
    TBranch        *b_HLT_mu40;   //!
    TBranch        *b_HLT_mu26_ivarmedium;   //!
