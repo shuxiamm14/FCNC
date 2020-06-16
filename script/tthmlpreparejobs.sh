@@ -1,10 +1,10 @@
-
 rundir=$ttH_fakes_DIR/datafiles/tthML/v2
 mkdir -p $rundir/run
 rm $rundir/run/*
 allsamplefile=$rundir/run/allsamples.dat
 sysallsamplefile=$rundir/run/sys_allsamples.dat
-for files in `ls /global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimV9/*.list`
+inputdir=/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimttV3
+for files in `ls $inputdir/*.list`
 do
 	if [ `grep -c "$files" $rundir/ignore.list` -ne '0' ] ; then
 		continue;
@@ -12,7 +12,7 @@ do
 	cat $files | sort >> $allsamplefile
 	echo >> $allsamplefile
 done
-for files in `ls /global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimSysV9/*.list`
+for files in `ls $inputdir/*.list`
 do
 	cat $files | sort >> $sysallsamplefile
 	echo >> $sysallsamplefile

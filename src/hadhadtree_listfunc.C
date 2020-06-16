@@ -2,9 +2,6 @@
 #include "hadhadtree.h"
 using namespace std;
 void hadhadtree::definetree(TTree * tree) {
-  tree->Branch("eventNumber", &eventNumber);
-  tree->Branch("mc_channel_number", &mc_channel_number);
-  tree->Branch("runNumber",&runNumber);
   tree->Branch("weights",&weights);
   if(reduce == 1){
     setVecBranch(tree);
@@ -574,7 +571,7 @@ void hadhadtree::Init(TTree *tree)
     ljets_width = 0;
     setVecBranch(tree);
     tree->SetBranchAddress("eventNumber", &eventNumber);
-    tree->SetBranchAddress("mc_channel_number", &mc_channel_number);
+    tree->SetBranchAddress("mc_channel_number", &mcChannelNumber);
     tree->SetBranchAddress("runNumber", &runNumber);
     tree->SetBranchAddress("weights", &weights);
     tree->SetBranchAddress("tau_pt_0", &tau_pt_0);
@@ -1732,7 +1729,7 @@ void hadhadtree::Init(TTree *tree)
       tree->SetBranchAddress("n_truth_jets_pt20_eta45", &n_truth_jets_pt20_eta45, &b_n_truth_jets_pt20_eta45);
       tree->SetBranchAddress("n_truth_quark_jets", &n_truth_quark_jets, &b_n_truth_quark_jets);
       tree->SetBranchAddress("truth_passedVBFFilter", &truth_passedVBFFilter, &b_truth_passedVBFFilter);
-      tree->SetBranchAddress("weight_mc", &weight_mc, &b_weight_mc);
+      tree->SetBranchAddress("weight_mc", &weight_mc_d, &b_weight_mc);
     }
   }
 }

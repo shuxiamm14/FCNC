@@ -1,5 +1,6 @@
 #include "TLorentzVector.h"
-
+#ifndef TRUTHPART
+#define TRUTHPART
 class truthpart
 {
 public:
@@ -15,3 +16,4 @@ public:
 	int motherbarcode = -1;
 	std::vector<int> childrenbarcode;
 };
+#endif

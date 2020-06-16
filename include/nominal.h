@@ -27,6 +27,8 @@ class nominal {
 public :
 
   //=============================configurations===============================
+  bool dofit1l2tau = 0;
+  bool applyfakeSF = 0;
   std::map<TString,bool> dobwp;
   std::map<TString,bool> dovetobwp;
   bool doubleCounting = 0;
@@ -50,13 +52,17 @@ public :
   int version;
   bool plotTauFake;
   bool isData;
+  bool tightLep = 1;
+  bool tightTau;
   //=============================configurations===============================
 
   TString SystematicsName = "NOMINAL";
   CutFlow cut_flow;
   TMinuit* gMinside;
 // Fixed size dimensions of array or collections stored in the TTree if any.
-  const double btagwpCut[4]={0.94,0.83,0.64,0.11};
+  //const double btagwpCut[4]={0.94,0.83,0.64,0.11};
+  const double btagwpCut[4]={4.31,2.96,2.20,1.27};  //DL1r
+  double defaultbtagwp;
   //const double fakeSFs[4][4] = {
   //  {1.028254, 0.060939, 2.842907, 0.802803},  //1prong <35
   //  {0.770841, 0.524360, 2.233151, 0.769241},  //1prong >35
@@ -93,16 +99,6 @@ public :
   
   std::map<TString, TMVA::Reader*> reader;
 
-  static RooRealVar  _dR_;
-  static RooRealVar  _m1_;
-  static RooRealVar  _w1_;
-  static RooGaussian _gaus_;
-  static RooRealVar  _m2_;
-  static RooRealVar  _w2_;
-  static RooLandau   _land_;
-  static RooRealVar  _fr1_;
-  static RooAddPdf   _pdf_;
-
   static int GeV;
   std::vector<TString> plotNPs;
   std::map<TString,std::vector<std::vector<std::vector<observable>>>> newFakeSF;
@@ -110,31 +106,6 @@ public :
   Int_t ierflg;
   int ifill = 0;
 
-  float pt_b;
-  float pt_ljet;
-  float taulmass;
-  float t1mass;
-  float drlbditau;
-  float mtw;
-  float tau_pt_ss;
-  float tau_pt_os;
-  float etamax;
-  float drltau  ;
-  float drtauj  ;
-  float drtautau;
-  float wmass   ;
-  float t2mass  ;
-  float tautaumass;
-  float etmiss = 0;
-  float dphitauetmiss = 0;
-  float phicent = 0;
-  float chi2;
-  float allmass = 0;
-  float allpz = 0;
-  float mjjmin;
-  float drlb;
-  float drtaub;
-  int nljet = 0;
   bool nominaltree = 1;
   std::map<int, std::vector<TString>> weightsysmap; //only used after reduce 1
   std::vector<TString> weightlist; //only used in reduce 1
@@ -168,18 +139,18 @@ public :
   void ConfigNewFakeSF();
   void initReduce1();
   static Float_t eval(const Float_t x, const Float_t y, const TH2F* h);
-  observable FindNewFakeSF(TString NP, std::vector<int> origintag, std::vector<float> taupt, std::vector<int> isOS);
-  observable FindNewFakeSF(TString NP, int origintag, float taupt, int isOS, TString &name);
-  observable FindNewFakeSF(TString NP, int origintag, float taupt, int isOS);
+  observable FindNewFakeSF(TString NP);
+  observable FindNewFakeSF(TString NP, int itau, int isOS, TString &name);
+  observable FindNewFakeSF(TString NP, int itau, int isOS);
   void addweights(double weight, TString name);
   void saveweightslist(TString filename);
   void readTFmeanstd(TString filename);
   TMinuit* initgM();
   void initMVA(TString fcnc_region);
-  void dumpTruth(int part);
+  void dumpTruth(int part){}
   void readweightsysmap(int dsid,TString framework);
   TLorentzVector vectorPtEtaPhiE(std::vector<float> vec);
-  std::vector<int> findcjet();
+  std::vector<int>* findcjet();
   std::vector<int> findcjetML(int part);
   std::vector<int> findwpair(int cjet);
   static Float_t getHadTauProb(Float_t _dR, Float_t _p);
@@ -190,47 +161,108 @@ public :
   void fillhist(histSaver *plots, TString region, int nprong, TString sample, int ptbin, float taubtag, TString NP);
   void fill_notau(TString region, TString sample, TString NP);
   bool SelectTLepid(int id);
-  void calcfakesf(std::vector<int> origin, std::vector<float> pt, std::vector<int> prong);
-  void calcfakesf_pdg(std::vector<int> originpdg, std::vector<float> pt, std::vector<int> prong);
+  void calcfakesf(std::vector<int> origin);
+  void calcfakesf_pdg();
   void defGeV(int _GeV);
-  bool AddTheorySys();
+  bool addTheorySys();
   void initCommon();
   void initFit();
-  virtual void init_hist(TString histfilename){ printf("WARNING: virtual function init_hist is used\n");};
-  virtual void Loop(TTree*inputtree, TString samplename, float globalweight){ printf("WARNING: virtual function Loop is used\n");};
-  virtual void init_sample(TString sample, TString sampletitle){ printf("WARNING: virtual function init_sample is used\n");};
-  virtual void constructwmatchmap(TTree *tree){ printf("WARNING: virtual function constructwmatchmap is used\n");};
   static void printv(TLorentzVector v);
   void setVecBranch(TTree *tree);
   void vecBranch(TTree *tree);
-
-  int leading_b = -1 ;
-  int leading_ljet = -1 ;
-
-  ULong64_t       eventNumber;
-  int runNumber;
-  double weight_mc;
-  std::vector<float> *weight_mc_v;
-  std::vector<double>           *weights;
-  std::vector<int>    ljet_indice;
-  std::vector<float>  *neutrino_pt;
-  std::vector<float>  *neutrino_eta;
-  std::vector<float>  *neutrino_phi;
-  std::vector<float>  *neutrino_m;
-  std::vector<float>  *tau_pt;
-  std::vector<float>  *tau_eta;
-  std::vector<float>  *tau_phi;
-  std::vector<float>  *tau_charge;
+  void setBDTBranch(TTree *tree);
+  void BDTBranch(TTree *tree);
+  void init(TTree *tree);
+  void defineTree(TTree *tree);
+  virtual void initRaw(TTree *tree){ printf("WARNING: virtual function initRaw is used\n"); }
+  virtual void init_hist(TString histfilename){ printf("WARNING: virtual function init_hist is used\n"); }
+  void Loop(TTree*inputtree, TString samplename, float globalweight);
+  virtual void init_sample(TString sample, TString sampletitle){ printf("WARNING: virtual function init_sample is used\n"); }
+  virtual void constructwmatchmap(TTree *tree){ printf("WARNING: virtual function constructwmatchmap is used\n"); }
+  virtual void calcGeneralWeight(){ printf("WARNING: virtual function calcGeneralWeight is used\n"); }
+  virtual float calcRegionSF(TString region){ printf("WARNING: virtual function calcGeneralWeight is used\n"); return 0;}
+  virtual bool passBasicCut(){ printf("WARNING: virtual function passBasicCut is used in nominal.h\n"); return 1; }
+  virtual void defineObjects(){ printf("WARNING: virtual function defineObjects is used in nominal.h\n"); }
+  virtual void defineRegions();
+  virtual void defineTauTruth(){ printf("WARNING: virtual function defineTauTruth is used in nominal.h\n"); }
+  virtual void defineLepTruth(){ printf("WARNING: virtual function defineLepTruth is used in nominal.h\n"); }
+  virtual bool addWeightSys(){ printf("WARNING: virtual function addWeightSys is used in nominal.h\n"); return 1;}
+  virtual bool passRegionCut(){return 1;}
+  //======================================================general necessary variables========================================
+  ULong64_t  eventNumber;
+  UInt_t        runNumber;
+  UInt_t     mcChannelNumber;
+  float     weight_mc;
+  float      generalweight;
+  TString    samplename;
+  int        campaign;
+  //======================================================vector variables for analysis========================================
+  std::vector<float>           *weight_mc_v;
+  std::vector<double>          *weights;
+  std::vector<int>             *ljet_indice;
   std::vector<UInt_t>          *taus_n_charged_tracks;
   std::vector<Int_t>           *taus_b_tagged;
+  std::vector<Int_t>           *taus_id;
   std::vector<Float_t>         *taus_q;
   std::vector<TLorentzVector*> *taus_p4;
+  std::vector<int> *taus_matched_mother_pdgId;
+  std::vector<int> *taus_matched_pdgId;
+  std::vector<TLorentzVector*> *neutrinos_p4;
   TLorentzVector               *met_p4;
   std::vector<TLorentzVector*> *bjets_p4;
   std::vector<TLorentzVector*> *ljets_p4;
   std::vector<TLorentzVector*> *leps_p4;
   std::vector<Int_t>           *leps_id;
-
+  std::vector<Int_t>           *leps_iso;
+  std::vector<Int_t>           *leps_tight;
+  std::vector<int> *leps_matched_pdgId;
+  std::vector<int> *leps_truth_type;
+  std::vector<std::vector<int>*> taumatchmap;
+  std::vector<float>           *bjets_score;
+  //======================================================flat variables for BDT========================================
+  float      drttjmin;
+  float      t2vismass;
+  float      t1vismass;
+  float      ttvismass;
+  float      tautauvispt;
+  float      weight;
+  float      x1fit;
+  float      x2fit;
+  float      mtaujmin;
+  float      mttjmin;
+  float      tau_pt_0;
+  float      tau_pt_1;
+  float      pt_b;
+  float      pt_ljet;
+  float      taulmass;
+  float      t1mass;
+  float      drlbditau;
+  float      mtw;
+  float      tau_pt_ss;
+  float      tau_pt_os;
+  float      etamax;
+  float      drltau  ;
+  float      drttj  ;
+  float      drtautau;
+  float      wmass   ;
+  float      t2mass  ;
+  float      tautaumass;
+  float      etmiss;
+  float      dphitauetmiss;
+  float      phicent;
+  float      chi2;
+  float      allmass;
+  float      allpz;
+  float      mjjmin;
+  float      drlb;
+  float      drtaub;
+  float      lep_pt_0;
+  float      lep_pt_1;
+  int        nljet;
+  float      drtaujmin;
+  float      drtauj;
+  float      MET_RefFinal_et;
+  //======================================================variables for kinematic fit========================================
   static TH2F* prob_20_40;
   static TH2F* prob_40_60;
   static TH2F* prob_60_80;
@@ -242,19 +274,16 @@ public :
   static TH2F* prob_200_300;
   static TH2F* prob_300_400;
   static TH2F* prob_400;
-
+  static RooRealVar  _dR_;
+  static RooRealVar  _m1_;
+  static RooRealVar  _w1_;
+  static RooGaussian _gaus_;
+  static RooRealVar  _m2_;
+  static RooRealVar  _w2_;
+  static RooLandau   _land_;
+  static RooRealVar  _fr1_;
+  static RooAddPdf   _pdf_;
 
   std::map<TString,std::vector<TLorentzVector*>*> fitvec;
-  float      t2vismass;
-  float      t1vismass;
-  float      ttvismass;
-  float      tautauvispt;
-  float      weight;
-  float      x1fit;
-  float      x2fit;
-  float      drtaujmin;
-  float      mtaujmin;
-  float      tau_pt_0;
-  float      tau_pt_1;
 };
 #endif

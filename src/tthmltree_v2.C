@@ -1,80 +1,308 @@
 #define NO_TMINUIT
-#include "tthmltree.h"
+#include "tthmltree_v2.h"
 #include "TH2F.h"
-
-void tthmltree::initialize_fit(const char* input) {
-  printf("reading in histograms\n");
-  TFile f(input,"READ");
-
-  prob_20_40 = (TH2F*) f.Get("prob_20_40");
-  prob_40_60 = (TH2F*) f.Get("prob_40_60");
-  prob_60_80 = (TH2F*) f.Get("prob_60_80");
-  prob_80_100 = (TH2F*) f.Get("prob_80_100");
-  prob_100_120 = (TH2F*) f.Get("prob_100_120");
-  prob_120_140 = (TH2F*) f.Get("prob_120_140");
-  prob_140_160 = (TH2F*) f.Get("prob_140_160");
-  prob_160_200 = (TH2F*) f.Get("prob_160_200");
-  prob_200_300 = (TH2F*) f.Get("prob_200_300");
-  prob_300_400 = (TH2F*) f.Get("prob_300_400");
-  prob_400 = (TH2F*) f.Get("prob_400");
-
-  prob_20_40->SetDirectory(0);
-  prob_40_60->SetDirectory(0);
-  prob_60_80->SetDirectory(0);
-  prob_80_100->SetDirectory(0);
-  prob_100_120->SetDirectory(0);
-  prob_120_140->SetDirectory(0);
-  prob_140_160->SetDirectory(0);
-  prob_160_200->SetDirectory(0);
-  prob_200_300->SetDirectory(0);
-  prob_300_400->SetDirectory(0);
-  prob_400->SetDirectory(0);
-
-  fillOverFlow(prob_20_40);
-  fillOverFlow(prob_40_60);
-  fillOverFlow(prob_60_80);
-  fillOverFlow(prob_80_100);
-  fillOverFlow(prob_100_120);
-  fillOverFlow(prob_120_140);
-  fillOverFlow(prob_140_160);
-  fillOverFlow(prob_160_200);
-  fillOverFlow(prob_200_300);
-  fillOverFlow(prob_300_400);
-  fillOverFlow(prob_400);
-
-  f.Close();
-}
-
-//at least 2x2 bins:
-void tthmltree::fillOverFlow(TH2F* h) {
-  Int_t nx = h->GetNbinsX();
-  Int_t ny = h->GetNbinsY();
-  for(Int_t i=1; i<=nx; i++) {
-    h->SetBinContent(i,0,2*h->GetBinContent(i,1)-h->GetBinContent(i,2));
-    h->SetBinContent(i,ny+1,2*h->GetBinContent(i,ny)-h->GetBinContent(i,ny-1));
+using namespace std;
+void tthmltree_v2::dumpTruth(int ipart) {
+  TLorentzVector wchild[2], fcncjet, wboson;
+  stringstream outstream;
+  fstream nonmatchedfile;
+  nonmatchedfile.open("nonmatch.txt", fstream:: in | fstream::out | fstream::app);
+  if (debug) printf("truth particles: %lu\n", m_truth_pdgId->size());
+  bool foundcjet = 0;
+  int foundw = 0;
+  int ifcncmatched = -1;
+  bool foundhiggs = 0;
+  if (debug) printf("find truth: mc channel: %d\n", mc_channel_number);
+  for (int itruth = 0; itruth < m_truth_pdgId->size(); ++itruth) {
+    if (debug) printf("pdg: %d,\tbarcode: %d,\tparent: %d\n", m_truth_pdgId->at(itruth), m_truth_barcode->at(itruth), m_truth_parents->at(itruth).size() ? m_truth_parents->at(itruth)[0] : 0);
+    if (taus_p4->size() == 1 && abs(m_truth_pdgId->at(itruth)) == 24 && m_truth_m->at(itruth) / GeV > 70 && m_truth_m->at(itruth) / GeV < 90) {
+      for (int ichild = 0; ichild < m_truth_children->at(itruth).size(); ++ichild) {
+        int childbarcode = m_truth_children->at(itruth)[ichild];
+        if (debug) printf("child barcode %d\n", childbarcode);
+        int childid = 0;
+        for (int i = 0; i < m_truth_barcode->size(); ++i) {
+          if (m_truth_barcode->at(i) == childbarcode) {
+            childid = i;
+            break;
+          }
+        }
+        if (debug) printf("child pdg: %d\n", m_truth_pdgId->at(childid));
+        if (!(mc_channel_number == 411170 || mc_channel_number == 411171 || mc_channel_number == 411174 || mc_channel_number == 411175)) {
+          leptonicw += weight;
+          return;
+        }
+        if (abs(m_truth_pdgId->at(childid)) > 4 || abs(m_truth_pdgId->at(childid)) < 1) {
+          break;
+        }
+        if (debug) printf("childid: %d\n", childid);
+        wchild[foundw].SetPtEtaPhiM(m_truth_pt->at(childid), m_truth_eta->at(childid), m_truth_phi->at(childid), m_truth_m->at(childid));
+        if (debug) outstream << "wjet:\t" << wchild[foundw].Pt() << " " << wchild[foundw].Eta() << " " << wchild[foundw].Phi() << " " << wchild[foundw].E() << " " << m_truth_pdgId->at(childid) << endl;
+        foundw += 1;
+        if (foundw == 1) wboson.SetPtEtaPhiM(m_truth_pt->at(itruth), m_truth_eta->at(itruth), m_truth_phi->at(itruth), m_truth_m->at(itruth));
+      }
+    } else if ((abs(m_truth_pdgId->at(itruth)) == 2 || abs(m_truth_pdgId->at(itruth)) == 4)) {
+      int parent = -1;
+      for (int i = 0; i < m_truth_barcode->size(); ++i) {
+        if (m_truth_barcode->at(i) == m_truth_parents->at(itruth)[0]) {
+          parent = i;
+          break;
+        }
+      }
+      if (abs(m_truth_pdgId->at(parent)) == 6) {
+        foundcjet = 1;
+        fcncjet.SetPtEtaPhiM(m_truth_pt->at(itruth), m_truth_eta->at(itruth), m_truth_phi->at(itruth), m_truth_m->at(itruth));
+        if (debug) outstream << "cjet:\t" << fcncjet.Pt() << " " << fcncjet.Eta() << " " << fcncjet.Phi() << " " << fcncjet.E() << " " << m_truth_pdgId->at(itruth) << endl;
+        if (debug) outstream << "fcnctop:\t" << m_truth_pt->at(parent) << " " << m_truth_eta->at(parent) << " " << m_truth_phi->at(parent) << " " << m_truth_m->at(parent) << " " << m_truth_pdgId->at(parent) << endl;
+      }
+    }
+    if (m_truth_pdgId->at(itruth) == 25) {
+      if (debug) outstream << "higgs:\t" << m_truth_pt->at(itruth) << " " << m_truth_eta->at(itruth) << " " << m_truth_phi->at(itruth) << " " << m_truth_m->at(itruth) << " " << m_truth_pdgId->at(itruth) << endl;
+      foundhiggs = 1;
+    }
+    if (foundw == 2 && foundcjet && foundhiggs) break;
   }
-  for(Int_t j=1; j<=ny; j++) {
-    h->SetBinContent(0,j,2*h->GetBinContent(1,j)-h->GetBinContent(2,j));
-    h->SetBinContent(nx+1,j,2*h->GetBinContent(nx,j)-h->GetBinContent(nx-1,j));
+  if (debug && !foundw) printf("coundn't find truth w jets\n");
+  if (debug && !foundcjet) printf("coundn't find truth fcnc jets\n");
+  if ((!foundw && taus_p4->size() == 1) || !foundcjet) return;
+  if (taus_p4->size() == 1) {
+    if (foundw == 1) {
+      wchild[1] = wboson - wchild[0];
+      if (debug) outstream << "wjet:\t" << wchild[1].Pt() << " " << wchild[1].Eta() << " " << wchild[1].Phi() << " " << wchild[1].E() << endl;
+    }
   }
-  h->SetBinContent(0,0,h->GetBinContent(0,1)+h->GetBinContent(1,0)-h->GetBinContent(1,1));
-  h->SetBinContent(0,ny+1,h->GetBinContent(0,ny)+h->GetBinContent(1,ny+1)-h->GetBinContent(1,ny));
-  h->SetBinContent(nx+1,0,h->GetBinContent(nx,0)+h->GetBinContent(nx+1,1)-h->GetBinContent(nx,1));
-  h->SetBinContent(nx+1,ny+1,h->GetBinContent(nx,ny+1)+h->GetBinContent(nx+1,ny)-h->GetBinContent(nx,ny));
+  int loopmax = (taus_p4->size() == 1 ? 4 : 3);
+  int ijet = 0;
+  outstream << "bjet: " << bjets_p4->at(0)->Pt() << " " << bjets_p4->at(0)->Eta() << " " << bjets_p4->at(0)->Phi() << " " << bjets_p4->at(0)->E() << "\n";
+  for (int i = 0; i < 2; ++i) {
+    outstream << "taus: " << taus_p4->at(i)->Pt() << " " << taus_p4->at(i)->Eta() << " " << taus_p4->at(i)->Phi() << " " << taus_p4->at(i)->E() << "\n";
+  }
+  if (taus_p4->size() >= 2) {
+    outstream << "leptons: " << leps_p4->at(0)->Pt() << " " << leps_p4->at(0)->Eta() << " " << leps_p4->at(0)->Phi() << " " << leps_p4->at(0)->E() << "\n";
+  }
+  for (auto jetv: (*ljets_p4)) {
+    ijet += 1;
+    if(ijet > loopmax) break;
+    outstream << "pool" << ijet << ": " << jetv->Pt() << " " << jetv->Eta() << " " << jetv->Phi() << " " << jetv->E();
+    bool wmatched = 0;
+    if (jetv->DeltaR(fcncjet) < 0.4) {
+      outstream << " 1 0 0\n";
+      ifcncmatched = ijet;
+    } else if (taus_p4->size() == 1) {
+      for (int ichild = 0; ichild < 2; ++ichild) {
+        if (jetv->DeltaR(wchild[ichild]) < 0.4) {
+          outstream << " 0 1 0\n";
+          wmatched = 1;
+          break;
+        }
+      }
+    }
+    if (!(ifcncmatched==ijet) && !wmatched) outstream << " 0 0 1\n";
+    int ifile = ijet - (taus_p4->size() == 1 ? 2 : 1);
+    if(ifcncmatched>=0 && ifile>=0 && ljet_indice->at(0)<ijet){
+      filetruth[ifile][ipart] << outstream.str() << "eventweight: " << weight << " cjet_inv_mass_method: " << ljet_indice->at(0) << endl;
+    }
+  }
+  outstream.clear();
+  
+  if (ifcncmatched>=0) {
+    fcncmatched += weight;
+  } else {
+    nonmatchedfile << outstream.rdbuf() << nonfcncmatched << endl;
+    nonfcncmatched += weight;
+  }
+  nonmatchedfile.close();
 }
 
-// get smooth output from 2-d histogram (at least 2x2 bins)
+bool tthmltree_v2::passBasicCut(){
+  if(!passEventCleaning) return false;
+  if (samplename.Contains("ttbargamma")) {
+    if(!m_hasMEphoton_DRgt02_nonhad) return false;
+  }
+  if (samplename.Contains("ttbarnohad")) {
+    if(m_hasMEphoton_DRgt02_nonhad) return false;
+  }
+  if(!
+    (RunYear == 2015 && (( lep_Pt_0/1000>21 && HLT_mu20_iloose_L1MU15 ) || ( lep_Pt_0/1000>51 && HLT_mu50 ) || ( lep_Pt_0/1000>25 && HLT_e24_lhmedium_L1EM20VH )|| (lep_Pt_0/1000>61 &&HLT_e60_lhmedium) || ( lep_Pt_0/1000>121 && HLT_e120_lhloose))) ||
+    (RunYear == 2015 && (HLT_2e12_lhloose_L12EM10VH || HLT_e17_lhloose_mu14 || HLT_mu18_mu8noL1)) ||
+    (RunYear >= 2016 && (( lep_Pt_0/1000>27 && HLT_mu26_ivarmedium ) || ( lep_Pt_0/1000>51 && HLT_mu50 ) || ( lep_Pt_0/1000>27 && HLT_e26_lhtight_nod0_ivarloose ) || ( lep_Pt_0/1000>61 && HLT_e60_lhmedium_nod0) || ( lep_Pt_0/1000>141 && HLT_e140_lhloose_nod0))) ||
+    (RunYear >= 2016 && (HLT_2e17_lhvloose_nod0 || HLT_e17_lhloose_nod0_mu14 || HLT_mu22_mu8noL1))
+  ) return false;
+  if(taus_p4->size() && (!(tau_numTrack_0 == 1 || tau_numTrack_0 == 3) || !(tau_passEleBDT_0 && tau_passMuonOLR_0)) ) return false; // assuming triggers for 2017 is same for 2016 
 
-//at least 2 bins:
-void tthmltree::fillOverFlow(TH1F* h) {
-  Int_t nx = h->GetNbinsX();
-  h->SetBinContent(0,2*h->GetBinContent(1)-h->GetBinContent(2));
-  h->SetBinContent(nx+1,2*h->GetBinContent(nx)-h->GetBinContent(nx-1));
+
+  bool trig_match = (lep_isTrigMatch_0 || lep_isTrigMatch_1 || lep_isTrigMatch_2 || lep_isTrigMatch_3 || matchDLTll01 || matchDLTll02 || matchDLTll12 || matchDLTll03 || matchDLTll13 || matchDLTll23);
+  bool SLtrig_match =
+    ((RunYear == 2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose)) ||
+      (RunYear >= 2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0))) && lep_isTrigMatch_0;
+  if(!trig_match && !SLtrig_match) return false;
+  if(!(SLtrig_match && onelep_type && (!tightLep || SelectTLepid(0))) && !(trig_match && dilep_type && lep_Pt_0 > 20*GeV && lep_Pt_1 > 20*GeV)) return false;
+
+  cut_flow.fill("basic selection");
+
+  return true;
 }
 
-// get smooth output from 1-d histogram (at least 2 bins)
+void tthmltree_v2::defineObjects(){
 
-bool tthmltree::addWeightSys(){
+  if(version == 5){
+    lep_promptLeptonVeto_TagWeight_0  = lep_promptLeptonIso_TagWeight_0;
+    lep_promptLeptonVeto_TagWeight_1  = lep_promptLeptonIso_TagWeight_1;
+    lep_promptLeptonVeto_TagWeight_2  = lep_promptLeptonIso_TagWeight_2;
+    lep_promptLeptonVeto_TagWeight_3  = lep_promptLeptonIso_TagWeight_3;
+    lep_promptLeptonVeto_TagWeight_4  = lep_promptLeptonIso_TagWeight_4;
+  }
+
+  taus_p4->clear();
+  taus_b_tagged->clear();
+  taus_q->clear();
+  taus_n_charged_tracks->clear();
+  taus_id->clear();
+  
+  if(nTaus_OR_Pt25) {
+    TLorentzVector *tmptau = new TLorentzVector();
+    tmptau->SetPtEtaPhiE(tau_pt_0,tau_eta_0,tau_phi_0,tau_E_0);
+    taus_p4->push_back(tmptau);
+    taus_b_tagged->push_back(tau_MV2c10_0 > defaultbtagwp);
+    taus_q->push_back(tau_charge_0);
+    taus_n_charged_tracks->push_back(tau_numTrack_0);
+    taus_id->push_back(tau_JetBDTSigTight_0?3:2);
+  }
+  if(nTaus_OR_Pt25>1) {
+    TLorentzVector *tmptau = new TLorentzVector();
+    tmptau->SetPtEtaPhiE(tau_pt_1,tau_eta_1,tau_phi_1,tau_E_1);
+    taus_p4->push_back(tmptau);
+    taus_b_tagged->push_back(tau_MV2c10_1 > defaultbtagwp);
+    taus_q->push_back(tau_charge_1);
+    taus_n_charged_tracks->push_back(tau_numTrack_1);
+    taus_id->push_back(tau_JetBDTSigTight_1?3:2);
+  }
+
+  leps_p4->clear();
+  leps_id->clear();
+  leps_iso->clear();
+  leps_tight->clear();
+  TLorentzVector *tmplep = new TLorentzVector();
+  tmplep->SetPtEtaPhiE(lep_Pt_0, lep_Eta_0, lep_Phi_0, lep_E_0);
+  leps_p4->push_back(tmplep);
+  leps_id->push_back(lep_ID_0);
+  leps_iso->push_back(IsoLepid(0));
+  leps_tight->push_back(SelectTLepid(0));
+  if(dilep_type){
+    tmplep = new TLorentzVector();
+    tmplep->SetPtEtaPhiE(lep_Pt_1, lep_Eta_1, lep_Phi_1, lep_E_1);
+    leps_p4->push_back(tmplep);
+    leps_id->push_back(lep_ID_1);
+    leps_iso->push_back(IsoLepid(1));
+    leps_tight->push_back(SelectTLepid(1));
+  }
+
+  if (debug == 2) printf("Loop jets\n");
+  bjets_p4->clear();
+  bjets_score->clear();
+  ljets_p4->clear();
+  for (int i = 0; i < nJets_OR_T; ++i) {
+    if(debug == 2) printf("%dth jet btag: %f\n", i,(*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)]);
+    if ((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)] > defaultbtagwp) {
+      TLorentzVector *tmp = new TLorentzVector();
+      tmp->SetPtEtaPhiE((*m_jet_pt)[selected_jets_T->at(i)], (*m_jet_eta)[selected_jets_T->at(i)], (*m_jet_phi)[selected_jets_T->at(i)], (*m_jet_E)[selected_jets_T->at(i)]);
+      bjets_p4->push_back(tmp);
+      bjets_score->push_back((*m_jet_flavor_weight_MV2c10)[selected_jets_T->at(i)]);
+    }else{
+      if(!pt_ljet) pt_ljet = (*m_jet_pt)[selected_jets_T->at(i)];
+      TLorentzVector *tmp = new TLorentzVector();
+      tmp->SetPtEtaPhiE((*m_jet_pt)[selected_jets_T->at(i)], (*m_jet_eta)[selected_jets_T->at(i)], (*m_jet_phi)[selected_jets_T->at(i)], (*m_jet_E)[selected_jets_T->at(i)]);
+      ljets_p4->push_back(tmp);
+    }
+  }
+  met_p4->SetXYZM(MET_RefFinal_et*cos(MET_RefFinal_phi), MET_RefFinal_et*sin(MET_RefFinal_phi), MET_RefFinal_sumet, 0);
+}
+
+void tthmltree_v2::calcGeneralWeight(){
+  weight = mc_channel_number > 0 ? mc_norm*weight_mc*pileupEventWeight_090*(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous)*JVT_EventWeight*SherpaNJetWeight: 1.0;
+  if( mc_channel_number > 0) weight*=tightLep?lepSFObjLoose:lepSFIDLoose*lepSFTrigLoose;
+  if(taus_p4->size() &&  mc_channel_number >0) weight*=tightTau?tauSFLoose:tauSFTight; // stupid and confusing but this is how it is.
+  if(weight == 0 || debug) {
+    if(debug){
+      printf("weights:\nmc_norm=%f\nweight_mc=%f\npileupEventWeight_090=%f\nbtag=%f\nJVT_EventWeight=%f\nSherpaNJetWeight=%f\n\n", mc_norm,weight_mc,pileupEventWeight_090,(version == 7 ? bTagSF_weight_MV2c10_FixedCutBEff_70 : bTagSF_weight_MV2c10_Continuous),JVT_EventWeight,SherpaNJetWeight);
+    }
+  }
+}
+
+void tthmltree_v2::defineLepTruth(){
+  if(debug) printf("tthmltree_v3::defineLepTruth(): for %lu leptons\n",leps_p4->size());
+  leps_matched_pdgId->clear();
+  leps_truth_type->clear();
+  if(leps_p4->size())
+  {
+    leps_truth_type->push_back(lep_truthType_0);
+    leps_matched_pdgId->push_back(lep_truthPdgId_0);
+  }
+  if(leps_p4->size() >= 2){
+    leps_truth_type->push_back(lep_truthType_0);
+    leps_matched_pdgId->push_back(lep_truthPdgId_0);
+  }
+  if(debug) printf("tthmltree_v3::defineLepTruth(): done\n");
+}
+
+void tthmltree_v2::defineTauTruth(){
+
+  if(nominaltree && taus_p4->size()){
+    constructTruth();
+    taus_matched_mother_pdgId->clear();
+    for (int i = 0; i < taus_p4->size(); ++i)
+    {
+      auto matched = truthmatch(taus_p4->at(i));
+      if(matched)
+        if(matched->mother)
+          taus_matched_mother_pdgId->push_back(matched->mother->pdg);
+    }
+  }
+
+  if(taus_p4->size()){
+    if (tau_truthType_0 == 10) taus_matched_pdgId->push_back(6);
+    else if (tau_truthJetFlavour_0 < 0 && (tau_truthType_0 == 2 || tau_truthType_0 == 6)) taus_matched_pdgId->push_back(11);
+    else taus_matched_pdgId->push_back(tau_truthJetFlavour_0);
+  }
+  if(taus_p4->size()>=2){
+    if (tau_truthType_1 == 10) taus_matched_pdgId->push_back(6);
+    else if (tau_truthJetFlavour_1 < 0 && (tau_truthType_1 == 2 || tau_truthType_1 == 6)) taus_matched_pdgId->push_back(11);
+    else taus_matched_pdgId->push_back(tau_truthJetFlavour_1);
+  }
+}
+
+bool tthmltree_v2::SelectTLepid(int id) {
+  bool pass(false);
+  //lep_ambiguityType_0==0 for electron
+  if (id == 0) {
+    pass = (abs(lep_ID_0) == 13 || ((abs(lep_ID_0) == 11) && lep_isTightLH_0));
+  } else if (id == 1) {
+    pass = (abs(lep_ID_1) == 13 || ((abs(lep_ID_1) == 11) && lep_isTightLH_1));
+  } else if (id == 2) {
+    pass = (abs(lep_ID_2) == 13 || ((abs(lep_ID_2) == 11) && lep_isTightLH_2));
+  } else if (id == 3) {
+    pass = (abs(lep_ID_3) == 13 || ((abs(lep_ID_3) == 11) && lep_isTightLH_3));
+  } else if (id == 4) {
+    pass = (abs(lep_ID_4) == 13 || ((abs(lep_ID_4) == 11) && lep_isTightLH_4));
+  }
+  return pass;
+}
+
+bool tthmltree_v2::IsoLepid(int id) {
+  if (id == 0) {
+    return lep_isolationFixedCutLoose_0 && ((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(leps_id->at(0)) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5));
+  } else if (id == 1) {
+    return lep_isolationFixedCutLoose_1 && ((abs(lep_ID_1) == 11 && lep_promptLeptonVeto_TagWeight_1 < -0.7) || (abs(leps_id->at(1)) == 13 && lep_promptLeptonVeto_TagWeight_1 < -0.5));
+  } else if (id == 2) {
+    return lep_isolationFixedCutLoose_2 && ((abs(lep_ID_2) == 11 && lep_promptLeptonVeto_TagWeight_2 < -0.7) || (abs(lep_ID_2) == 13 && lep_promptLeptonVeto_TagWeight_2 < -0.5));
+  } else if (id == 3) {
+    return lep_isolationFixedCutLoose_3 && ((abs(lep_ID_3) == 11 && lep_promptLeptonVeto_TagWeight_3 < -0.7) || (abs(lep_ID_3) == 13 && lep_promptLeptonVeto_TagWeight_3 < -0.5));
+  } else if (id == 4) {
+    return lep_isolationFixedCutLoose_4 && ((abs(lep_ID_4) == 11 && lep_promptLeptonVeto_TagWeight_4 < -0.7) || (abs(lep_ID_4) == 13 && lep_promptLeptonVeto_TagWeight_4 < -0.5));
+  } else return 0;
+
+}
+
+bool tthmltree_v2::addWeightSys(){
   addweights(lepSFObjLoose_EL_SF_Reco_UP,"Ele_Reco_up");
   addweights(lepSFObjLoose_EL_SF_Reco_DOWN,"Ele_Reco_down");
   addweights(lepSFObjLoose_EL_SF_ID_UP,"Ele_ID_up");
@@ -156,7 +384,7 @@ bool tthmltree::addWeightSys(){
   return 1;
 }
 
-void tthmltree::Init(TTree*tree) {
+void tthmltree_v2::initRaw(TTree*tree) {
   printf("init tree: version %d\n", version);
   // The Init() function is called when the selector needs to initialize
   // a new tree or chain. Typically here the branch addresses and branch
@@ -166,10 +394,6 @@ void tthmltree::Init(TTree*tree) {
   // Init() will be called many times when running on PROOF
   // (once per file to be processed).
   // Set object pointer
-  tau_pt = 0;
-  tau_eta = 0;
-  tau_phi = 0;
-  tau_charge = 0;
   weight_mc_v = 0;
   m_truth_m = 0;
   m_truth_pt = 0;
@@ -409,75 +633,6 @@ void tthmltree::Init(TTree*tree) {
   printf("init tree: %s \nreduce scheme: %d\n", tree->GetName(), reduce);
   tree->SetMakeClass(1);
   tree->SetBranchAddress("mc_channel_number", & mc_channel_number);
-  if(reduce>=1) {
-    if(nominaltree || reduce >=2) {
-      tree->SetBranchAddress("taumatchwjet", &taumatchwjet);
-      if(TString(tree->GetName()).Contains("2tau")) tree->SetBranchAddress("subtaumatchwjet", &subtaumatchwjet);
-    }
-    tree->SetBranchAddress("weights", & weights);
-  }
-  if (reduce == 1){
-    setVecBranch(tree);
-  }
-  if (reduce >= 2) {
-    tree->SetBranchAddress("nljet",&nljet);
-    tree->SetBranchAddress("chi2", &chi2);
-    tree->SetBranchAddress("drlb", &drlb);
-    tree->SetBranchAddress("drtaub", &drtaub);
-    tree->SetBranchAddress("mjjmin", &mjjmin);
-    tree->SetBranchAddress("allmass", &allmass);
-    tree->SetBranchAddress("allpz", &allpz);
-    tree->SetBranchAddress("ljet_indice", & ljet_indice);
-    tree->SetBranchAddress("x1fit", & x1fit);
-    tree->SetBranchAddress("x2fit", & x2fit);
-    tree->SetBranchAddress("t2vismass", & t2vismass);
-    tree->SetBranchAddress("t1vismass", & t1vismass);
-    tree->SetBranchAddress("t2mass", & t2mass);
-    tree->SetBranchAddress("t1mass", & t1mass);
-    tree->SetBranchAddress("ttvismass", & ttvismass);
-    tree->SetBranchAddress("tautauvispt", & tautauvispt);
-    tree->SetBranchAddress("tau_numTrack_0", & tau_numTrack_0);
-    tree->SetBranchAddress("tau_truthType_0", & tau_truthType_0);
-    tree->SetBranchAddress("tau_truthType_1", & tau_truthType_1);
-    tree->SetBranchAddress("drlbditau", & drlbditau);
-    tree->SetBranchAddress("tau_pt_ss", & tau_pt_ss);
-    tree->SetBranchAddress("tau_pt_os", & tau_pt_os);
-    tree->SetBranchAddress("tau_pt_0", & tau_pt_0);
-    tree->SetBranchAddress("tau_pt_1", & tau_pt_1);
-    tree->SetBranchAddress("lep_pt_0", & lep_pt_0);
-    tree->SetBranchAddress("lep_pt_1", & lep_pt_1);
-    tree->SetBranchAddress("mtw", & mtw);
-    tree->SetBranchAddress("etamax", & etamax);
-    tree->SetBranchAddress("drltau", & drltau);
-    tree->SetBranchAddress("drtauj", & drtauj);
-    tree->SetBranchAddress("drtautau", & drtautau);
-    tree->SetBranchAddress("tau_charge_0", & tau_charge_0);
-    tree->SetBranchAddress("tau_charge_1", & tau_charge_1);
-    tree->SetBranchAddress("tau_JetBDTSigTight_0", & tau_JetBDTSigTight_0);
-    tree->SetBranchAddress("tau_JetBDTSigTight_1", & tau_JetBDTSigTight_1);
-    tree->SetBranchAddress("eventNumber", & eventNumber);
-    if(isData) tree->SetBranchAddress("runNumber", & runNumber);
-    tree->SetBranchAddress("drtaujmin", & drtaujmin);
-    tree->SetBranchAddress("mtaujmin", & mtaujmin);
-    tree->SetBranchAddress("etmiss",&etmiss);
-    tree->SetBranchAddress("dphitauetmiss",&dphitauetmiss);
-    tree->SetBranchAddress("phicent",&phicent);
-    tree->SetBranchAddress("tautaumass", &tautaumass);
-    tree->SetBranchAddress("wmass", &wmass);
-    tree->SetBranchAddress("tau_truthJetFlavour_0", & tau_truthJetFlavour_0);
-    tree->SetBranchAddress("nTaus_OR_Pt25", &nTaus_OR_Pt25);
-    tree->SetBranchAddress("PLV_0", &lep_promptLeptonVeto_TagWeight_0);
-    tree->SetBranchAddress("PLV_1", &lep_promptLeptonVeto_TagWeight_1);
-    tree->SetBranchAddress("lep_ID_0", &lep_ID_0);
-    tree->SetBranchAddress("lep_ID_1", &lep_ID_1);
-    tree->SetBranchAddress("taulmass", &taulmass);
-    tree->SetBranchAddress("lep_truthType_0",&lep_truthType_0);
-    tree->SetBranchAddress("lep_truthType_1",&lep_truthType_1);
-    tree->SetBranchAddress("lep_truthPdgId_0",&lep_truthPdgId_0);
-    tree->SetBranchAddress("lep_truthPdgId_1",&lep_truthPdgId_1);
-    
-    return;
-  }
 
   if (reduce == 0) {
     tree->SetBranchAddress("HLT_mu40", & HLT_mu40);
@@ -547,7 +702,7 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("HLT_e5_loose", & HLT_e5_loose);
     tree->SetBranchAddress("HLT_e300_etcut", & HLT_e300_etcut);
   }
-  if(version == 5){
+  if(version == 5  && reduce == 0){
     tree->SetBranchAddress("EventNumber", & eventNumber);
     if(isData) tree->SetBranchAddress("RunNumber", & runNumber);
     if(reduce == 0) tree->SetBranchAddress("bTagSF_weight_Continuous", &bTagSF_weight_MV2c10_Continuous);
@@ -557,10 +712,6 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("randomRunNumber", & randomRunNumber);
     tree->SetBranchAddress("mu", & mu);
     tree->SetBranchAddress("hasBadMuon", & hasBadMuon);
-    tree->SetBranchAddress("tau_pt", & tau_pt);
-    tree->SetBranchAddress("tau_eta", & tau_eta);
-    tree->SetBranchAddress("tau_phi", & tau_phi);
-    tree->SetBranchAddress("tau_charge", & tau_charge);
     tree->SetBranchAddress("DL1_60_EventWeight", & DL1_60_EventWeight);
     tree->SetBranchAddress("DL1_70_EventWeight", & DL1_70_EventWeight);
     tree->SetBranchAddress("DL1_77_EventWeight", & DL1_77_EventWeight);
@@ -2219,7 +2370,66 @@ void tthmltree::Init(TTree*tree) {
     tree->SetBranchAddress("tauSFLoose_TAU_SF_RECO_HIGHPT_DOWN", & tauSFLoose_TAU_SF_RECO_HIGHPT_DOWN);
   }
 }
-void tthmltree::definetree(TTree*tree) {
+void tthmltree_v2::defineTree(TTree*tree) {
+  if(reduce == 2) {
+    if(samplename.Contains("data")) tree->Branch("runNumber", &runNumber);
+    tree->Branch("taus_matched_mother_pdgId", &taus_matched_mother_pdgId);
+    tree->Branch("chi2",&chi2);
+    tree->Branch("allmass", &allmass);
+    tree->Branch("allpz", &allpz);
+    tree->Branch("t1mass",&t1mass);
+    tree->Branch("tautaumass",&tautaumass);
+    tree->Branch("wmass",&wmass);
+    tree->Branch("t2mass",&t2mass);
+    tree->Branch("tau_truthType_0",&tau_truthType_0);
+    tree->Branch("tau_numTrack_0", & tau_numTrack_0);
+    tree->Branch("tau_truthType_1",&tau_truthType_1);
+    tree->Branch("taus_q",&taus_q);
+    tree->Branch("tau_JetBDTSigTight_0",&tau_JetBDTSigTight_0);
+    tree->Branch("tau_JetBDTSigTight_1",&tau_JetBDTSigTight_1);
+    tree->Branch("eventNumber", &eventNumber);
+    tree->Branch("weights",&weights);
+    tree->Branch("ljet_indice", &ljet_indice );
+    tree->Branch("x1fit", &x1fit);
+    tree->Branch("tau_pt_0", &tau_pt_0);
+    tree->Branch("tau_pt_1", &tau_pt_1);
+    tree->Branch("x2fit", &x2fit);
+    tree->Branch("t1vismass",&t1vismass);
+    tree->Branch("t2vismass",&t2vismass);
+    tree->Branch("ttvismass",&ttvismass);
+    tree->Branch("tautauvispt",&tautauvispt);
+    tree->Branch("mtw",&mtw);
+    tree->Branch("tau_pt_ss",&tau_pt_ss);
+    tree->Branch("tau_pt_os",&tau_pt_os);
+    tree->Branch("drlbditau", &drlbditau);
+    tree->Branch("drlb", &drlb);
+    tree->Branch("drtaub", &drtaub);
+    tree->Branch("etamax", &etamax);
+    tree->Branch("drltau",&drltau);
+    tree->Branch("drtauj",&drtauj);
+    tree->Branch("drtautau",&drtautau);
+    tree->Branch("drtaujmin", &drtaujmin);
+    tree->Branch("mtaujmin", &mtaujmin);
+    tree->Branch("mjjmin", &mjjmin);
+    tree->Branch("etmiss",&etmiss);
+    tree->Branch("dphitauetmiss",&dphitauetmiss);
+    tree->Branch("phicent",&phicent);
+    tree->Branch("mc_channel_number", &mc_channel_number);
+    tree->Branch("nljet", &nljet);
+    tree->Branch("tau_truthJetFlavour_0", & tau_truthJetFlavour_0);
+    tree->Branch("PLV_0", &lep_promptLeptonVeto_TagWeight_0);
+    tree->Branch("PLV_1", &lep_promptLeptonVeto_TagWeight_1);
+    tree->Branch("leps_id",&leps_id);
+    tree->Branch("lep_pt_0",&lep_pt_0);
+    tree->Branch("lep_pt_1",&lep_pt_1);
+    tree->Branch("lep_truthType_0",&lep_truthType_0);
+    tree->Branch("lep_truthType_1",&lep_truthType_1);
+    tree->Branch("lep_truthPdgId_0",&lep_truthPdgId_0);
+    tree->Branch("lep_truthPdgId_1",&lep_truthPdgId_1);
+    tree->Branch("taulmass", &taulmass);
+    return;
+  }
+  vecBranch(tree);
   tree->Branch("weights", &weights);
   tree->Branch("eventNumber", & eventNumber, "eventNumber/l");
   if(isData) tree->Branch("runNumber", & runNumber, "runNumber/i");
@@ -2228,10 +2438,6 @@ void tthmltree::definetree(TTree*tree) {
   tree->Branch("mu", & mu, "mu/F");
   tree->Branch("backgroundFlags", & backgroundFlags, "backgroundFlags/i");
   tree->Branch("hasBadMuon", & hasBadMuon, "hasBadMuon/i");
-  tree->Branch("tau_pt", & tau_pt);
-  tree->Branch("tau_eta", & tau_eta);
-  tree->Branch("tau_phi", & tau_phi);
-  tree->Branch("tau_charge", & tau_charge);
   tree->Branch("triggers", & triggers, "triggers/I");
   tree->Branch("loose", & loose, "loose/I");
   tree->Branch("mcWeightOrg", &weight_mc, "mcWeightOrg/D");

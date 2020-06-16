@@ -47,12 +47,30 @@ void nominal::initMVA(TString fcnc_region){
   }
 
   reader[fcnc_region]->AddVariable("ttvismass",&ttvismass);
-  reader[fcnc_region]->AddVariable("drtaujmin",&drtaujmin);
+  reader[fcnc_region]->AddVariable("drtaujmin",&drttjmin);
 
   reader[fcnc_region]->BookMVA( "BDTG_1" , TString(PACKAGE_DIR) + "/config/weights/" + fcnc_region + "TMVAClassification_1_BDTG.weights.xml" );
   reader[fcnc_region]->BookMVA( "BDTG_2" , TString(PACKAGE_DIR) + "/config/weights/" + fcnc_region + "TMVAClassification_2_BDTG.weights.xml" );
 }
 
+void nominal::init(TTree *tree){
+  if(reduce == 0) initRaw(tree);
+  else {
+    tree->SetBranchAddress("eventNumber", &eventNumber);
+    tree->SetBranchAddress("runNumber", &runNumber);
+    tree->SetBranchAddress("mcChannelNumber", &mcChannelNumber);
+    if(reduce == 1) setVecBranch(tree);
+    else if(reduce == 2) setBDTBranch(tree);
+  }
+}
+
+void nominal::defineTree(TTree *tree){
+  tree->Branch("eventNumber", &eventNumber);
+  tree->Branch("runNumber", &runNumber);
+  tree->Branch("mcChannelNumber", &mcChannelNumber);
+  if(reduce == 1) vecBranch(tree);
+  else if(reduce == 2) BDTBranch(tree);
+}
 
 Double_t nominal::phi_centrality(Double_t aPhi, Double_t bPhi, Double_t cPhi) {
 //     Calculate the phi centrality score for an object to be between two other objects in phi
@@ -119,7 +137,7 @@ nominal::nominal(){
   tau_pt_os = 0;
   etamax = 0;
   drltau   = 0;
-  drtauj   = 0;
+  drttj   = 0;
   drtautau = 0;
   wmass     = 0;
   t2mass    = 0;
@@ -134,10 +152,6 @@ nominal::nominal(){
     dovetobwp[bwps[i]] = 0;
   }
 
-  neutrino_pt  = new vector<float>();
-  neutrino_eta = new vector<float>();
-  neutrino_phi = new vector<float>();
-  neutrino_m   = new vector<float>();
   fake_plots = 0;
   fake_notau_plots = 0;
   gMinside = initgM();
@@ -161,48 +175,162 @@ nominal::~nominal(){
   deletepointer(fcnc_plots);
   deletepointer(fake_notau_plots);
   deletepointer(gM);
-  deletepointer(neutrino_pt  );
-  deletepointer(neutrino_eta );
-  deletepointer(neutrino_phi );
-  deletepointer(neutrino_m   );
+  deletepointer(neutrinos_p4);
 }
 
 void nominal::initReduce1(){
-  taus_n_charged_tracks = new vector<UInt_t> ();
-  taus_b_tagged = new vector<Int_t> ();
-  taus_p4 = new vector<TLorentzVector*>();
-  taus_q = new vector<Float_t> ();
-  leps_id = new vector<Int_t> ();
-  bjets_p4 = new vector<TLorentzVector*>;
-  ljets_p4 = new vector<TLorentzVector*>();
-  leps_p4 = new vector<TLorentzVector*>();
+  weights = new vector<double> ();
+  ljet_indice = new std::vector<int>();
+  taus_n_charged_tracks = new std::vector<UInt_t>();
+  taus_b_tagged = new std::vector<Int_t>();
+  taus_id = new std::vector<Int_t>();
+  taus_q = new std::vector<Float_t>();
+  taus_p4 = new std::vector<TLorentzVector*>();
+  taus_matched_mother_pdgId = new std::vector<int>();
+  taus_matched_pdgId = new std::vector<int>();
+  neutrinos_p4 = new std::vector<TLorentzVector*>();
   met_p4 = new TLorentzVector();
+  bjets_p4 = new std::vector<TLorentzVector*>();
+  ljets_p4 = new std::vector<TLorentzVector*>();
+  leps_p4 = new std::vector<TLorentzVector*>();
+  leps_id = new std::vector<Int_t>();
+  leps_iso = new std::vector<Int_t>();
+  leps_tight = new std::vector<Int_t>();
+  leps_matched_pdgId = new std::vector<int>();
+  leps_truth_type = new std::vector<int>();
+  bjets_score = new vector<float> ();
 }
 
-void nominal::setVecBranch(TTree *tree){
-  tree->SetBranchAddress("leps_p4", &leps_p4);
-  tree->SetBranchAddress("leps_id", &leps_id);
-  tree->SetBranchAddress("bjets_p4", &bjets_p4);
-  tree->SetBranchAddress("met_p4", &met_p4);
-  tree->SetBranchAddress("taus_p4", &taus_p4);
-  tree->SetBranchAddress("ljets_p4", &ljets_p4);
+void nominal::setBDTBranch(TTree *tree){
+  tree->SetBranchAddress("taus_matched_pdgId", &taus_matched_pdgId);
+  tree->SetBranchAddress("taus_matched_mother_pdgId", &taus_matched_mother_pdgId);
+  tree->SetBranchAddress("weights", & weights);
+  tree->SetBranchAddress("nljet",&nljet);
+  tree->SetBranchAddress("chi2", &chi2);
+  tree->SetBranchAddress("drlb", &drlb);
+  tree->SetBranchAddress("drtaub", &drtaub);
+  tree->SetBranchAddress("mjjmin", &mjjmin);
+  tree->SetBranchAddress("x1fit", & x1fit);
+  tree->SetBranchAddress("x2fit", & x2fit);
+  tree->SetBranchAddress("t2vismass", & t2vismass);
+  tree->SetBranchAddress("t1vismass", & t1vismass);
+  tree->SetBranchAddress("t2mass", & t2mass);
+  tree->SetBranchAddress("t1mass", & t1mass);
+  tree->SetBranchAddress("ttvismass", & ttvismass);
+  tree->SetBranchAddress("tautauvispt", & tautauvispt);
+  tree->SetBranchAddress("drlbditau", & drlbditau);
+  tree->SetBranchAddress("tau_pt_ss", & tau_pt_ss);
+  tree->SetBranchAddress("tau_pt_os", & tau_pt_os);
+  tree->SetBranchAddress("tau_pt_0", & tau_pt_0);
+  tree->SetBranchAddress("tau_pt_1", & tau_pt_1);
+  tree->SetBranchAddress("lep_pt_0", & lep_pt_0);
+  tree->SetBranchAddress("lep_pt_1", & lep_pt_1);
+  tree->SetBranchAddress("mtw", & mtw);
+  tree->SetBranchAddress("etamax", & etamax);
+  tree->SetBranchAddress("drltau", & drltau);
+  tree->SetBranchAddress("drttj", & drttj);
+  tree->SetBranchAddress("drtautau", & drtautau);
+  tree->SetBranchAddress("drttjmin", & drttjmin);
+  tree->SetBranchAddress("mtaujmin", & mtaujmin);
+  tree->SetBranchAddress("etmiss",&etmiss);
+  tree->SetBranchAddress("dphitauetmiss",&dphitauetmiss);
+  tree->SetBranchAddress("phicent",&phicent);
+  tree->SetBranchAddress("tautaumass", &tautaumass);
+  tree->SetBranchAddress("wmass", &wmass);
   tree->SetBranchAddress("taus_n_charged_tracks", &taus_n_charged_tracks);
   tree->SetBranchAddress("taus_b_tagged", &taus_b_tagged);
+  tree->SetBranchAddress("leps_matched_pdgId", &leps_matched_pdgId);
+  tree->SetBranchAddress("leps_truth_type", &leps_truth_type);
+}
+
+void nominal::BDTBranch(TTree *tree){
+  tree->Branch("taus_b_tagged", &taus_b_tagged);
+  tree->Branch("taus_n_charged_tracks", &taus_n_charged_tracks);
+  tree->Branch("taus_matched_pdgId", &taus_matched_pdgId);
+  tree->Branch("taus_matched_mother_pdgId", &taus_matched_mother_pdgId);
+  tree->Branch("weights", & weights);
+  tree->Branch("nljet",&nljet);
+  tree->Branch("chi2", &chi2);
+  tree->Branch("drlb", &drlb);
+  tree->Branch("drtaub", &drtaub);
+  tree->Branch("mjjmin", &mjjmin);
+  tree->Branch("x1fit", & x1fit);
+  tree->Branch("x2fit", & x2fit);
+  tree->Branch("t2vismass", & t2vismass);
+  tree->Branch("t1vismass", & t1vismass);
+  tree->Branch("t2mass", & t2mass);
+  tree->Branch("t1mass", & t1mass);
+  tree->Branch("ttvismass", & ttvismass);
+  tree->Branch("tautauvispt", & tautauvispt);
+  tree->Branch("drlbditau", & drlbditau);
+  tree->Branch("tau_pt_ss", & tau_pt_ss);
+  tree->Branch("tau_pt_os", & tau_pt_os);
+  tree->Branch("tau_pt_0", & tau_pt_0);
+  tree->Branch("tau_pt_1", & tau_pt_1);
+  tree->Branch("lep_pt_0", & lep_pt_0);
+  tree->Branch("lep_pt_1", & lep_pt_1);
+  tree->Branch("mtw", & mtw);
+  tree->Branch("etamax", & etamax);
+  tree->Branch("drltau", & drltau);
+  tree->Branch("drttj", & drttj);
+  tree->Branch("drtautau", & drtautau);
+  tree->Branch("drttjmin", & drttjmin);
+  tree->Branch("mtaujmin", & mtaujmin);
+  tree->Branch("etmiss",&etmiss);
+  tree->Branch("dphitauetmiss",&dphitauetmiss);
+  tree->Branch("phicent",&phicent);
+  tree->Branch("tautaumass", &tautaumass);
+  tree->Branch("wmass", &wmass);
+  tree->Branch("leps_matched_pdgId", &leps_matched_pdgId);
+  tree->Branch("leps_truth_type", &leps_truth_type);
+}
+
+
+void nominal::setVecBranch(TTree *tree){
+  tree->SetBranchAddress("bjets_score", &bjets_score);
+  tree->SetBranchAddress("weights", &weights);
+  tree->SetBranchAddress("ljet_indice", &ljet_indice);
+  tree->SetBranchAddress("taus_n_charged_tracks", &taus_n_charged_tracks);
+  tree->SetBranchAddress("taus_b_tagged", &taus_b_tagged);
+  tree->SetBranchAddress("taus_id", &taus_id);
   tree->SetBranchAddress("taus_q", &taus_q);
+  tree->SetBranchAddress("taus_p4", &taus_p4);
+  tree->SetBranchAddress("taus_matched_mother_pdgId", &taus_matched_mother_pdgId);
+  tree->SetBranchAddress("taus_matched_pdgId", &taus_matched_pdgId);
+  tree->SetBranchAddress("neutrinos_p4", &neutrinos_p4);
+  tree->SetBranchAddress("met_p4", &met_p4);
+  tree->SetBranchAddress("bjets_p4", &bjets_p4);
+  tree->SetBranchAddress("ljets_p4", &ljets_p4);
+  tree->SetBranchAddress("leps_p4", &leps_p4);
+  tree->SetBranchAddress("leps_id", &leps_id);
+  tree->SetBranchAddress("leps_iso", &leps_iso);
+  tree->SetBranchAddress("leps_tight", &leps_tight);
+  tree->SetBranchAddress("leps_matched_pdgId", &leps_matched_pdgId);
+  tree->SetBranchAddress("leps_truth_type", &leps_truth_type);
 }
 
 void nominal::vecBranch(TTree *tree){
-  tree->Branch("leps_p4", &leps_p4);
-  tree->Branch("leps_id", &leps_id);
-  tree->Branch("bjets_p4", &bjets_p4);
-  tree->Branch("met_p4", &met_p4);
-  tree->Branch("taus_p4", &taus_p4);
-  tree->Branch("ljets_p4", &ljets_p4);
+  tree->Branch("bjets_score", &bjets_score);
+  tree->Branch("weights", &weights);
+  tree->Branch("ljet_indice", &ljet_indice);
   tree->Branch("taus_n_charged_tracks", &taus_n_charged_tracks);
   tree->Branch("taus_b_tagged", &taus_b_tagged);
+  tree->Branch("taus_id", &taus_id);
   tree->Branch("taus_q", &taus_q);
+  tree->Branch("taus_p4", &taus_p4);
+  tree->Branch("taus_matched_mother_pdgId", &taus_matched_mother_pdgId);
+  tree->Branch("taus_matched_pdgId", &taus_matched_pdgId);
+  tree->Branch("neutrinos_p4", &neutrinos_p4);
+  tree->Branch("met_p4", &met_p4);
+  tree->Branch("bjets_p4", &bjets_p4);
+  tree->Branch("ljets_p4", &ljets_p4);
+  tree->Branch("leps_p4", &leps_p4);
+  tree->Branch("leps_id", &leps_id);
+  tree->Branch("leps_iso", &leps_iso);
+  tree->Branch("leps_tight", &leps_tight);
+  tree->Branch("leps_matched_pdgId", &leps_matched_pdgId);
+  tree->Branch("leps_truth_type", &leps_truth_type);
 }
-
 
 void nominal::initFit(){
   fitvec["taus"] = taus_p4;
@@ -241,7 +369,6 @@ void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t 
     printf("list isnt found\n");
     exit(1);
   }
-
   std::vector<TLorentzVector*> *taus = fitvec->at("taus");
   std::vector<TLorentzVector*> *leps = fitvec->at("leps");
   std::vector<TLorentzVector*> *bjets = fitvec->at("bjets");
@@ -309,9 +436,9 @@ void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t 
 
 
 
-vector<int> nominal::findcjet(){
+vector<int>* nominal::findcjet(){
   double m_w = 81*GeV;
-  vector<int> output;
+  vector<int> *output = new vector<int>();
   TString channel;
   if(taus_p4->size() + leps_p4->size() == 3) channel = "leponicW";
   else if(taus_p4->size() + leps_p4->size() == 2) channel = "hadronicW";
@@ -339,22 +466,22 @@ vector<int> nominal::findcjet(){
       fcjet = j;
     }
   }
-  output.push_back(fcjet);
+  output->push_back(fcjet);
   if (channel == "hadronicW"){
     if(nlightj <= 3){
       for (int i = 0; i < nlightj; ++i){
-        if(i!=fcjet) output.push_back(i);
+        if(i!=fcjet) output->push_back(i);
       }
     }else{
       vector<int> wpair = findwpair(fcjet);
-      output.push_back(wpair[0]);
-      output.push_back(wpair[1]);
-      wmass = (*ljets_p4->at(output[1]) + *ljets_p4->at(output[2])).M();
+      output->push_back(wpair[0]);
+      output->push_back(wpair[1]);
+      wmass = (*ljets_p4->at(output->at(1)) + *ljets_p4->at(output->at(2))).M();
     }
     TLorentzVector top = *bjets_p4->at(0);
-    for (int i = 1; i < output.size(); ++i)
+    for (int i = 1; i < output->size(); ++i)
     {
-      top = top + *ljets_p4->at(output[i]);
+      top = top + *ljets_p4->at(output->at(i));
     }
     t1vismass = top.M();
     t1mass = t1vismass;
@@ -462,12 +589,8 @@ vector<int> nominal::findcjetML(int trainpart){
   return output;
 }
 
-void nominal::calcfakesf(std::vector<int> origin, std::vector<float> pt, std::vector<int> prong){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
-  if(origin.size()!=pt.size() || pt.size()!=prong.size()) {
-    printf("nominal::calcfakesf(): ERROR: origin, pt, prong vector size are not equal.\n");
-    exit(0);
-  }
-  int ntau = origin.size();
+void nominal::calcfakesf(std::vector<int> origin){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
+  int ntau = taus_p4->size();
   float fakeSF_origin = 1;
   float fakeSF_origin_NP[2][4] = {{1,1,1,1},{1,1,1,1}};
   float fakeSF_tthML = 1;
@@ -476,16 +599,15 @@ void nominal::calcfakesf(std::vector<int> origin, std::vector<float> pt, std::ve
   for (int i = 0; i < ntau; ++i)
   {
     if(origin[i]<0) continue;
-    pt[i] = pt[i]/GeV;
-    fakeSF_origin*=fakeSFs[ pt[i]>35 ][origin[i]];
-    int prongbin = prong[i] == 3;
+    fakeSF_origin*=fakeSFs[ taus_p4->at(i)->Pt()>35*GeV ][origin[i]];
+    int prongbin = taus_n_charged_tracks->at(i) == 3;
     if(prongbin == 0) {
-      if(pt[i]<45) ptbin = 0;
-      else if(pt[i] < 70) ptbin = 1;
+      if(taus_p4->at(i)->Pt()<45*GeV) ptbin = 0;
+      else if(taus_p4->at(i)->Pt() < 70*GeV) ptbin = 1;
       else ptbin = 2;
     }else{
-      if(pt[i]<50) ptbin = 0;
-      else if(pt[i] < 75) ptbin = 1;
+      if(taus_p4->at(i)->Pt()<50*GeV) ptbin = 0;
+      else if(taus_p4->at(i)->Pt() < 75*GeV) ptbin = 1;
       else ptbin = 2;
     }
     fakeSF_tthML *= fakeSFML[prongbin][ptbin];
@@ -508,10 +630,10 @@ void nominal::calcfakesf(std::vector<int> origin, std::vector<float> pt, std::ve
       for (int itau = 0; itau < ntau; ++itau)
       {
         if(origin[itau] >= 0 ){
-          if ( iNP < 4 && pt[itau]>35 == 0 )
-             valNP *= fakeSFsNPbase[pt[itau]>35][origin[itau]][iNP]*sqrt(fakeSFsNPsSigma2[pt[itau]>35][iNP])/fakeSFs[pt[itau]>35][origin[itau]] + 1;
-          else if (iNP >= 4 && pt[itau]>35 == 1) {
-             valNP *= fakeSFsNPbase[pt[itau]>35][origin[itau]][iNP-4]*sqrt(fakeSFsNPsSigma2[pt[itau]>35][iNP-4])/fakeSFs[pt[itau]>35][origin[itau]] + 1;
+          if ( iNP < 4 && taus_p4->at(itau)->Pt()>35*GeV == 0 )
+             valNP *= fakeSFsNPbase[taus_p4->at(itau)->Pt()>35*GeV][origin[itau]][iNP]*sqrt(fakeSFsNPsSigma2[taus_p4->at(itau)->Pt()>35*GeV][iNP])/fakeSFs[taus_p4->at(itau)->Pt()>35*GeV][origin[itau]] + 1;
+          else if (iNP >= 4 && taus_p4->at(itau)->Pt()>35*GeV == 1) {
+             valNP *= fakeSFsNPbase[taus_p4->at(itau)->Pt()>35*GeV][origin[itau]][iNP-4]*sqrt(fakeSFsNPsSigma2[taus_p4->at(itau)->Pt()>35*GeV][iNP-4])/fakeSFs[taus_p4->at(itau)->Pt()>35*GeV][origin[itau]] + 1;
           }
         }
       }
@@ -521,26 +643,31 @@ void nominal::calcfakesf(std::vector<int> origin, std::vector<float> pt, std::ve
 
 }
 
-observable nominal::FindNewFakeSF(TString NP, vector<int> origintag, vector<float> taupt, vector<int> isOS){ //origin=-1,0,1,2,3,4 for real/lep,b,c,g,j,wjet
+observable nominal::FindNewFakeSF(TString NP){ //origin=-1,0,1,2,3,4 for real/lep,b,c,g,j,wjet
   observable result = 1;
-  for (int i = 0; i < origintag.size(); ++i)
+  for (int i = 0; i < taus_p4->size(); ++i)
   {
-    result *= FindNewFakeSF(NP, origintag[i], taupt[i], isOS[i]);
+    if(leps_id->size()) result *= FindNewFakeSF(NP, i, leps_id->at(0) * taus_q->at(i) > 0 );
+    else if(taus_q->size()>=2) result *= FindNewFakeSF(NP, i, taus_q->at(0) * taus_q->at(1) > 0 );
+    else {
+      printf("nominal::FindNewFakeSF() : ERROR: taus_q < 2 and leps_id = 0\n");
+      exit(0);
+    }
   }
   return result;
 }
 
-observable nominal::FindNewFakeSF(TString NP, int origintag, float taupt, int isOS, TString &name){ //origin=-1,0,1,2,3,4 for real/lep,b,c,g,j,wjet
+observable nominal::FindNewFakeSF(TString NP, int itau, int isOS, TString &name){ //origin=-1,0,1,2,3,4 for real/lep,b,c,g,j,wjet
   if(!newFakeSF.size()) {
     printf("nominal::FindNewFakeSF() Error : newFakeSF is Empty, please call nominal::ConfigNewFakeSF() first\n");
     exit(0);
   }
-  if(origintag < 0) return 1;
-  bool iswjet = origintag == 4;
+  if(taus_matched_pdgId->at(itau) == 15) return 1;
+  bool iswjet = abs(taus_matched_mother_pdgId->at(itau)) == 24;
   int slice = 0;
   for (int islice = 1; islice < fakePtSlices.size(); ++islice)
   {
-    if(taupt/GeV<fakePtSlices[islice]) {
+    if(taus_p4->at(itau)->Pt()/GeV<fakePtSlices[islice]) {
       slice = islice-1;
       break;
     }
@@ -554,12 +681,12 @@ observable nominal::FindNewFakeSF(TString NP, int origintag, float taupt, int is
   return result;
 }
 
-observable nominal::FindNewFakeSF(TString NP, int origintag, float taupt, int isOS){
+observable nominal::FindNewFakeSF(TString NP, int itau, int isOS){
   TString name;
-  return FindNewFakeSF(NP, origintag, taupt, isOS, name);
+  return FindNewFakeSF(NP, itau, isOS, name);
 }
 
-bool nominal::AddTheorySys(){
+bool nominal::addTheorySys(){
   if(weight_mc_v){
     for (int i = 1; i <= theoryweightsum->GetNbinsX(); ++i)
     {
@@ -686,11 +813,11 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
   printf("nominal::ConfigNewFakeSF() : End\n");
 }
 
-void nominal::calcfakesf_pdg(std::vector<int> originpdg, std::vector<float> pt, std::vector<int> prong){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
+void nominal::calcfakesf_pdg(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
   std::vector<int> origin;
-  for (int i = 0; i < originpdg.size(); ++i)
+  for (int i = 0; i < taus_matched_pdgId->size(); ++i)
   {
-    switch(originpdg[i]){
+    switch(abs(taus_matched_pdgId->at(i))){
       case 11: case 13: case 15:
       origin.push_back(-1);
       break;
@@ -707,7 +834,7 @@ void nominal::calcfakesf_pdg(std::vector<int> originpdg, std::vector<float> pt, 
       origin.push_back(3);
     }
   }
-  calcfakesf(origin,pt,prong);
+  calcfakesf(origin);
 }
 
 void nominal::addweights(double weight, TString name){
@@ -810,3 +937,611 @@ TMinuit* nominal::initgM(){
   gM->mnexcm("SET ERR", arglist ,1,ierflg);
   return gM;
 }
+
+void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1)
+{
+  if(!inputtree) {
+    printf("WARNING: input tree is empty\n");
+    return;
+  }
+  samplename = _samplename;
+  if(debug && dohist) for (int iNP = 0; iNP < plotNPs.size(); ++iNP) fcnc_plots->show();
+  if(isData) {
+    campaign = samplename.Contains("1516") ? 1: (samplename.Contains("17")? 2:3);
+  }else{
+    campaign = samplename.Contains("mc16a") ? 1: (samplename.Contains("mc16d")? 2:3);
+  }
+  belong_regions.clear();
+
+  if(reduce > 1) {
+    belong_regions.add(inputtree->GetName());
+    fcnc = belong_regions.isCategory("SR") || belong_regions.isCategory("SRCR");
+    printf("is FCNC SR or SRCR? %d\n", fcnc);
+    if(belong_regions.have("85")) defaultbtagwp = btagwpCut[3];
+  }
+
+  nonfcncmatched = 0;
+  fcncmatched = 0;
+  leptonicw = 0;
+
+  bool cutmass = 0;
+
+  reduce -= 1;
+  init(inputtree);
+  reduce += 1;
+  if(reduce == 2 && fitvec.size() == 0) initFit();
+  if(debug) printf("reduce scheme: %d\n", reduce);
+  Long64_t nentries = inputtree->GetEntriesFast();
+  TString sample = samplename.Contains("data")? "data":samplename.Remove(0,6).Data();
+
+  if(samplename.Contains("ttbar")) sample = "ttbar";
+
+  if (dumptruth) {
+    for (int i = 0; i < 3; ++i) {
+      filetruth[i][0].open(CharAppend("hadhad", i + 2) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
+      filetruth[i][1].open(CharAppend("hadhad", i + 2) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
+    }
+  }
+  int nloop = debug ? min((Long64_t)1000,nentries) : nentries;
+  double defaultbtagwp = btagwpCut[1];
+
+  fstream signalevtnb;
+  if(samplename.Contains("fcnc")) signalevtnb.open((samplename+"_evt.txt").Data(), fstream:: in | fstream::out | fstream::app);
+  printf("nentries: %d\n", nloop);
+  if(nentries == 0) return;
+  float droppedweight = 0;
+  cut_flow.sample = samplename;
+  cut_flow.region = reduce==1? "all" : (inputtree->GetName());
+  fstream evtfile;
+  if(dumpeventnumber) evtfile.open((samplename+"_evt.txt").Data(), fstream:: in | fstream::out | fstream::app);
+
+  if (dumptruth) {
+    if(reduce > 1){
+      if (TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) {
+        filetruth[0][0].open("lephad2jodd.txt", fstream:: in | fstream::out | fstream::app);
+        filetruth[0][1].open("lephad2jeven.txt", fstream:: in | fstream::out | fstream::app);
+      } else
+        for (int i = 0; i < 3; ++i) {
+          if (TString(inputtree->GetName()).Contains("reg1l1tau1b3j")) {
+            if (i != 0) {
+              filetruth[i][0].open(CharAppend("lephad", i + 2) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
+              filetruth[i][1].open(CharAppend("lephad", i + 2) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
+            }
+          } else {
+            filetruth[i][0].open(CharAppend("lep2tau", i + 1) + "jodd.txt", fstream:: in | fstream::out | fstream::app);
+            filetruth[i][1].open(CharAppend("lep2tau", i + 1) + "jeven.txt", fstream:: in | fstream::out | fstream::app);
+          }
+        }
+    }else{
+      printf("please dumptruth after reduce1\n"); //not supported yet
+      exit(0);
+    }
+  }
+
+
+  for (Long64_t jentry = 0; jentry < nloop; jentry++) {
+    cut_flow.newEvent();
+    inputtree->GetEntry(jentry);
+    //if(mcChannelNumber == 411172 || mcChannelNumber == 411173 || mcChannelNumber == 411176 || mcChannelNumber == 411177)
+    //  continue;
+    if ((jentry % 100000 == 0) || debug)
+      std::cout << " I am here event " << jentry << " Event " << eventNumber << " Run " << runNumber << " ismc " << mcChannelNumber << " Filled events "<< ifill<<std::endl;
+//===============================SFs and weights===============================
+    if(reduce == 1){
+      belong_regions.clear();
+      calcGeneralWeight();
+      if(globalweight!=0) generalweight*=globalweight;
+      if(generalweight == 0) continue;
+      weight = generalweight;
+      cut_flow.fill("n-tuple");
+      //if(fabs(generalweight) > 5) {
+      //  droppedweight+=generalweight;
+      //  continue;
+      //}
+      if(!passBasicCut()) continue;
+
+      defineObjects();
+
+      defineRegions();
+
+      if(belong_regions.isEmpty()) continue;
+
+      cut_flow.fill("SR+CR");
+      
+      defineTauTruth();
+      
+      defineLepTruth();
+
+      tau_pt_0 = taus_p4->at(0)->Pt();
+      if(taus_p4->size()>=2) tau_pt_1 = taus_p4->at(1)->Pt();
+      if(leps_p4->size()) {
+        tau_pt_0 = taus_p4->at(0)->Pt();
+        if(leps_p4->size()>=2) lep_pt_1 = leps_p4->at(1)->Pt();
+      }
+      
+    }else{
+      weight = weights->at(0);
+    }
+    //===============================pre-selections===============================
+    if(reduce == 2) {
+      if(!passRegionCut()) continue;
+      if (taus_p4->size() && taus_b_tagged->at(0) == 1) continue;
+      if (taus_p4->size()>1)
+        if(taus_b_tagged->at(1) == 1)
+          continue;
+      cut_flow.fill("tau b-veto");
+
+      bool passbjetcut = 0;
+      for(auto bjet : *bjets_p4){
+        if(bjet->Pt() > 30 && abs(bjet->Eta()) < 2.5) passbjetcut = 1;
+      }
+      if(!passbjetcut) continue;
+      cut_flow.fill("bjet pt>30 eta<2.5");
+      if(met_p4->Pt()<30*GeV) continue;
+      cut_flow.fill("MET>30");
+
+      if(!nominaltree && taus_p4->size()) {
+        taus_matched_mother_pdgId = taumatchmap[eventNumber];
+      }
+
+      if(bjets_p4->size() >= 2){
+         if(!bjets_score || !bjets_score->size() || bjets_score->at(0) > bjets_score->at(1)){
+           ljets_p4->push_back(bjets_p4->at(1));
+           bjets_p4->erase(bjets_p4->begin()+1);
+         }else{
+           ljets_p4->push_back(bjets_p4->at(0));
+           bjets_p4->erase(bjets_p4->begin());
+         }
+      }
+
+      ljet_indice = findcjet();
+  
+      TLorentzVector *tau2,*wlep;
+      if(taus_p4->size() == 2) {
+        tau2 = taus_p4->at(1);
+        wlep = leps_p4->at(0);
+      }
+      else {
+        tau2 = leps_p4->at(0);
+        if(leps_p4->size() == 2){
+          if((belong_regions.have("2lSS1tau") && tau2->DeltaR(*taus_p4->at(0)) > leps_p4->at(1)->DeltaR(*taus_p4->at(0)))
+            || (!belong_regions.have("2l1tau") && leps_id->at(0)*taus_q->at(0) < 0) ){
+            tau2 = leps_p4->at(1);
+            wlep = leps_p4->at(0);
+          }else{
+            wlep = leps_p4->at(1);
+          }
+        }else{
+          wlep = 0;
+        }
+      }
+
+
+      ttvismass = (*taus_p4->at(0) + *tau2).M();
+      drtautau = taus_p4->at(0)->DeltaR(*tau2);
+      if(ttvismass < 50*GeV) continue;
+      cut_flow.fill("$m_{\\tau\\tau$,vis}>50");
+      if(ttvismass > 130*GeV) continue;
+      cut_flow.fill("$m_{\\tau\\tau$,vis}<130");
+      if(drtautau > 3.4) continue;
+      cut_flow.fill("\\Delta R(\\tau,\\tau)>3.4");
+      if(dofit && (taus_p4->size() + leps_p4->size() == 2 || dofit1l2tau)){
+
+        if (taus_p4->size() + leps_p4->size() >= 3) {
+          gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
+          gMinside->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
+          gMinside->mnparm(2, "pt3", 10*GeV, 10*GeV, 0., 1000*GeV, ierflg);
+          gMinside->mnparm(3, "eta3", 0, 0.1, -5, 5, ierflg);
+          gMinside->mnparm(4, "phi3", 0, 0.1, -PI, PI, ierflg);
+          arglist[0] = 5;
+        } else {
+          gMinside->mnparm(0, "v1pt",  tau_pt_0, 1*GeV, 0., 1000*GeV, ierflg);
+          gMinside->mnparm(1, "v1eta", taus_p4->at(0)->Eta(), 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
+          gMinside->mnparm(2, "v1phi", taus_p4->at(0)->Phi(), 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
+          gMinside->mnparm(3, "v2pt",  tau2->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
+          gMinside->mnparm(4, "v2eta", tau2->Eta(), 0.01, tau2->Eta()-0.25, tau2->Eta()+0.25, ierflg);
+          gMinside->mnparm(5, "v2phi", tau2->Phi(), 0.01, tau2->Phi()-0.25, tau2->Phi()+0.25, ierflg);
+          if(leps_p4->size()) gMinside->mnparm(6, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
+          arglist[0] = 7;
+        }
+    
+        gMinside->SetObjectFit((TObject*)&fitvec);
+        arglist[1] = 60.;
+        Double_t val[7] = {0,0,0,0,0,0,0};
+        Double_t err[7] = {0,0,0,0,0,0,0};
+
+        if(debug) printf("start kinematic fit\n");
+        gMinside->mnexcm("SCAN", arglist, 2, ierflg);
+        for (int i = 0; i < 7; ++i) gMinside->GetParameter(i, val[i], err[i]);
+    
+        if (taus_p4->size() >= 2) {
+          gMinside->mnparm(0, "rpt1", val[0], 0.01, 0., 2., ierflg);
+          gMinside->mnparm(1, "rpt2", val[1], 0.01, 0., 2., ierflg);
+          gMinside->mnparm(2, "pt3",  val[2], 10*GeV, 0., 1000*GeV, ierflg);
+          gMinside->mnparm(3, "eta3", val[3], 0.1, -5, 5, ierflg);
+          gMinside->mnparm(4, "phi3", val[4], 0.1, -PI, PI, ierflg);
+        } else {
+          gMinside->mnparm(0, "v1pt",  val[0], 1, 0., 1000*GeV, ierflg);
+          gMinside->mnparm(1, "v1eta", val[1], 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
+          gMinside->mnparm(2, "v1phi", val[2], 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
+          gMinside->mnparm(3, "v2pt",  val[3], 1, 0., 1000*GeV, ierflg);
+          gMinside->mnparm(4, "v2eta", val[4], 0.01, tau2->Eta()-0.25, tau2->Eta()+0.25, ierflg);
+          gMinside->mnparm(5, "v2phi", val[5], 0.01, tau2->Phi()-0.25, tau2->Phi()+0.25, ierflg);
+          if(leps_p4->size()) gMinside->mnparm(6, "v2m",   val[6], 0.01, 0, 1776, ierflg);
+        }
+    
+        arglist[0] = 1000;
+        arglist[1] = 0;
+    
+        Double_t fmin,edm,errdef;
+        Int_t nvpar,nparx,icstat;
+        gMinuit->mnstat(fmin,edm,errdef,nvpar,nparx,icstat);
+
+        chi2 = fmin;
+
+        gMinside->mnexcm("MIGRADE", arglist, 2, ierflg);
+        for (int i = 0; i < (taus_p4->size() + leps_p4->size() >= 3 ? 5 : (leps_p4->size()?7:6)); ++i) gMinside->GetParameter(i, val[i], err[i]);
+        neutrinos_p4->clear();
+
+        TLorentzVector *tauv1_v = new TLorentzVector();
+        TLorentzVector *tauv2_v = new TLorentzVector();
+        TLorentzVector *wv_v = new TLorentzVector();
+        if(taus_p4->size() + leps_p4->size() >= 3) {
+          tauv1_v->SetPtEtaPhiM(val[0]*taus_p4->at(0)->Pt(), taus_p4->at(0)->Eta(), taus_p4->at(0)->Phi(), ljets_p4->size() >= 2 ? 0 : val[2]);
+          tauv2_v->SetPtEtaPhiM(val[1]*tau2->Pt(), tau2->Eta(), tau2->Phi(), 0);
+          x1fit = 1 / (1 + val[0]);
+          x2fit = 1 / (1 + val[1]);
+          wv_v->SetPtEtaPhiM(val[2], val[3], val[4], 0);
+          t1mass = (*wlep + *wv_v + *bjets_p4->at(0)).M();
+          wmass = (*wlep + *wv_v).M();
+        }
+        else {
+          tauv1_v->SetPtEtaPhiM(val[0],val[1],val[2],0);
+          tauv2_v->SetPtEtaPhiM(val[3],val[4],val[5],val[6]);
+          x1fit = taus_p4->at(0)->E() / (*taus_p4->at(0) + *tauv1_v).E();
+          x2fit = tau2->E() / (*tau2 + *tauv2_v).E();
+        }
+        neutrinos_p4->push_back(tauv1_v);
+        neutrinos_p4->push_back(tauv2_v);
+        if(taus_p4->size() + leps_p4->size() >= 3) neutrinos_p4->push_back(wv_v);
+        else deletepointer(wv_v);
+
+        if(taus_p4->size() + leps_p4->size() == 2){
+          if(ljets_p4->size()>=3){
+            t1mass = (*(ljets_p4->at(ljet_indice->at(1))) + *(ljets_p4->at(ljet_indice->at(2))) + *(bjets_p4->at(0))).M();
+            wmass = (*(ljets_p4->at(ljet_indice->at(1))) + *(ljets_p4->at(ljet_indice->at(2)))).M();
+          }else{
+            t1mass = (*(ljets_p4->at(ljet_indice->at(0))) + *(ljets_p4->at(ljet_indice->at(1))) + *(bjets_p4->at(0))).M();
+            wmass = (*(ljets_p4->at(ljet_indice->at(0))) + *(ljets_p4->at(ljet_indice->at(1)))).M();
+          }
+          t2mass = (*(ljets_p4->at(ljet_indice->at(0))) + *(taus_p4->at(0)) + *(tau2) + *neutrinos_p4->at(0) + *neutrinos_p4->at(1)).M();
+          tautaumass = (*(taus_p4->at(0)) + *(tau2) + *neutrinos_p4->at(0) + *neutrinos_p4->at(1)).M();
+        }
+        x1fit = 1 - neutrinos_p4->at(0)->E() / (*(taus_p4->at(0)) + *neutrinos_p4->at(0)).E();
+        x2fit = 1 - neutrinos_p4->at(1)->E() / (*(tau2) + *neutrinos_p4->at(1)).E();
+      }
+
+      phicent = phi_centrality(taus_p4->at(0)->Phi(),tau2->Phi(),met_p4->Phi());
+      tautauvispt = (*taus_p4->at(0) + *tau2).Pt();
+      t2vismass = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2 + *ljets_p4->at(ljet_indice->at(0))).M() : 0;
+      drttj = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2).DeltaR(*ljets_p4->at(ljet_indice->at(0))) : 0;
+      dphitauetmiss = fabs(met_p4->Phi() - (*taus_p4->at(0) + *tau2).Phi());
+      etmiss = met_p4->Pt();
+
+      mtaujmin = 0;
+
+      drttjmin = 999;
+      mttjmin = 0;
+      mjjmin = 0;
+
+      for (int ijet = 0 ; ijet < ljets_p4->size(); ijet ++ ) {
+
+        if(mtaujmin == 0 || mtaujmin > (*taus_p4->at(0) + *ljets_p4->at(ijet)).M()){
+          mtaujmin = (*taus_p4->at(0) + *ljets_p4->at(ijet)).M();
+        }
+
+        if(drttjmin > (*(taus_p4->at(0)) + *(tau2)).DeltaR(*ljets_p4->at(ijet)))
+          drttjmin = (*(taus_p4->at(0)) + *(tau2)).DeltaR(*ljets_p4->at(ijet));
+        if(mttjmin > (*(taus_p4->at(0)) + *(tau2)+ *ljets_p4->at(ijet)).M() || mttjmin == 0)
+          mttjmin = (*(taus_p4->at(0)) + *(tau2) + *ljets_p4->at(ijet)).M();
+
+        for(int jjet = ijet+1 ; jjet < ljets_p4->size(); jjet ++ ){
+          double tmpmjj = (*ljets_p4->at(ijet)+*ljets_p4->at(jjet)).M();
+          if(mjjmin > tmpmjj || mjjmin==0) mjjmin = tmpmjj;
+        }
+      }
+      pt_b = bjets_p4->at(0)->Pt();
+      pt_ljet = ljets_p4->size() ? ljets_p4->at(0)->Pt():0;
+      if(leps_p4->size()){
+        lep_pt_0 = leps_p4->at(0)->Pt();
+        lep_pt_1 = leps_p4->size() == 1? 0 : leps_p4->at(1)->Pt();
+      }
+
+      if (dumptruth && fcnc && sample.Contains("fcnc")) dumpTruth(eventNumber % 2);
+      tau_pt_0 = taus_p4->at(0)->Pt();
+      if(taus_p4->size()>=2) tau_pt_1 = taus_p4->at(1)->Pt();
+      if(leps_p4->size()) {
+        tau_pt_0 = taus_p4->at(0)->Pt();
+        if(leps_p4->size()>=2) lep_pt_1 = leps_p4->at(1)->Pt();
+      }
+
+    }
+
+    if(reduce == 3){
+      if (belong_regions.have("1l2tau"))
+      {
+        if(t1vismass > 190*GeV )
+          continue;
+        cut_flow.fill("$m_{l,b}<190$");
+      }
+      BDTG_test  = 0;
+      BDTG_train  = 0;
+      if(doBDT){
+        if(debug) printf("eval BDTG\n");
+        if(belong_regions.have("2mtau")){
+          if(belong_regions.have("3j")) {
+            BDTG_test = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2) );
+            BDTG_train = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)) );
+          }
+          if(belong_regions.have("2j")) {
+            BDTG_test = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2) );
+            BDTG_train = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)) );
+          }
+        }else{
+          if(belong_regions.have("1l2tau")) BDTG_test  = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+          if(belong_regions.have("2j"    )) BDTG_test  = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+          if(belong_regions.have("3j"    )) BDTG_test  = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+          if(belong_regions.have("1l2tau")) BDTG_train = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+          if(belong_regions.have("2j"    )) BDTG_train = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+          if(belong_regions.have("3j"    )) BDTG_train = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+        }
+      }
+      if(dumpeventnumber) {
+        for(auto reg : belong_regions.all()){
+          if(mcChannelNumber>0)
+            evtfile<<reg<<" "<<mcChannelNumber<<" "<<eventNumber<<" "<<weights->at(0)<<endl;
+          else
+            evtfile<<reg<<" "<<runNumber<<" "<<eventNumber<<" "<<weights->at(0)<<endl;
+        }
+      }
+    }
+
+    if(debug) printf("nominal::Loop : Finding origins\n");
+
+    if (dohist && mcChannelNumber && weightsysmap.find(mcChannelNumber) == weightsysmap.end()) {
+      readweightsysmap(mcChannelNumber,(!(belong_regions.have("2l")||belong_regions.have("1l")) || belong_regions.have("ltau"))? "xTFW" : "tthML");
+      if(weightsysmap.find(mcChannelNumber) == weightsysmap.end()) {
+        printf("tthmltree::Loop() WARNING: channel number %d not found in the systematics map, skipping\n", mcChannelNumber);
+        continue;
+      }
+    }
+
+    for (auto region: belong_regions.all()) {
+      if(debug) printf("fill region: %s\n", region.Data());
+      if(reduce == 1){
+        weights->clear();
+        if(!isData){
+          weight = generalweight*calcRegionSF(region);
+          addweights(weight,"NOMINAL");
+          calcfakesf_pdg();
+          if(nominaltree){
+            if(!addWeightSys()) continue;
+            if(!addTheorySys()) {
+              printf("Warning: cannot add weight systematics\n");
+              continue;
+            }
+          }
+        }else{
+          addweights(1,"NOMINAL");
+        }
+      }
+      if (writetree){
+        if(outputtree.find(region) != outputtree.end()){
+          outputtree[region]->Fill();
+        }
+        else{
+          printf("Error: outputtree cannot find: %s\n", region.Data());
+          for(auto itertmp : outputtree){
+            printf("output tree list: %s\n", itertmp.first.Data());
+          }
+          exit(1);
+        }
+      }
+      if (dohist) {
+
+        TString    leporigin;
+        TString    tauorigin;
+        if (sample.Contains("data")) {
+          leporigin = "data";
+          sample = "data";
+        } else {
+          int nfakelep = leps_matched_pdgId->size();
+          for (int i = 0; i < leps_matched_pdgId->size(); ++i){
+            int lepabspdg = abs(leps_matched_pdgId->at(i));
+            if(leps_truth_type->at(i) == 2 || leps_truth_type->at(i) == 6) {
+              if(leps_matched_pdgId->at(i) == leps_id->at(i)) nfakelep--;
+              else if(leps_matched_pdgId->at(i) == -leps_id->at(i)) leporigin = sample + "_chargeflip";
+              else leporigin = sample + "_misid";
+            }else if(leps_truth_type->at(i)<=8) leporigin = sample + "_non_prompt";
+            else leporigin = sample + "_fakelep";
+          }
+          if(nfakelep == 0) leporigin = sample + "_reallep";
+          else if(nfakelep >= 2) leporigin = sample + "_doublefake";
+        }
+        if (sample.Contains("data")) {
+          tauorigin = "data";
+          sample = "data";
+        } else {
+          int nfaketau = 0;
+          for (int i = 0; i < taus_matched_pdgId->size(); ++i){
+            int tauabspdg = abs(taus_matched_pdgId->at(i));
+            if(tauabspdg != 15) {
+              nfaketau++;
+              if (tauabspdg == 13 || tauabspdg == 11) tauorigin = sample + "_lep";
+              else if (tauabspdg == 5) tauorigin = sample + "_b";
+              else if (tauabspdg == 4) tauorigin = sample + "_c";
+              else if (tauabspdg <= 3 && tauabspdg >=1) tauorigin = sample + "_j";
+              else tauorigin = sample + "_nomatch";
+              if((tauabspdg == 4 || (tauabspdg <= 3 && tauabspdg >=1)) && abs(taus_matched_mother_pdgId->at(i)) == 24) tauorigin = sample + "_wjet";
+            }
+          }
+          if(nfaketau == 0) tauorigin = sample + "_real";
+          else if(nfaketau >= 2) tauorigin = sample + "_doublefake";
+        }
+        if(debug) printf("fill hist\n");
+
+        if(mcChannelNumber!=0){
+          auto weightvec = weightsysmap.at(mcChannelNumber);
+          for (int iNP = 0; iNP < plotNPs.size(); ++iNP){
+            auto theNP = plotNPs.at(iNP);
+            if(debug) printf("fill NP %s\n", theNP.Data());
+            weight = weights->at(0);
+            if(applyNewFakeSF){
+              if(theNP.Contains("fakeSF")){
+                TString SFname;
+                if(debug) printf("weight = %f\nPlotNP = %s\n",weight,theNP.Data());
+                observable thefakeSF;
+                if(leps_id->size()) thefakeSF= FindNewFakeSF("NOMINAL", 0, leps_id->at(0)*taus_q->at(0) > 0,SFname);
+                else thefakeSF= FindNewFakeSF("NOMINAL", 0, belong_regions.have("os"),SFname);
+                weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);
+                if(taus_p4->size() >= 2) {
+                  if(leps_id->size()) thefakeSF= FindNewFakeSF("NOMINAL", 1, leps_id->at(0)*taus_q->at(1) > 0,SFname);
+                  else thefakeSF = FindNewFakeSF("NOMINAL", 1, belong_regions.have("os"), SFname);
+                  weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);
+                }
+                if(debug) printf("weight = %f after apply fakeSF\n",weight);
+              }else{
+                if(doubleCounting){
+                  weight *= FindNewFakeSF("NOMINAL").nominal;
+                }else if(nominaltree) 
+                  weight *= FindNewFakeSF(theNP).nominal;
+                else if(theNP == "NOMINAL"){
+                  weight *= FindNewFakeSF(SystematicsName).nominal;
+                }
+              }
+            }
+            if(!theNP.Contains("Xsec") && !theNP.Contains("fakeSF") && nominaltree) {
+              std::vector<TString>::iterator it = std::find(weightvec.begin(), weightvec.end(), theNP);
+              int index = 2;
+              if(it != weightvec.end()) index = std::distance(weightvec.begin(), it);
+              else continue;
+              if(index==2 || index==1) weight = weights->at(index);
+              else if(index > 8 && index < 17)
+                weight = weights->at(2) * weights->at(index);
+              else if(index !=0)
+                weight *= weights->at(index);
+            }
+            if (fcnc) {
+              if(plotTauFake) fillhist(fcnc_plots, region, taus_n_charged_tracks->at(0), tauorigin, tau_pt_0 / GeV > 35, taus_b_tagged->at(0), theNP);
+              else if(!taus_b_tagged->at(0) && region.Contains("2l")) fcnc_plots->fill_hist(leporigin,region,theNP);
+            }
+            else if(region.Contains("tau")) fillhist(fake_plots, region, taus_n_charged_tracks->at(0), tauorigin, tau_pt_0 / GeV > 35, taus_b_tagged->at(0), theNP);
+            else fill_notau(region, sample, theNP);
+          }
+        }else{ //data
+          if (region.Contains("tau")) {
+            if (fcnc) {
+              if(plotTauFake) fillhist(fcnc_plots, region, taus_n_charged_tracks->at(0), tauorigin, tau_pt_0 / GeV > 35, taus_b_tagged->at(0), "NOMINAL");
+              else if(!taus_b_tagged->at(0) && region.Contains("2l")) fcnc_plots->fill_hist("data",region,"NOMINAL");
+            }
+            else fillhist(fake_plots, region, taus_n_charged_tracks->at(0), tauorigin, tau_pt_0 / GeV > 35, taus_b_tagged->at(0), "NOMINAL");
+          } else fill_notau(region, sample, "NOMINAL");
+        }
+      }
+      if(debug == 2) printf("finish hist\n");
+    }
+    ifill ++;
+  }
+  if(dumpeventnumber) evtfile.close();
+  printf("dropped events total weight: %f\n", droppedweight);
+  if(reduce != 1){
+    printf("%s \n", inputtree->GetName());
+    cut_flow.print();
+    cut_flow.save(20);
+    cut_flow.clear();
+  }
+  if (dumptruth) {
+    if (TString(inputtree->GetName()).Contains("reg1l1tau1b2j")) {
+      filetruth[0][0].close();
+      filetruth[0][1].close();
+    } else
+      for (int i = 0; i < 6; ++i) {
+        if (TString(inputtree->GetName()).Contains("reg1l1tau1b3j")) {
+          if (i != 0) {
+            filetruth[i][0].close();
+            filetruth[i][1].close();
+          }
+        } else {
+          filetruth[i][0].close();
+          filetruth[i][1].close();
+        }
+      }
+  }
+}
+
+void nominal::defineRegions(){
+  if(!leps_p4 || leps_p4->size()==0){
+    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau1b2jss");
+    if((taus_id->at(0)>=2) + (taus_id->at(1)>=2) == 1 &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1mtau1ltau1b2jss");
+    if(!(taus_id->at(0)>=2) && !(taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ltau1b2jss");
+    if(taus_id->at(0)==3 && taus_id->at(1)==3 && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ttau1b2jss");
+    if(taus_id->at(0)==3 + (taus_id->at(1)==3) == 1 && (taus_id->at(0)>=2) + (taus_id->at(1)>=2) == 1 && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1ttau1mtau1b2jss");
+    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau1b3jss");
+    if((taus_id->at(0)>=2) + (taus_id->at(1)>=2) == 1 &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1mtau1ltau1b3jss");
+    if(!(taus_id->at(0)>=2) && !(taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ltau1b3jss");
+    if(taus_id->at(0)==3 && taus_id->at(1)==3 && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ttau1b3jss");
+    if(taus_id->at(0)==3 + (taus_id->at(1)==3) == 1 && (taus_id->at(0)>=2) + (taus_id->at(1)>=2) == 1 && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1ttau1mtau1b3jss");
+    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau1b2jos");
+    if((taus_id->at(0)>=2) + (taus_id->at(1)>=2) == 1 &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1mtau1ltau1b2jos");
+    if(!(taus_id->at(0)>=2) && !(taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ltau1b2jos");
+    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau1b3jos");
+    if((taus_id->at(0)>=2) + (taus_id->at(1)>=2) == 1 &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1mtau1ltau1b3jos");
+    if(!(taus_id->at(0)>=2) && !(taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ltau1b3jos");
+    if(taus_id->at(0)==3 && taus_id->at(1)==3 && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ttau1b2jos");
+    if(taus_id->at(0)==3 + (taus_id->at(1)==3) == 1 && (taus_id->at(0)>=2) + (taus_id->at(1)>=2) == 1 && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1ttau1mtau1b2jos");
+    if(taus_id->at(0)==3 && taus_id->at(1)==3 && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ttau1b3jos");
+    if(taus_id->at(0)==3 + (taus_id->at(1)==3) == 1 && (taus_id->at(0)>=2) + (taus_id->at(1)>=2) == 1 && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1ttau1mtau1b3jos");
+    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau2b2jss");
+    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau2b3jss");
+    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b2jos");
+    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b3jos");
+  }else if(leps_p4->size()==1){
+    if(ljets_p4->size() == 2 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b2j_os");
+    if(ljets_p4->size() >= 3 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b3j_os");
+    if(bjets_p4->size() == 1 && taus_p4->size() >= 2 && taus_q->at(0)*taus_q->at(1) < 0) belong_regions.add("reg1l2tau1bnj_os");
+    if(ljets_p4->size() == 2 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau1b2j_ss");
+    if(ljets_p4->size() >= 3 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau1b3j_ss");
+    if(ljets_p4->size() == 2 && bjets_p4->size() == 2 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau2b2j_os");
+    if(ljets_p4->size() >= 3 && bjets_p4->size() == 2 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau2b3j_os");
+    if(ljets_p4->size() == 2 && bjets_p4->size() == 2 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau2b2j_ss");
+    if(ljets_p4->size() >= 3 && bjets_p4->size() == 2 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau2b3j_ss");
+    if(bjets_p4->size() == 1 && taus_p4->size() >= 2 && taus_q->at(0)*taus_q->at(1) > 0) belong_regions.add("reg1l2tau1bnj_ss");
+    if(bjets_p4->size() == 2 && taus_p4->size() >= 2 && taus_q->at(0)*taus_q->at(1) < 0) belong_regions.add("reg1l2tau2bnj_os");
+    if(bjets_p4->size() == 2 && taus_p4->size() >= 2 && taus_q->at(0)*taus_q->at(1) > 0) belong_regions.add("reg1l2tau2bnj_ss");
+    if(bjets_p4->size() == 2 && ljets_p4->size() == 1 && taus_p4->size() == 1 && (leps_id->at(0) > 0 ? -1 : 1)*taus_q->at(0) < 0) belong_regions.add("reg1l1tau2b1j_os");
+    if(bjets_p4->size() == 2 && ljets_p4->size() == 1 && taus_p4->size() == 1 && (leps_id->at(0) > 0 ? -1 : 1)*taus_q->at(0) > 0) belong_regions.add("reg1l1tau2b1j_ss");
+    if(bjets_p4->size() == 2 && ljets_p4->size() == 0 && taus_p4->size() == 1 && (leps_id->at(0) > 0 ? -1 : 1)*taus_q->at(0) < 0) belong_regions.add("reg1l1tau2b_os");
+    if(bjets_p4->size() == 2 && ljets_p4->size() == 0 && taus_p4->size() == 1 && (leps_id->at(0) > 0 ? -1 : 1)*taus_q->at(0) > 0) belong_regions.add("reg1l1tau2b_ss");
+  }else if (leps_p4->size()==2){
+    if( leps_iso->at(0) && (!tightLep || leps_tight->at(0)) &&
+        leps_iso->at(1) && (!tightLep || leps_tight->at(1))) { //tight lepton
+      bool sameflavor = abs(leps_id->at(0)) == abs(leps_id->at(1));
+      float mll = (*leps_p4->at(0)+*leps_p4->at(1)).M();
+      if((!sameflavor || (sameflavor && (mll < 80*GeV || mll > 100*GeV))) && leps_id->at(0)*leps_id->at(1)<0){ //2l ttbar CR
+        if(bjets_p4->size() == 2 && taus_p4->size() == 1) belong_regions.add("reg2l1tau2bnj");
+        if(bjets_p4->size() == 1 && taus_p4->size() == 1) belong_regions.add("reg2l1tau1bnj");
+        if(bjets_p4->size() == 2 && taus_p4->size() == 0) belong_regions.add("reg2l2bnj");
+      }
+      if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau1bnj_os");
+      if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau1bnj_ss");
+      if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau2bnj_os");
+      if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau2bnj_ss");
+    }else if(leps_iso->at(0) && tightLep && leps_tight->at(0) && leps_tight->at(1)){ //reverse iso only for 2nd lepton
+      if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau1bnj_os_antiiso");
+      if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau1bnj_ss_antiiso");
+      if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau2bnj_os_antiiso");
+      if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau2bnj_ss_antiiso");
+    }
+  }
+}
+

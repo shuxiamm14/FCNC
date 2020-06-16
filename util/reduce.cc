@@ -1,5 +1,6 @@
 #include "hadhadtree.h"
-#include "tthmltree.h"
+#include "tthmltree_v2.h"
+#include "tthmltree_v3.h"
 #include "TROOT.h"
 #include "TSystem.h"
 #include "weightsys_list.h"
@@ -20,6 +21,7 @@ int main(int argc, char const *argv[])
 	bool dofake = 0;
 	bool onlyMajorNP = 0; // set to 0 for current xTFW analysis.
 	bool applynewSF = 0; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
+	int version = 8;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	TString framework = argv[1];
@@ -42,7 +44,7 @@ int main(int argc, char const *argv[])
 		printf("sys sample doesnt have the systematic trees\n");
 		return 0;
 	}
-	TString samplefilefullname = prefix + "/datafiles/" + framework + "/v2/run/"+ ((systname != "nominal" && framework == "tthML") ? "sys_" : "" ) + samplefile;
+	TString samplefilefullname = prefix + "/datafiles/" + framework + "/v3/run/"+ ((systname != "nominal" && framework == "tthML") ? "sys_" : "" ) + samplefile;
 	printf("reading list: %s\n",samplefilefullname.Data());
 	ifstream fn(samplefilefullname);
 	if(!fn) {
@@ -122,10 +124,14 @@ int main(int argc, char const *argv[])
 	nominal *analysis;
 	if(framework == "xTFW") analysis = new hadhadtree();
 	else if(framework == "tthML") {
-		analysis = new tthmltree();
-		analysis->version = 7;
-		if(inputconfig.Contains("fcnc_ml")) {
-			analysis->version = 5;
+		if(version == 8){
+			analysis = new tthmltree_v3();
+			analysis->version = 8;
+		}else{
+			analysis = new tthmltree_v2();
+			analysis->version = 7;
+			if(inputconfig.Contains("ml"))
+				analysis->version = 5;
 		}
 	}
 	analysis->SystematicsName = systname;
@@ -134,7 +140,7 @@ int main(int argc, char const *argv[])
 	analysis->dofit = 1;
 	analysis->reduce = reduce;
 	analysis->debug = debug;
-	analysis->plotTauFake = 0;
+	analysis->plotTauFake = 1;
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
 	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
 	analysis->doubleCounting = 1;
@@ -202,7 +208,8 @@ int main(int argc, char const *argv[])
 				inputfile_nominal->GetObject(reg,nominalinputtree);
 				analysis->constructwmatchmap(nominalinputtree);
 			}
-			if(analysis->plotTauFake || reg.Contains("2l")) analysis->Loop( (TTree*)inputfile.Get(reg), inputconfig, 1);
+			if(analysis->plotTauFake || reg.Contains("2l") || reduce <=2) analysis->Loop( (TTree*)inputfile.Get(reg), inputconfig, 1);
+			else printf("region is disabled in plotting lepton fakes, skip\n");
 		}
 		analysis->finalise_sample();
 		printf("finished reduce\n");
@@ -339,7 +346,7 @@ int main(int argc, char const *argv[])
 		cutflowraw->GetXaxis()->SetBinLabel(1,"Total Events");
 		cutflowraw->GetXaxis()->SetBinLabel(2,"DAOD");
 	}else if(analysis->nominaltree && !isData){
-		TString weightfilename = prefix + "/datafiles/" + framework + "/v2/run/weightsum_" + samplefile;
+		TString weightfilename = prefix + "/datafiles/" + framework + "/v3/run/" + samplefile;
 		printf("Read weightSum file: %s\n", weightfilename.Data());
 		ifstream wtfn(weightfilename);
 		while(!wtfn.eof()){
@@ -365,7 +372,6 @@ int main(int argc, char const *argv[])
 			weighttree->SetBranchAddress("totalEventsWeighted", &totalEventsWeighted);
 			int nentries = weighttree->GetEntries();
 			printf("Loop over %d entries for weight sum\n", nentries);
-			float mc_norm = 0;
 			for (int i = 0; i < nentries; ++i)
 			{
 				weighttree->GetEntry(i);
@@ -374,12 +380,8 @@ int main(int argc, char const *argv[])
 					theoryweightsum[dsid]->SetDirectory(gROOT);
 					for(int j = 0; j<weightname->size(); j++) theoryweightsum[dsid]->GetXaxis()->SetBinLabel(j+1,weightname->at(j).c_str());
 				}
-				mc_norm += totalEventsWeighted;
+				totgenweighted[dsid] += totalEventsWeighted;
 				for(int j = 0; j<weightname->size(); j++) theoryweightsum[dsid]->Fill(j,weightsum->at(j));
-			}
-			if(framework == "tthML" && inputconfig.Contains("fcnc_ml")) {
-				if(xsecs.find(dsid) == xsecs.end()) printf("ERROR: Xsection for DSID %d not found.\n", dsid); 
-				((tthmltree*)analysis)->mc_norm = xsecs.find(dsid)->second * luminosity / mc_norm;
 			}
 		}
 	}
@@ -423,7 +425,8 @@ int main(int argc, char const *argv[])
 				if(analysis->nominaltree) analysis->saveweightslist(prefix + "/config/theoryweightlist/" + framework + "_" + to_string(lastdsid) + ".txt");
 			}
 			if(dsid != lastdsid) analysis->init_dsid();
-			analysis->Loop( (TTree*)inputfile.Get(systname), inputconfig, framework == "xTFW"? xsecs[dsid]*luminosity/totgenweighted[dsid] : 1);
+			if(framework == "tthML" && inputconfig.Contains("ml") && analysis->version == 5) ((tthmltree_v2*)analysis)->mc_norm = xsecs[dsid]*luminosity/totgenweighted[dsid];
+			analysis->Loop( (TTree*)inputfile.Get(systname), inputconfig, (framework == "xTFW")? xsecs[dsid]*luminosity/totgenweighted[dsid] : 1);
 			if(framework == "xTFW") printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		}
 		inputfile.Close();

@@ -11,7 +11,7 @@ int main(int argc, char const *argv[])
 	}
 	TString framework = argv[1];
 	vector<TString> region_tthML = {
-		"all","reg1l1tau1b2j_os","reg1l1tau1b2j_ss","reg1l1tau1b3j_os","reg1l1tau1b3j_ss","reg1l2tau1bnj_os","reg1l2tau1bnj_ss",
+		"reg1l1tau1b2j_os","reg1l1tau1b2j_ss","reg1l1tau1b3j_os","reg1l1tau1b3j_ss","reg1l2tau1bnj_os","reg1l2tau1bnj_ss",
 		"reg1l1tau2b2j_os","reg1l1tau2b2j_ss","reg1l1tau2b3j_os","reg1l1tau2b3j_ss","reg1l2tau2bnj_os","reg1l2tau2bnj_ss"
 	};
 	vector<TString> region_xTFW = {
@@ -70,6 +70,7 @@ int main(int argc, char const *argv[])
 					}else{
 						inputfile = new TFile(filename + sample.name + ".root");
 					}
+                                        if(!inputfile->Get(region[ireg])) printf("histogram %s not found in file %s\n",region[ireg].Data(),inputfile->GetName());
 					cutflow_hist = (TH1D*)( inputfile->Get(region[ireg])->Clone());
 					cutflow_hist->SetDirectory(0);
 					deletepointer(inputfile);

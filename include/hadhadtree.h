@@ -14,15 +14,19 @@ class hadhadtree : public nominal{
 public :
    // Declaration of leaf types
    hadhadtree();
+   void defineObjects();
    void definetaus();
    void definejets();
    void init_hist(TString histfilename);
-   void Loop(TTree*inputtree, TString samplename, float globalweight);
    void     Init(TTree *tree);
    void init_sample(TString sample, TString sampletitle);
    void fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag, TString NPname);
    void definetree(TTree *tree);
    bool addWeightSys();
+   bool passRegionCut();
+   bool passBasicCut();
+   void calcGeneralWeight();
+   float calcRegionSF(TString region);
    int tauabspdg = 0;
    std::vector<Int_t>           *taus_id = 0;
    std::vector<UInt_t>          *taus_decay_mode = 0;
@@ -51,6 +55,7 @@ public :
    std::vector<TLorentzVector*>  *bjets_wztruth_p4;
    std::vector<TLorentzVector*>  *jets_wztruth_p4;
 
+   double weight_mc_d;
    UInt_t          HLT_tau35_loose1_tracktwo_tau25_loose1_tracktwo;
    UInt_t          HLT_tau35_medium1_tracktwoEF_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;
    UInt_t          HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I_J25;
@@ -406,7 +411,6 @@ public :
    Float_t         met_more_met_sumet_pho;
    Float_t         met_more_met_sumet_soft;
    Float_t         met_more_met_sumet_tau;
-   TLorentzVector  *met_p4;
    Float_t         met_sign_met_over_sqrt_ht;
    Float_t         met_sign_met_over_sqrt_sumet;
    Float_t         met_sign_met_rho;

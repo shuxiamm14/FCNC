@@ -57,7 +57,7 @@ rm -f sublocal.sh
 #done
 
 if [[ $2 =~ "sub" ]] ; then
-	for lines in `ls $ttH_fakes_DIR/datafiles/tthML/v2/run/{mc*,data*}  | xargs -n 1 basename`
+	for lines in `ls $ttH_fakes_DIR/datafiles/tthML/v3/run/{mc*,data*}  | xargs -n 1 basename`
 	do
 		if [[ $systname != "nominal" ]] && ( [[ $lines =~ "wjet" ]] || [[ $lines =~ "zll" ]] || [[ $lines =~ "ztautau" ]] ) ; then
 			continue
