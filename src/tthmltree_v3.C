@@ -32,7 +32,7 @@ bool tthmltree_v3::passBasicCut(){
 
   cut_flow.fill("trigger match");
 
-  if(SelectTLepid(0)) return false; // do not apply to 1l2tau region, because QCD is small.
+  if(!SelectTLepid(0)) return false; // do not apply to 1l2tau region, because QCD is small.
   if(dilep_type && !SelectTLepid(1)) return false;
   cut_flow.fill("tight lepton");
 
