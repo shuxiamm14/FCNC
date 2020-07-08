@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
 	TString framework = argv[1];
 	vector<TString> region_tthML = {
 		"reg1l1tau1b2j_os","reg1l1tau1b2j_ss","reg1l1tau1b3j_os","reg1l1tau1b3j_ss","reg1l2tau1bnj_os","reg1l2tau1bnj_ss",
-		"reg1l1tau2b2j_os","reg1l1tau2b2j_ss","reg1l1tau2b3j_os","reg1l1tau2b3j_ss","reg1l2tau2bnj_os","reg1l2tau2bnj_ss"
+		"reg1l1tau2b2j_os","reg1l1tau2b2j_ss","reg1l1tau2b3j_os","reg1l1tau2b3j_ss","reg1l2tau2bnj_os","reg1l2tau2bnj_ss","all"
 	};
 	vector<TString> region_xTFW = {
 		"all","reg2mtau1b2j_os","reg2mtau1b2j_ss",
@@ -56,6 +56,8 @@ int main(int argc, char const *argv[])
 				if(signalmap.find(sample.name) != signalmap.end()){
 					for(auto subsamp : signalmap.at(sample.name)){
 						inputfile = new TFile(filename + subsamp + ".root");
+						TH1D *cutflowhist = (TH1D*)(inputfile->Get(region[ireg]));
+						if(!cutflowhist) continue;
 						if(!cutflow_hist) {
 							cutflow_hist = (TH1D*)(inputfile->Get(region[ireg])->Clone());
 							cutflow_hist->SetDirectory(0);
@@ -70,12 +72,18 @@ int main(int argc, char const *argv[])
 					}else{
 						inputfile = new TFile(filename + sample.name + ".root");
 					}
-                                        if(!inputfile->Get(region[ireg])) printf("histogram %s not found in file %s\n",region[ireg].Data(),inputfile->GetName());
+                                        if(!inputfile->Get(region[ireg])) {
+						printf("histogram %s not found in file %s\n",region[ireg].Data(),inputfile->GetName());
+						continue;
+					}
 					cutflow_hist = (TH1D*)( inputfile->Get(region[ireg])->Clone());
 					cutflow_hist->SetDirectory(0);
 					deletepointer(inputfile);
 				}
-				if(!cutflow_hist) printf("grab cutflow histogram failed: %s, %s\n", (mc_campaigns[icamp] + "_" + sample.name).Data(),region[ireg].Data());
+				if(!cutflow_hist) {
+					printf("grab cutflow histogram failed: %s, %s\n", (mc_campaigns[icamp] + "_" + sample.name).Data(),region[ireg].Data());
+					continue;
+				}
 				TAxis *xaxis = cutflow_hist->GetXaxis();
 				for (int ibin = 1; ibin <= cutflow_hist->GetNbinsX(); ++ibin)
 				{

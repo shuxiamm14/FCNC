@@ -19,9 +19,11 @@ do
 	sed -i "s|$1.out|.txt|" checkdone/finished_$systname.txt
 	sed -i "s|out|txt|" checkdone/finished_$systname.txt
 	if [ "$systname" == "nominal" ] ; then
-		ls $ttH_fakes_DIR/datafiles/tthML/v2/run | grep -e "^mc16*" |sort > checkdone/all_$systname.txt
+		ls $ttH_fakes_DIR/datafiles/tthML/v3/run | grep -e "^mc16*" |sort > checkdone/all_$systname.txt
+		ls $ttH_fakes_DIR/datafiles/tthML/v3/run | grep -e "^data*" |sort >> checkdone/all_$systname.txt
+		Order checkdone/all_$systname.txt
 	else
-		ls $ttH_fakes_DIR/datafiles/tthML/v2/run | grep sys_mc|sort > checkdone/all_$systname.txt
+		ls $ttH_fakes_DIR/datafiles/tthML/v3/run | grep sys_mc|sort > checkdone/all_$systname.txt
 	fi
 	sed -i "s|sys_||" checkdone/all_$systname.txt
 	check=`diff checkdone/finished_$systname.txt checkdone/all_$systname.txt | grep ">" | awk '{print $2}'`

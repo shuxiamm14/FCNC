@@ -8,44 +8,32 @@ This project analyse n-tuples generated from 2 frameworks: xTauFramework(hadhad+
 
 the list of Datasets is in datafiles/
 
-To run this project, you need
+Requirements:
 
-	somewhere/plotTools
+	plotTools
 		https://gitlab.cern.ch/boyang/plotTools (need compile for shared libraries)
+		And its requirements:
+			http://eigen.tuxfamily.org/index.php?title=Main_Page
 
-	somewhere/tools/
-		frugally-deep (and the required project for this one: eigen): https://github.com/Dobiasd/frugally-deep.git (header library, dont need compile)
+	external tools:
+		frugally-deep: https://github.com/Dobiasd/frugally-deep.git
+		And its requirements:
+			http://eigen.tuxfamily.org/index.php?title=Main_Page (You already have it if you installed plotTools)
+			https://ci.appveyor.com/api/projects/status/github/dobiasd/FunctionalPlus
+			https://raw.githubusercontent.com/nlohmann/json
 
-Compile:
+Installation:
 	
-	set TOOLDIR in the CMakeList.txt to somewhere/tools
-	set PLOTTOOLDIR in the CMakeList.txt to somewhere/plotTools
+	source setup.sh
 
-	mkdir build
-	cd build
-	cmake ..
-	make
-	cd ..
+How to run:
 
-source env.sh every time you come back to analysis
-
-For "hadhad+jets channel":
-
-	run scripts/hadhadpreparejobs.sh to get the address of the rootfiles
-	run xtfw_reduce*_run to reduce n-tuples
+	source env.sh
+	run hadhadpreparejobs.sh(tthmlpreparejobs.sh) to get the address of the rootfiles from xTauFramework(ttHML framework)
+	run reduce_run to reduce n-tuples
 	run trainBDT to train the BDT
-	run xtfw_fcnc_analysis_run to analyse the histograms
+	run make_plots_run to analyse the histograms
 
-For "lepton channels":
-
-	run tth_reduce*_run to reduce n-tuples (only available on nersc.gov)
-	run trainBDT to train the BDT
-	run tth_fcnc_analysis_run to analyse the histograms
-	
 In case you use TRexFitter (https://gitlab.cern.ch/TRExStats/TRExFitter), to produce the fitter input:
 
-	run *_fcnc_analysis_run and set doTrex in *_fcnc_analysis.cc to 1 and doPlot to 0
-
-For PDF systematics and scale systematics, you need to take the cover of the variations:
-
-	run take_variation_cover_run
+	run make_plots_run and set doTrex in to 1 and doPlot to 0

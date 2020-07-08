@@ -34,6 +34,10 @@ tthmltree::tthmltree():nominal::nominal(){
     "reg2lSS1tau2bnj_ss_antiiso",
     "reg2lSS1tau1bnj_ss_antiiso",
     "reg2lSS1tau1bnj_os_antiiso",
+    "reg2lSS1tau2bnj_os_antiisolead",
+    "reg2lSS1tau2bnj_ss_antiisolead",
+    "reg2lSS1tau1bnj_ss_antiisolead",
+    "reg2lSS1tau1bnj_os_antiisolead",
     "reg2l1tau2bnj"
   };
   belong_regions.m_region_map["FakeCR"] = {
@@ -73,8 +77,8 @@ void tthmltree::init_hist(TString outputfilename){
     }
     fcnc_plots->add(10,25.,125.,"p_{T,#tau}","taupt_0",&tau_pt_0,true,"GeV");
     fcnc_plots->add(10,25.,125.,"p_{T,sub-#tau}","taupt_1",&tau_pt_1,true,"GeV");
-    fcnc_plots->add(10,25.,125.,"p_{T,l}","lep_pt_0",&lep_pt_0,true,"GeV");
-    fcnc_plots->add(10,25.,125.,"p_{T,sub-l}","lep_pt_1",&lep_pt_1,true,"GeV");
+    fcnc_plots->add(10,15.,115.,"p_{T,l}","lep_pt_0",&lep_pt_0,true,"GeV");
+    fcnc_plots->add(10,15.,115.,"p_{T,sub-l}","lep_pt_1",&lep_pt_1,true,"GeV");
     fcnc_plots->add(10,25.,125.,"p_{T,SS#tau}","tauptss",&tau_pt_ss,true,"GeV");
     fcnc_plots->add(10,25.,125.,"p_{T,OS#tau}","tauptos",&tau_pt_os,true,"GeV");
     fcnc_plots->add(100,100.,300.,"m_{t,SM}","t1mass",&t1mass,true,"GeV");
@@ -142,7 +146,7 @@ void tthmltree::init_hist(TString outputfilename){
     fake_plots->add(10,25.,125.,"p_{T,b}","bpt",&pt_b,true,"GeV");
     fake_plots->add(10,25.,125.,"p_{T,light-jet}","ljetpt",&pt_ljet,true,"GeV");
     fake_plots->add(20,20.,120.,"m_{#tau,light-jet}","taulmass",&taulmass,true,"GeV");
-    fake_plots->add(100,0.,100.,"E_{miss}^{T}","met",&MET_RefFinal_et,true,"GeV");
+    fake_plots->add(100,0.,100.,"E_{miss}^{T}","etmiss",&etmiss,true,"GeV");
     for (int j = 0; j < fake_nregions; ++j){
       if(plotTauFake){
         for (int k = 0; k < 2; ++k){
@@ -233,18 +237,22 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
         }
       }else{
         if(fcnc_nregions){
-          fcnc_plots->init_sample(sample + "_reallep",plotNPs[0],sampletitle + "(real lepton)",(enum EColor)7);
-          fcnc_plots->init_sample(sample + "_chargeflip",plotNPs[0],sampletitle + "(lepton charge flip)",kBlue);
-          fcnc_plots->init_sample(sample + "_misid",plotNPs[0],sampletitle + "(lepton flavor flip)",kViolet);
+          fcnc_plots->init_sample(sample + "_real",plotNPs[0],sampletitle + "(real lepton)",(enum EColor)7);
+          fcnc_plots->init_sample(sample + "_charge_flip",plotNPs[0],sampletitle + "(lepton charge flip)",kBlue);
+          fcnc_plots->init_sample(sample + "_conversion",plotNPs[0],sampletitle + "(lepton flavor flip)",kViolet);
           fcnc_plots->init_sample(sample + "_non_prompt",plotNPs[0],sampletitle + "(non-prompt lepton)",kGreen);
-          fcnc_plots->init_sample(sample + "_fakelep",plotNPs[0],sampletitle + "(fake lepton)",kOrange);
+          fcnc_plots->init_sample(sample + "_other_fakes",plotNPs[0],sampletitle + "(fake lepton)",kOrange);
+          fcnc_plots->init_sample(sample + "_unknown_fakes",plotNPs[0],sampletitle + "(fake lepton)",kOrange);
+          fcnc_plots->init_sample(sample + "_doublefake",plotNPs[0],sampletitle + "(double fake lepton)",kGray);
         }
         if(fake_nregions){
-          fake_plots->init_sample(sample + "_reallep","NOMINAL",sampletitle + "(real lepton)",(enum EColor)7);
-          fake_plots->init_sample(sample + "_chargeflip","NOMINAL",sampletitle + "(lepton charge flip)",kBlue);
-          fake_plots->init_sample(sample + "_misid","NOMINAL",sampletitle + "(lepton flavor flip)",kViolet);
+          fake_plots->init_sample(sample + "_real","NOMINAL",sampletitle + "(real lepton)",(enum EColor)7);
+          fake_plots->init_sample(sample + "_charge_flip","NOMINAL",sampletitle + "(lepton charge flip)",kBlue);
+          fake_plots->init_sample(sample + "_conversion","NOMINAL",sampletitle + "(lepton flavor flip)",kViolet);
           fake_plots->init_sample(sample + "_non_prompt","NOMINAL",sampletitle + "(non-prompt lepton)",kGreen);
-          fake_plots->init_sample(sample + "_fakelep","NOMINAL",sampletitle + "(fake lepton)",kOrange);
+          fake_plots->init_sample(sample + "_other_fakes","NOMINAL",sampletitle + "(fake lepton)",kOrange);
+          fake_plots->init_sample(sample + "_unknown_fakes","NOMINAL",sampletitle + "(fake lepton)",kOrange);
+          fake_plots->init_sample(sample + "_doublefake","NOMINAL",sampletitle + "(double fake lepton)",kGray);
         }
       }
       if(fake_nregions_notau) fake_notau_plots->init_sample(sample,"NOMINAL",sampletitle,kRed);

@@ -33,7 +33,7 @@ echo '#!/bin/bash
 #SBATCH --time=24:00:00
 #SBATCH --mem=4GB
 #SBATCH --image=zlmarshall/atlas-grid-slc6:20190416 --export=NONE
-shifter --module=cvmfs /bin/bash bulkreduce.sh $1
+shifter --module=cvmfs /bin/bash bulkreduce.sh
 ' > slurmscript.sh
 chmod +x slurmscript.sh
 
@@ -103,7 +103,7 @@ if [[ $2 =~ "local" ]] ; then
 	./sublocal.sh 2>&1 &
 else
 	if [ -n "$4" ] ; then
-		sbatch --job-name=${systname}_$4 --output=$4.out  --error=$4.err slurmscript.sh
+		sbatch --job-name=${systname}_$4 --output=$4.out  --error=$4.err slurmscript.sh 
 	else
 		sbatch --job-name=${systname} --output=job.out --error=job.err slurmscript.sh
 		#echo "sbatch --job-name=${name}_${systname} --output=${name}.out --error=${name}.err slurmscript.sh $lines"

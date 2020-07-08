@@ -188,6 +188,7 @@ public :
   virtual void defineLepTruth(){ printf("WARNING: virtual function defineLepTruth is used in nominal.h\n"); }
   virtual bool addWeightSys(){ printf("WARNING: virtual function addWeightSys is used in nominal.h\n"); return 1;}
   virtual bool passRegionCut(){return 1;}
+  TString classifyLepFakes(int ilep);
   //======================================================general necessary variables========================================
   ULong64_t  eventNumber;
   UInt_t        runNumber;
@@ -217,6 +218,11 @@ public :
   std::vector<Int_t>           *leps_tight;
   std::vector<int> *leps_matched_pdgId;
   std::vector<int> *leps_truth_type;
+  std::vector<int> *leps_truth_origin;
+  std::vector<int> *leps_first_EgMother_pdgId;
+  std::vector<int> *leps_first_EgMother_truth_origin;
+  std::vector<int> *leps_first_EgMother_truth_type;
+
   std::vector<std::vector<int>*> taumatchmap;
   std::vector<float>           *bjets_score;
   //======================================================flat variables for BDT========================================

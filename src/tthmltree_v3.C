@@ -12,23 +12,47 @@ bool tthmltree_v3::passBasicCut(){
     (RunYear == 2015 && (( lep_Pt_0/1000>21 && HLT_mu20_iloose_L1MU15 ) || ( lep_Pt_0/1000>51 && HLT_mu50 ) || ( lep_Pt_0/1000>25 && HLT_e24_lhmedium_L1EM20VH )|| (lep_Pt_0/1000>61 &&HLT_e60_lhmedium) || ( lep_Pt_0/1000>121 && HLT_e120_lhloose))) ||
     (RunYear == 2015 && (HLT_2e12_lhloose_L12EM10VH || HLT_e17_lhloose_mu14 || HLT_mu18_mu8noL1)) ||
     (RunYear >= 2016 && (( lep_Pt_0/1000>27 && HLT_mu26_ivarmedium ) || ( lep_Pt_0/1000>51 && HLT_mu50 ) || ( lep_Pt_0/1000>27 && HLT_e26_lhtight_nod0_ivarloose ) || ( lep_Pt_0/1000>61 && HLT_e60_lhmedium_nod0) || ( lep_Pt_0/1000>141 && HLT_e140_lhloose_nod0))) ||
-    (RunYear >= 2016 && (HLT_2e17_lhvloose_nod0 || HLT_e17_lhloose_nod0_mu14 || HLT_mu22_mu8noL1)))
+    (RunYear >= 2016 && ((lep_Pt_0/1000>18 && lep_Pt_1/1000>18 && HLT_2e17_lhvloose_nod0) || (lep_Pt_0/1000>18 && lep_Pt_1/1000>15 && HLT_e17_lhloose_nod0_mu14) || (lep_Pt_0/1000>23 && lep_Pt_1/1000>9 && HLT_mu22_mu8noL1))))
   ) return false;
   cut_flow.fill("pass trigger");
 
-  if(taus_p4->size() && (!(taus_numTrack_0 == 1 || taus_numTrack_0 == 3) || !(taus_passEleBDT_0 && taus_passMuonOLR_0)) ) return false; // assuming triggers for 2017 is same for 2016 
-  if(taus_p4->size()>=2 && (!(taus_numTrack_1 == 1 || taus_numTrack_1 == 3) || !(taus_passEleBDT_1 && taus_passMuonOLR_1)) ) return false; // assuming triggers for 2017 is same for 2016 
-  cut_flow.fill("tauOLR");
+  if(nTaus_OR && (!(taus_numTrack_0 == 1 || taus_numTrack_0 == 3) || !(taus_passEleBDT_0 && taus_passMuonOLR_0)) ) return false; // assuming triggers for 2017 is same for 2016 
+  cut_flow.fill("leadtauOLR");
+  if(nTaus_OR>=2 && (!(taus_numTrack_1 == 1 || taus_numTrack_1 == 3) || !(taus_passEleBDT_1 && taus_passMuonOLR_1)) ) return false; // assuming triggers for 2017 is same for 2016 
+  cut_flow.fill("subtauOLR");
 
-  bool trig_match = (lep_isTrigMatch_0 || lep_isTrigMatch_1 || lep_isTrigMatch_2 || lep_isTrigMatch_3 || matchDLTll01 || matchDLTll02 || matchDLTll12 || matchDLTll03 || matchDLTll13 || matchDLTll23);
-  bool SLtrig_match =
+  //bool trig_match = !onelep_type && (lep_isTrigMatch_0 || lep_isTrigMatch_1 || lep_isTrigMatch_2 || lep_isTrigMatch_3 || matchDLTll01 || matchDLTll02 || matchDLTll12 || matchDLTll03 || matchDLTll13 || matchDLTll23);
+
+  bool trig_match = !onelep_type && lep_isTrigMatchDLT_0 && lep_isTrigMatchDLT_1;
+  bool SLtrig_match = onelep_type &&
     ((RunYear == 2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose)) ||
     (RunYear >= 2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0))) && lep_isTrigMatch_0;
-  if(!trig_match && !SLtrig_match) return false;
-  cut_flow.fill("trigger match");
-  if(!(SLtrig_match && onelep_type && (!tightLep || SelectTLepid(0))) && !(trig_match && dilep_type && lep_Pt_0 > 20*GeV && lep_Pt_1 > 20*GeV)) return false;
 
-  cut_flow.fill("tight lep");
+  if(!trig_match && !SLtrig_match) return false;
+
+  cut_flow.fill("trigger match");
+
+  if(SelectTLepid(0)) return false; // do not apply to 1l2tau region, because QCD is small.
+  if(dilep_type && !SelectTLepid(1)) return false;
+  cut_flow.fill("tight lepton");
+
+  if(onelep_type && nTaus_OR_Pt25 == 1 && !IsoLepid(0)) return false;
+  cut_flow.fill("PLV for lephad");
+
+  if(nTaus_OR && (!taus_JetRNNSigMedium_0 || taus_pt_0<25*GeV)) return false;
+  cut_flow.fill("Medium,25GeV leadtau");
+
+  if(nTaus_OR>1 && (!taus_JetRNNSigMedium_1 || taus_pt_1<25*GeV)) return false;
+  cut_flow.fill("Medium,25GeV subtau");
+
+  if(
+      !onelep_type &&
+      (
+        ( abs(lep_ID_0)==11 && (lep_chargeIDBDTResult_0<0.7 || lep_ambiguityType_0 != 0) ) ||
+        ( abs(lep_ID_1)==11 && (lep_chargeIDBDTResult_1<0.7 || lep_ambiguityType_1 != 0) )
+      )
+  ) return false;
+  cut_flow.fill("2lSS chargeBDT");
 
   return true;
 }
@@ -40,7 +64,7 @@ void tthmltree_v3::defineObjects(){
   taus_q->clear();
   taus_n_charged_tracks->clear();
   taus_id->clear();
-  if(nTaus_OR && taus_JetRNNSigMedium_0) {
+  if(nTaus_OR) {
     TLorentzVector *tmptau = new TLorentzVector();
     tmptau->SetPtEtaPhiE(taus_pt_0,taus_eta_0,taus_phi_0,taus_E_0);
     taus_p4->push_back(tmptau);
@@ -49,7 +73,7 @@ void tthmltree_v3::defineObjects(){
     taus_n_charged_tracks->push_back(taus_numTrack_0);
     taus_id->push_back(taus_JetRNNSigTight_0?3:(taus_JetRNNSigMedium_0?2:1));
   }
-  if(nTaus_OR>1 && taus_JetRNNSigMedium_1) {
+  if(nTaus_OR>1) {
     TLorentzVector *tmptau = new TLorentzVector();
     tmptau->SetPtEtaPhiE(taus_pt_1,taus_eta_1,taus_phi_1,taus_E_1);
     taus_p4->push_back(tmptau);
@@ -77,7 +101,7 @@ void tthmltree_v3::defineObjects(){
     leps_iso->push_back(IsoLepid(1));
     leps_tight->push_back(SelectTLepid(1));
   }
-
+  if(onelep_type && leps_p4->size()!= 1) printf("Warning: onelep_type but leps_p4->size()!= 1\n"); 
   if (debug == 2) printf("Loop jets\n");
   bjets_p4->clear();
   bjets_score->clear();
@@ -113,16 +137,31 @@ void tthmltree_v3::calcGeneralWeight(){
 
 void tthmltree_v3::defineLepTruth(){
   if(debug) printf("tthmltree_v3::defineLepTruth(): for %lu leptons\n",leps_p4->size());
+
   leps_matched_pdgId->clear();
   leps_truth_type->clear();
+
+  leps_truth_origin->clear();
+  leps_first_EgMother_pdgId->clear();
+  leps_first_EgMother_truth_origin->clear();
+  leps_first_EgMother_truth_type->clear();
+
   if(leps_p4->size())
   {
     leps_truth_type->push_back(lep_truthType_0);
     leps_matched_pdgId->push_back(lep_truthPdgId_0);
+    leps_truth_origin->push_back(lep_truthOrigin_0);
+    leps_first_EgMother_pdgId->push_back(lep_firstEgMotherPdgId_0);
+    leps_first_EgMother_truth_origin->push_back(lep_firstEgMotherTruthOrigin_0);
+    leps_first_EgMother_truth_type->push_back(lep_firstEgMotherTruthType_0);
   }
   if(leps_p4->size() >= 2){
-    leps_truth_type->push_back(lep_truthType_0);
-    leps_matched_pdgId->push_back(lep_truthPdgId_0);
+    leps_truth_type->push_back(lep_truthType_1);
+    leps_matched_pdgId->push_back(lep_truthPdgId_1);
+    leps_truth_origin->push_back(lep_truthOrigin_1);
+    leps_first_EgMother_pdgId->push_back(lep_firstEgMotherPdgId_1);
+    leps_first_EgMother_truth_origin->push_back(lep_firstEgMotherTruthOrigin_1);
+    leps_first_EgMother_truth_type->push_back(lep_firstEgMotherTruthType_1);
   }
   if(debug) printf("tthmltree_v3::defineLepTruth(): done\n");
 }
@@ -161,30 +200,30 @@ bool tthmltree_v3::SelectTLepid(int id) {
   bool pass(false);
   //lep_ambiguityType_0==0 for electron
   if (id == 0) {
-    pass = (abs(lep_ID_0) == 13 || ((abs(lep_ID_0) == 11) && lep_isTightLH_0));
+    pass = (abs(lep_ID_0) == 13 || ((abs(lep_ID_0) == 11) && lep_isTightLH_0)) && lep_plvWP_Tight_0;
   } else if (id == 1) {
-    pass = (abs(lep_ID_1) == 13 || ((abs(lep_ID_1) == 11) && lep_isTightLH_1));
+    pass = (abs(lep_ID_1) == 13 || ((abs(lep_ID_1) == 11) && lep_isTightLH_1)) && lep_plvWP_Tight_1;
   } else if (id == 2) {
-    pass = (abs(lep_ID_2) == 13 || ((abs(lep_ID_2) == 11) && lep_isTightLH_2));
+    pass = (abs(lep_ID_2) == 13 || ((abs(lep_ID_2) == 11) && lep_isTightLH_2)) && lep_plvWP_Tight_2;
   } else if (id == 3) {
-    pass = (abs(lep_ID_3) == 13 || ((abs(lep_ID_3) == 11) && lep_isTightLH_3));
+    pass = (abs(lep_ID_3) == 13 || ((abs(lep_ID_3) == 11) && lep_isTightLH_3)) && lep_plvWP_Tight_3;
   } else if (id == 4) {
-    pass = (abs(lep_ID_4) == 13 || ((abs(lep_ID_4) == 11) && lep_isTightLH_4));
+    pass = (abs(lep_ID_4) == 13 || ((abs(lep_ID_4) == 11) && lep_isTightLH_4)) && lep_plvWP_Tight_4;
   }
   return pass;
 }
 
 bool tthmltree_v3::IsoLepid(int id) {
   if (id == 0) {
-    return lep_isolationFCLoose_0 && ((abs(lep_ID_0) == 11 && lep_promptLeptonVeto_TagWeight_0 < -0.7) || (abs(leps_id->at(0)) == 13 && lep_promptLeptonVeto_TagWeight_0 < -0.5));
+    return lep_isolationFCLoose_0;
   } else if (id == 1) {
-    return lep_isolationFCLoose_1 && ((abs(lep_ID_1) == 11 && lep_promptLeptonVeto_TagWeight_1 < -0.7) || (abs(leps_id->at(1)) == 13 && lep_promptLeptonVeto_TagWeight_1 < -0.5));
+    return lep_isolationFCLoose_1;
   } else if (id == 2) {
-    return lep_isolationFCLoose_2 && ((abs(lep_ID_2) == 11 && lep_promptLeptonVeto_TagWeight_2 < -0.7) || (abs(lep_ID_2) == 13 && lep_promptLeptonVeto_TagWeight_2 < -0.5));
+    return lep_isolationFCLoose_2;
   } else if (id == 3) {
-    return lep_isolationFCLoose_3 && ((abs(lep_ID_3) == 11 && lep_promptLeptonVeto_TagWeight_3 < -0.7) || (abs(lep_ID_3) == 13 && lep_promptLeptonVeto_TagWeight_3 < -0.5));
+    return lep_isolationFCLoose_3;
   } else if (id == 4) {
-    return lep_isolationFCLoose_4 && ((abs(lep_ID_4) == 11 && lep_promptLeptonVeto_TagWeight_4 < -0.7) || (abs(lep_ID_4) == 13 && lep_promptLeptonVeto_TagWeight_4 < -0.5));
+    return lep_isolationFCLoose_4;
   } else return 0;
 
 }
