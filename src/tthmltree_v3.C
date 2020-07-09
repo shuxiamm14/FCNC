@@ -200,30 +200,30 @@ bool tthmltree_v3::SelectTLepid(int id) {
   bool pass(false);
   //lep_ambiguityType_0==0 for electron
   if (id == 0) {
-    pass = (abs(lep_ID_0) == 13 || ((abs(lep_ID_0) == 11) && lep_isTightLH_0)) && lep_plvWP_Tight_0;
+    pass = (abs(lep_ID_0) == 13 || ((abs(lep_ID_0) == 11) && lep_isTightLH_0)) && lep_isolationFCLoose_0;
   } else if (id == 1) {
-    pass = (abs(lep_ID_1) == 13 || ((abs(lep_ID_1) == 11) && lep_isTightLH_1)) && lep_plvWP_Tight_1;
+    pass = (abs(lep_ID_1) == 13 || ((abs(lep_ID_1) == 11) && lep_isTightLH_1)) && lep_isolationFCLoose_1;
   } else if (id == 2) {
-    pass = (abs(lep_ID_2) == 13 || ((abs(lep_ID_2) == 11) && lep_isTightLH_2)) && lep_plvWP_Tight_2;
+    pass = (abs(lep_ID_2) == 13 || ((abs(lep_ID_2) == 11) && lep_isTightLH_2)) && lep_isolationFCLoose_2;
   } else if (id == 3) {
-    pass = (abs(lep_ID_3) == 13 || ((abs(lep_ID_3) == 11) && lep_isTightLH_3)) && lep_plvWP_Tight_3;
+    pass = (abs(lep_ID_3) == 13 || ((abs(lep_ID_3) == 11) && lep_isTightLH_3)) && lep_isolationFCLoose_3;
   } else if (id == 4) {
-    pass = (abs(lep_ID_4) == 13 || ((abs(lep_ID_4) == 11) && lep_isTightLH_4)) && lep_plvWP_Tight_4;
+    pass = (abs(lep_ID_4) == 13 || ((abs(lep_ID_4) == 11) && lep_isTightLH_4)) && lep_isolationFCLoose_4;
   }
   return pass;
 }
 
 bool tthmltree_v3::IsoLepid(int id) {
   if (id == 0) {
-    return lep_isolationFCLoose_0;
+    return lep_plvWP_Tight_0;
   } else if (id == 1) {
-    return lep_isolationFCLoose_1;
+    return lep_plvWP_Tight_1;
   } else if (id == 2) {
-    return lep_isolationFCLoose_2;
+    return lep_plvWP_Tight_2;
   } else if (id == 3) {
-    return lep_isolationFCLoose_3;
+    return lep_plvWP_Tight_3;
   } else if (id == 4) {
-    return lep_isolationFCLoose_4;
+    return lep_plvWP_Tight_4;
   } else return 0;
 
 }
