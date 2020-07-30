@@ -53,9 +53,10 @@ target_link_libraries(applyTF ${ROOT_LIBRARIES})
 
 add_library(common SHARED ${PROJECT_SOURCE_DIR}/src/common.C)
 target_link_libraries(common ${ROOT_LIBRARIES} ${PLOTTOOLLIB})
+target_compile_definitions(common PRIVATE PACKAGE_DIR="${CMAKE_SOURCE_DIR}")
 
 add_library(nominal SHARED ${PROJECT_SOURCE_DIR}/src/nominal_listfunc.C ${PROJECT_SOURCE_DIR}/src/nominal.C ${PROJECT_SOURCE_DIR}/include/nominal.h ${PROJECT_SOURCE_DIR}/src/hadhadtree.C ${PROJECT_SOURCE_DIR}/src/hadhadtree_listfunc.C ${PROJECT_SOURCE_DIR}/include/hadhadtree.h ${PROJECT_SOURCE_DIR}/src/tthmltree.C ${PROJECT_SOURCE_DIR}/src/tthmltree_v2.C ${PROJECT_SOURCE_DIR}/src/tthmltree_v3.C ${PROJECT_SOURCE_DIR}/include/tthmltree.h ${PROJECT_SOURCE_DIR}/include/tthmltree_v2.h ${PROJECT_SOURCE_DIR}/include/tthmltree_v3.h)
-target_link_libraries(nominal ${ROOT_LIBRARIES} applyTF ${PLOTTOOLLIB} dict)
+target_link_libraries(nominal ${ROOT_LIBRARIES} applyTF ${PLOTTOOLLIB} dict common)
 target_compile_definitions(nominal PRIVATE PACKAGE_DIR="${CMAKE_SOURCE_DIR}")
 
 file( GLOB APP_SOURCES RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/util/*reduce* )

@@ -20,7 +20,7 @@ public :
    void init_hist(TString histfilename);
    void     Init(TTree *tree);
    void init_sample(TString sample, TString sampletitle);
-   void fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag, TString NPname);
+   void fill_fcnc(TString region, int nprong, TString sample, bool taubtag, TString NPname);
    void definetree(TTree *tree);
    bool addWeightSys();
    bool passRegionCut();

@@ -1,4 +1,4 @@
-#include "makechart.h"
+#include "LatexChart.h"
 #include "TFile.h"
 #include "TH1D.h"
 using namespace std;

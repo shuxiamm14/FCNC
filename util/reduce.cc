@@ -22,6 +22,7 @@ int main(int argc, char const *argv[])
 	bool onlyMajorNP = 0; // set to 0 for current xTFW analysis.
 	bool applynewSF = 0; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
 	int version = 8;
+	bool nominalOnly = 1;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	TString framework = argv[1];
@@ -141,7 +142,7 @@ int main(int argc, char const *argv[])
 	analysis->dofit = 1;
 	analysis->reduce = reduce;
 	analysis->debug = debug;
-	analysis->plotTauFake = 1;
+	analysis->plotTauFake = 0;
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
 	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
 	analysis->doubleCounting = 1;
@@ -169,7 +170,7 @@ int main(int argc, char const *argv[])
 		}
 		if(doplot) {
 			if(!inputconfig.Contains("data")){
-				if(analysis->nominaltree == 1 ){
+				if(analysis->nominaltree == 1 && !nominalOnly){
 					//for(auto v: fakeNPlist) analysis->plotNPs.push_back(v);
 					if(plot_sys){
 						if(onlyMajorNP){

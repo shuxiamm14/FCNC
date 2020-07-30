@@ -1,6 +1,6 @@
 #include "histSaver.h"
 #include "HISTFITTER.h"
-
+#include "common.h"
 int main(int argc, char const *argv[])
 {
 	if (argc != 2)
@@ -30,8 +30,9 @@ int main(int argc, char const *argv[])
 	//notau_plots->debug = 0;
 
 	TString bwps[] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
-	tau_plots->add("p_{T,#tau}","taupt","GeV");
-	tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
+	auto vars = getVariables("tthML");
+	tau_plots->add(vars["tau_pt_0"]);
+	tau_plots->add(vars["mtaujmin"]);
 	//tau_plots->add("p_{T,b}","bpt","GeV");
   	//tau_plots->add("E_{miss}^{T}","met","GeV",5);
 	//tau_plots->add("p_{T,light-jet}","ljetpt","GeV");

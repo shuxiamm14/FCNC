@@ -101,8 +101,8 @@ public :
 
   static int GeV;
   std::vector<TString> plotNPs;
-  std::map<TString,std::vector<std::vector<std::vector<observable>>>> newFakeSF;
-  std::vector<std::vector<std::vector<observable>>> newFakeSFSys;
+  std::map<TString,std::map<TString,std::vector<observable>>> newFakeSF;
+  std::map<TString,std::vector<observable>> newFakeSFSys;
   Int_t ierflg;
   int ifill = 0;
 
@@ -128,7 +128,6 @@ public :
   int fake_nregions_notau;
   bool writetree = 1;
   TString bwps[4] = {"btagwp60","btagwp70","btagwp77","btagwp85"};
-  TString ptbin[2] = {"below35","above35"};
   BelongRegion belong_regions;
   Double_t _lum = 80.;
   nominal();
@@ -140,8 +139,8 @@ public :
   void initReduce1();
   static Float_t eval(const Float_t x, const Float_t y, const TH2F* h);
   observable FindNewFakeSF(TString NP);
-  observable FindNewFakeSF(TString NP, int itau, int isOS, TString &name);
-  observable FindNewFakeSF(TString NP, int itau, int isOS);
+  observable FindNewFakeSF(TString NP, int itau, TString &name);
+  observable FindNewFakeSF(TString NP, int itau);
   void addweights(double weight, TString name);
   void saveweightslist(TString filename);
   void readTFmeanstd(TString filename);
@@ -158,7 +157,7 @@ public :
   Double_t phi_centrality(Double_t aPhi, Double_t bPhi, Double_t cPhi);
   void finalise_sample();
   static  void    fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
-  void fillhist(histSaver *plots, TString region, int nprong, TString sample, int ptbin, float taubtag, TString NP);
+  void fillhist(histSaver *plots, TString region, int nprong, TString sample, float taubtag, TString NP);
   void fill_notau(TString region, TString sample, TString NP);
   bool SelectTLepid(int id);
   void calcfakesf(std::vector<int> origin);

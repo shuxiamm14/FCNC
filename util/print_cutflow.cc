@@ -1,6 +1,6 @@
 #include "fcnc_include.h"
 #include "common.h"
-#include "makechart.h"
+#include "LatexChart.h"
 using namespace std;
 
 int main(int argc, char const *argv[])
@@ -24,9 +24,9 @@ int main(int argc, char const *argv[])
 	else region = region_xTFW;
 	float BR = 0.2;
 	gSystem->mkdir("cutflow");
-	vector<sample> bkg_samples = getBkgSamples(framework);
-	vector<sample> sig_samples = getSigSamples(framework,BR);
-	vector<sample> samples = bkg_samples;
+	vector<fcncSample> bkg_samples = getBkgSamples(framework);
+	vector<fcncSample> sig_samples = getSigSamples(framework,BR);
+	vector<fcncSample> samples = bkg_samples;
 	samples.insert(samples.end(),sig_samples.begin(),sig_samples.end());
 	samples.emplace_back("data","Data",kBlack);
 	for(auto &sample : samples){
@@ -44,7 +44,7 @@ int main(int argc, char const *argv[])
 		vector<LatexChart*> charts;
 		for (int icamp = 0; icamp < 3; ++icamp)
 		{
-			if(framework == "tthML" && icamp == 2) continue; //tthML only has 80fb-1
+			//if(framework == "tthML" && icamp == 2) continue; //tthML only has 80fb-1
 			TString label = "cutflow_"+region[ireg] + "_" + mc_campaigns[icamp];
 			LatexChart* chart = new LatexChart(label.Data());
 			charts.push_back(chart);

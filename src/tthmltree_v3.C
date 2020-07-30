@@ -32,7 +32,7 @@ bool tthmltree_v3::passBasicCut(){
 
   cut_flow.fill("trigger match");
 
-  if(!SelectTLepid(0)) return false; // do not apply to 1l2tau region, because QCD is small.
+  if(!SelectTLepid(0)) return false;
   if(dilep_type && !SelectTLepid(1)) return false;
   cut_flow.fill("tight lepton");
 
@@ -48,8 +48,8 @@ bool tthmltree_v3::passBasicCut(){
   if(
       !onelep_type &&
       (
-        ( abs(lep_ID_0)==11 && (lep_chargeIDBDTResult_0<0.7 || lep_ambiguityType_0 != 0) ) ||
-        ( abs(lep_ID_1)==11 && (lep_chargeIDBDTResult_1<0.7 || lep_ambiguityType_1 != 0) )
+        ( abs(lep_ID_0)==11 && (lep_chargeIDBDTLoose_0 || lep_ambiguityType_0 != 0) ) ||
+        ( abs(lep_ID_1)==11 && (lep_chargeIDBDTLoose_1 || lep_ambiguityType_1 != 0) )
       )
   ) return false;
   cut_flow.fill("2lSS chargeBDT");
@@ -109,6 +109,8 @@ void tthmltree_v3::defineObjects(){
 
   for (int i = 0; i < jets_pt->size(); ++i) {
     if(debug == 2) printf("%dth jet btag: %f\n", i, jets_score_DL1r->at(i));
+    if(jets_pt->at(i) < 25*GeV || fabs(jets_eta->at(i)) > 2.4) continue;
+    if(jets_tauOR->at(i) != 1) continue;
     if (jets_score_DL1r->at(i) > defaultbtagwp) {
       TLorentzVector *tmp = new TLorentzVector();
       tmp->SetPtEtaPhiE(jets_pt->at(i), jets_eta->at(i), jets_phi->at(i), jets_e->at(i));

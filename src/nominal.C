@@ -1,7 +1,7 @@
 #include "nominal.h"
 #include "fcnc_include.h"
 #include "common.h"
-#include "makechart.h"
+#include "LatexChart.h"
 using namespace std;
 int nominal::GeV = 0;
 
@@ -12,42 +12,45 @@ void nominal::initMVA(TString fcnc_region){
   reader[fcnc_region] = new TMVA::Reader( "!Color:!Silent" );
 
   reader[fcnc_region]->AddVariable("tau_pt_0",&tau_pt_0);
-  reader[fcnc_region]->AddVariable("tau_pt_1",&tau_pt_1);
+  //reader[fcnc_region]->AddVariable("tau_pt_1",&tau_pt_1);
   reader[fcnc_region]->AddVariable("drtautau",&drtautau);
+  reader[fcnc_region]->AddVariable("etmiss",&etmiss);
+  reader[fcnc_region]->AddVariable("ttvismass",&ttvismass);
+  reader[fcnc_region]->AddVariable("drtaujmin",&drtaujmin);
+  if(!fcnc_region.Contains("2mtau")) {
+    reader[fcnc_region]->AddVariable("drlb",&drlb);
+    if(fcnc_region.Contains("2lSS")) reader[fcnc_region]->AddVariable("lep_pt_0",&lep_pt_0);
+  }
   if(fcnc_region.Contains("2j") || fcnc_region.Contains("3j")){
-     reader[fcnc_region]->AddVariable("etmiss",&etmiss);
-     reader[fcnc_region]->AddVariable("dphitauetmiss",&dphitauetmiss);
-     reader[fcnc_region]->AddVariable("phicent",&phicent);
-     reader[fcnc_region]->AddVariable("tautaumass",&tautaumass);
-     reader[fcnc_region]->AddVariable("t2mass",&t2mass);
-     reader[fcnc_region]->AddVariable("x1fit",&x1fit);
-     reader[fcnc_region]->AddVariable("x2fit",&x2fit);
-     if(fcnc_region.Contains("1l1tau")){
-        reader[fcnc_region]->AddVariable("drlb",&drlb);
-        reader[fcnc_region]->AddVariable("drtaub",&drtaub);
-        reader[fcnc_region]->AddVariable("mjjmin",&mjjmin);
-     }
-     if(fcnc_region != "reg1l1tau1b2j"){
-        reader[fcnc_region]->AddVariable("wmass",&wmass);
-        reader[fcnc_region]->AddVariable("t1mass",&t1mass);
-     }
-     if(fcnc_region.Contains("1l1tau1b2j")){
-        reader[fcnc_region]->AddVariable("allpz",&allpz);
-        reader[fcnc_region]->AddVariable("allmass",&allmass);
-     }
-  }else if(fcnc_region.Contains("1l2tau1")){
-     reader[fcnc_region]->AddVariable("t1vismass",&t1vismass);
-     reader[fcnc_region]->AddVariable("mtaujmin",&mtaujmin);
-     reader[fcnc_region]->AddVariable("drltau",&drltau);
-     reader[fcnc_region]->AddVariable("etamax",&etamax);
-     reader[fcnc_region]->AddVariable("mtw",&mtw);
-     reader[fcnc_region]->AddVariable("drlbditau",&drlbditau);
-     reader[fcnc_region]->AddVariable("tautauvispt",&tautauvispt);
-     reader[fcnc_region]->AddVariable("t2vismass",&t2vismass);
+    reader[fcnc_region]->AddVariable("dphitauetmiss",&dphitauetmiss);
+    reader[fcnc_region]->AddVariable("phicent",&phicent);
+    reader[fcnc_region]->AddVariable("tautaumass",&tautaumass);
+    reader[fcnc_region]->AddVariable("t2mass",&t2mass);
+    reader[fcnc_region]->AddVariable("x1fit",&x1fit);
+    reader[fcnc_region]->AddVariable("x2fit",&x2fit);
+    reader[fcnc_region]->AddVariable("t1mass",&t1mass);
+    if(fcnc_region.Contains("1l1tau")){
+       reader[fcnc_region]->AddVariable("drtaub",&drtaub);
+       reader[fcnc_region]->AddVariable("mjjmin",&mjjmin);
+    }
+    if(!fcnc_region.Contains("reg1l1tau1b2j")){
+       reader[fcnc_region]->AddVariable("wmass",&wmass);
+    }
+    //if(fcnc_region.Contains("1l1tau1b2j")){
+    //   reader[fcnc_region]->AddVariable("allpz",&allpz);
+    //   reader[fcnc_region]->AddVariable("allmass",&allmass);
+    //}
+  }else if(fcnc_region.Contains("1l2tau1") || fcnc_region.Contains("2lSS")){
+    reader[fcnc_region]->AddVariable("t1vismass",&t1vismass);
+    reader[fcnc_region]->AddVariable("mtaujmin",&mtaujmin);
+    reader[fcnc_region]->AddVariable("drltau",&drltau);
+    reader[fcnc_region]->AddVariable("etamax",&etamax);
+    reader[fcnc_region]->AddVariable("mtw",&mtw);
+    reader[fcnc_region]->AddVariable("drlbditau",&drlbditau);
+    reader[fcnc_region]->AddVariable("tautauvispt",&tautauvispt);
+    reader[fcnc_region]->AddVariable("t2vismass",&t2vismass);
   }
 
-  reader[fcnc_region]->AddVariable("ttvismass",&ttvismass);
-  reader[fcnc_region]->AddVariable("drtaujmin",&drttjmin);
 
   reader[fcnc_region]->BookMVA( "BDTG_1" , TString(PACKAGE_DIR) + "/config/weights/" + fcnc_region + "TMVAClassification_1_BDTG.weights.xml" );
   reader[fcnc_region]->BookMVA( "BDTG_2" , TString(PACKAGE_DIR) + "/config/weights/" + fcnc_region + "TMVAClassification_2_BDTG.weights.xml" );
@@ -237,6 +240,7 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("drtautau", & drtautau);
   tree->SetBranchAddress("drttjmin", & drttjmin);
   tree->SetBranchAddress("mtaujmin", & mtaujmin);
+  tree->SetBranchAddress("drtaujmin", & drtaujmin);
   tree->SetBranchAddress("etmiss",&etmiss);
   tree->SetBranchAddress("dphitauetmiss",&dphitauetmiss);
   tree->SetBranchAddress("phicent",&phicent);
@@ -286,6 +290,7 @@ void nominal::BDTBranch(TTree *tree){
   tree->Branch("drtautau", & drtautau);
   tree->Branch("drttjmin", & drttjmin);
   tree->Branch("mtaujmin", & mtaujmin);
+  tree->Branch("drtaujmin", & drtaujmin);
   tree->Branch("etmiss",&etmiss);
   tree->Branch("dphitauetmiss",&dphitauetmiss);
   tree->Branch("phicent",&phicent);
@@ -508,8 +513,6 @@ vector<int>* nominal::findcjet(){
     }
     t1vismass = top.M();
     t1mass = t1vismass;
-  }else{
-    t1vismass = (*leps_p4->at(0) + *bjets_p4->at(0)).M();
   }
   return output;
 }
@@ -668,45 +671,46 @@ void nominal::calcfakesf(std::vector<int> origin){ //origin=-1,0,1,2,3 for real/
 
 observable nominal::FindNewFakeSF(TString NP){ //origin=-1,0,1,2,3,4 for real/lep,b,c,g,j,wjet
   observable result = 1;
-  for (int i = 0; i < taus_p4->size(); ++i)
-  {
-    if(leps_id->size()) result *= FindNewFakeSF(NP, i, leps_id->at(0) * taus_q->at(i) > 0 );
-    else if(taus_q->size()>=2) result *= FindNewFakeSF(NP, i, taus_q->at(0) * taus_q->at(1) > 0 );
-    else {
-      printf("nominal::FindNewFakeSF() : ERROR: taus_q < 2 and leps_id = 0\n");
-      exit(0);
-    }
-  }
+  if(belong_regions.have("tau")) result *= FindNewFakeSF(NP, 0);
+  if(belong_regions.have("2tau") || belong_regions.have("2mtau")) result *= FindNewFakeSF(NP, 1);
   return result;
 }
 
-observable nominal::FindNewFakeSF(TString NP, int itau, int isOS, TString &name){ //origin=-1,0,1,2,3,4 for real/lep,b,c,g,j,wjet
+observable nominal::FindNewFakeSF(TString NP, int itau, TString &name){ //origin=-1,0,1,2,3,4 for real/lep,b,c,g,j,wjet
+  double taupt = itau == 0? tau_pt_0 : tau_pt_1;
   if(!newFakeSF.size()) {
     printf("nominal::FindNewFakeSF() Error : newFakeSF is Empty, please call nominal::ConfigNewFakeSF() first\n");
     exit(0);
   }
-  if(taus_matched_pdgId->at(itau) == 15) return 1;
-  bool iswjet = abs(taus_matched_mother_pdgId->at(itau)) == 24;
+  TString origin;
+  if(abs(taus_matched_pdgId->at(itau)) == 5) origin = "bjet-fake";
+  else if(abs(taus_matched_pdgId->at(itau)) < 6) {
+    if(abs(taus_matched_mother_pdgId->at(itau)) == 24) origin = "wjet-fake";
+    else origin = "other-fake";
+  }else{
+    return 1;
+  }
+
   int slice = 0;
   for (int islice = 1; islice < fakePtSlices.size(); ++islice)
   {
-    if(taus_p4->at(itau)->Pt()/GeV<fakePtSlices[islice]) {
+    if(taupt/GeV<fakePtSlices[islice]) {
       slice = islice-1;
       break;
     }
   }
 
-  observable result = doubleCounting? newFakeSFSys[isOS][iswjet][slice] : newFakeSF[NP][isOS][iswjet][slice];
-  string ss = "fakeSFNP_ptbin" + to_string(slice) + (iswjet?"_wjet":"");
+  observable result = doubleCounting? newFakeSFSys[origin][slice] : newFakeSF[NP][origin][slice];
+  string ss = "fakeSFNP_ptbin" + to_string(slice) + "_" + origin.Data();
   name = ss.c_str();
   if(!newFakeSF[NP].size()) printf("nominal::FindNewFakeSF : NP %s not found\n", NP.Data());
   if(debug) printf("%s = %f +/- %f\n", name.Data(), result.nominal, result.error);
   return result;
 }
 
-observable nominal::FindNewFakeSF(TString NP, int itau, int isOS){
+observable nominal::FindNewFakeSF(TString NP, int itau){
   TString name;
-  return FindNewFakeSF(NP, itau, isOS, name);
+  return FindNewFakeSF(NP, itau, name);
 }
 
 bool nominal::addTheorySys(){
@@ -740,97 +744,102 @@ bool nominal::addTheorySys(){
 
 void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
   printf("nominal::ConfigNewFakeSF() : Starting\n");
-  TString prefix = PACKAGE_DIR;
-  prefix += "/data/";
   newFakeSF.clear();
   newFakeSFSys.clear();
-  string iswjetstring[2] = {"fake", "wjet-fake"};
-  for (int isOS = 0; isOS < 2; ++isOS)
+  TFile *sfFile =  TFile::Open(SFfilename);
+  printf("nominal::ConfigNewFakeSF() : Done reading\n");
+  TH1D *SFhist = 0;
+  for (auto origin : SForigins)
   {
-    TString filename = prefix + (isOS?"scale_factors_os.root" : "scale_factors_ss.root");
-    printf("nominal::ConfigNewFakeSF() : Reading file %s\n",filename.Data());
-    TFile *sfFile =  TFile::Open(filename);
-    printf("nominal::ConfigNewFakeSF() : Done reading\n");
-    TH1D *SFhist = 0;
-    for (int iswjet = 0; iswjet < 2 ; ++iswjet)
+    for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
     {
-      for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
+      string histname = ( "sf_" + string(origin.Data()) + "_pt" + to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) );
+      printf("nominal::ConfigNewFakeSF() : Read histogram %s\n", histname.c_str());
+      //SFhist = (TH1D*)(sfFile.Get(histname.c_str())->Clone((histname+"_buffer").c_str()));
+      sfFile->GetObject(histname.c_str(),SFhist);
+      SFhist->SetDirectory(0);  //It crashes without this line!
+      if(!SFhist) printf("histogram not found in SF file: %s\n", histname.c_str());
+      TAxis *xaxis = SFhist->GetXaxis();
+      double newFakeSFnominal;
+      double err2 = 0;
+      for (int ibin = 1; ibin <= SFhist->GetNbinsX(); ++ibin)
       {
-        string histname = ( "Fit_sf_" + iswjetstring[iswjet] + "_pt" + to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) );
-        printf("nominal::ConfigNewFakeSF() : Read histogram %s\n", histname.c_str());
-        //SFhist = (TH1D*)(sfFile.Get(histname.c_str())->Clone((histname+"_buffer").c_str()));
-        sfFile->GetObject(histname.c_str(),SFhist);
-        SFhist->SetDirectory(0);  //It crashes without this line!
-        if(!SFhist) printf("histogram not found in SF file: %s\n", histname.c_str());
-        TAxis *xaxis = SFhist->GetXaxis();
-        double newFakeSFnominal;
-        double err2 = 0;
-        for (int ibin = 1; ibin <= SFhist->GetNbinsX(); ++ibin)
-        {
-          if(!strncmp(xaxis->GetBinLabel(ibin),"NOMINAL",100)){
-            newFakeSFnominal = SFhist->GetBinContent(ibin);
-            err2 += pow(SFhist->GetBinError(ibin),2);
-            break;
-          }
+        if(!strncmp(xaxis->GetBinLabel(ibin),"NOMINAL",100)){
+          newFakeSFnominal = SFhist->GetBinContent(ibin);
+          err2 += pow(SFhist->GetBinError(ibin),2);
+          break;
         }
-        for (int ibin = 1; ibin <= SFhist->GetNbinsX(); ++ibin)
-        {
-          TString NPname = xaxis->GetBinLabel(ibin);
-          double content = SFhist->GetBinContent(ibin);
-          double err = SFhist->GetBinError(ibin);
-          if(!content || NPname.Contains("Punch")) continue;
-          if(NPname != "NOMINAL" && !NPname.Contains("fake") && !NPname.Contains("down")){
-            err2 += pow(content - newFakeSFnominal, 2);
-          }
-          if((find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) && SystematicsName!=NPname && NPname!="NOMINAL") {
-            continue;
-          }
-          if(!newFakeSF[NPname].size()) newFakeSF[NPname] = {{{0,0,0},{0,0,0}},{{0,0,0},{0,0,0}}};
-          newFakeSF[NPname][isOS][iswjet][islice] = observable(content,err);
-        }
-        if(!newFakeSFSys.size()) newFakeSFSys = {{{0,0,0},{0,0,0}},{{0,0,0},{0,0,0}}};
-        newFakeSFSys[isOS][iswjet][islice] = observable(newFakeSFnominal,sqrt(err2));
-        deletepointer(SFhist);
       }
+      for (int ibin = 1; ibin <= SFhist->GetNbinsX(); ++ibin)
+      {
+        TString NPname = xaxis->GetBinLabel(ibin);
+        double content = SFhist->GetBinContent(ibin);
+        double err = SFhist->GetBinError(ibin);
+        if(!content || NPname.Contains("Punch")) continue;
+        if(NPname != "NOMINAL" && !NPname.Contains("fake") && !NPname.Contains("down")){
+          err2 += pow(content - newFakeSFnominal, 2);
+        }
+        if((find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) && SystematicsName!=NPname && NPname!="NOMINAL") {
+          continue;
+        }
+        if(!newFakeSF[NPname].size()) {
+          for (int i = 0; i < fakePtSlices.size()-1; ++i)
+          {
+            for (auto theorigin:SForigins)
+            {
+              newFakeSF[NPname][theorigin].emplace_back(0);
+            }
+          }
+        }
+        newFakeSF[NPname][origin][islice] = observable(content,err);
+      }
+      if(!newFakeSFSys.size()) {
+        for (int i = 0; i < fakePtSlices.size()-1; ++i)
+        {
+          for (auto theorigin:SForigins)
+          {
+            newFakeSFSys[theorigin].emplace_back(0);
+          }
+        }
+      }
+      newFakeSFSys[origin][islice] = observable(newFakeSFnominal,sqrt(err2));
+      deletepointer(SFhist);
     }
   }
-  LatexChart *chart[2] = {0,0};
+  
+  LatexChart *chart = 0;
   printf("saved SF for NP:");
   for(auto iter : newFakeSF){
     printf(" %s", iter.first.Data());
   }
   printf("\nnew SFs: \n");
-  for (int isOS = 0; isOS < 2; ++isOS)
+  string chartname = "scale_factors";
+  if(access( chartname.c_str(), F_OK ) == -1) chart = new LatexChart(chartname);
+  printf("Slices: ");
+  for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
   {
-    string chartname = isOS?"scale_factors_os" : "scale_factors_ss";
-    if(access( chartname.c_str(), F_OK ) == -1) chart[isOS] = new LatexChart(chartname);
-    printf("isOS: %d\n", isOS);
-    printf("Slices: ");
+    printf(" %s ", ( to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) ).c_str());
+  }
+  printf("\n");
+  for (auto origin : SForigins)
+  {
+    printf("%s", origin.Data());
     for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
     {
-      printf(" %s ", ( to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) ).c_str());
+      printf(" %f+/-%f ", newFakeSFSys[origin][islice].nominal, newFakeSFSys[origin][islice].error);
+      if(chart){
+        string rowname = origin == "wjet-fake"? "$\\tau_{W}$" : (origin == "bjet-fake"? "$\\tau_{b}$" : "$\\tau_{other}$");
+        string columnname = "$" + to_string(int(fakePtSlices[islice])) + "-" + to_string(int(fakePtSlices[islice+1])) + "$~GeV";
+        if(islice == fakePtSlices.size()-2) columnname = to_string(int(fakePtSlices[islice])) + "GeV$-$";
+        chart->set(rowname, columnname, newFakeSFSys[origin][islice]);
+      }
     }
     printf("\n");
-    for (int iswjet = 0; iswjet < 2; ++iswjet)
-    {
-      printf("%s", iswjetstring[iswjet].c_str());
-      for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
-      {
-        printf(" %f+/-%f ", newFakeSFSys[isOS][iswjet][islice].nominal, newFakeSFSys[isOS][iswjet][islice].error);
-        if(chart[isOS]){
-          string rowname = iswjet? "$\\tau_{W}$" : "non-$\\tau_{W}$ fakes";
-          string columnname = "$" + to_string(int(fakePtSlices[islice])) + "-" + to_string(int(fakePtSlices[islice+1])) + "$~GeV";
-          if(islice == fakePtSlices.size()-2) columnname = to_string(int(fakePtSlices[islice])) + "GeV$-$";
-          chart[isOS]->set(rowname, columnname, newFakeSFSys[isOS][iswjet][islice]);
-        }
-      }
-      printf("\n");
-    }
-    if(chart[isOS]) {
-      chart[isOS]->caption = "The results of the fit in di-lep and $2b" + string(isOS? "OS":"SS") + "$ regions.";
-      chart[isOS]->print(chart[isOS]->label);
-      deletepointer(chart[isOS]);
-    }
+  }
+  if(chart) {
+    chart->caption = "The results of the fit in CR regions.";
+    chart->print(chart->label);
+    deletepointer(chart);
   }
   applyNewFakeSF = 1;
   printf("nominal::ConfigNewFakeSF() : End\n");
@@ -901,12 +910,12 @@ vector<int> nominal::findwpair(int cjet){
   return output;
 }
 
-void nominal::fillhist(histSaver* plots, TString region, int nprong, TString sample, int iptbin, float taubtag, TString NP){
+void nominal::fillhist(histSaver* plots, TString region, int nprong, TString sample, float taubtag, TString NP){
   for (int i = 0; i < 4; ++i){
     if(taubtag>btagwpCut[i]) {
-      if(dobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[i],NP);
+      if(dobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[i],NP);
     }else{
-      if(dovetobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[i],NP);
+      if(dovetobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[i],NP);
     }
   }
 }
@@ -1038,12 +1047,13 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
   }
 
 
+  int printperentry = reduce == 1? 100000 : 5000;
   for (Long64_t jentry = 0; jentry < nloop; jentry++) {
     cut_flow.newEvent();
     inputtree->GetEntry(jentry);
     //if(mcChannelNumber == 411172 || mcChannelNumber == 411173 || mcChannelNumber == 411176 || mcChannelNumber == 411177)
     //  continue;
-    if ((jentry % 100000 == 0) || debug)
+    if ((jentry % printperentry == 0) || debug)
       std::cout << " I am here event " << jentry << " Event " << eventNumber << " Run " << runNumber << " ismc " << mcChannelNumber << " Filled events "<< ifill<<std::endl;
 //===============================SFs and weights===============================
     if(reduce == 1){
@@ -1102,6 +1112,10 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         if(met_p4->Pt()<30*GeV) continue;
         cut_flow.fill("$MET>30$");
       }
+      if(belong_regions.have("1l1tau")){
+        if(met_p4->Pt()<20*GeV) continue;
+        cut_flow.fill("$MET>20$");
+      }
 
       if(!nominaltree && taus_p4->size()) {
         taus_matched_mother_pdgId = taumatchmap[eventNumber];
@@ -1119,7 +1133,8 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
 
       ljet_indice = findcjet();
   
-      TLorentzVector *tau2,*wlep;
+      TLorentzVector *tau2 = 0;
+      TLorentzVector *wlep = 0;
       if(taus_p4->size() == 2) {
         tau2 = taus_p4->at(1);
         wlep = leps_p4->at(0);
@@ -1134,11 +1149,12 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           }else{
             wlep = leps_p4->at(1);
           }
+          
         }else{
           wlep = 0;
         }
       }
-
+      if(wlep) t1vismass = (*wlep + *bjets_p4->at(0)).M();
 
       ttvismass = (*taus_p4->at(0) + *tau2).M();
       drtautau = taus_p4->at(0)->DeltaR(*tau2);
@@ -1256,7 +1272,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       tautauvispt = (*taus_p4->at(0) + *tau2).Pt();
       t2vismass = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2 + *ljets_p4->at(ljet_indice->at(0))).M() : 0;
       drttj = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2).DeltaR(*ljets_p4->at(ljet_indice->at(0))) : 0;
-      dphitauetmiss = fabs(met_p4->Phi() - (*taus_p4->at(0) + *tau2).Phi());
+      dphitauetmiss = fabs(met_p4->DeltaPhi(*taus_p4->at(0) + *tau2));
       etmiss = met_p4->Pt();
 
       mtaujmin = 0;
@@ -1264,13 +1280,30 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       drttjmin = 999;
       mttjmin = 0;
       mjjmin = 0;
+      drlb = leps_p4->at(0)->DeltaR(*bjets_p4->at(0));
+      drtaub = taus_p4->at(0)->DeltaR(*bjets_p4->at(0));
+      drltau = taus_p4->at(0)->DeltaR(*leps_p4->at(0));
 
+      if(wlep && wlep != leps_p4->at(0)) drltau = taus_p4->at(0)->DeltaR(*wlep);
+      etamax = 0;
+      for (auto tau: *taus_p4)
+      {
+        etamax = max(etamax,(float)fabs(tau->Eta()));
+      }
+      if(wlep) mtw = sqrt(2*wlep->Pt()*etmiss*(1 - cos( met_p4->DeltaPhi(*wlep) )));
+      if(taus_p4->size() >= 2) drlbditau = (*leps_p4->at(0) + *bjets_p4->at(0)).DeltaR(*taus_p4->at(0) + *taus_p4->at(1));
+      else if(wlep) drlbditau = (*wlep + *bjets_p4->at(0)).DeltaR(*taus_p4->at(0) + *tau2);
+
+      drtaujmin = 0;
       for (int ijet = 0 ; ijet < ljets_p4->size(); ijet ++ ) {
 
         if(mtaujmin == 0 || mtaujmin > (*taus_p4->at(0) + *ljets_p4->at(ijet)).M()){
           mtaujmin = (*taus_p4->at(0) + *ljets_p4->at(ijet)).M();
         }
-
+        if(drtaujmin == 0 || drtaujmin > taus_p4->at(0)->DeltaR(*ljets_p4->at(ijet))){
+          drtaujmin = taus_p4->at(0)->DeltaR(*ljets_p4->at(ijet));
+          if(taus_p4->size() >= 2) drtaujmin = min(drtaujmin, (float)taus_p4->at(1)->DeltaR(*ljets_p4->at(ijet)));
+        }
         if(drttjmin > (*(taus_p4->at(0)) + *(tau2)).DeltaR(*ljets_p4->at(ijet)))
           drttjmin = (*(taus_p4->at(0)) + *(tau2)).DeltaR(*ljets_p4->at(ijet));
         if(mttjmin > (*(taus_p4->at(0)) + *(tau2)+ *ljets_p4->at(ijet)).M() || mttjmin == 0)
@@ -1295,7 +1328,6 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         tau_pt_0 = taus_p4->at(0)->Pt();
         if(leps_p4->size()>=2) lep_pt_1 = leps_p4->at(1)->Pt();
       }
-
     }
 
     if(reduce == 3){
@@ -1313,12 +1345,22 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             BDTG_train = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)) );
           }
         }else{
-          if(belong_regions.have("1l2tau")) BDTG_test  = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
-          if(belong_regions.have("2j"    )) BDTG_test  = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
-          if(belong_regions.have("3j"    )) BDTG_test  = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
-          if(belong_regions.have("1l2tau")) BDTG_train = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
-          if(belong_regions.have("2j"    )) BDTG_train = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
-          if(belong_regions.have("3j"    )) BDTG_train = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+          if(belong_regions.have("1l2tau")) {
+            BDTG_test  = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+            BDTG_train = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+          }
+          if(belong_regions.have("2j"    )) {
+            BDTG_test  = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+            BDTG_train = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+          }
+          if(belong_regions.have("3j"    )) {
+            BDTG_test  = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+            BDTG_train = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+          }
+          if(belong_regions.have("2lSS"    )) {
+            BDTG_test  = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+            BDTG_train = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+          }
         }
       }
       if(dumpeventnumber) {
@@ -1383,11 +1425,11 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           int nfakelep = leps_matched_pdgId->size();
           for (int i = 0; i < leps_matched_pdgId->size(); ++i){
             TString origin = classifyLepFakes(i);
-            if(origin == "real") nfakelep -= 1;
+            if(origin == "realLep") nfakelep -= 1;
             leporigin = sample + "_" + origin;
           }
-          if(nfakelep == 0) leporigin = sample + "_real";
-          else if(nfakelep >= 2) leporigin = sample + "_doublefake";
+          if(nfakelep == 0) leporigin = sample + "_realLep";
+          else if(nfakelep >= 2) leporigin = sample + "_doubleFakeLep";
         }
         if (sample.Contains("data")) {
           tauorigin = "data";
@@ -1402,6 +1444,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
               else if (tauabspdg == 5) tauorigin = sample + "_b";
               else if (tauabspdg == 4) tauorigin = sample + "_c";
               else if (tauabspdg <= 3 && tauabspdg >=1) tauorigin = sample + "_j";
+              else if (tauabspdg == 21) tauorigin = sample + "_g";
               else tauorigin = sample + "_nomatch";
               if((tauabspdg == 4 || (tauabspdg <= 3 && tauabspdg >=1)) && abs(taus_matched_mother_pdgId->at(i)) == 24) tauorigin = sample + "_wjet";
             }
@@ -1422,12 +1465,12 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
                 TString SFname;
                 if(debug) printf("weight = %f\nPlotNP = %s\n",weight,theNP.Data());
                 observable thefakeSF;
-                if(leps_id->size()) thefakeSF= FindNewFakeSF("NOMINAL", 0, leps_id->at(0)*taus_q->at(0) > 0,SFname);
-                else thefakeSF= FindNewFakeSF("NOMINAL", 0, belong_regions.have("os"),SFname);
+                if(leps_id->size()) thefakeSF= FindNewFakeSF("NOMINAL", 0,SFname);
+                else thefakeSF= FindNewFakeSF("NOMINAL", 0,SFname);
                 weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);
                 if(taus_p4->size() >= 2) {
-                  if(leps_id->size()) thefakeSF= FindNewFakeSF("NOMINAL", 1, leps_id->at(0)*taus_q->at(1) > 0,SFname);
-                  else thefakeSF = FindNewFakeSF("NOMINAL", 1, belong_regions.have("os"), SFname);
+                  if(leps_id->size()) thefakeSF= FindNewFakeSF("NOMINAL", 1,SFname);
+                  else thefakeSF = FindNewFakeSF("NOMINAL", 1, SFname);
                   weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);
                 }
                 if(debug) printf("weight = %f after apply fakeSF\n",weight);
@@ -1453,19 +1496,19 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
                 weight *= weights->at(index);
             }
             if (fcnc) {
-              if(plotTauFake) fillhist(fcnc_plots, region, taus_n_charged_tracks->at(0), tauorigin, tau_pt_0 / GeV > 35, taus_b_tagged->at(0), theNP);
+              if(plotTauFake) fillhist(fcnc_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), theNP);
               else if(!taus_b_tagged->at(0) && region.Contains("2l")) fcnc_plots->fill_hist(leporigin,region,theNP);
             }
-            else if(region.Contains("tau")) fillhist(fake_plots, region, taus_n_charged_tracks->at(0), tauorigin, tau_pt_0 / GeV > 35, taus_b_tagged->at(0), theNP);
+            else if(region.Contains("tau")) fillhist(fake_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), theNP);
             else fill_notau(region, sample, theNP);
           }
         }else{ //data
           if (region.Contains("tau")) {
             if (fcnc) {
-              if(plotTauFake) fillhist(fcnc_plots, region, taus_n_charged_tracks->at(0), tauorigin, tau_pt_0 / GeV > 35, taus_b_tagged->at(0), "NOMINAL");
+              if(plotTauFake) fillhist(fcnc_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), "NOMINAL");
               else if(!taus_b_tagged->at(0) && region.Contains("2l")) fcnc_plots->fill_hist("data",region,"NOMINAL");
             }
-            else fillhist(fake_plots, region, taus_n_charged_tracks->at(0), tauorigin, tau_pt_0 / GeV > 35, taus_b_tagged->at(0), "NOMINAL");
+            else fillhist(fake_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), "NOMINAL");
           } else fill_notau(region, sample, "NOMINAL");
         }
       }
@@ -1586,19 +1629,19 @@ TString nominal::classifyLepFakes(int ilep){ //https://indico.cern.ch/event/7259
     (T==3 && ( O==25 || O==32 || O==27 ) )||
     (T==4 && O==27 )||
     (T==16 && ( O==25 || O==27 )) || ( T==4 && O==5 && firstEgMotherT==16 && ( firstEgMotherO==25 || firstEgMotherO==27 ) ) || (T==7 && ( O==25 || O==32 || O==27 )) || (( T==6 || T==8 ) && ( O==27 ))
-  ) return "non_prompt";
+  ) return "nonPrompt";
 
   //Hadron decay (light flavor)
   if(
     (T==4 && ( O==6 || O==23 || O==24 ) ) ||
     ((T==4 && O==5 && firstEgMotherT==16 && ( firstEgMotherO==42 || firstEgMotherO==23 || firstEgMotherO==24 )) || (T==4 && O==7 && ( (firstEgMotherT==4 && firstEgMotherO==24) || (firstEgMotherT==16 && firstEgMotherO==42) ) ) || (T==16 && (O==42 || O==23) ) ) ||
     (T==8 && ( O==34 || O==35 || O==23 ||24 ) ) || T==17
-  ) return "other_fakes";
+  ) return "otherFakeLep";
 
   //Muons reconstructed as e
   if(
     (( T==3 || T==15 ) && O==8) || ( T==4 && O==7 && firstEgMotherT==3 && firstEgMotherO==8 ) || ( T==4 && O==5 && firstEgMotherT==15 && firstEgMotherO==8 )
-  ) return "other_fakes";
+  ) return "otherFakeLep";
 
   //Prompt photon conversion
   if(
@@ -1608,7 +1651,7 @@ TString nominal::classifyLepFakes(int ilep){ //https://indico.cern.ch/event/7259
   //Prompt muon
   if(
     T==6 && (O==10 || O==12 || O==13 || O==14 || O==15 || O==22 || O==43)
-  ) return "real";
+  ) return "realLep";
 
   bool C1 = T==2 || ( T==4 && O==5 && fabs(firstEgMotherPdgId) == 11) ||
   ( T==4 && O==7 && firstEgMotherT==2 && (firstEgMotherO == 10 || firstEgMotherO == 12 || firstEgMotherO == 13 || firstEgMotherO == 14 || firstEgMotherO == 43) && fabs(firstEgMotherPdgId) == 11);
@@ -1616,12 +1659,12 @@ TString nominal::classifyLepFakes(int ilep){ //https://indico.cern.ch/event/7259
   //Prompt electron
   if(
     (C1 && firstEgMotherPdgId*RecoCharge<0) || (T==4 && (O==5 || O==7) && firstEgMotherO==40) || ( T==15 && O==40 )
-  ) return "real";
+  ) return "realLep";
   //charge flip
   if(
     C1 && firstEgMotherPdgId*RecoCharge>0
-  ) return "charge_flip";
+  ) return "chargeFlip";
 
   printf("Warning: fake origin not found: T==%d,O==%d,RecoCharge==%d,firstEgMotherPdgId==%d,firstEgMotherO==%d ; classify as unknown_fakes\n",T,O,RecoCharge,firstEgMotherPdgId,firstEgMotherO);
-  return "unknown_fakes";
+  return "unknownFakeLep";
 }

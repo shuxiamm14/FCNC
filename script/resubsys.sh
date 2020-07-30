@@ -34,7 +34,7 @@ do
 		for samp in $check
 		do
 			echo "submit_tth_reduce.sh $1 sublocal $systname $samp"
-			#submit_tth_reduce.sh $1 sublocal $systname $samp
+			submit_tth_reduce.sh $1 sublocal $systname $samp
 		done
 	fi
 	if [ -n "$2" ]; then

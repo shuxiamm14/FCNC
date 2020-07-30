@@ -4,6 +4,7 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 #include "fcnc_include.h"
+#include "common.h"
 using namespace std;
 
 hadhadtree::hadhadtree() : nominal::nominal(){
@@ -49,40 +50,39 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV,  fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
   fcnc_plots->set_weight(&weight);
   fcnc_plots->debug = debug;
-  if(reduce == 3 && doBDT) fcnc_plots->add(100,-1.,1.,"BDT discriminant","BDTG_train",&BDTG_train,false,"");
-  if(reduce == 3 && doBDT) fcnc_plots->add(100,-1.,1.,"BDT discriminant","BDTG_test",&BDTG_test,false,"");
-  fcnc_plots->add(100,40.,140.,"p_{T,lead-#tau}","taupt_0",&tau_pt_0,false,"GeV");
-  fcnc_plots->add(100,30.,80.,"p_{T,sublead-#tau}","taupt_1",&tau_pt_1,false,"GeV");
-  fcnc_plots->add(100,15.,115.,"E^{T}_{miss}","etmiss",&etmiss,false,"GeV");
-  fcnc_plots->add(60,0.,3.,"#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss",&dphitauetmiss,false);
-  fcnc_plots->add(80,50.,130.,"m_{#tau#tau,vis}","ttvismass",&ttvismass,false,"GeV");
-  fcnc_plots->add(100,0.4,3.4,"#DeltaR(#tau,#tau)","drtautau",&drtautau,false,"");
-  fcnc_plots->add(80,0.2,4.2,"#DeltaR(#tau,#light-jet,min)","drttjmin",&drttjmin,false,"");
-  fcnc_plots->add(60,-1.5,1.5,"E^{T}_{miss} centrality","phicent",&phicent,false,"");
-  fcnc_plots->add(900,100.,1000.,"m_{t,SM}","t1mass",&t1mass,false,"GeV");
-  fcnc_plots->add(100,70.,170.,"m_{#tau,#tau}","tautaumass",&tautaumass,false,"GeV");
-  fcnc_plots->add(100,30.,530.,"m_{W}","wmass",&wmass,false,"GeV");
-  fcnc_plots->add(400,100.,500.,"m_{t,FCNC}","t2mass",&t2mass,false,"GeV");
-  //fcnc_plots->add(100,50.,250.,"P_{t,#tau#tau,vis}","tautauvispt",&tautauvispt,false,"GeV");
-  //fcnc_plots->add(100,50.,250.,"m_{t,FCNC,vis}","t2vismass",&t2vismass,false,"GeV");
-  fcnc_plots->add(100,50.,250.,"m_{t,SM,vis}","t1vismass",&t1vismass,false,"GeV");
-  fcnc_plots->add(80,0.2,1.,"E_{vis-#tau,1}/E_{#tau,1}","x1fit",&x1fit,false,"");
-  fcnc_plots->add(80,0.2,1.,"E_{vis-#tau,2}/E_{#tau,2}","x2fit",&x2fit,false,"");
-  fcnc_plots->add(60,-13.,17.,"#chi^2","chi2",&chi2,false,"");
-  fcnc_plots->add(500,0.,1000.,"m_{all}","allmass",&allmass,false,"GeV");
-  fcnc_plots->add(500,0.,1000.,"P_{z,all}","allpz",&allpz,false,"GeV");
-  //fcnc_plots->add(100,0.,5.,"#eta_{#tau,max}","etamax",&etamax,false,"");
-  //fcnc_plots->add(100,0.,5.,"#DeltaR(#tau,fcnc-j)","drtauj",&drtauj,false,"");
+  auto vars = getVariables("xTFW");
+  if(reduce == 3 && doBDT)
+  fcnc_plots->add(vars["BDTG_train"],&BDTG_train);
+  fcnc_plots->add(vars["BDTG_test"],&BDTG_test);
+  fcnc_plots->add(vars["tau_pt_0"],&tau_pt_0);
+  fcnc_plots->add(vars["tau_pt_1"],&tau_pt_1);
+  fcnc_plots->add(vars["etmiss"],&etmiss);
+  fcnc_plots->add(vars["dphitauetmiss"],&dphitauetmiss);
+  fcnc_plots->add(vars["ttvismass"],&ttvismass);
+  fcnc_plots->add(vars["drtautau"],&drtautau);
+  fcnc_plots->add(vars["drttjmin"],&drttjmin);
+  fcnc_plots->add(vars["phicent"],&phicent);
+  fcnc_plots->add(vars["t1mass"],&t1mass);
+  fcnc_plots->add(vars["tautaumass"],&tautaumass);
+  fcnc_plots->add(vars["wmass"],&wmass);
+  fcnc_plots->add(vars["t2mass"],&t2mass);
+//fcnc_plots->add(vars["tautauvispt"],&tautauvispt);
+//fcnc_plots->add(vars["t2vismass"],&t2vismass);
+  fcnc_plots->add(vars["t1vismass"],&t1vismass);
+  fcnc_plots->add(vars["x1fit"],&x1fit);
+  fcnc_plots->add(vars["x2fit"],&x2fit);
+  fcnc_plots->add(vars["chi2"],&chi2);
+  fcnc_plots->add(vars["allmass"],&allmass);
+  fcnc_plots->add(vars["allpz"],&allpz);
+//fcnc_plots->add(vars["etamax"],&etamax);
+//fcnc_plots->add(vars["drtauj"],&drtauj);
   for (int j = 0; j < fcnc_regions.size(); ++j)
   {
     for (int k = 0; k < 2; ++k)
     {
-      for (int iptbin = 0; iptbin < 2; ++iptbin)
-      {
-        if(debug) printf("adding region: %s\n", (fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[1]).Data());
-        //fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[1]);
-        fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_veto" + bwps[1]);
-      }
+      if(debug) printf("adding region: %s\n", (fcnc_regions[j] + "_" + bwps[1]).Data());
+      //fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + ptbin[iptbin] + "_" + bwps[1]);
+      fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_veto" + bwps[1]);
     }
   }
 }
@@ -257,12 +257,12 @@ void hadhadtree::calcGeneralWeight(){
 }
 
 
-void hadhadtree::fill_fcnc(TString region, int nprong, TString sample, int iptbin, bool taubtag, TString NPname){
+void hadhadtree::fill_fcnc(TString region, int nprong, TString sample, bool taubtag, TString NPname){
   //if(taubtag) {
   //  if(debug) printf("fill region: %s sample: %s\n", (region+"_"+char('0'+nprong) + "prong" + "_"+bwps[1]).Data(), sample.Data());
   //  fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_" + bwps[1]);
   //}else{
   if(!taubtag) {
-    fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + ptbin[iptbin] + "_veto" + bwps[1], NPname);
+    fcnc_plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[1], NPname);
   }
 }

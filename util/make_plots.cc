@@ -6,7 +6,7 @@
 #include <sys/ioctl.h>
 #include "fcnc_include.h"
 #include "weightsys_list.h"
-#include "makechart.h"
+#include "LatexChart.h"
 #include "common.h"
 using namespace std;
 
@@ -25,7 +25,7 @@ TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir
 
 
 
-void plot(int iNP, TString framework, TString method) //method = fitss / fitos / plot / trex
+int plot(int iNP, TString framework, TString method, int ipart = 0) //method = fitss / fitos / plot / trex
 {
 	TString dirname;
 	TString NPname = findNPname(dirname,iNP,framework);
@@ -47,6 +47,9 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 	TString fitcharge = "os";
 	int campaignfrom = 0;
 	int campaignto = 3;
+	int perpart = 5;
+	int varcount = 0;
+	int plotvar = 0;
 	if(method.Contains("plot")){
 		doTrex = 0;
 		doPlots = 1;
@@ -60,6 +63,10 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		wfake = 1;
 		fittodata = 1;
 		fitcharge = method.Contains("os")?"os":"ss";
+	}
+	if(method.Contains("lep")){
+		plotFakeLep = 1;
+		wfake = 0;
 	}
 	if(fittodata == 1 && NPname.Contains("Xsec")) {
 		histmiddlename = nominalname;
@@ -79,9 +86,9 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 	tau_plots->checkread_variable = 0;
 	tau_plots->checkread_ibin = 2;
 */
-	vector<sample> samples = getBkgSamples(framework);
+	vector<fcncSample> samples = getBkgSamples(framework);
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kMagenta, kSpring, kTeal, kAzure};
-	vector<sample> sigsamples = getSigSamples(framework, BRbenchmark);
+	vector<fcncSample> sigsamples = getSigSamples(framework, BRbenchmark);
 	if(!calculate_fake_calibration){
 		samples.insert(samples.begin(),sigsamples.begin(),sigsamples.end());
 	}
@@ -104,79 +111,57 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 			exit(0);
 		}
 	}
+	auto vars = getVariables(framework);
 	if(framework == "tthML"){
 		if(calculate_fake_calibration){
-			tau_plots->add("p_{T,#tau}","taupt_0","GeV");
+			tau_plots->add(vars["tau_pt_0"]);
 			if(!fittodata){
-				tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
-				tau_plots->add("p_{T,b}","bpt","GeV");
-  				tau_plots->add("E_{miss}^{T}","etmiss","GeV",10);
-				tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
+				tau_plots->add(vars["taulmass"]);
+				tau_plots->add(vars["bpt"]);
+  				tau_plots->add(vars["etmiss"]);
+				tau_plots->add(vars["ljetpt"]);
 			}
 			//tau_plots->add("p_{T,b}","bpt","GeV");
 			//tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
 		}
 		else if(plotnj){
-  			tau_plots->add("N_{l-jet}","njet","",1);
+  			tau_plots->add(vars["njet"]);
 			tau_plots->muteregion("3j");
 			tau_plots->muteregion("2j");
 		}else{
 			tau_plots->sensitivevariable = "BDTG_test";
-			tau_plots->add("BDT discriminant","BDTG_test","",10);
-  			tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",1);
-  			tau_plots->add("p_{T,lead-l}","lep_pt_0","GeV",1);
-			tau_plots->add("m_{#tau,light-jet}","taulmass","GeV");
-  			tau_plots->add("E^{T}_{miss}","etmiss","GeV",10);
-			tau_plots->add("#DeltaR(l,b-jet)","drlb","",3);
-			tau_plots->add("#chi^{2}","chi2","",5);
-			tau_plots->add("M_{all}","allmass","GeV",25);
-			tau_plots->add("p_{Z,all}","allpz","GeV",25);
-			tau_plots->add("M(light-jet,light-jet,min)","mjjmin","GeV",5);
-  			tau_plots->add("m_{t,SM}","t1mass","GeV",5);
-  			tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
-  			tau_plots->add("m_{W}","wmass","GeV",5);
-  			tau_plots->add("m_{t,FCNC}","t2mass","GeV",5);
-  			tau_plots->add("m_{#tau#tau,vis}","tautauvismass","GeV",10);
-  			tau_plots->add("m_{t,FCNC,vis}","t2vismass","GeV",10);
-  			tau_plots->add("P_{t,#tau#tau,vis}","tautauvispt","GeV",10);
-  			tau_plots->add("m^{T}_{W}","mtw","GeV",10);
-  			tau_plots->add("m_{t,SM,vis}","t1vismass","GeV",15);
-  			tau_plots->add("#DeltaR(l+b-jet,#tau+#tau)","drlbditau","",5);
-  			tau_plots->add("#eta_{#tau,max}","etamax","",10);
-  			tau_plots->add("#DeltaR(l,#tau)","drltau","",8);
-  			tau_plots->add("#DeltaR(#tau,fcnc-j)","drtauj","",10);
-  			tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",4);
-  			tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-  			tau_plots->add("M(#tau#tau light-jet,min)","mtaujmin","",5);
-			tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",6);
-			tau_plots->add("E^{T}_{miss} centrality","phicent","",3);
-  			tau_plots->add("p_{T,sublead-#tau}","taupt_1","GeV",1);
-  			tau_plots->add("p_{T,sublead-l}","lep_pt_1","GeV",1);
-  			tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
-  			tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
+			for(auto var : vars){
+				
+//				if(   var.first!="tau_pt_0"
+//					&&var.first!="tau_pt_1"
+//					&&var.first!="etmiss"
+//					&&var.first!="ttvismass"
+//					&&var.first!="lep_pt_0"
+//					&&var.first!="BDTG_test"
+//				) continue;
+				if(varcount / perpart == ipart){
+					tau_plots->add(var.second);
+					plotvar++;
+				}else if(varcount / perpart == ipart+1) break;
+				varcount++;
+			}
+			if(plotvar == 0) { printf("No variable to plot\n"); return 0; }
   		}
   	}else{
 		tau_plots->sensitivevariable = "BDTG_test";
-		tau_plots->add("BDT discriminant","BDTG_test","",5);
-		//tau_plots->add("BDT discriminant","BDTG_train","",5);
-  		//tau_plots->add("p_{T,lead-#tau}","taupt_0","GeV",5);
-  		//tau_plots->add("p_{T,sublead-#tau}","tau_1_pt","GeV",5);
-  		//tau_plots->add("#Delta#phi(#tau#tau,P^{T}_{miss})","dphitauetmiss","",5);
-  		//tau_plots->add("m_{#tau#tau,vis}","ttvismass","",5);
-  		//tau_plots->add("#DeltaR(#tau,#tau)","drtautau","",5);
-  		//tau_plots->add("#DeltaR(#tau,light-jet,min)","drtaujmin","",5);
-  		//tau_plots->add("E^{T}_{miss} centrality","phicent","",5);
-  		//tau_plots->add("m_{t,SM}","t1mass","GeV",20);
-  		//tau_plots->add("m_{#tau,#tau}","tautaumass","GeV",5);
-  		//tau_plots->add("m_{W}","wmass","GeV",5);
-  		//tau_plots->add("m_{t,FCNC}","t2mass","GeV",20);
-  		//tau_plots->add("E^{T}_{miss}","etmiss","GeV",5);
-  		//tau_plots->add("#chi^2","chi2","",5);
-  		//tau_plots->add("E_{vis,#tau,1}/E_{#tau,1}","x1fit","",5);
-  		//tau_plots->add("E_{vis,#tau,2}/E_{#tau,2}","x2fit","",5);
+		for(auto var : vars){
+			if(   var.first!="tau_pt_0"
+				&&var.first!="tau_pt_1"
+				&&var.first!="etmiss"
+				&&var.first!="ttvismass"
+				&&var.first!="lep_pt_0"
+				&&var.first!="BDTG_test"
+			) continue;
+			tau_plots->add(var.second);
+		}
 	}
   	gErrorIgnoreLevel = kWarning;
-  	tau_plots->blinding = 1;
+  	tau_plots->blinding = 2;
 	vector<TString> regions_xTFW = {
 		//"reg1mtau1ltau1b2jss",
 		//"reg2ltau1b2jss",
@@ -230,12 +215,7 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		}else{
 			for (int k = 0; k < 2; ++k){
 				for (int i = 1; i < 2; i+=2){
-					//TString addedregion = regions[j] + nprong[k] + "_veto";
-				  	//printf("adding region: %s\n", addedregion.Data());
-				  	//tau_plots->add_region(addedregion);
-					//tau_plots->add_region(regions[j] + nprong[k] + "_");
-					tau_plots->add_region(regions[j] + nprong[k] + "_above35_vetobtagwp70");
-					tau_plots->add_region(regions[j] + nprong[k] + "_below35_vetobtagwp70");
+					tau_plots->add_region(regions[j] + nprong[k] + "_vetobtagwp70");
 				}
 			}
 		}
@@ -244,8 +224,8 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 	vector<TString> origin = {"b", "c", "g", "j", "lep", "wjet-fake","nomatch","doublefake", "real", "data"};
 	vector<TString> origintitle = {"b-jets fake #tau", "c-jets fake #tau", "gluon-jets fake #tau", "light-jets fake #tau", "lepton fake #tau", "#tau_{W}", "non-matched", "double fake #tau", "real #tau", "data"};
 	if(plotFakeLep){
-		vector<TString> tmp1 = {"chargeflip","misid","non_prompt","fakelep","real","data"};
-		vector<TString> tmp2 = {"charge flip","mis-id","non prompt","fake lep","real lep","data"};
+		vector<TString> tmp1 = {"chargeFlip","converge","nonPrompt","unknown","realLep","data"};
+		vector<TString> tmp2 = {"charge flip","converge","non prompt","unknown","real lep","data"};
 		origin = tmp1;
 		origintitle = tmp2;
 	}else{
@@ -309,7 +289,7 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 					TString samplename = (samplesys==samples[j].name ? NPname : samples[j].name);
 					inputfile = getFile(mc_campaign + "_" + samplename + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 					double norm = samples[j].norm;
-					if(plotFakeLep) tau_plots->read_sample( samples[j].name, samplename + "_real", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
+					if(plotFakeLep) tau_plots->read_sample( samples[j].name, samplename + "_realLep", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 					else tau_plots->read_sample( samples[j].name, samplename + "_real", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 					//tau_plots->read_sample( samples[j].name, samplename + "_lep", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 					if(showFake){
@@ -409,9 +389,9 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 					//postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b3j_os");
 					//postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b2j_os");
 					TFile SFfile(prefix + "scale_factors.root","update");
-					//if(NPname == "NOMINAL") {
-					//	chart = new LatexChart("scale_factor");
-					//}
+					if(NPname == "NOMINAL") {
+						chart = new LatexChart("scale_factor");
+					}
 
 					vector<TString> postfit_regions = fit_regions;
 					postfit_regions.push_back("reg1l1tau1b2j_os" + nprong[i]);
@@ -428,22 +408,22 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 //						chart = new LatexChart(("scale_factor_" + fitcharge).Data());
 //					}
 					vector<TString> scalesamples = {"wjet-fake","other-fake","bjet-fake"};
-					TString varname = "taupt_0";
+					TString varname = "tau_pt_0";
 					map<TString,vector<observable>> *SFs = tau_plots->fit_scale_factor(&fit_regions, &varname, &scalesamples, &fakePtSlices, &histmiddlename, &postfit_regions);
 
 					TH1D* SFhist;
-					for (int i = 0; i < 3; ++i)	//3 pt bins
+					for (int i = 0; i < fakePtSlices.size(); ++i)	//3 pt bins
 					{
 						for (auto SF : *SFs) //parameters
 						{
 							if(chart) {
-								string rowname = SF.first.Contains("wjet")? "$\tau_{W}$" : (SF.first.Contains("bjet") ? "$\tau_{b}$" : "$\tau_{other}$");
+								string rowname = SF.first.Contains("wjet")? "$\\tau_{W}$" : (SF.first.Contains("bjet") ? "$\\tau_{b}$" : "$\\tau_{other}$");
 								string columnname = "$" + to_string(int(fakePtSlices[i])) + "-" + to_string(int(fakePtSlices[i+1])) + "$~GeV";
 								if(i == fakePtSlices.size()-2) columnname = to_string(int(fakePtSlices[i])) + "GeV$-$";
 								chart->set(rowname,columnname,SF.second[i]);
 							}
 					
-							TString histname = prefix + SF.first + "_pt" + (to_string(int(fakePtSlices[i])) + to_string(int(fakePtSlices[i+1]))).c_str();
+							TString histname = SF.first + "_pt" + (to_string(int(fakePtSlices[i])) + to_string(int(fakePtSlices[i+1]))).c_str();
 							SFhist = (TH1D*)SFfile.Get(histname);
 							if(!SFhist) {
 								SFhist = new TH1D(histname,histname,300,0,300);
@@ -454,6 +434,7 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 							SFhist -> Write(histname, TObject::kWriteDelete);
 						}
 					}
+					SFfile.Close();
 					if(chart){
 						chart->print(chart->label + "_statonly");
 					}
@@ -478,19 +459,19 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 					if(mergeprong) { if(i != 2) continue; }
 					else { if(i == 2) continue; }
 					if(calculate_fake_calibration){
-						tau_plots->scale_to_data("reg1l1tau2b1j_os" + nprong[i],"1 fake","taupt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau2b1j_ss" + nprong[i],"1 fake","taupt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau2b_os" + nprong[i],"1 fake","taupt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau2b_ss" + nprong[i],"1 fake","taupt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b1j_os" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b1j_ss" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b_os" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b_ss" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
 					}else{
-						tau_plots->scale_to_data("reg1l1tau2b2j_os" + nprong[i],"1 fake","taupt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau2b3j_os" + nprong[i],"1 fake","taupt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau2b2j_ss" + nprong[i],"1 fake","taupt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau2b3j_ss" + nprong[i],"1 fake","taupt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau1b2j_os" + nprong[i],"1 fake","taupt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau1b3j_os" + nprong[i],"1 fake","taupt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau1b2j_ss" + nprong[i],"1 fake","taupt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau1b3j_ss" + nprong[i],"1 fake","taupt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b2j_os" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b3j_os" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b2j_ss" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b3j_ss" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau1b2j_os" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau1b3j_os" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau1b2j_ss" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau1b3j_ss" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
 					}
 				}
   			}
@@ -554,6 +535,11 @@ void plot(int iNP, TString framework, TString method) //method = fitss / fitos /
 		deletepointer(datafile[i]);
 		deletepointer(datafile_fake[i]);
 	}
+	if(plotvar < perpart) {
+		printf("finished %d variables. %d variables in this batch with batch size %d.\n", varcount, plotvar, perpart);
+		return 0;
+	}
+	return 1;
 }
 
 int main(int argc, char const *argv[])
@@ -566,7 +552,8 @@ int main(int argc, char const *argv[])
 	for (int i = from; i <= to; ++i)
 	{
 		printf("=============================generating NP %d : %s=============================\n", i, findNPname(dirname,i,framework).Data());
-		plot(i,framework,method);
+		for(int ipart = 0;1;ipart++)
+			if(!plot(i,framework,method,ipart)) break;
 	}
 	return 0;
 }
