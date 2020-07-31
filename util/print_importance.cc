@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std;
 
-void fillChart(LatexChart* chart, string inputfiles_name){
+void fillChart(LatexChart* chart, string inputfiles_name, TString framework, string output_dir){
 	string outputfile_name = inputfiles_name;
 	printf("Read list %s\n",inputfiles_name.c_str());
 	ifstream input_files(inputfiles_name);
@@ -12,7 +12,7 @@ void fillChart(LatexChart* chart, string inputfiles_name){
 		printf("file %s connot be opened\n", inputfiles_name.c_str());
 	}
 	char inputline[50];
-	auto vars = getVariables("tthML");
+	auto vars = getVariables(framework);
 	while(!input_files.eof()){
 		char file_name[20];
 		input_files.getline(inputline,50);
@@ -45,7 +45,8 @@ void fillChart(LatexChart* chart, string inputfiles_name){
 			chart->set(rowname,region_name,importance*100);
 		}
 		findAndReplaceAll(outputfile_name,".tmp","");
-		chart->print(outputfile_name);
+
+		chart->print(output_dir+"/"+outputfile_name);
 	}
 }
 
@@ -57,15 +58,21 @@ int main(int argc, char const *argv[])
 		return 0;
 	}
 	vector<LatexChart*> charts;
+	string output_dir = TABLE_DIR;
+	TString framework = "tthML";
+	output_dir+="/Importance/";
+	gSystem->mkdir(output_dir.c_str());
+	output_dir+= framework.Data();
+	gSystem->mkdir(output_dir.c_str());
 	for(int i = 1; i< argc; i++){
 		LatexChart* tmpchart = new LatexChart("importance");
-		fillChart(tmpchart,argv[i]);
+		fillChart(tmpchart,argv[i],framework,output_dir);
 		charts.push_back(tmpchart);
 	}
 	for(int i = 1; i < argc-1; i++){
 		charts[0]->concate(charts[i]);
 	}
-	string outputfile_name = "Importance";
-	charts[0]->print(outputfile_name);
+	string outputfile_name = "Merged";
+	charts[0]->print(output_dir+"/"+outputfile_name);
 	return 0;
 }
