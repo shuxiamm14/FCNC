@@ -1,7 +1,6 @@
 # Specify the minimum version for CMake
 
 cmake_minimum_required(VERSION 3.7)
-vim
 add_compile_options(-g)
 # Project's name
 
