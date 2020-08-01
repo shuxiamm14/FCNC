@@ -528,7 +528,22 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			{
   				tau_plots->overlay(samp.name);
 			}
-		TString savename = NPname;
+		TString savename = FIGURE_DIR;
+		if(savename == "") savename = ".";
+		savename += "/" + framework;
+		gSystem->mkdir(savename);
+		if(framework == "tthML"){
+			if(plotFakeLep) {
+				savename += "/fakelep";
+				gSystem->mkdir(savename);
+			} else{
+				savename += "/faketau";
+				gSystem->mkdir(savename);
+				if(fittodata) savename += "/fit";
+				else savename += "/postfit";
+			}
+		}
+		savename += "/" + NPname;
 		if(fittodata) savename += "_" + method;
 		tau_plots->plot_stack(histmiddlename, savename);
 		

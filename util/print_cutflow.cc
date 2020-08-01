@@ -10,6 +10,11 @@ int main(int argc, char const *argv[])
 		printf("Please specify the framework\n");
 	}
 	TString framework = argv[1];
+	string outputdir = TABLE_DIR;
+	outputdir += "/cutflow/";
+	gSystem->mkdir(outputdir.c_str());
+	outputdir += framework.Data();
+	gSystem->mkdir(outputdir.c_str());
 	vector<TString> region_tthML = {
 		"reg1l1tau1b2j_os","reg1l1tau1b2j_ss","reg1l1tau1b3j_os","reg1l1tau1b3j_ss","reg1l2tau1bnj_os","reg1l2tau1bnj_ss",
 		"reg1l1tau2b2j_os","reg1l1tau2b2j_ss","reg1l1tau2b3j_os","reg1l1tau2b3j_ss","reg1l2tau2bnj_os","reg1l2tau2bnj_ss","all"
@@ -23,7 +28,6 @@ int main(int argc, char const *argv[])
 	if(framework == "tthML") region = region_tthML;
 	else region = region_xTFW;
 	float BR = 0.2;
-	gSystem->mkdir("cutflow");
 	vector<fcncSample> bkg_samples = getBkgSamples(framework);
 	vector<fcncSample> sig_samples = getSigSamples(framework,BR);
 	vector<fcncSample> samples = bkg_samples;
@@ -99,13 +103,13 @@ int main(int argc, char const *argv[])
 			else sum->add(chart);
 			chart->caption = chart->label;
 			translateRegion(chart->caption);
-			chart->print("cutflow/" + chart->label);
+			chart->print(outputdir + chart->label);
 			deletepointer(chart);
 		}
 		sum->label = ("cutflow_" + region[ireg]).Data();
 		sum->caption = sum->label;
 		translateRegion(sum->caption);
-		sum->print("cutflow/" + sum->label);
+		sum->print(outputdir + sum->label);
 		deletepointer(sum);
 		charts.clear();
 	}
