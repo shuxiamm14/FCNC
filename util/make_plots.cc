@@ -259,7 +259,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 						for(auto signalsamp : signalmap.at(samples[j].name)){
 							inputfile = getFile(mc_campaign + "_" + signalsamp + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 							double norm = samples[j].norm;
-							tau_plots->read_sample( origin[i], signalsamp + "_" + origin[i], histmiddlename, origintitle[i], (enum EColor)colors[i], norm,inputfile);
+							if(origin[i] == "wjet-fake") tau_plots->read_sample( origin[i], signalsamp + "_wjet", histmiddlename, origintitle[i], (enum EColor)colors[i], norm,inputfile);
+							else tau_plots->read_sample( origin[i], signalsamp + "_" + origin[i], histmiddlename, origintitle[i], (enum EColor)colors[i], norm,inputfile);
 							deletepointer(inputfile);
 						}
 					}
@@ -267,7 +268,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					//inputfile = getFile(mc_campaign + "_" + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 					inputfile = getFile(mc_campaign + "_" + samplename + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 					double norm = samples[j].norm;
-					tau_plots->read_sample( origin[i], samples[j].name + "_" + origin[i], histmiddlename, origintitle[i], (enum EColor)colors[i], norm,inputfile);
+					if(origin[i] == "wjet-fake") tau_plots->read_sample( origin[i], samples[j].name + "_wjet", histmiddlename, origintitle[i], (enum EColor)colors[i], norm,inputfile);
+					else tau_plots->read_sample( origin[i], samples[j].name + "_" + origin[i], histmiddlename, origintitle[i], (enum EColor)colors[i], norm,inputfile);
 					deletepointer(inputfile);
 				}
 			}
@@ -282,7 +284,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				if(!calculate_fake_calibration && signalmap.find(samples[j].name) != signalmap.end()){
 					for(auto signalsamp : signalmap.at(samples[j].name)){
 						inputfile = getFile(mc_campaign + "_" + signalsamp + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
-						for (int i = 0; i < origin.size(); i++) tau_plots->read_sample( samples[j].name, signalsamp + "_" + origin[i], histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
+						for (int i = 0; i < origin.size(); i++) {
+							if(origin[i] == "wjet-fake") tau_plots->read_sample( samples[j].name, signalsamp + "_wjet", histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
+							else tau_plots->read_sample( samples[j].name, signalsamp + "_" + origin[i], histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
+						}
 						deletepointer(inputfile);
 					}
 				}else{
@@ -294,7 +299,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					//tau_plots->read_sample( samples[j].name, samplename + "_lep", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 					if(showFake){
 						if (mergeFake) {
-							for (int i = 0; i < origin.size() - 3; i++) tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], histmiddlename, "Fake MC, 1 truth #tau", kMagenta, norm, inputfile);
+							for (int i = 0; i < origin.size() - 3; i++) {
+								if(origin[i] == "wjet-fake") tau_plots->read_sample( "fake1truth", samplename + "_wjet", histmiddlename, "Fake MC, 1 truth #tau", kMagenta, norm, inputfile);
+								else tau_plots->read_sample( "fake1truth", samplename + "_wjet", histmiddlename, "Fake MC, 1 truth #tau", kMagenta, norm, inputfile);
+							}
 							tau_plots->read_sample( "fake0truth", samplename + "_" + origin[origin.size() - 3], histmiddlename, "fake, 0 truth #tau", kTeal, norm,inputfile);
 						}else if(wfake){
 							for (int i = 0; i < origin.size() - 2; i++) {
@@ -328,11 +336,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	}
 	if(!plotFakeLep){
 		for (int j = 0; j < nregions; ++j){
-			for (int k = 0; k < 2; ++k)
-				for (int i = 1; i < 2; i+=2){
-				  tau_plots->merge_regions(regions[j] + nprong[k] + "_above35_vetobtagwp70",regions[j] + nprong[k] + "_below35_vetobtagwp70",regions[j] + nprong[k]);
-				}
-			if(mergeprong) tau_plots->merge_regions(regions[j] + nprong[0],regions[j] + nprong[1],regions[j]);
+			if(mergeprong) tau_plots->merge_regions(regions[j] + nprong[0] + "_vetobtagwp70",regions[j] + nprong[1] + "_vetobtagwp70",regions[j]);
 		}
 	}
 	if(plot_option == 2){
