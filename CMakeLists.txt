@@ -1,7 +1,7 @@
 # Specify the minimum version for CMake
 
 cmake_minimum_required(VERSION 3.7)
-
+vim
 add_compile_options(-g)
 # Project's name
 
@@ -17,8 +17,8 @@ message("TOOL_DIR=" $ENV{TOOL_DIR})
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
-set(FIGURE_DIR $ENV{FCNC_DIR}/FCNCFigure)
-set(TABLE_DIR $ENV{FCNC_DIR}/FCNCTable)
+set(FIGURE_DIR $ENV{FCNC_DIR}/FCNCFigures)
+set(TABLE_DIR $ENV{FCNC_DIR}/FCNCTables)
 
 #EIGEN3 package needed if dont have one, go git checkout and put the package path here
 set(TOOLDIR $ENV{TOOL_DIR})
