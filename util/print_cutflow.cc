@@ -18,6 +18,7 @@ int main(int argc, char const *argv[])
 	vector<TString> region_tthML = {
 		"reg1l1tau1b2j_os","reg1l1tau1b2j_ss","reg1l1tau1b3j_os","reg1l1tau1b3j_ss","reg1l2tau1bnj_os","reg1l2tau1bnj_ss",
 		"reg1l1tau2b2j_os","reg1l1tau2b2j_ss","reg1l1tau2b3j_os","reg1l1tau2b3j_ss","reg1l2tau2bnj_os","reg1l2tau2bnj_ss","all"
+		"reg2l1tau1bnj", "reg2l1tau2bnj", "reg2lSS1tau1bnj_os", "reg2lSS1tau1bnj_os_antiiso", "reg2lSS1tau1bnj_os_antiisolead"
 	};
 	vector<TString> region_xTFW = {
 		"all","reg2mtau1b2j_os","reg2mtau1b2j_ss",
@@ -93,7 +94,7 @@ int main(int argc, char const *argv[])
 				{
 					TString cut_name = xaxis->GetBinLabel(ibin);
 					if(cut_name == "") break;
-					chart->set(cut_name.Data(), sample.title.Data(), cutflow_hist->GetBinContent(ibin), cutflow_hist->GetBinError(ibin));
+					if(cutflow_hist->GetBinContent(ibin)) chart->set(cut_name.Data(), sample.title.Data(), cutflow_hist->GetBinContent(ibin), cutflow_hist->GetBinError(ibin));
 				}
 			}
 		}
@@ -103,13 +104,12 @@ int main(int argc, char const *argv[])
 			else sum->add(chart);
 			chart->caption = chart->label;
 			translateRegion(chart->caption);
-			chart->print(outputdir + chart->label);
 			deletepointer(chart);
 		}
 		sum->label = ("cutflow_" + region[ireg]).Data();
 		sum->caption = sum->label;
 		translateRegion(sum->caption);
-		sum->print(outputdir + sum->label);
+		sum->print(outputdir + "/" + sum->label);
 		deletepointer(sum);
 		charts.clear();
 	}

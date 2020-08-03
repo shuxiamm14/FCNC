@@ -31,6 +31,9 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString NPname = findNPname(dirname,iNP,framework);
 	TString nominalname = "NOMINAL";
 	TString histmiddlename =  (dirname==NPname || NPname.Contains("fake_mismodelling"))? nominalname:NPname;
+	TString figuredir = FIGURE_DIR;
+	TString chartdir = TABLE_DIR;
+	bool prefit = 1;
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 1;
 	bool wfake = 0;
@@ -56,7 +59,9 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		if(method.Contains("fake")) calculate_fake_calibration = 1;
 		else calculate_fake_calibration = 0;
 	}
-	if(method.Contains("fit")){
+	if(method.Contains("postfit")){
+		prefit = 0;
+	}else if(method.Contains("fit")){
 		doTrex = 0;
 		doPlots = 1;
 		calculate_fake_calibration = 1;
@@ -440,7 +445,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					}
 					SFfile.Close();
 					if(chart){
-						chart->print(chart->label + "_statonly");
+						gSystem->mkdir((chartdir + "/fakeTauFit/").Data());
+						chart->print((chartdir + "/fakeTauFit/").Data() + chart->label + "_statonly");
 					}
 				}
 			}
@@ -528,24 +534,29 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			{
   				tau_plots->overlay(samp.name);
 			}
-		TString savename = FIGURE_DIR;
-		if(savename == "") savename = ".";
-		savename += "/" + framework;
-		gSystem->mkdir(savename);
-		if(framework == "tthML"){
-			if(plotFakeLep) {
-				savename += "/fakelep";
-				gSystem->mkdir(savename);
-			} else{
-				savename += "/faketau";
-				gSystem->mkdir(savename);
-				if(fittodata) savename += "/fit";
-				else savename += "/postfit";
+		if(fittodata) tau_plots->plot_stack(histmiddlename, "plots_" + NPname, "charts_" + NPname);
+		else{
+			if(figuredir == "") figuredir = ".";
+			if(chartdir == "") chartdir = ".";
+			TString savename = "/" + framework;
+			gSystem->mkdir(figuredir + "/" + savename);
+			gSystem->mkdir(chartdir + "/" + savename);
+			if(framework == "tthML"){
+				if(plotFakeLep) {
+					savename += "/fakelep";
+				} else{
+					savename += "/faketau";
+				}
+					gSystem->mkdir(figuredir + "/" + savename);
+					gSystem->mkdir(chartdir + "/" + savename);
+					if(prefit) savename += "/prefit";
+					else savename += "/postfit";
+					gSystem->mkdir(figuredir + "/" + savename);
+					gSystem->mkdir(chartdir + "/" + savename);
 			}
+			savename += "/" + NPname;
+			tau_plots->plot_stack(histmiddlename, figuredir + "/" + savename,chartdir + "/" + savename);
 		}
-		savename += "/" + NPname;
-		if(fittodata) savename += "_" + method;
-		tau_plots->plot_stack(histmiddlename, savename);
 		
 	}
 	deletepointer(tau_plots);
