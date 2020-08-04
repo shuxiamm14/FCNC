@@ -53,6 +53,9 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	int perpart = 5;
 	int varcount = 0;
 	int plotvar = 0;
+	if(method.Contains("nofake")){
+                showFake = 0;
+	}
 	if(method.Contains("plot")){
 		doTrex = 0;
 		doPlots = 1;
@@ -121,10 +124,26 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		if(calculate_fake_calibration){
 			tau_plots->add(vars["tau_pt_0"]);
 			if(!fittodata){
-				tau_plots->add(vars["taulmass"]);
-				tau_plots->add(vars["bpt"]);
-  				tau_plots->add(vars["etmiss"]);
-				tau_plots->add(vars["ljetpt"]);
+				tau_plots->sensitivevariable = "BDTG_test";
+				for(auto var : vars){
+					
+//					if(   var.first!="tau_pt_0"
+//						&&var.first!="tau_pt_1"
+//						&&var.first!="etmiss"
+//						&&var.first!="ttvismass"
+//						&&var.first!="lep_pt_0"
+//						&&var.first!="BDTG_test"
+//					) continue;
+					if(varcount / perpart == ipart){
+						tau_plots->add(var.second);
+						plotvar++;
+					}else if(varcount / perpart == ipart+1) break;
+					varcount++;
+				}
+				//tau_plots->add(vars["taulmass"]);
+				//tau_plots->add(vars["bpt"]);
+  				//tau_plots->add(vars["etmiss"]);
+				//tau_plots->add(vars["ljetpt"]);
 			}
 			//tau_plots->add("p_{T,b}","bpt","GeV");
 			//tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
@@ -538,9 +557,12 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		else{
 			if(figuredir == "") figuredir = ".";
 			if(chartdir == "") chartdir = ".";
-			TString savename = "/" + framework;
+			TString savename = framework;
 			gSystem->mkdir(figuredir + "/" + savename);
 			gSystem->mkdir(chartdir + "/" + savename);
+			savename += showFake? "/showFake" : "/raw";
+			gSystem->mkdir(figuredir + "/" + savename);
+                        gSystem->mkdir(chartdir + "/" + savename);
 			if(framework == "tthML"){
 				if(plotFakeLep) {
 					savename += "/fakelep";
