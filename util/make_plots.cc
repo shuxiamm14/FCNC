@@ -248,8 +248,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	vector<TString> origin = {"b", "c", "g", "j", "lep", "wjet-fake","nomatch","doublefake", "real", "data"};
 	vector<TString> origintitle = {"b-jets fake #tau", "c-jets fake #tau", "gluon-jets fake #tau", "light-jets fake #tau", "lepton fake #tau", "#tau_{W}", "non-matched", "double fake #tau", "real #tau", "data"};
 	if(plotFakeLep){
-		vector<TString> tmp1 = {"chargeFlip","converge","nonPrompt","unknownFakeLep","doubleFakeLep","realLep","data"};
-		vector<TString> tmp2 = {"charge flip","converge","non prompt","unknown fake lep","double fake","realLep","data"};
+		vector<TString> tmp1 = {"chargeFlip","converge","nonPrompt","otherFakeLep","unknownFakeLep","doubleFakeLep","realLep","data"};
+		vector<TString> tmp2 = {"charge flip","converge","non prompt","other fake lep","unknown fake lep","double fake","realLep","data"};
 		origin = tmp1;
 		origintitle = tmp2;
 	}else{

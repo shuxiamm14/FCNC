@@ -1428,7 +1428,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           for (int i = 0; i < leps_matched_pdgId->size(); ++i){
             TString origin = classifyLepFakes(i);
             if(origin == "realLep") nfakelep -= 1;
-            leporigin = sample + "_" + origin;
+            else leporigin = sample + "_" + origin;
           }
           if(nfakelep == 0) leporigin = sample + "_realLep";
           else if(nfakelep >= 2) leporigin = sample + "_doubleFakeLep";
