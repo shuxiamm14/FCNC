@@ -307,6 +307,7 @@ void nominal::BDTBranch(TTree *tree){
 
 
 void nominal::setVecBranch(TTree *tree){
+  tree->SetBranchAddress("chi2", &chi2);
   tree->SetBranchAddress("bjets_score", &bjets_score);
   tree->SetBranchAddress("weights", &weights);
   tree->SetBranchAddress("ljet_indice", &ljet_indice);
@@ -335,6 +336,7 @@ void nominal::setVecBranch(TTree *tree){
 
 void nominal::vecBranch(TTree *tree){
   tree->Branch("bjets_score", &bjets_score);
+  tree->Branch("chi2", &chi2);
   tree->Branch("weights", &weights);
   tree->Branch("ljet_indice", &ljet_indice);
   tree->Branch("taus_n_charged_tracks", &taus_n_charged_tracks);
