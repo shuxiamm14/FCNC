@@ -1219,6 +1219,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
     
         arglist[0] = 1000;
         arglist[1] = 0;
+        gMinside->mnexcm("MIGRADE", arglist, 2, ierflg);
     
         Double_t fmin,edm,errdef;
         Int_t nvpar,nparx,icstat;
@@ -1226,7 +1227,6 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
 
         chi2 = fmin;
 
-        gMinside->mnexcm("MIGRADE", arglist, 2, ierflg);
         for (int i = 0; i < (taus_p4->size() + leps_p4->size() >= 3 ? 5 : (leps_p4->size()?7:6)); ++i) gMinside->GetParameter(i, val[i], err[i]);
         neutrinos_p4->clear();
 
