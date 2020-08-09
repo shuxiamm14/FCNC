@@ -17,6 +17,10 @@ if [ -z ${ttH_fakes_DIR+x} ] ; then
 	alias tthmake='cd $ttH_fakes_DIR/build; make; cd -'
 fi
 
+export TOOL_DIR=/afs/cern.ch/work/m/mxia/xTFW/FCNC_analysis/tools
+export PLOT_LIB_DIR=/afs/cern.ch/work/m/mxia/xTFW/FCNC_analysis/PlotTools
+
+
 Order(){
   infile=$1
   cat ${infile} | sort -n > "${infile}_sorted"
