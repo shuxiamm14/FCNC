@@ -17,6 +17,7 @@ void nominal::initMVA(TString fcnc_region){
   reader[fcnc_region]->AddVariable("etmiss",&etmiss);
   reader[fcnc_region]->AddVariable("ttvismass",&ttvismass);
   reader[fcnc_region]->AddVariable("drtaujmin",&drtaujmin);
+  reader[fcnc_region]->AddVariable("mttjmin",&mttjmin);
   if(!fcnc_region.Contains("2mtau")) {
     reader[fcnc_region]->AddVariable("drlb",&drlb);
     if(fcnc_region.Contains("2lSS")) reader[fcnc_region]->AddVariable("lep_pt_0",&lep_pt_0);
@@ -240,6 +241,7 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("drtautau", & drtautau);
   tree->SetBranchAddress("drttjmin", & drttjmin);
   tree->SetBranchAddress("mtaujmin", & mtaujmin);
+  tree->SetBranchAddress("mttjmin", & mttjmin);
   tree->SetBranchAddress("drtaujmin", & drtaujmin);
   tree->SetBranchAddress("etmiss",&etmiss);
   tree->SetBranchAddress("dphitauetmiss",&dphitauetmiss);
@@ -290,6 +292,7 @@ void nominal::BDTBranch(TTree *tree){
   tree->Branch("drtautau", & drtautau);
   tree->Branch("drttjmin", & drttjmin);
   tree->Branch("mtaujmin", & mtaujmin);
+  tree->Branch("mttjmin", & mttjmin);
   tree->Branch("drtaujmin", & drtaujmin);
   tree->Branch("etmiss",&etmiss);
   tree->Branch("dphitauetmiss",&dphitauetmiss);
@@ -1276,7 +1279,6 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       etmiss = met_p4->Pt();
 
       mtaujmin = 0;
-
       drttjmin = 999;
       mttjmin = 0;
       mjjmin = 0;
@@ -1297,9 +1299,15 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       drtaujmin = 0;
       for (int ijet = 0 ; ijet < ljets_p4->size(); ijet ++ ) {
 
-        if(mtaujmin == 0 || mtaujmin > (*taus_p4->at(0) + *ljets_p4->at(ijet)).M()){
-          mtaujmin = (*taus_p4->at(0) + *ljets_p4->at(ijet)).M();
+        double tmpmttjmin =  (*taus_p4->at(0) + *tau2 + *ljets_p4->at(ijet)).M();
+        double tmpmtaujmin = (*taus_p4->at(0) + *ljets_p4->at(ijet)).M();
+        if(mtaujmin == 0 || mtaujmin > tmpmtaujmin){
+          mtaujmin = tmpmtaujmin;
         }
+        if(mttjmin == 0 || mttjmin > tmpmttjmin){
+          mttjmin = tmpmttjmin;
+        }
+
         if(drtaujmin == 0 || drtaujmin > taus_p4->at(0)->DeltaR(*ljets_p4->at(ijet))){
           drtaujmin = taus_p4->at(0)->DeltaR(*ljets_p4->at(ijet));
           if(taus_p4->size() >= 2) drtaujmin = min(drtaujmin, (float)taus_p4->at(1)->DeltaR(*ljets_p4->at(ijet)));

@@ -97,7 +97,8 @@ std::map<TString,variable*> getVariables(TString framework){
 		ret["tautauvispt"] = new variable("tautauvispt","P_{t,#tau#tau,vis}",100,0.,200.,"GeV",scale,10);
 		ret["t2vismass"] = new variable("t2vismass","m_{t,FCNC,vis}",100,50.,250.,"GeV",scale,10);
 		ret["t1vismass"] = new variable("t1vismass","m_{t,SM,vis}",150,40.,190.,"GeV",scale,15);
-		ret["mtaujmin"] = new variable("mtaujmin","M(#tau#taulight-jet,min)",100,50.,250.,"GeV",scale,10);
+		ret["mttjmin"] = new variable("mttjmin","M(#tau#tau light-jet,min)",100,100.,300.,"GeV",scale,10);
+		ret["mtaujmin"] = new variable("mtaujmin","M(#tau light-jet,min)",100,50.,250.,"GeV",scale,10);
 		ret["mjjmin"] = new variable("mjjmin","M(light-jet,light-jet,min)",100,20.,200.,"GeV",scale,5);
 		ret["etmiss"] = new variable("etmiss","E^{T}_{miss}",100,15.,115.,"GeV",scale,10);
 		ret["x1fit"] = new variable("x1fit","E_{#nu,1}/E_{#tau,1}",100,0.,1.,"",1,10);
