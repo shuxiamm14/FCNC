@@ -143,6 +143,7 @@ int main(int argc, char const *argv[])
 	analysis->reduce = reduce;
 	analysis->debug = debug;
 	analysis->plotTauFake = 0;
+	analysis->ctagFCNC = 1;
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
 	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
 	analysis->doubleCounting = 1;

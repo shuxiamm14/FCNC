@@ -31,8 +31,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString NPname = findNPname(dirname,iNP,framework);
 	TString nominalname = "NOMINAL";
 	TString histmiddlename =  (dirname==NPname || NPname.Contains("fake_mismodelling"))? nominalname:NPname;
-	TString figuredir = FIGURE_DIR;
-	TString chartdir = TABLE_DIR;
+	TString figuredir = method.Contains("test")?"." : FIGURE_DIR;
+	TString chartdir = method.Contains("test")?"." : TABLE_DIR;
 	bool prefit = 1;
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 1;

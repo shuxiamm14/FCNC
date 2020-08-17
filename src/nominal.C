@@ -203,6 +203,7 @@ void nominal::initReduce1(){
   leps_matched_pdgId = new std::vector<int>();
   leps_truth_type = new std::vector<int>();
   bjets_score = new vector<float> ();
+  ljets_bscore = new vector<float> ();
   leps_truth_origin = new vector<int>;
   leps_first_EgMother_pdgId = new vector<int>;
   leps_first_EgMother_truth_origin = new vector<int>;
@@ -210,6 +211,7 @@ void nominal::initReduce1(){
 }
 
 void nominal::setBDTBranch(TTree *tree){
+  tree->SetBranchAddress("fcncjetbscore", &fcncjetbscore);
   tree->SetBranchAddress("taus_matched_pdgId", &taus_matched_pdgId);
   tree->SetBranchAddress("taus_matched_mother_pdgId", &taus_matched_mother_pdgId);
   tree->SetBranchAddress("weights", & weights);
@@ -258,6 +260,7 @@ void nominal::setBDTBranch(TTree *tree){
 }
 
 void nominal::BDTBranch(TTree *tree){
+  tree->Branch("fcncjetbscore", &fcncjetbscore);
   tree->Branch("taus_b_tagged", &taus_b_tagged);
   tree->Branch("taus_n_charged_tracks", &taus_n_charged_tracks);
   tree->Branch("taus_matched_pdgId", &taus_matched_pdgId);
@@ -308,6 +311,7 @@ void nominal::BDTBranch(TTree *tree){
 
 void nominal::setVecBranch(TTree *tree){
   tree->SetBranchAddress("bjets_score", &bjets_score);
+  tree->SetBranchAddress("ljets_bscore", &ljets_bscore);
   tree->SetBranchAddress("weights", &weights);
   tree->SetBranchAddress("ljet_indice", &ljet_indice);
   tree->SetBranchAddress("taus_n_charged_tracks", &taus_n_charged_tracks);
@@ -335,6 +339,7 @@ void nominal::setVecBranch(TTree *tree){
 
 void nominal::vecBranch(TTree *tree){
   tree->Branch("bjets_score", &bjets_score);
+  tree->Branch("ljets_bscore", &ljets_bscore);
   tree->Branch("weights", &weights);
   tree->Branch("ljet_indice", &ljet_indice);
   tree->Branch("taus_n_charged_tracks", &taus_n_charged_tracks);
@@ -1124,14 +1129,21 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       if(bjets_p4->size() >= 2){
          if(!bjets_score || !bjets_score->size() || bjets_score->at(0) > bjets_score->at(1)){
            ljets_p4->push_back(bjets_p4->at(1));
+           ljets_bscore->push_back(bjets_score->at(1));
            bjets_p4->erase(bjets_p4->begin()+1);
+           bjets_score->erase(bjets_score->begin()+1);
          }else{
            ljets_p4->push_back(bjets_p4->at(0));
+           ljets_bscore->push_back(bjets_score->at(0));
            bjets_p4->erase(bjets_p4->begin());
+           bjets_score->erase(bjets_score->begin());
          }
       }
 
       ljet_indice = findcjet();
+      if(ljet_indice->size()) fcncjetbscore = ljets_bscore->at(ljet_indice->at(0));
+      else fcncjetbscore = 0;
+      
   
       TLorentzVector *tau2 = 0;
       TLorentzVector *wlep = 0;
@@ -1333,6 +1345,10 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
     if(reduce == 3){
       BDTG_test  = 0;
       BDTG_train  = 0;
+      if(ctagFCNC && fcncjetbscore < btagwpCut[3]) {
+        continue;
+      }
+      cut_flow.fill("Loose btag FCNC jet");
       if(doBDT){
         if(debug) printf("eval BDTG\n");
         if(belong_regions.have("2mtau")){
