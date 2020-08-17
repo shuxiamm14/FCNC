@@ -223,6 +223,9 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		"reg2lSS1tau1bnj_os",
 		"reg2lSS1tau1bnj_os_antiiso",
 		"reg2lSS1tau1bnj_os_antiisolead",
+		"reg2lSS1taunj_os",
+		"reg2lSS1taunj_os_antiiso",
+		"reg2lSS1taunj_os_antiisolead",
 	};
 	vector<TString> regions_tthML = plotFakeLep? regions_tthML_fakelep : regions_tthML_faketau;
 	//vector<TString> regions_calc_fake = {"reg2l1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_os","reg2l1tau1b","reg1l1tau2b_os","reg1l1tau2b_ss"};//,"reg2l2bnj","reg1l2b2j","reg2l2b"};

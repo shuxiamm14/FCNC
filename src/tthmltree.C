@@ -46,6 +46,9 @@ tthmltree::tthmltree():nominal::nominal(){
     "reg1l1tau2b1j_ss",
     "reg1l1tau2b_os",
     "reg1l1tau2b_ss",
+    "reg2lSS1taunj_os",
+    "reg2lSS1taunj_os_antiiso",
+    "reg2lSS1taunj_os_antiisolead",
     "reg2l2bnj",
   };
 

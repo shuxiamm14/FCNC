@@ -1123,218 +1123,218 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       if(!nominaltree && taus_p4->size()) {
         taus_matched_mother_pdgId = taumatchmap[eventNumber];
       }
-
-      if(bjets_p4->size() >= 2){
-         if(!bjets_score || !bjets_score->size() || bjets_score->at(0) > bjets_score->at(1)){
-           ljets_p4->push_back(bjets_p4->at(1));
-           bjets_p4->erase(bjets_p4->begin()+1);
-         }else{
-           ljets_p4->push_back(bjets_p4->at(0));
-           bjets_p4->erase(bjets_p4->begin());
-         }
-      }
-
-      ljet_indice = findcjet();
+      if(fcnc){
+        if(bjets_p4->size() >= 2){
+           if(!bjets_score || !bjets_score->size() || bjets_score->at(0) > bjets_score->at(1)){
+             ljets_p4->push_back(bjets_p4->at(1));
+             bjets_p4->erase(bjets_p4->begin()+1);
+           }else{
+             ljets_p4->push_back(bjets_p4->at(0));
+             bjets_p4->erase(bjets_p4->begin());
+           }
+        }
+        ljet_indice = findcjet();
   
-      TLorentzVector *tau2 = 0;
-      TLorentzVector *wlep = 0;
-      if(taus_p4->size() == 2) {
-        tau2 = taus_p4->at(1);
-        wlep = leps_p4->at(0);
-      }
-      else {
-        tau2 = leps_p4->at(0);
-        if(leps_p4->size() == 2){
-          if((belong_regions.have("2lSS1tau") && tau2->DeltaR(*taus_p4->at(0)) > leps_p4->at(1)->DeltaR(*taus_p4->at(0)))
-            || (!belong_regions.have("2l1tau") && leps_id->at(0)*taus_q->at(0) < 0) ){
-            tau2 = leps_p4->at(1);
-            wlep = leps_p4->at(0);
-          }else{
-            wlep = leps_p4->at(1);
-          }
-          
-        }else{
-          wlep = 0;
-        }
-      }
-      if(wlep) t1vismass = (*wlep + *bjets_p4->at(0)).M();
-
-      ttvismass = (*taus_p4->at(0) + *tau2).M();
-      drtautau = taus_p4->at(0)->DeltaR(*tau2);
-      if(belong_regions.have("2mtau")){
-        if(ttvismass < 50*GeV) continue;
-        cut_flow.fill("$m_{\\tau\\tau,vis}>50$");
-        if(ttvismass > 130*GeV) continue;
-        cut_flow.fill("$m_{\\tau\\tau,vis}<130$");
-        if(drtautau > 3.4) continue;
-        cut_flow.fill("$\\Delta R(\\tau,\\tau)<3.4$");
-        if (belong_regions.have("1l2tau"))
-        {
-          if(t1vismass > 190*GeV )
-            continue;
-          cut_flow.fill("$m_{l,b}<190$");
-        }
-      }
-      if(dofit && (taus_p4->size() + leps_p4->size() == 2 || dofit1l2tau)){
-
-        if (taus_p4->size() + leps_p4->size() >= 3) {
-          gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
-          gMinside->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
-          gMinside->mnparm(2, "pt3", 10*GeV, 10*GeV, 0., 1000*GeV, ierflg);
-          gMinside->mnparm(3, "eta3", 0, 0.1, -5, 5, ierflg);
-          gMinside->mnparm(4, "phi3", 0, 0.1, -PI, PI, ierflg);
-          arglist[0] = 5;
-        } else {
-          gMinside->mnparm(0, "v1pt",  tau_pt_0, 1*GeV, 0., 1000*GeV, ierflg);
-          gMinside->mnparm(1, "v1eta", taus_p4->at(0)->Eta(), 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
-          gMinside->mnparm(2, "v1phi", taus_p4->at(0)->Phi(), 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
-          gMinside->mnparm(3, "v2pt",  tau2->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
-          gMinside->mnparm(4, "v2eta", tau2->Eta(), 0.01, tau2->Eta()-0.25, tau2->Eta()+0.25, ierflg);
-          gMinside->mnparm(5, "v2phi", tau2->Phi(), 0.01, tau2->Phi()-0.25, tau2->Phi()+0.25, ierflg);
-          if(leps_p4->size()) gMinside->mnparm(6, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
-          arglist[0] = 7;
-        }
-    
-        gMinside->SetObjectFit((TObject*)&fitvec);
-        arglist[1] = 60.;
-        Double_t val[7] = {0,0,0,0,0,0,0};
-        Double_t err[7] = {0,0,0,0,0,0,0};
-
-        if(debug) printf("start kinematic fit\n");
-        gMinside->mnexcm("SCAN", arglist, 2, ierflg);
-        for (int i = 0; i < 7; ++i) gMinside->GetParameter(i, val[i], err[i]);
-    
-        if (taus_p4->size() >= 2) {
-          gMinside->mnparm(0, "rpt1", val[0], 0.01, 0., 2., ierflg);
-          gMinside->mnparm(1, "rpt2", val[1], 0.01, 0., 2., ierflg);
-          gMinside->mnparm(2, "pt3",  val[2], 10*GeV, 0., 1000*GeV, ierflg);
-          gMinside->mnparm(3, "eta3", val[3], 0.1, -5, 5, ierflg);
-          gMinside->mnparm(4, "phi3", val[4], 0.1, -PI, PI, ierflg);
-        } else {
-          gMinside->mnparm(0, "v1pt",  val[0], 1, 0., 1000*GeV, ierflg);
-          gMinside->mnparm(1, "v1eta", val[1], 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
-          gMinside->mnparm(2, "v1phi", val[2], 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
-          gMinside->mnparm(3, "v2pt",  val[3], 1, 0., 1000*GeV, ierflg);
-          gMinside->mnparm(4, "v2eta", val[4], 0.01, tau2->Eta()-0.25, tau2->Eta()+0.25, ierflg);
-          gMinside->mnparm(5, "v2phi", val[5], 0.01, tau2->Phi()-0.25, tau2->Phi()+0.25, ierflg);
-          if(leps_p4->size()) gMinside->mnparm(6, "v2m",   val[6], 0.01, 0, 1776, ierflg);
-        }
-    
-        arglist[0] = 1000;
-        arglist[1] = 0;
-        gMinside->mnexcm("MIGRADE", arglist, 2, ierflg);
-    
-        Double_t fmin,edm,errdef;
-        Int_t nvpar,nparx,icstat;
-        gMinuit->mnstat(fmin,edm,errdef,nvpar,nparx,icstat);
-
-        chi2 = fmin;
-
-        for (int i = 0; i < (taus_p4->size() + leps_p4->size() >= 3 ? 5 : (leps_p4->size()?7:6)); ++i) gMinside->GetParameter(i, val[i], err[i]);
-        neutrinos_p4->clear();
-
-        TLorentzVector *tauv1_v = new TLorentzVector();
-        TLorentzVector *tauv2_v = new TLorentzVector();
-        TLorentzVector *wv_v = new TLorentzVector();
-        if(taus_p4->size() + leps_p4->size() >= 3) {
-          tauv1_v->SetPtEtaPhiM(val[0]*taus_p4->at(0)->Pt(), taus_p4->at(0)->Eta(), taus_p4->at(0)->Phi(), ljets_p4->size() >= 2 ? 0 : val[2]);
-          tauv2_v->SetPtEtaPhiM(val[1]*tau2->Pt(), tau2->Eta(), tau2->Phi(), 0);
-          x1fit = 1 / (1 + val[0]);
-          x2fit = 1 / (1 + val[1]);
-          wv_v->SetPtEtaPhiM(val[2], val[3], val[4], 0);
-          t1mass = (*wlep + *wv_v + *bjets_p4->at(0)).M();
-          wmass = (*wlep + *wv_v).M();
+        TLorentzVector *tau2 = 0;
+        TLorentzVector *wlep = 0;
+        if(taus_p4->size() == 2) {
+          tau2 = taus_p4->at(1);
+          wlep = leps_p4->at(0);
         }
         else {
-          tauv1_v->SetPtEtaPhiM(val[0],val[1],val[2],0);
-          tauv2_v->SetPtEtaPhiM(val[3],val[4],val[5],val[6]);
-          x1fit = taus_p4->at(0)->E() / (*taus_p4->at(0) + *tauv1_v).E();
-          x2fit = tau2->E() / (*tau2 + *tauv2_v).E();
-        }
-        neutrinos_p4->push_back(tauv1_v);
-        neutrinos_p4->push_back(tauv2_v);
-        if(taus_p4->size() + leps_p4->size() >= 3) neutrinos_p4->push_back(wv_v);
-        else deletepointer(wv_v);
-
-        if(taus_p4->size() + leps_p4->size() == 2){
-          if(ljets_p4->size()>=3){
-            t1mass = (*(ljets_p4->at(ljet_indice->at(1))) + *(ljets_p4->at(ljet_indice->at(2))) + *(bjets_p4->at(0))).M();
-            wmass = (*(ljets_p4->at(ljet_indice->at(1))) + *(ljets_p4->at(ljet_indice->at(2)))).M();
+          tau2 = leps_p4->at(0);
+          if(leps_p4->size() == 2){
+            if((belong_regions.have("2lSS1tau") && tau2->DeltaR(*taus_p4->at(0)) > leps_p4->at(1)->DeltaR(*taus_p4->at(0)))
+              || (!belong_regions.have("2l1tau") && leps_id->at(0)*taus_q->at(0) < 0) ){
+              tau2 = leps_p4->at(1);
+              wlep = leps_p4->at(0);
+            }else{
+              wlep = leps_p4->at(1);
+            }
+            
           }else{
-            t1mass = (*(ljets_p4->at(ljet_indice->at(0))) + *(ljets_p4->at(ljet_indice->at(1))) + *(bjets_p4->at(0))).M();
-            wmass = (*(ljets_p4->at(ljet_indice->at(0))) + *(ljets_p4->at(ljet_indice->at(1)))).M();
+            wlep = 0;
           }
-          t2mass = (*(ljets_p4->at(ljet_indice->at(0))) + *(taus_p4->at(0)) + *(tau2) + *neutrinos_p4->at(0) + *neutrinos_p4->at(1)).M();
-          tautaumass = (*(taus_p4->at(0)) + *(tau2) + *neutrinos_p4->at(0) + *neutrinos_p4->at(1)).M();
         }
-        x1fit = 1 - neutrinos_p4->at(0)->E() / (*(taus_p4->at(0)) + *neutrinos_p4->at(0)).E();
-        x2fit = 1 - neutrinos_p4->at(1)->E() / (*(tau2) + *neutrinos_p4->at(1)).E();
-      }
-
-      phicent = phi_centrality(taus_p4->at(0)->Phi(),tau2->Phi(),met_p4->Phi());
-      tautauvispt = (*taus_p4->at(0) + *tau2).Pt();
-      t2vismass = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2 + *ljets_p4->at(ljet_indice->at(0))).M() : 0;
-      drttj = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2).DeltaR(*ljets_p4->at(ljet_indice->at(0))) : 0;
-      dphitauetmiss = fabs(met_p4->DeltaPhi(*taus_p4->at(0) + *tau2));
-      etmiss = met_p4->Pt();
-
-      mtaujmin = 0;
-      drttjmin = 999;
-      mttjmin = 0;
-      mjjmin = 0;
-      drlb = leps_p4->at(0)->DeltaR(*bjets_p4->at(0));
-      drtaub = taus_p4->at(0)->DeltaR(*bjets_p4->at(0));
-      drltau = taus_p4->at(0)->DeltaR(*leps_p4->at(0));
-
-      if(wlep && wlep != leps_p4->at(0)) drltau = taus_p4->at(0)->DeltaR(*wlep);
-      etamax = 0;
-      for (auto tau: *taus_p4)
-      {
-        etamax = max(etamax,(float)fabs(tau->Eta()));
-      }
-      if(wlep) mtw = sqrt(2*wlep->Pt()*etmiss*(1 - cos( met_p4->DeltaPhi(*wlep) )));
-      if(taus_p4->size() >= 2) drlbditau = (*leps_p4->at(0) + *bjets_p4->at(0)).DeltaR(*taus_p4->at(0) + *taus_p4->at(1));
-      else if(wlep) drlbditau = (*wlep + *bjets_p4->at(0)).DeltaR(*taus_p4->at(0) + *tau2);
-
-      drtaujmin = 0;
-      for (int ijet = 0 ; ijet < ljets_p4->size(); ijet ++ ) {
-
-        double tmpmttjmin =  (*taus_p4->at(0) + *tau2 + *ljets_p4->at(ijet)).M();
-        double tmpmtaujmin = (*taus_p4->at(0) + *ljets_p4->at(ijet)).M();
-        if(mtaujmin == 0 || mtaujmin > tmpmtaujmin){
-          mtaujmin = tmpmtaujmin;
+        if(wlep) t1vismass = (*wlep + *bjets_p4->at(0)).M();
+  
+        ttvismass = (*taus_p4->at(0) + *tau2).M();
+        drtautau = taus_p4->at(0)->DeltaR(*tau2);
+        if(belong_regions.have("2mtau")){
+          if(ttvismass < 50*GeV) continue;
+          cut_flow.fill("$m_{\\tau\\tau,vis}>50$");
+          if(ttvismass > 130*GeV) continue;
+          cut_flow.fill("$m_{\\tau\\tau,vis}<130$");
+          if(drtautau > 3.4) continue;
+          cut_flow.fill("$\\Delta R(\\tau,\\tau)<3.4$");
+          if (belong_regions.have("1l2tau"))
+          {
+            if(t1vismass > 190*GeV )
+              continue;
+            cut_flow.fill("$m_{l,b}<190$");
+          }
         }
-        if(mttjmin == 0 || mttjmin > tmpmttjmin){
-          mttjmin = tmpmttjmin;
+        if(dofit && (taus_p4->size() + leps_p4->size() == 2 || dofit1l2tau)){
+  
+          if (taus_p4->size() + leps_p4->size() >= 3) {
+            gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
+            gMinside->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
+            gMinside->mnparm(2, "pt3", 10*GeV, 10*GeV, 0., 1000*GeV, ierflg);
+            gMinside->mnparm(3, "eta3", 0, 0.1, -5, 5, ierflg);
+            gMinside->mnparm(4, "phi3", 0, 0.1, -PI, PI, ierflg);
+            arglist[0] = 5;
+          } else {
+            gMinside->mnparm(0, "v1pt",  tau_pt_0, 1*GeV, 0., 1000*GeV, ierflg);
+            gMinside->mnparm(1, "v1eta", taus_p4->at(0)->Eta(), 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
+            gMinside->mnparm(2, "v1phi", taus_p4->at(0)->Phi(), 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
+            gMinside->mnparm(3, "v2pt",  tau2->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
+            gMinside->mnparm(4, "v2eta", tau2->Eta(), 0.01, tau2->Eta()-0.25, tau2->Eta()+0.25, ierflg);
+            gMinside->mnparm(5, "v2phi", tau2->Phi(), 0.01, tau2->Phi()-0.25, tau2->Phi()+0.25, ierflg);
+            if(leps_p4->size()) gMinside->mnparm(6, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
+            arglist[0] = 7;
+          }
+      
+          gMinside->SetObjectFit((TObject*)&fitvec);
+          arglist[1] = 60.;
+          Double_t val[7] = {0,0,0,0,0,0,0};
+          Double_t err[7] = {0,0,0,0,0,0,0};
+  
+          if(debug) printf("start kinematic fit\n");
+          gMinside->mnexcm("SCAN", arglist, 2, ierflg);
+          for (int i = 0; i < 7; ++i) gMinside->GetParameter(i, val[i], err[i]);
+      
+          if (taus_p4->size() >= 2) {
+            gMinside->mnparm(0, "rpt1", val[0], 0.01, 0., 2., ierflg);
+            gMinside->mnparm(1, "rpt2", val[1], 0.01, 0., 2., ierflg);
+            gMinside->mnparm(2, "pt3",  val[2], 10*GeV, 0., 1000*GeV, ierflg);
+            gMinside->mnparm(3, "eta3", val[3], 0.1, -5, 5, ierflg);
+            gMinside->mnparm(4, "phi3", val[4], 0.1, -PI, PI, ierflg);
+          } else {
+            gMinside->mnparm(0, "v1pt",  val[0], 1, 0., 1000*GeV, ierflg);
+            gMinside->mnparm(1, "v1eta", val[1], 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
+            gMinside->mnparm(2, "v1phi", val[2], 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
+            gMinside->mnparm(3, "v2pt",  val[3], 1, 0., 1000*GeV, ierflg);
+            gMinside->mnparm(4, "v2eta", val[4], 0.01, tau2->Eta()-0.25, tau2->Eta()+0.25, ierflg);
+            gMinside->mnparm(5, "v2phi", val[5], 0.01, tau2->Phi()-0.25, tau2->Phi()+0.25, ierflg);
+            if(leps_p4->size()) gMinside->mnparm(6, "v2m",   val[6], 0.01, 0, 1776, ierflg);
+          }
+      
+          arglist[0] = 1000;
+          arglist[1] = 0;
+          gMinside->mnexcm("MIGRADE", arglist, 2, ierflg);
+      
+          Double_t fmin,edm,errdef;
+          Int_t nvpar,nparx,icstat;
+          gMinuit->mnstat(fmin,edm,errdef,nvpar,nparx,icstat);
+  
+          chi2 = fmin;
+  
+          for (int i = 0; i < (taus_p4->size() + leps_p4->size() >= 3 ? 5 : (leps_p4->size()?7:6)); ++i) gMinside->GetParameter(i, val[i], err[i]);
+          neutrinos_p4->clear();
+  
+          TLorentzVector *tauv1_v = new TLorentzVector();
+          TLorentzVector *tauv2_v = new TLorentzVector();
+          TLorentzVector *wv_v = new TLorentzVector();
+          if(taus_p4->size() + leps_p4->size() >= 3) {
+            tauv1_v->SetPtEtaPhiM(val[0]*taus_p4->at(0)->Pt(), taus_p4->at(0)->Eta(), taus_p4->at(0)->Phi(), ljets_p4->size() >= 2 ? 0 : val[2]);
+            tauv2_v->SetPtEtaPhiM(val[1]*tau2->Pt(), tau2->Eta(), tau2->Phi(), 0);
+            x1fit = 1 / (1 + val[0]);
+            x2fit = 1 / (1 + val[1]);
+            wv_v->SetPtEtaPhiM(val[2], val[3], val[4], 0);
+            t1mass = (*wlep + *wv_v + *bjets_p4->at(0)).M();
+            wmass = (*wlep + *wv_v).M();
+          }
+          else {
+            tauv1_v->SetPtEtaPhiM(val[0],val[1],val[2],0);
+            tauv2_v->SetPtEtaPhiM(val[3],val[4],val[5],val[6]);
+            x1fit = taus_p4->at(0)->E() / (*taus_p4->at(0) + *tauv1_v).E();
+            x2fit = tau2->E() / (*tau2 + *tauv2_v).E();
+          }
+          neutrinos_p4->push_back(tauv1_v);
+          neutrinos_p4->push_back(tauv2_v);
+          if(taus_p4->size() + leps_p4->size() >= 3) neutrinos_p4->push_back(wv_v);
+          else deletepointer(wv_v);
+  
+          if(taus_p4->size() + leps_p4->size() == 2){
+            if(ljets_p4->size()>=3){
+              t1mass = (*(ljets_p4->at(ljet_indice->at(1))) + *(ljets_p4->at(ljet_indice->at(2))) + *(bjets_p4->at(0))).M();
+              wmass = (*(ljets_p4->at(ljet_indice->at(1))) + *(ljets_p4->at(ljet_indice->at(2)))).M();
+            }else{
+              t1mass = (*(ljets_p4->at(ljet_indice->at(0))) + *(ljets_p4->at(ljet_indice->at(1))) + *(bjets_p4->at(0))).M();
+              wmass = (*(ljets_p4->at(ljet_indice->at(0))) + *(ljets_p4->at(ljet_indice->at(1)))).M();
+            }
+            t2mass = (*(ljets_p4->at(ljet_indice->at(0))) + *(taus_p4->at(0)) + *(tau2) + *neutrinos_p4->at(0) + *neutrinos_p4->at(1)).M();
+            tautaumass = (*(taus_p4->at(0)) + *(tau2) + *neutrinos_p4->at(0) + *neutrinos_p4->at(1)).M();
+          }
+          x1fit = 1 - neutrinos_p4->at(0)->E() / (*(taus_p4->at(0)) + *neutrinos_p4->at(0)).E();
+          x2fit = 1 - neutrinos_p4->at(1)->E() / (*(tau2) + *neutrinos_p4->at(1)).E();
         }
-
-        if(drtaujmin == 0 || drtaujmin > taus_p4->at(0)->DeltaR(*ljets_p4->at(ijet))){
-          drtaujmin = taus_p4->at(0)->DeltaR(*ljets_p4->at(ijet));
-          if(taus_p4->size() >= 2) drtaujmin = min(drtaujmin, (float)taus_p4->at(1)->DeltaR(*ljets_p4->at(ijet)));
+  
+        phicent = phi_centrality(taus_p4->at(0)->Phi(),tau2->Phi(),met_p4->Phi());
+        tautauvispt = (*taus_p4->at(0) + *tau2).Pt();
+        t2vismass = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2 + *ljets_p4->at(ljet_indice->at(0))).M() : 0;
+        drttj = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2).DeltaR(*ljets_p4->at(ljet_indice->at(0))) : 0;
+        dphitauetmiss = fabs(met_p4->DeltaPhi(*taus_p4->at(0) + *tau2));
+        etmiss = met_p4->Pt();
+  
+        mtaujmin = 0;
+        drttjmin = 999;
+        mttjmin = 0;
+        mjjmin = 0;
+        drlb = leps_p4->at(0)->DeltaR(*bjets_p4->at(0));
+        drtaub = taus_p4->at(0)->DeltaR(*bjets_p4->at(0));
+        drltau = taus_p4->at(0)->DeltaR(*leps_p4->at(0));
+  
+        if(wlep && wlep != leps_p4->at(0)) drltau = taus_p4->at(0)->DeltaR(*wlep);
+        etamax = 0;
+        for (auto tau: *taus_p4)
+        {
+          etamax = max(etamax,(float)fabs(tau->Eta()));
         }
-        if(drttjmin > (*(taus_p4->at(0)) + *(tau2)).DeltaR(*ljets_p4->at(ijet)))
-          drttjmin = (*(taus_p4->at(0)) + *(tau2)).DeltaR(*ljets_p4->at(ijet));
-        if(mttjmin > (*(taus_p4->at(0)) + *(tau2)+ *ljets_p4->at(ijet)).M() || mttjmin == 0)
-          mttjmin = (*(taus_p4->at(0)) + *(tau2) + *ljets_p4->at(ijet)).M();
-
-        for(int jjet = ijet+1 ; jjet < ljets_p4->size(); jjet ++ ){
-          double tmpmjj = (*ljets_p4->at(ijet)+*ljets_p4->at(jjet)).M();
-          if(mjjmin > tmpmjj || mjjmin==0) mjjmin = tmpmjj;
+        if(wlep) mtw = sqrt(2*wlep->Pt()*etmiss*(1 - cos( met_p4->DeltaPhi(*wlep) )));
+        if(taus_p4->size() >= 2) drlbditau = (*leps_p4->at(0) + *bjets_p4->at(0)).DeltaR(*taus_p4->at(0) + *taus_p4->at(1));
+        else if(wlep) drlbditau = (*wlep + *bjets_p4->at(0)).DeltaR(*taus_p4->at(0) + *tau2);
+  
+        drtaujmin = 0;
+        for (int ijet = 0 ; ijet < ljets_p4->size(); ijet ++ ) {
+  
+          double tmpmttjmin =  (*taus_p4->at(0) + *tau2 + *ljets_p4->at(ijet)).M();
+          double tmpmtaujmin = (*taus_p4->at(0) + *ljets_p4->at(ijet)).M();
+          if(mtaujmin == 0 || mtaujmin > tmpmtaujmin){
+            mtaujmin = tmpmtaujmin;
+          }
+          if(mttjmin == 0 || mttjmin > tmpmttjmin){
+            mttjmin = tmpmttjmin;
+          }
+  
+          if(drtaujmin == 0 || drtaujmin > taus_p4->at(0)->DeltaR(*ljets_p4->at(ijet))){
+            drtaujmin = taus_p4->at(0)->DeltaR(*ljets_p4->at(ijet));
+            if(taus_p4->size() >= 2) drtaujmin = min(drtaujmin, (float)taus_p4->at(1)->DeltaR(*ljets_p4->at(ijet)));
+          }
+          if(drttjmin > (*(taus_p4->at(0)) + *(tau2)).DeltaR(*ljets_p4->at(ijet)))
+            drttjmin = (*(taus_p4->at(0)) + *(tau2)).DeltaR(*ljets_p4->at(ijet));
+          if(mttjmin > (*(taus_p4->at(0)) + *(tau2)+ *ljets_p4->at(ijet)).M() || mttjmin == 0)
+            mttjmin = (*(taus_p4->at(0)) + *(tau2) + *ljets_p4->at(ijet)).M();
+  
+          for(int jjet = ijet+1 ; jjet < ljets_p4->size(); jjet ++ ){
+            double tmpmjj = (*ljets_p4->at(ijet)+*ljets_p4->at(jjet)).M();
+            if(mjjmin > tmpmjj || mjjmin==0) mjjmin = tmpmjj;
+          }
         }
-      }
-      pt_b = bjets_p4->at(0)->Pt();
-      pt_ljet = ljets_p4->size() ? ljets_p4->at(0)->Pt():0;
-      if(leps_p4->size()){
-        lep_pt_0 = leps_p4->at(0)->Pt();
-        lep_pt_1 = leps_p4->size() == 1? 0 : leps_p4->at(1)->Pt();
-      }
-
-      if (dumptruth && fcnc && sample.Contains("fcnc")) dumpTruth(eventNumber % 2);
-      tau_pt_0 = taus_p4->at(0)->Pt();
-      if(taus_p4->size()>=2) tau_pt_1 = taus_p4->at(1)->Pt();
-      if(leps_p4->size()) {
+        pt_b = bjets_p4->at(0)->Pt();
+        pt_ljet = ljets_p4->size() ? ljets_p4->at(0)->Pt():0;
+        if(leps_p4->size()){
+          lep_pt_0 = leps_p4->at(0)->Pt();
+          lep_pt_1 = leps_p4->size() == 1? 0 : leps_p4->at(1)->Pt();
+        }
+  
+        if (dumptruth && fcnc && sample.Contains("fcnc")) dumpTruth(eventNumber % 2);
         tau_pt_0 = taus_p4->at(0)->Pt();
-        if(leps_p4->size()>=2) lep_pt_1 = leps_p4->at(1)->Pt();
+        if(taus_p4->size()>=2) tau_pt_1 = taus_p4->at(1)->Pt();
+        if(leps_p4->size()) {
+          tau_pt_0 = taus_p4->at(0)->Pt();
+          if(leps_p4->size()>=2) lep_pt_1 = leps_p4->at(1)->Pt();
+        }
       }
     }
 
@@ -1498,8 +1498,8 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
               if(it != weightvec.end()) index = std::distance(weightvec.begin(), it);
               else continue;
               if(index==2 || index==1) weight = weights->at(index);
-              else if(index > 8 && index < 17)
-                weight = weights->at(2) * weights->at(index);
+              //else if(index > 8 && index < 17)
+              //  weight = weights->at(2) * weights->at(index);
               else if(index !=0)
                 weight *= weights->at(index);
             }
@@ -1604,16 +1604,19 @@ void nominal::defineRegions(){
         if(bjets_p4->size() == 2 && taus_p4->size() == 0) belong_regions.add("reg2l2bnj");
       }
       if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau1bnj_os");
+      if(bjets_p4->size() == 0 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1taunj_os");
       //if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau1bnj_ss");
       //if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau2bnj_os");
       //if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau2bnj_ss");
     }else if(leps_iso->at(0) && !leps_iso->at(1)){ //reverse iso only for 2nd lepton
       if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau1bnj_os_antiiso");
+      if(bjets_p4->size() == 0 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1taunj_os_antiiso");
       //if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau1bnj_ss_antiiso");
       //if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau2bnj_os_antiiso");
       //if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau2bnj_ss_antiiso");
     }else if(leps_iso->at(1) && !leps_iso->at(0)){ //reverse iso only for 1st lepton
       if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau1bnj_os_antiisolead");
+      if(bjets_p4->size() == 0 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1taunj_os_antiisolead");
       //if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau1bnj_ss_antiisolead");
       //if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau2bnj_os_antiisolead");
       //if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau2bnj_ss_antiisolead");
