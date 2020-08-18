@@ -58,7 +58,7 @@ int main(int argc, char const *argv[])
 	}
 	vector<TString> regions, regions_fake, regions_notau;
 	if(framework == "xTFW"){
-		regions.push_back("reg2mtau1b2jss");
+	      /*	regions.push_back("reg2mtau1b2jss");
 		regions.push_back("reg2mtau1b3jss");
 		regions.push_back("reg2mtau1b3jos");
 		regions.push_back("reg2mtau1b2jos");
@@ -81,7 +81,27 @@ int main(int argc, char const *argv[])
 		regions.push_back("reg2ttau1b2jos");
 		regions.push_back("reg1ttau1mtau1b2jos");
 		regions.push_back("reg2ttau1b3jos");
-		regions.push_back("reg1ttau1mtau1b3jos");
+		regions.push_back("reg1ttau1mtau1b3jos");*/
+                regions.push_back("reg2mtau1b2jss");
+regions.push_back("reg2mtau1b3jss");
+regions.push_back("reg2mtau1b2jos");
+regions.push_back("reg2mtau1b3jos");
+regions.push_back("reg2mtau2b2jss");
+regions.push_back("reg2mtau2b3jss");
+regions.push_back("reg2mtau2b2jos");
+regions.push_back("reg2mtau2b3jos");
+//regions.push_back("reg2mtau0b4jos");
+//regions.push_back("reg2mtau0b3jos");
+//regions.push_back("reg2mtau0b4jss");
+//regions.push_back("reg2mtau0b3jss");
+//regions.push_back("reg2mtau4jos");
+//regions.push_back("reg2mtau3jos");
+//regions.push_back("reg2mtau4jss");
+//regions.push_back("reg2mtau3jss");
+regions.push_back("reg2ltau1b2jss");
+regions.push_back("reg2ltau1b3jss");
+regions.push_back("reg2ltau1b2jos");
+regions.push_back("reg2ltau1b3jos");
 	}else{
 		if(tthdofcnc || reduce == 1){
 			regions.push_back("reg1l1tau1b2j_os");
@@ -139,7 +159,7 @@ int main(int argc, char const *argv[])
 	analysis->SystematicsName = systname;
 	analysis->dumptruth = 0;
 	analysis->doBDT = 1;
-	analysis->dofit = 1;
+	analysis->dofit = 0;
 	analysis->reduce = reduce;
 	analysis->debug = debug;
 	analysis->plotTauFake = 0;
@@ -190,9 +210,11 @@ int main(int argc, char const *argv[])
 			}else analysis->plotNPs.push_back("NOMINAL");
 			for(auto NPs: analysis->plotNPs) printf("Plotting NPs: %s\n",NPs.Data());
 			if(applynewSF) analysis->ConfigNewFakeSF();
-			analysis->init_hist(inputconfig);
+			analysis->fcnc_regions = regions;
+                        analysis->init_hist(inputconfig);
 		}
-		analysis->init_sample(inputconfig,inputconfig);
+	        analysis->fcnc_regions = regions;
+        	analysis->init_sample(inputconfig,inputconfig);
 		TString inputfilename = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/" + analysis->SystematicsName + "/" + inputconfig + "_tree.root";
 		TString inputfilename_nominal = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/nominal/" + inputconfig + "_tree.root";
 		printf("reading file: %s\n", inputfilename.Data());
@@ -331,8 +353,8 @@ int main(int argc, char const *argv[])
 	
 		fn.clear();
 		fn.seekg(0, fn.beg);
-		cutflowweighted = new TH1D("cutflow_HSM_common_weighted","cutflow_HSM_common_weighted",23,0,23);
-		cutflowraw = new TH1D("cutflow_HSM_common_raw","cutflow_HSM_common_raw",23,0,23);
+		cutflowweighted = new TH1D("cutflow_HSM_common_weighted","cutflow_HSM_common_weighted",24,0,23);
+		cutflowraw = new TH1D("cutflow_HSM_common_raw","cutflow_HSM_common_raw",24,0,23);
 		cutflowweighted->Sumw2();
 		cutflowraw->Sumw2();
 		cutflowweighted->SetBinContent(1,totgenWeighted);
