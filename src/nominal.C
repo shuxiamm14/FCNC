@@ -17,8 +17,8 @@ void nominal::initMVA(TString fcnc_region){
   reader[fcnc_region]->AddVariable("etmiss",&etmiss);
   reader[fcnc_region]->AddVariable("ttvismass",&ttvismass);
   reader[fcnc_region]->AddVariable("drtaujmin",&drtaujmin);
-  reader[fcnc_region]->AddVariable("mttjmin",&mttjmin);
-  if(!fcnc_region.Contains("2mtau")) {
+  //reader[fcnc_region]->AddVariable("mttjmin",&mttjmin);
+  if(!fcnc_region.Contains("2mtau")&& !fcnc_region.Contains("2ltau")) {
     reader[fcnc_region]->AddVariable("drlb",&drlb);
     if(fcnc_region.Contains("2lSS")) reader[fcnc_region]->AddVariable("lep_pt_0",&lep_pt_0);
   }
@@ -58,14 +58,15 @@ void nominal::initMVA(TString fcnc_region){
 }
 
 void nominal::init(TTree *tree){
-  if(reduce == 0) initRaw(tree);
+ /* if(reduce == 0) initRaw(tree);
   else {
     tree->SetBranchAddress("eventNumber", &eventNumber);
     tree->SetBranchAddress("runNumber", &runNumber);
     tree->SetBranchAddress("mcChannelNumber", &mcChannelNumber);
     if(reduce == 1) setVecBranch(tree);
     else if(reduce == 2) setBDTBranch(tree);
-  }
+  }*/
+  initRaw(tree);
 }
 
 void nominal::defineTree(TTree *tree){
@@ -208,6 +209,7 @@ void nominal::initReduce1(){
   leps_first_EgMother_pdgId = new vector<int>;
   leps_first_EgMother_truth_origin = new vector<int>;
   leps_first_EgMother_truth_type = new vector<int>;
+  totaljets_p4=new vector<TLorentzVector*>();
 }
 
 void nominal::setBDTBranch(TTree *tree){
@@ -517,6 +519,7 @@ vector<int>* nominal::findcjet(){
     t1vismass = top.M();
     t1mass = t1vismass;
   }
+ 
   return output;
 }
 
@@ -914,11 +917,13 @@ vector<int> nominal::findwpair(int cjet){
 }
 
 void nominal::fillhist(histSaver* plots, TString region, int nprong, TString sample, float taubtag, TString NP){
+ // std::cout<<"tau btag: "<<taubtag<<std::endl;
   for (int i = 0; i < 4; ++i){
-    if(taubtag>btagwpCut[i]) {
-      if(dobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[i],NP);
+ //   std::cout<<"i: "<<i<<std::endl;
+    if(taubtag) {
+      if(dobwp[bwps[i]] == 1) {plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[i],NP);}
     }else{
-      if(dovetobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[i],NP);
+      if(dovetobwp[bwps[i]] == 1){plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[i],NP);}
     }
   }
 }
@@ -1056,34 +1061,51 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
     inputtree->GetEntry(jentry);
     //if(mcChannelNumber == 411172 || mcChannelNumber == 411173 || mcChannelNumber == 411176 || mcChannelNumber == 411177)
     //  continue;
+    prepare();
     if ((jentry % printperentry == 0) || debug)
       std::cout << " I am here event " << jentry << " Event " << eventNumber << " Run " << runNumber << " ismc " << mcChannelNumber << " Filled events "<< ifill<<std::endl;
 //===============================SFs and weights===============================
-    if(reduce == 1){
+  if(reduce == 1){
       belong_regions.clear();
       calcGeneralWeight();
       if(globalweight!=0) generalweight*=globalweight;
       if(generalweight == 0) continue;
       weight = generalweight;
       cut_flow.fill("n-tuple");
-      //if(fabs(generalweight) > 5) {
-      //  droppedweight+=generalweight;
-      //  continue;
-      //}
+      if(fabs(generalweight) > 5) {
+        droppedweight+=generalweight;
+        continue;
+      }
+       cut_flow.fill("weight<5");
+     
+      defineObjects();
       if(!passBasicCut()) continue;
 
-      defineObjects();
-
       defineRegions();
-
       if(belong_regions.isEmpty()) continue;
 
       cut_flow.fill("SR+CR");
       
-      defineTauTruth();
+     // defineTauTruth();
       
-      defineLepTruth();
+     // defineLepTruth();
 
+
+      if(bjets_p4->size()==0){
+      cut_flow.fill("bjet pt>30 eta<2.5");
+      }else if(bjets_p4->size()==1){
+      bool passbjetcut = 0;
+      if(bjets_p4->at(0)->Pt() > 30 && abs(bjets_p4->at(0)->Eta()) < 2.5) passbjetcut = 1;
+      if(!passbjetcut) continue;
+      cut_flow.fill("bjet pt>30 eta<2.5");
+      }else if(bjets_p4->size()==2){
+      bool passbjetcut = 0;
+      if(bjets_p4->at(0)->Pt() > 30 && abs(bjets_p4->at(0)->Eta()) < 2.5&&bjets_p4->at(1)->Pt() > 30 && abs(bjets_p4->at(1)->Eta()) < 2.5) passbjetcut = 1;
+      if(!passbjetcut) continue;
+      cut_flow.fill("bjet pt>30 eta<2.5");
+      }else{
+      continue;
+      }
       tau_pt_0 = taus_p4->at(0)->Pt();
       if(taus_p4->size()>=2) tau_pt_1 = taus_p4->at(1)->Pt();
       if(leps_p4->size()) {
@@ -1093,6 +1115,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       
     }else{
       weight = weights->at(0);
+      std::cout<<"weight_size: "<<weights->size()<<"  weight[0]: "<<weights->at(0)<<std::endl;
     }
     //===============================pre-selections===============================
     if(reduce == 2) {
@@ -1103,7 +1126,6 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         if(taus_b_tagged->at(1) == 1)
           continue;
       cut_flow.fill("tau b-veto");
-
       //bool passbjetcut = 0;
       //for(auto bjet : *bjets_p4){
       //  if(bjet->Pt() > 20 && abs(bjet->Eta()) < 2.5) passbjetcut = 1;
@@ -1111,9 +1133,9 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       //if(!passbjetcut) continue;
       //cut_flow.fill("bjet pt>30 eta<2.5");
 
-      if(belong_regions.have("2mtau")){
-        if(met_p4->Pt()<30*GeV) continue;
-        cut_flow.fill("$MET>30$");
+      if(belong_regions.have("2mtau")||belong_regions.have("2ltau")){
+        if(met_p4->Pt()<20*GeV) continue;
+        cut_flow.fill("$MET>20$");
       }
       if(belong_regions.have("1l1tau")){
         if(met_p4->Pt()<20*GeV) continue;
@@ -1123,7 +1145,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       if(!nominaltree && taus_p4->size()) {
         taus_matched_mother_pdgId = taumatchmap[eventNumber];
       }
-
+      
       if(bjets_p4->size() >= 2){
          if(!bjets_score || !bjets_score->size() || bjets_score->at(0) > bjets_score->at(1)){
            ljets_p4->push_back(bjets_p4->at(1));
@@ -1133,14 +1155,12 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
            bjets_p4->erase(bjets_p4->begin());
          }
       }
-
       ljet_indice = findcjet();
-  
       TLorentzVector *tau2 = 0;
       TLorentzVector *wlep = 0;
       if(taus_p4->size() == 2) {
         tau2 = taus_p4->at(1);
-        wlep = leps_p4->at(0);
+       if(leps_p4->size()!=0) wlep = leps_p4->at(0);
       }
       else {
         tau2 = leps_p4->at(0);
@@ -1158,16 +1178,15 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         }
       }
       if(wlep) t1vismass = (*wlep + *bjets_p4->at(0)).M();
-
       ttvismass = (*taus_p4->at(0) + *tau2).M();
       drtautau = taus_p4->at(0)->DeltaR(*tau2);
-      if(belong_regions.have("2mtau")){
+      if(belong_regions.have("2mtau")||belong_regions.have("2ltau")){
         if(ttvismass < 50*GeV) continue;
         cut_flow.fill("$m_{\\tau\\tau,vis}>50$");
         if(ttvismass > 130*GeV) continue;
         cut_flow.fill("$m_{\\tau\\tau,vis}<130$");
-        if(drtautau > 3.4) continue;
-        cut_flow.fill("$\\Delta R(\\tau,\\tau)<3.4$");
+        if(drtautau >= 2.5) continue;
+        cut_flow.fill("$\\Delta R(\\tau,\\tau)<2.5$");
         if (belong_regions.have("1l2tau"))
         {
           if(t1vismass > 190*GeV )
@@ -1270,11 +1289,11 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         x1fit = 1 - neutrinos_p4->at(0)->E() / (*(taus_p4->at(0)) + *neutrinos_p4->at(0)).E();
         x2fit = 1 - neutrinos_p4->at(1)->E() / (*(tau2) + *neutrinos_p4->at(1)).E();
       }
-
+      
       phicent = phi_centrality(taus_p4->at(0)->Phi(),tau2->Phi(),met_p4->Phi());
       tautauvispt = (*taus_p4->at(0) + *tau2).Pt();
-      t2vismass = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2 + *ljets_p4->at(ljet_indice->at(0))).M() : 0;
-      drttj = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2).DeltaR(*ljets_p4->at(ljet_indice->at(0))) : 0;
+     // t2vismass = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2 + *ljets_p4->at(ljet_indice->at(0))).M() : 0;
+     // drttj = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2).DeltaR(*ljets_p4->at(ljet_indice->at(0))) : 0;
       dphitauetmiss = fabs(met_p4->DeltaPhi(*taus_p4->at(0) + *tau2));
       etmiss = met_p4->Pt();
 
@@ -1282,18 +1301,20 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       drttjmin = 999;
       mttjmin = 0;
       mjjmin = 0;
-      drlb = leps_p4->at(0)->DeltaR(*bjets_p4->at(0));
+     if(leps_p4->size()!=0) drlb = leps_p4->at(0)->DeltaR(*bjets_p4->at(0));
       drtaub = taus_p4->at(0)->DeltaR(*bjets_p4->at(0));
-      drltau = taus_p4->at(0)->DeltaR(*leps_p4->at(0));
+     if(leps_p4->size()!=0) drltau = taus_p4->at(0)->DeltaR(*leps_p4->at(0));
 
-      if(wlep && wlep != leps_p4->at(0)) drltau = taus_p4->at(0)->DeltaR(*wlep);
+      if(leps_p4->size()!=0){
+      	if(wlep && wlep != leps_p4->at(0)) drltau = taus_p4->at(0)->DeltaR(*wlep);
+      }
       etamax = 0;
       for (auto tau: *taus_p4)
       {
         etamax = max(etamax,(float)fabs(tau->Eta()));
       }
       if(wlep) mtw = sqrt(2*wlep->Pt()*etmiss*(1 - cos( met_p4->DeltaPhi(*wlep) )));
-      if(taus_p4->size() >= 2) drlbditau = (*leps_p4->at(0) + *bjets_p4->at(0)).DeltaR(*taus_p4->at(0) + *taus_p4->at(1));
+      if(taus_p4->size() >= 2&&leps_p4->size()!=0) drlbditau = (*leps_p4->at(0) + *bjets_p4->at(0)).DeltaR(*taus_p4->at(0) + *taus_p4->at(1));
       else if(wlep) drlbditau = (*wlep + *bjets_p4->at(0)).DeltaR(*taus_p4->at(0) + *tau2);
 
       drtaujmin = 0;
@@ -1337,13 +1358,12 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         if(leps_p4->size()>=2) lep_pt_1 = leps_p4->at(1)->Pt();
       }
     }
-
     if(reduce == 3){
       BDTG_test  = 0;
       BDTG_train  = 0;
       if(doBDT){
         if(debug) printf("eval BDTG\n");
-        if(belong_regions.have("2mtau")){
+        if(belong_regions.have("2mtau")||belong_regions.have("2ltau")){
           if(belong_regions.have("3j")) {
             BDTG_test = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2) );
             BDTG_train = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)) );
@@ -1390,7 +1410,6 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         continue;
       }
     }
-
     for (auto region: belong_regions.all()) {
       if(debug) printf("fill region: %s\n", region.Data());
       if(reduce == 1){
@@ -1426,7 +1445,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
 
         TString    leporigin;
         TString    tauorigin;
-        if (sample.Contains("data")) {
+    /*    if (sample.Contains("data")) {
           leporigin = "data";
           sample = "data";
         } else {
@@ -1439,7 +1458,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           if(nfakelep == 0) leporigin = sample + "_realLep";
           else if(nfakelep >= 2) leporigin = sample + "_doubleFakeLep";
         }
-        if (sample.Contains("data")) {
+      */  if (sample.Contains("data")) {
           tauorigin = "data";
           sample = "data";
         } else {
@@ -1461,12 +1480,12 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           else if(nfaketau >= 2) tauorigin = sample + "_doublefake";
         }
         if(debug) printf("fill hist\n");
-
+     
         if(mcChannelNumber!=0){
           auto weightvec = weightsysmap.at(mcChannelNumber);
           for (int iNP = 0; iNP < plotNPs.size(); ++iNP){
             auto theNP = plotNPs.at(iNP);
-            if(debug) printf("fill NP %s\n", theNP.Data());
+            //if(debug||true) printf("fill NP %s\n", theNP.Data());
             weight = weights->at(0);
             if(applyNewFakeSF){
               if(theNP.Contains("fakeSF")){
@@ -1503,7 +1522,8 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
               else if(index !=0)
                 weight *= weights->at(index);
             }
-            if (fcnc) {
+      if(debug)std::cout<<"tauorigin: "<<tauorigin.Data()<<std::endl;
+      if (fcnc) {
               if(plotTauFake) fillhist(fcnc_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), theNP);
               else if(!taus_b_tagged->at(0) && region.Contains("2l")) fcnc_plots->fill_hist(leporigin,region,theNP);
             }
@@ -1553,7 +1573,27 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
 
 void nominal::defineRegions(){
   if(!leps_p4 || leps_p4->size()==0){
-    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau1b2jss");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau1b2jss");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau1b3jss");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau1b2jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau1b3jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau2b2jss");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau2b3jss");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b2jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b3jos");
+//if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 0 && ljets_p4->size() >= 4 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau0b4jos");
+//if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 0 && ljets_p4->size() == 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau0b3jos");
+//if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 0 && ljets_p4->size() >= 4 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau0b4jss");
+//if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 0 && ljets_p4->size() == 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau0b3jss");
+//if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && (bjets_p4->size()+ljets_p4->size()) >= 4 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau4jos");
+//if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && (bjets_p4->size()+ljets_p4->size()) == 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau3jos");
+//if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && (bjets_p4->size()+ljets_p4->size()) >= 4 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg2mtau4jss");
+//if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && (bjets_p4->size()+ljets_p4->size()) == 3 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg2mtau3jss");
+if((taus_id->at(0)>=1) && (taus_id->at(1)>=1) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ltau1b2jss");
+if((taus_id->at(0)>=1) && (taus_id->at(1)>=1) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ltau1b3jss");
+if((taus_id->at(0)>=1) && (taus_id->at(1)>=1) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ltau1b2jos");
+if((taus_id->at(0)>=1) && (taus_id->at(1)>=1) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ltau1b3jos");
+   /* if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau1b2jss");
     if((taus_id->at(0)>=2) + (taus_id->at(1)>=2) == 1 &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1mtau1ltau1b2jss");
     if(!(taus_id->at(0)>=2) && !(taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ltau1b2jss");
     if(taus_id->at(0)==3 && taus_id->at(1)==3 && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ttau1b2jss");
@@ -1576,7 +1616,7 @@ void nominal::defineRegions(){
     if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau2b2jss");
     if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau2b3jss");
     if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b2jos");
-    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b3jos");
+    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b3jos");*/
   }else if(leps_p4->size()==1){
     if(ljets_p4->size() == 2 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b2j_os");
     if(ljets_p4->size() >= 3 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b3j_os");

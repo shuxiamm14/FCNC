@@ -18,7 +18,7 @@ public :
    void definetaus();
    void definejets();
    void init_hist(TString histfilename);
-   void     Init(TTree *tree);
+   void     initRaw(TTree *tree);
    void init_sample(TString sample, TString sampletitle);
    void fill_fcnc(TString region, int nprong, TString sample, bool taubtag, TString NPname);
    void definetree(TTree *tree);
@@ -28,12 +28,31 @@ public :
    void calcGeneralWeight();
    float calcRegionSF(TString region);
    int tauabspdg = 0;
-   std::vector<Int_t>           *taus_id = 0;
+   void  prepare();
+
+  bool MassCollinearCore(const TLorentzVector &k1, const TLorentzVector &k2,  // particles
+                               const double metetx, const double metety,            // met
+                               double &mass, double &xp1, double &xp2);
+  bool MassCollinear(const std::vector<TLorentzVector*>  *taus_p4,
+                           const TLorentzVector *met,
+                           UInt_t tau_0_allTrk_n,UInt_t tau_1_allTrk_n,             // met
+                           const bool kMMCsynchronize,                // mmc sychronization
+                           double &mass, double &xp1, double &xp2);
+   bool x0_x1_cut(const std::vector<TLorentzVector*>  *taus_p4,
+   const TLorentzVector *met,
+   UInt_t tau_0_allTrk_n,UInt_t tau_1_allTrk_n,double& x0,double& x1);
+   
+   bool passtrigger=1;
+   TString mode="";
+   //float tau0RNN;
+   //float tau1RNN;
+
+   //std::vector<Int_t>           *taus_id = 0;
    std::vector<UInt_t>          *taus_decay_mode = 0;
-   std::vector<Int_t>           *taus_matched_mother_pdgId = 0;
+  // std::vector<Int_t>           *taus_matched_mother_pdgId = 0;
    std::vector<Int_t>           *taus_matched_mother_status = 0;
-   std::vector<Int_t>           *taus_matched_pdgId = 0;
-   std::vector<UInt_t>          *taus_n_charged_tracks = 0;
+ //  std::vector<Int_t>           *taus_matched_pdgId = 0;
+ //  std::vector<UInt_t>          *taus_n_charged_tracks = 0;
    std::vector<Float_t>         *bjets_fjvt = 0;
    std::vector<Int_t>           *bjets_is_Jvt_HS = 0;
    std::vector<Float_t>         *bjets_jvt = 0;
@@ -55,41 +74,57 @@ public :
    std::vector<TLorentzVector*>  *bjets_wztruth_p4;
    std::vector<TLorentzVector*>  *jets_wztruth_p4;
 
+   int tau_origin=0;
    double weight_mc_d;
-   UInt_t          HLT_tau35_loose1_tracktwo_tau25_loose1_tracktwo;
-   UInt_t          HLT_tau35_medium1_tracktwoEF_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;
-   UInt_t          HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I_J25;
-   UInt_t          HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1DR_TAU20ITAU12I_J25;
-   UInt_t          HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;
-   UInt_t          HLT_tau40_medium1_tracktwoEF_tau35_medium1_tracktwoEF;
-   UInt_t          HLT_tau40_medium1_tracktwo_tau35_medium1_tracktwo;
-   UInt_t          HLT_tau40_mediumRNN_tracktwoMVA_tau35_mediumRNN_tracktwoMVA;
-   UInt_t          HLT_tau80_medium1_TAU60_tau50_medium1_L1TAU12;
-   UInt_t          HLT_tau80_medium1_tracktwoEF_L1TAU60_tau35_medium1_tracktwoEF_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I;
-   UInt_t          HLT_tau80_medium1_tracktwoEF_L1TAU60_tau60_medium1_tracktwoEF_L1TAU40;
-   UInt_t          HLT_tau80_medium1_tracktwo_L1TAU60_tau35_medium1_tracktwo_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I;
-   UInt_t          HLT_tau80_medium1_tracktwo_L1TAU60_tau50_medium1_tracktwo_L1TAU12;
-   UInt_t          HLT_tau80_medium1_tracktwo_L1TAU60_tau60_medium1_tracktwo_L1TAU40;
-   UInt_t          HLT_tau80_mediumRNN_tracktwoMVA_L1TAU60_tau35_mediumRNN_tracktwoMVA_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I;
-   UInt_t          HLT_tau80_mediumRNN_tracktwoMVA_L1TAU60_tau60_mediumRNN_tracktwoMVA_L1TAU40;
+   Double_t        AMI_cross_section;
+   ULong64_t       event_number;
+   Float_t         HTXS_Higgs_eta;
+   Float_t         HTXS_Higgs_pt;
    Int_t           HTXS_Njets_pTjet25;
    Int_t           HTXS_Njets_pTjet30;
    Int_t           HTXS_Stage0_Category;
+   Int_t           HTXS_Stage1_2_Category_pTjet25GeV;
+   Int_t           HTXS_Stage1_2_Category_pTjet30GeV;
+   Int_t           HTXS_Stage1_2_Fine_Category_pTjet25GeV;
+   Int_t           HTXS_Stage1_2_Fine_Category_pTjet30GeV;
    Int_t           HTXS_Stage1_Category_pTjet25GeV;
    Int_t           HTXS_Stage1_Category_pTjet30GeV;
    Int_t           HTXS_errorMode;
    Int_t           HTXS_prodMode;
+   Float_t         HTjets;
    Float_t         NOMINAL_pileup_combined_weight;
    UInt_t          NOMINAL_pileup_random_lb_number;
    UInt_t          NOMINAL_pileup_random_run_number;
    Float_t         PRW_DATASF_1down_pileup_combined_weight;
    Float_t         PRW_DATASF_1up_pileup_combined_weight;
+   Float_t         SumPtBjet;
    TLorentzVector  *boson_0_truth_p4;
    Int_t           boson_0_truth_pdgId;
    Float_t         boson_0_truth_q;
    Int_t           boson_0_truth_status;
    Int_t           channel_index;
+   Double_t        cross_section;
    TLorentzVector  *dijet_p4;
+   Float_t         ditau_CP_alphaminus_ip;
+   Float_t         ditau_CP_alphaminus_ip_rho;
+   Float_t         ditau_CP_alphaminus_rho_rho;
+   Float_t         ditau_CP_ip_tau0_mag;
+   Float_t         ditau_CP_ip_tau0_x_ip;
+   Float_t         ditau_CP_ip_tau0_y_ip;
+   Float_t         ditau_CP_ip_tau0_z_ip;
+   Float_t         ditau_CP_ip_tau1_mag;
+   Float_t         ditau_CP_ip_tau1_x_ip;
+   Float_t         ditau_CP_ip_tau1_y_ip;
+   Float_t         ditau_CP_ip_tau1_z_ip;
+   Float_t         ditau_CP_phi_star_cp_a1_rho;
+   Float_t         ditau_CP_phi_star_cp_ip_ip;
+   Float_t         ditau_CP_phi_star_cp_ip_rho;
+   Float_t         ditau_CP_phi_star_cp_ip_rho_opt;
+   Float_t         ditau_CP_phi_star_cp_rho_ip;
+   Float_t         ditau_CP_phi_star_cp_rho_rho;
+   Float_t         ditau_CP_tau0_upsilon;
+   Float_t         ditau_CP_tau1_upsilon;
+   Float_t         ditau_CP_upsilon_a1;
    Int_t           ditau_coll_approx;
    Float_t         ditau_coll_approx_m;
    Float_t         ditau_coll_approx_x0;
@@ -100,6 +135,26 @@ public :
    Float_t         ditau_dr;
    Double_t        ditau_higgspt;
    Int_t           ditau_matched;
+   Float_t         ditau_matched_CP_alphaminus_ip;
+   Float_t         ditau_matched_CP_alphaminus_ip_rho;
+   Float_t         ditau_matched_CP_alphaminus_rho_rho;
+   Float_t         ditau_matched_CP_ip_tau0_mag;
+   Float_t         ditau_matched_CP_ip_tau0_x_ip;
+   Float_t         ditau_matched_CP_ip_tau0_y_ip;
+   Float_t         ditau_matched_CP_ip_tau0_z_ip;
+   Float_t         ditau_matched_CP_ip_tau1_mag;
+   Float_t         ditau_matched_CP_ip_tau1_x_ip;
+   Float_t         ditau_matched_CP_ip_tau1_y_ip;
+   Float_t         ditau_matched_CP_ip_tau1_z_ip;
+   Float_t         ditau_matched_CP_phi_star_cp_a1_rho;
+   Float_t         ditau_matched_CP_phi_star_cp_ip_ip;
+   Float_t         ditau_matched_CP_phi_star_cp_ip_rho;
+   Float_t         ditau_matched_CP_phi_star_cp_ip_rho_opt;
+   Float_t         ditau_matched_CP_phi_star_cp_rho_ip;
+   Float_t         ditau_matched_CP_phi_star_cp_rho_rho;
+   Float_t         ditau_matched_CP_tau0_upsilon;
+   Float_t         ditau_matched_CP_tau1_upsilon;
+   Float_t         ditau_matched_CP_upsilon_a1;
    Float_t         ditau_matched_cosalpha;
    Float_t         ditau_matched_deta;
    Float_t         ditau_matched_dphi;
@@ -122,12 +177,8 @@ public :
    Float_t         ditau_mmc_maxw_eta;
    Int_t           ditau_mmc_maxw_fit_status;
    Float_t         ditau_mmc_maxw_m;
-   Float_t         ditau_mmc_maxw_met_et;
-   Float_t         ditau_mmc_maxw_met_phi;
    Float_t         ditau_mmc_maxw_phi;
    Float_t         ditau_mmc_maxw_pt;
-   Float_t         ditau_mmc_maxw_x0;
-   Float_t         ditau_mmc_maxw_x1;
    Int_t           ditau_mmc_mlm_fit_status;
    Float_t         ditau_mmc_mlm_m;
    Float_t         ditau_mt_lep0_met;
@@ -136,68 +187,12 @@ public :
    Float_t         ditau_qxq;
    Float_t         ditau_scal_sum_pt;
    UInt_t          event_clean_EC_TightBad;
-   UInt_t          higgs;
-   UInt_t          higgs_child1;
-   Int_t           higgs_child1_classifierParticleOrigin;
-   Int_t           higgs_child1_classifierParticleType;
-   Int_t           higgs_child1_mother_pdgId;
-   Int_t           higgs_child1_mother_status;
-   Int_t           higgs_child1_origin;
-   TLorentzVector  *higgs_child1_p4;
-   Int_t           higgs_child1_pdgId;
-   Float_t         higgs_child1_pz;
-   Float_t         higgs_child1_q;
-   Int_t           higgs_child1_status;
-   Int_t           higgs_child1_type;
-   UInt_t          higgs_child2;
-   Int_t           higgs_child2_classifierParticleOrigin;
-   Int_t           higgs_child2_classifierParticleType;
-   Int_t           higgs_child2_mother_pdgId;
-   Int_t           higgs_child2_mother_status;
-   Int_t           higgs_child2_origin;
-   TLorentzVector  *higgs_child2_p4;
-   Int_t           higgs_child2_pdgId;
-   Float_t         higgs_child2_pz;
-   Float_t         higgs_child2_q;
-   Int_t           higgs_child2_status;
-   Int_t           higgs_child2_type;
-   UInt_t          higgs_child3;
-   Int_t           higgs_child3_classifierParticleOrigin;
-   Int_t           higgs_child3_classifierParticleType;
-   Int_t           higgs_child3_mother_pdgId;
-   Int_t           higgs_child3_mother_status;
-   Int_t           higgs_child3_origin;
-   TLorentzVector  *higgs_child3_p4;
-   Int_t           higgs_child3_pdgId;
-   Float_t         higgs_child3_pz;
-   Float_t         higgs_child3_q;
-   Int_t           higgs_child3_status;
-   Int_t           higgs_child3_type;
-   UInt_t          higgs_child4;
-   Int_t           higgs_child4_classifierParticleOrigin;
-   Int_t           higgs_child4_classifierParticleType;
-   Int_t           higgs_child4_mother_pdgId;
-   Int_t           higgs_child4_mother_status;
-   Int_t           higgs_child4_origin;
-   TLorentzVector  *higgs_child4_p4;
-   Int_t           higgs_child4_pdgId;
-   Float_t         higgs_child4_pz;
-   Float_t         higgs_child4_q;
-   Int_t           higgs_child4_status;
-   Int_t           higgs_child4_type;
-   Int_t           higgs_classifierParticleOrigin;
-   Int_t           higgs_classifierParticleType;
-   Int_t           higgs_mother_pdgId;
-   Int_t           higgs_mother_status;
-   Int_t           higgs_origin;
-   TLorentzVector  *higgs_p4;
-   Int_t           higgs_pdgId;
-   Float_t         higgs_pz;
-   Float_t         higgs_q;
-   Int_t           higgs_status;
-   Int_t           higgs_type;
+   Int_t           event_is_bad_batman;
+   Double_t        filter_efficiency;
    UInt_t          is_dijet_centrality;
-   Int_t           jet_0_b_tagged;
+   Float_t         jet_0_b_tag_score;
+   Int_t           jet_0_b_tagged_DL1r_FixedCutBEff_70;
+   Int_t           jet_0_b_tagged_DL1r_FixedCutBEff_85;
    Float_t         jet_0_fjvt;
    Int_t           jet_0_flavorlabel_part;
    Int_t           jet_0_is_Jvt_HS;
@@ -206,7 +201,9 @@ public :
    Float_t         jet_0_width;
    TLorentzVector  *jet_0_wztruth_p4;
    Float_t         jet_0_wztruth_pdgid;
-   Int_t           jet_1_b_tagged;
+   Float_t         jet_1_b_tag_score;
+   Int_t           jet_1_b_tagged_DL1r_FixedCutBEff_70;
+   Int_t           jet_1_b_tagged_DL1r_FixedCutBEff_85;
    Float_t         jet_1_fjvt;
    Int_t           jet_1_flavorlabel_part;
    Int_t           jet_1_is_Jvt_HS;
@@ -215,7 +212,9 @@ public :
    Float_t         jet_1_width;
    TLorentzVector  *jet_1_wztruth_p4;
    Float_t         jet_1_wztruth_pdgid;
-   Int_t           jet_2_b_tagged;
+   Float_t         jet_2_b_tag_score;
+   Int_t           jet_2_b_tagged_DL1r_FixedCutBEff_70;
+   Int_t           jet_2_b_tagged_DL1r_FixedCutBEff_85;
    Float_t         jet_2_fjvt;
    Int_t           jet_2_flavorlabel_part;
    Int_t           jet_2_is_Jvt_HS;
@@ -227,7 +226,8 @@ public :
    UInt_t          jet_3;
    Int_t           jet_3_b_tag_quantile;
    Float_t         jet_3_b_tag_score;
-   Int_t           jet_3_b_tagged;
+   Int_t           jet_3_b_tagged_DL1r_FixedCutBEff_70;
+   Int_t           jet_3_b_tagged_DL1r_FixedCutBEff_85;
    UInt_t          jet_3_cleanJet_EC_LooseBad;
    Float_t         jet_3_fjvt;
    Int_t           jet_3_flavorlabel;
@@ -245,7 +245,8 @@ public :
    UInt_t          jet_4;
    Int_t           jet_4_b_tag_quantile;
    Float_t         jet_4_b_tag_score;
-   Int_t           jet_4_b_tagged;
+   Int_t           jet_4_b_tagged_DL1r_FixedCutBEff_70;
+   Int_t           jet_4_b_tagged_DL1r_FixedCutBEff_85;
    UInt_t          jet_4_cleanJet_EC_LooseBad;
    Float_t         jet_4_fjvt;
    Int_t           jet_4_flavorlabel;
@@ -263,7 +264,8 @@ public :
    UInt_t          jet_5;
    Int_t           jet_5_b_tag_quantile;
    Float_t         jet_5_b_tag_score;
-   Int_t           jet_5_b_tagged;
+   Int_t           jet_5_b_tagged_DL1r_FixedCutBEff_70;
+   Int_t           jet_5_b_tagged_DL1r_FixedCutBEff_85;
    UInt_t          jet_5_cleanJet_EC_LooseBad;
    Float_t         jet_5_fjvt;
    Int_t           jet_5_flavorlabel;
@@ -281,7 +283,8 @@ public :
    UInt_t          jet_6;
    Int_t           jet_6_b_tag_quantile;
    Float_t         jet_6_b_tag_score;
-   Int_t           jet_6_b_tagged;
+   Int_t           jet_6_b_tagged_DL1r_FixedCutBEff_70;
+   Int_t           jet_6_b_tagged_DL1r_FixedCutBEff_85;
    UInt_t          jet_6_cleanJet_EC_LooseBad;
    Float_t         jet_6_fjvt;
    Int_t           jet_6_flavorlabel;
@@ -296,86 +299,137 @@ public :
    Float_t         jet_6_width;
    TLorentzVector  *jet_6_wztruth_p4;
    Float_t         jet_6_wztruth_pdgid;
-   Float_t         jet_FT_EFF_Eigen_B_0_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_0_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_0_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_0_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_1_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_1_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_1_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_1_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_2_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_2_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_2_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_3_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_3_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_3_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_3_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_4_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_4_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_4_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_4_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_5_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_5_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_5_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_5_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_6_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_6_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_6_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_6_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_7_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_7_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_7_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_7_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_8_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_8_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_8_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_B_8_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_0_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_0_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_0_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_0_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_1_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_1_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_1_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_1_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_2_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_2_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_2_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_2_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_3_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_3_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_3_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_C_3_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_0_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_0_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_0_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_0_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_1_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_1_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_1_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_1_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_2_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_2_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_2_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_2_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_3_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_3_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_3_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_3_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_4_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_4_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_4_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_Eigen_Light_4_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_extrapolation_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_extrapolation_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_extrapolation_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_extrapolation_1up_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_extrapolation_from_charm_1down_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_extrapolation_from_charm_1down_global_ineffSF_MV2c10;
-   Float_t         jet_FT_EFF_extrapolation_from_charm_1up_global_effSF_MV2c10;
-   Float_t         jet_FT_EFF_extrapolation_from_charm_1up_global_ineffSF_MV2c10;
+   UInt_t          jet_7;
+   Int_t           jet_7_b_tag_quantile;
+   Float_t         jet_7_b_tag_score;
+   Int_t           jet_7_b_tagged_DL1r_FixedCutBEff_70;
+   Int_t           jet_7_b_tagged_DL1r_FixedCutBEff_85;
+   UInt_t          jet_7_cleanJet_EC_LooseBad;
+   Float_t         jet_7_fjvt;
+   Int_t           jet_7_flavorlabel;
+   Int_t           jet_7_flavorlabel_cone;
+   Int_t           jet_7_flavorlabel_part;
+   Int_t           jet_7_is_Jvt_HS;
+   Float_t         jet_7_jvt;
+   Int_t           jet_7_origin;
+   TLorentzVector  *jet_7_p4;
+   Float_t         jet_7_q;
+   Int_t           jet_7_type;
+   Float_t         jet_7_width;
+   TLorentzVector  *jet_7_wztruth_p4;
+   Float_t         jet_7_wztruth_pdgid;
+   Float_t         jet_FT_EFF_Eigen_B_0_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_0_1down_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_B_0_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_0_1down_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_B_0_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_0_1up_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_B_0_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_0_1up_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_B_1_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_1_1down_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_B_1_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_1_1down_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_B_1_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_1_1up_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_B_1_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_1_1up_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_B_2_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_2_1down_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_B_2_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_2_1down_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_B_2_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_2_1up_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_0_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_0_1down_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_0_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_0_1down_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_0_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_0_1up_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_0_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_0_1up_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_1_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_1_1down_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_1_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_1_1down_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_1_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_1_1up_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_1_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_1_1up_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_2_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_2_1down_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_2_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_2_1down_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_2_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_2_1up_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_2_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_2_1up_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_3_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_3_1down_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_3_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_3_1down_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_3_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_3_1up_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_C_3_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_C_3_1up_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_0_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_0_1down_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_0_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_0_1down_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_0_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_0_1up_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_0_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_0_1up_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_1_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_1_1down_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_1_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_1_1down_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_1_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_1_1up_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_1_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_1_1up_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_2_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_2_1down_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_2_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_2_1down_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_2_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_2_1up_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_2_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_2_1up_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_3_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_3_1down_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_3_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_3_1down_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_3_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_3_1up_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_3_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_3_1up_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_4_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_4_1down_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_4_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_4_1down_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_4_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_4_1up_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_Light_4_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_Light_4_1up_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_extrapolation_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_extrapolation_1down_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_extrapolation_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_extrapolation_1down_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_extrapolation_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_extrapolation_1up_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_extrapolation_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_extrapolation_1up_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_extrapolation_from_charm_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_extrapolation_from_charm_1down_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_extrapolation_from_charm_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_extrapolation_from_charm_1down_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_extrapolation_from_charm_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_extrapolation_from_charm_1up_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_extrapolation_from_charm_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_extrapolation_from_charm_1up_global_ineffSF_DL1r_FixedCutBEff_85;
    Float_t         jet_JET_JvtEfficiency_1down_central_jets_global_effSF_JVT;
    Float_t         jet_JET_JvtEfficiency_1down_central_jets_global_ineffSF_JVT;
    Float_t         jet_JET_JvtEfficiency_1up_central_jets_global_effSF_JVT;
@@ -388,9 +442,16 @@ public :
    Float_t         jet_NOMINAL_central_jets_global_ineffSF_JVT;
    Float_t         jet_NOMINAL_forward_jets_global_effSF_JVT;
    Float_t         jet_NOMINAL_forward_jets_global_ineffSF_JVT;
-   Float_t         jet_NOMINAL_global_effSF_MV2c10;
-   Float_t         jet_NOMINAL_global_ineffSF_MV2c10;
+   Float_t         jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jjdrmin;
+   Double_t        kfactor;
    Float_t         lepton_eta_centrality;
+   Float_t         mTopWbest;
+   Float_t         mWbest;
+   Float_t         mWsubbest;
    UInt_t          mc_channel_number;
    TLorentzVector  *met_hpto_p4;
    Float_t         met_more_met_et_ele;
@@ -411,6 +472,7 @@ public :
    Float_t         met_more_met_sumet_pho;
    Float_t         met_more_met_sumet_soft;
    Float_t         met_more_met_sumet_tau;
+   //TLorentzVector  *met_p4;
    Float_t         met_sign_met_over_sqrt_ht;
    Float_t         met_sign_met_over_sqrt_sumet;
    Float_t         met_sign_met_rho;
@@ -431,7 +493,8 @@ public :
    Float_t         n_actual_int_cor;
    Float_t         n_avg_int;
    Float_t         n_avg_int_cor;
-   Int_t           n_bjets;
+   Int_t           n_bjets_DL1r_FixedCutBEff_70;
+   Int_t           n_bjets_DL1r_FixedCutBEff_85;
    Int_t           n_electrons;
    Int_t           n_jets;
    Int_t           n_jets_30;
@@ -448,248 +511,248 @@ public :
    Int_t           n_photons;
    Int_t           n_pvx;
    Int_t           n_taus;
-   Int_t           n_taus_loose;
-   Int_t           n_taus_medium;
-   Int_t           n_taus_tight;
-   Int_t           n_taus_veryloose;
+   Int_t           n_taus_rnn_loose;
+   Int_t           n_taus_rnn_medium;
+   Int_t           n_taus_rnn_tight;
+   Int_t           n_taus_rnn_veryloose;
    UInt_t          n_truth_gluon_jets;
    UInt_t          n_truth_jets;
    UInt_t          n_truth_jets_pt20_eta45;
    UInt_t          n_truth_quark_jets;
    Int_t           n_vx;
+   Float_t         pmg_truth_weight_FSRHi;
+   Float_t         pmg_truth_weight_FSRLo;
+   Float_t         pmg_truth_weight_ISRLo;
+   Float_t         pmg_truth_weight_pdf_signal_weight_0;
+   Float_t         pmg_truth_weight_pdf_signal_weight_1;
+   Float_t         pmg_truth_weight_pdf_signal_weight_10;
+   Float_t         pmg_truth_weight_pdf_signal_weight_11;
+   Float_t         pmg_truth_weight_pdf_signal_weight_12;
+   Float_t         pmg_truth_weight_pdf_signal_weight_13;
+   Float_t         pmg_truth_weight_pdf_signal_weight_14;
+   Float_t         pmg_truth_weight_pdf_signal_weight_15;
+   Float_t         pmg_truth_weight_pdf_signal_weight_16;
+   Float_t         pmg_truth_weight_pdf_signal_weight_17;
+   Float_t         pmg_truth_weight_pdf_signal_weight_18;
+   Float_t         pmg_truth_weight_pdf_signal_weight_19;
+   Float_t         pmg_truth_weight_pdf_signal_weight_2;
+   Float_t         pmg_truth_weight_pdf_signal_weight_20;
+   Float_t         pmg_truth_weight_pdf_signal_weight_21;
+   Float_t         pmg_truth_weight_pdf_signal_weight_22;
+   Float_t         pmg_truth_weight_pdf_signal_weight_23;
+   Float_t         pmg_truth_weight_pdf_signal_weight_24;
+   Float_t         pmg_truth_weight_pdf_signal_weight_25;
+   Float_t         pmg_truth_weight_pdf_signal_weight_26;
+   Float_t         pmg_truth_weight_pdf_signal_weight_27;
+   Float_t         pmg_truth_weight_pdf_signal_weight_28;
+   Float_t         pmg_truth_weight_pdf_signal_weight_29;
+   Float_t         pmg_truth_weight_pdf_signal_weight_3;
+   Float_t         pmg_truth_weight_pdf_signal_weight_30;
+   Float_t         pmg_truth_weight_pdf_signal_weight_4;
+   Float_t         pmg_truth_weight_pdf_signal_weight_5;
+   Float_t         pmg_truth_weight_pdf_signal_weight_6;
+   Float_t         pmg_truth_weight_pdf_signal_weight_7;
+   Float_t         pmg_truth_weight_pdf_signal_weight_8;
+   Float_t         pmg_truth_weight_pdf_signal_weight_9;
    Int_t           primary_vertex;
    TVector3        *primary_vertex_v;
    Float_t         pt_total;
    UInt_t          run_number;
    Float_t         scalar_sum_pt;
    UInt_t          tau_0;
-   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
+   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
    Float_t         tau_0_NOMINAL_TauEffSF_HadTauEleOLR_tauhad;
-   Float_t         tau_0_NOMINAL_TauEffSF_JetBDTloose;
-   Float_t         tau_0_NOMINAL_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_NOMINAL_TauEffSF_JetBDTtight;
-   Float_t         tau_0_NOMINAL_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_0_NOMINAL_TauEffSF_JetRNNloose;
+   Float_t         tau_0_NOMINAL_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_NOMINAL_TauEffSF_JetRNNtight;
    Float_t         tau_0_NOMINAL_TauEffSF_LooseEleBDT_electron;
-   Float_t         tau_0_NOMINAL_TauEffSF_MediumEleBDTPlusVeto_electron;
-   Float_t         tau_0_NOMINAL_TauEffSF_MediumEleBDT_electron;
-   Float_t         tau_0_NOMINAL_TauEffSF_VeryLooseLlhEleOLR_electron;
    Float_t         tau_0_NOMINAL_TauEffSF_reco;
    Float_t         tau_0_NOMINAL_TauEffSF_selection;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDTPlusVeto_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDT_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDTPlusVeto_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDT_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDTPlusVeto_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDT_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDTPlusVeto_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDT_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDTPlusVeto_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDT_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDTPlusVeto_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDT_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDTPlusVeto_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDT_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDTPlusVeto_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDT_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1down_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1up_TauEffSF_LooseEleBDT_electron;
    Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDT_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDTPlusVeto_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDT_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDTPlusVeto_electron;
    Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDT_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDTPlusVeto_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDT_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_VeryLooseLlhEleOLR_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_selection;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1up_TauEffSF_VeryLooseLlhEleOLR_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1up_TauEffSF_selection;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1down_TauEffSF_VeryLooseLlhEleOLR_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1down_TauEffSF_selection;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1up_TauEffSF_VeryLooseLlhEleOLR_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1up_TauEffSF_selection;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1down_TauEffSF_VeryLooseLlhEleOLR_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1down_TauEffSF_selection;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1up_TauEffSF_VeryLooseLlhEleOLR_electron;
-   Float_t         tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1up_TauEffSF_selection;
    Float_t         tau_0_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1down_TauEffSF_HadTauEleOLR_tauhad;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1down_TauEffSF_selection;
    Float_t         tau_0_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1up_TauEffSF_HadTauEleOLR_tauhad;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1up_TauEffSF_selection;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_SYST_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_SYST_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_SYST_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_SYST_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_SYST_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_JETID_SYST_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1down_TauEffSF_reco;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1down_TauEffSF_selection;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1up_TauEffSF_reco;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1up_TauEffSF_selection;
    Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1down_TauEffSF_reco;
    Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1down_TauEffSF_selection;
    Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1up_TauEffSF_reco;
    Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1up_TauEffSF_selection;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
    Float_t         tau_0_allTrk_eta;
    UInt_t          tau_0_allTrk_n;
    Float_t         tau_0_allTrk_phi;
    Float_t         tau_0_allTrk_pt;
    Int_t           tau_0_b_tagged;
+   TLorentzVector  *tau_0_decay_charged_p4;
    UInt_t          tau_0_decay_mode;
+   TLorentzVector  *tau_0_decay_neutral_p4;
    Float_t         tau_0_ele_bdt_eff_sf;
    Int_t           tau_0_ele_bdt_loose_retuned;
    Int_t           tau_0_ele_bdt_medium_retuned;
@@ -700,11 +763,6 @@ public :
    Int_t           tau_0_ele_bdt_tight_retuned;
    Float_t         tau_0_ele_match_lhscore;
    UInt_t          tau_0_ele_olr_pass;
-   UInt_t          tau_0_jet_bdt_loose;
-   UInt_t          tau_0_jet_bdt_medium;
-   Float_t         tau_0_jet_bdt_score_trans;
-   UInt_t          tau_0_jet_bdt_tight;
-   UInt_t          tau_0_jet_bdt_veryloose;
    Float_t         tau_0_jet_jvt;
    UInt_t          tau_0_jet_rnn_loose;
    UInt_t          tau_0_jet_rnn_medium;
@@ -713,13 +771,28 @@ public :
    UInt_t          tau_0_jet_rnn_tight;
    UInt_t          tau_0_jet_rnn_veryloose;
    Float_t         tau_0_jet_width;
+   Float_t         tau_0_jetseed_TrackWidthPt1000_wrt_PV;
+   Float_t         tau_0_jetseed_TrackWidthPt1000_wrt_TV;
+   TLorentzVector  *tau_0_jetseed_p4;
+   Double_t        tau_0_leadTrk_d0;
+   Double_t        tau_0_leadTrk_d0_sig;
    Float_t         tau_0_leadTrk_eta;
    Float_t         tau_0_leadTrk_phi;
    Float_t         tau_0_leadTrk_pt;
+   Double_t        tau_0_leadTrk_pvx_z0;
+   Double_t        tau_0_leadTrk_pvx_z0_sig;
+   Double_t        tau_0_leadTrk_pvx_z0_sintheta;
+   TVector3        *tau_0_leadTrk_vertex_v;
+   Double_t        tau_0_leadTrk_z0;
+   Double_t        tau_0_leadTrk_z0_sig;
+   Double_t        tau_0_leadTrk_z0_sintheta;
    UInt_t          tau_0_matched;
    Int_t           tau_0_matched_classifierParticleOrigin;
    Int_t           tau_0_matched_classifierParticleType;
+   TLorentzVector  *tau_0_matched_decay_charged_p4;
    Int_t           tau_0_matched_decay_mode;
+   TLorentzVector  *tau_0_matched_decay_neutral_p4;
+   TLorentzVector  *tau_0_matched_decay_neutrino_p4;
    UInt_t          tau_0_matched_isEle;
    UInt_t          tau_0_matched_isHadTau;
    UInt_t          tau_0_matched_isJet;
@@ -765,243 +838,221 @@ public :
    TLorentzVector  *tau_0_track1_p4;
    TLorentzVector  *tau_0_track2_p4;
    UInt_t          tau_0_trig_HLT_tau25_medium1_tracktwo;
+   UInt_t          tau_0_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_0_trig_HLT_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_0_trig_HLT_tau25_mediumRNN_tracktwoMVA_03dR30_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_0_trig_HLT_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;
    UInt_t          tau_0_trig_HLT_tau35_medium1_tracktwo;
+   UInt_t          tau_0_trig_HLT_tau35_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_0_trig_HLT_tau35_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_0_trig_HLT_tau35_medium1_tracktwoEF_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_0_trig_HLT_tau35_medium1_tracktwoEF_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;
    UInt_t          tau_0_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo;
    UInt_t          tau_0_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I;
    UInt_t          tau_0_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I_J25;
    UInt_t          tau_0_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1DR_TAU20ITAU12I;
    UInt_t          tau_0_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1DR_TAU20ITAU12I_J25;
    UInt_t          tau_0_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1TAU20IM_2TAU12IM;
+   UInt_t          tau_0_trig_HLT_tau35_mediumRNN_tracktwoMVA_03dR30_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_0_trig_HLT_tau35_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_0_trig_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_03dR30_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_0_trig_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;
    UInt_t          tau_0_trig_trigger_matched;
    Int_t           tau_0_type;
    UInt_t          tau_1;
-   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
+   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
    Float_t         tau_1_NOMINAL_TauEffSF_HadTauEleOLR_tauhad;
-   Float_t         tau_1_NOMINAL_TauEffSF_JetBDTloose;
-   Float_t         tau_1_NOMINAL_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_NOMINAL_TauEffSF_JetBDTtight;
-   Float_t         tau_1_NOMINAL_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_1_NOMINAL_TauEffSF_JetRNNloose;
+   Float_t         tau_1_NOMINAL_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_NOMINAL_TauEffSF_JetRNNtight;
    Float_t         tau_1_NOMINAL_TauEffSF_LooseEleBDT_electron;
-   Float_t         tau_1_NOMINAL_TauEffSF_MediumEleBDTPlusVeto_electron;
-   Float_t         tau_1_NOMINAL_TauEffSF_MediumEleBDT_electron;
-   Float_t         tau_1_NOMINAL_TauEffSF_VeryLooseLlhEleOLR_electron;
    Float_t         tau_1_NOMINAL_TauEffSF_reco;
    Float_t         tau_1_NOMINAL_TauEffSF_selection;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDTPlusVeto_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDT_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDTPlusVeto_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDT_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDTPlusVeto_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDT_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDTPlusVeto_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDT_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDTPlusVeto_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDT_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDTPlusVeto_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDT_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDTPlusVeto_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDT_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDTPlusVeto_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDT_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDTPlusVeto_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1down_TauEffSF_LooseEleBDT_electron;
+   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1up_TauEffSF_LooseEleBDT_electron;
    Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDT_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDTPlusVeto_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDT_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDTPlusVeto_electron;
    Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDT_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDTPlusVeto_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDT_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_VeryLooseLlhEleOLR_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_selection;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1up_TauEffSF_VeryLooseLlhEleOLR_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1up_TauEffSF_selection;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1down_TauEffSF_VeryLooseLlhEleOLR_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1down_TauEffSF_selection;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1up_TauEffSF_VeryLooseLlhEleOLR_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1up_TauEffSF_selection;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1down_TauEffSF_VeryLooseLlhEleOLR_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1down_TauEffSF_selection;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1up_TauEffSF_VeryLooseLlhEleOLR_electron;
-   Float_t         tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1up_TauEffSF_selection;
    Float_t         tau_1_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1down_TauEffSF_HadTauEleOLR_tauhad;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1down_TauEffSF_selection;
    Float_t         tau_1_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1up_TauEffSF_HadTauEleOLR_tauhad;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1up_TauEffSF_selection;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_SYST_1down_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_SYST_1down_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_SYST_1down_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_SYST_1up_TauEffSF_JetBDTloose;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_SYST_1up_TauEffSF_JetBDTmedium;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_JETID_SYST_1up_TauEffSF_JetBDTtight;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1down_TauEffSF_reco;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1down_TauEffSF_selection;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1up_TauEffSF_reco;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1up_TauEffSF_selection;
    Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1down_TauEffSF_reco;
    Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1down_TauEffSF_selection;
    Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1up_TauEffSF_reco;
    Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1up_TauEffSF_selection;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1down_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1down_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1down_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1up_TauEffSF_JetRNNloose;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1up_TauEffSF_JetRNNmedium;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1up_TauEffSF_JetRNNtight;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;
+   Float_t         tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;
    Float_t         tau_1_allTrk_eta;
    UInt_t          tau_1_allTrk_n;
    Float_t         tau_1_allTrk_phi;
    Float_t         tau_1_allTrk_pt;
    Int_t           tau_1_b_tagged;
+   TLorentzVector  *tau_1_decay_charged_p4;
    UInt_t          tau_1_decay_mode;
+   TLorentzVector  *tau_1_decay_neutral_p4;
    Float_t         tau_1_ele_bdt_eff_sf;
    Int_t           tau_1_ele_bdt_loose_retuned;
    Int_t           tau_1_ele_bdt_medium_retuned;
@@ -1012,11 +1063,6 @@ public :
    Int_t           tau_1_ele_bdt_tight_retuned;
    Float_t         tau_1_ele_match_lhscore;
    UInt_t          tau_1_ele_olr_pass;
-   UInt_t          tau_1_jet_bdt_loose;
-   UInt_t          tau_1_jet_bdt_medium;
-   Float_t         tau_1_jet_bdt_score_trans;
-   UInt_t          tau_1_jet_bdt_tight;
-   UInt_t          tau_1_jet_bdt_veryloose;
    Float_t         tau_1_jet_jvt;
    UInt_t          tau_1_jet_rnn_loose;
    UInt_t          tau_1_jet_rnn_medium;
@@ -1025,13 +1071,28 @@ public :
    UInt_t          tau_1_jet_rnn_tight;
    UInt_t          tau_1_jet_rnn_veryloose;
    Float_t         tau_1_jet_width;
+   Float_t         tau_1_jetseed_TrackWidthPt1000_wrt_PV;
+   Float_t         tau_1_jetseed_TrackWidthPt1000_wrt_TV;
+   TLorentzVector  *tau_1_jetseed_p4;
+   Double_t        tau_1_leadTrk_d0;
+   Double_t        tau_1_leadTrk_d0_sig;
    Float_t         tau_1_leadTrk_eta;
    Float_t         tau_1_leadTrk_phi;
    Float_t         tau_1_leadTrk_pt;
+   Double_t        tau_1_leadTrk_pvx_z0;
+   Double_t        tau_1_leadTrk_pvx_z0_sig;
+   Double_t        tau_1_leadTrk_pvx_z0_sintheta;
+   TVector3        *tau_1_leadTrk_vertex_v;
+   Double_t        tau_1_leadTrk_z0;
+   Double_t        tau_1_leadTrk_z0_sig;
+   Double_t        tau_1_leadTrk_z0_sintheta;
    UInt_t          tau_1_matched;
    Int_t           tau_1_matched_classifierParticleOrigin;
    Int_t           tau_1_matched_classifierParticleType;
+   TLorentzVector  *tau_1_matched_decay_charged_p4;
    Int_t           tau_1_matched_decay_mode;
+   TLorentzVector  *tau_1_matched_decay_neutral_p4;
+   TLorentzVector  *tau_1_matched_decay_neutrino_p4;
    UInt_t          tau_1_matched_isEle;
    UInt_t          tau_1_matched_isHadTau;
    UInt_t          tau_1_matched_isJet;
@@ -1077,157 +1138,79 @@ public :
    TLorentzVector  *tau_1_track1_p4;
    TLorentzVector  *tau_1_track2_p4;
    UInt_t          tau_1_trig_HLT_tau25_medium1_tracktwo;
+   UInt_t          tau_1_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_1_trig_HLT_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_1_trig_HLT_tau25_mediumRNN_tracktwoMVA_03dR30_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_1_trig_HLT_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;
    UInt_t          tau_1_trig_HLT_tau35_medium1_tracktwo;
+   UInt_t          tau_1_trig_HLT_tau35_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_1_trig_HLT_tau35_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_1_trig_HLT_tau35_medium1_tracktwoEF_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_1_trig_HLT_tau35_medium1_tracktwoEF_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;
    UInt_t          tau_1_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo;
    UInt_t          tau_1_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I;
    UInt_t          tau_1_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I_J25;
    UInt_t          tau_1_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1DR_TAU20ITAU12I;
    UInt_t          tau_1_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1DR_TAU20ITAU12I_J25;
    UInt_t          tau_1_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1TAU20IM_2TAU12IM;
+   UInt_t          tau_1_trig_HLT_tau35_mediumRNN_tracktwoMVA_03dR30_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_1_trig_HLT_tau35_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_1_trig_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_03dR30_L1DR_TAU20ITAU12I_J25;
+   UInt_t          tau_1_trig_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;
    UInt_t          tau_1_trig_trigger_matched;
    Int_t           tau_1_type;
    Float_t         tau_eta_centrality;
-   UInt_t          tb;
-   UInt_t          tb_childq;
-   Int_t           tb_childq_classifierParticleOrigin;
-   Int_t           tb_childq_classifierParticleType;
-   Int_t           tb_childq_mother_pdgId;
-   Int_t           tb_childq_mother_status;
-   Int_t           tb_childq_origin;
-   TLorentzVector  *tb_childq_p4;
-   Int_t           tb_childq_pdgId;
-   Float_t         tb_childq_pz;
-   Float_t         tb_childq_q;
-   Int_t           tb_childq_status;
-   Int_t           tb_childq_type;
-   Int_t           tb_classifierParticleOrigin;
-   Int_t           tb_classifierParticleType;
-   Int_t           tb_mother_pdgId;
-   Int_t           tb_mother_status;
-   Int_t           tb_origin;
-   TLorentzVector  *tb_p4;
-   Int_t           tb_pdgId;
-   Float_t         tb_pz;
-   Float_t         tb_q;
-   Int_t           tb_status;
-   Int_t           tb_type;
-   UInt_t          top;
-   UInt_t          top_childq;
-   Int_t           top_childq_classifierParticleOrigin;
-   Int_t           top_childq_classifierParticleType;
-   Int_t           top_childq_mother_pdgId;
-   Int_t           top_childq_mother_status;
-   Int_t           top_childq_origin;
-   TLorentzVector  *top_childq_p4;
-   Int_t           top_childq_pdgId;
-   Float_t         top_childq_pz;
-   Float_t         top_childq_q;
-   Int_t           top_childq_status;
-   Int_t           top_childq_type;
-   Int_t           top_classifierParticleOrigin;
-   Int_t           top_classifierParticleType;
-   Int_t           top_mother_pdgId;
-   Int_t           top_mother_status;
-   Int_t           top_origin;
-   TLorentzVector  *top_p4;
-   Int_t           top_pdgId;
-   Float_t         top_pz;
-   Float_t         top_q;
-   Int_t           top_status;
-   Int_t           top_type;
    UInt_t          truth_passedVBFFilter;
-   UInt_t          wm_childq1;
-   Int_t           wm_childq1_classifierParticleOrigin;
-   Int_t           wm_childq1_classifierParticleType;
-   Int_t           wm_childq1_mother_pdgId;
-   Int_t           wm_childq1_mother_status;
-   Int_t           wm_childq1_origin;
-   TLorentzVector  *wm_childq1_p4;
-   Int_t           wm_childq1_pdgId;
-   Float_t         wm_childq1_pz;
-   Float_t         wm_childq1_q;
-   Int_t           wm_childq1_status;
-   Int_t           wm_childq1_type;
-   UInt_t          wm_childq2;
-   Int_t           wm_childq2_classifierParticleOrigin;
-   Int_t           wm_childq2_classifierParticleType;
-   Int_t           wm_childq2_mother_pdgId;
-   Int_t           wm_childq2_mother_status;
-   Int_t           wm_childq2_origin;
-   TLorentzVector  *wm_childq2_p4;
-   Int_t           wm_childq2_pdgId;
-   Float_t         wm_childq2_pz;
-   Float_t         wm_childq2_q;
-   Int_t           wm_childq2_status;
-   Int_t           wm_childq2_type;
-   UInt_t          wp_childq1;
-   Int_t           wp_childq1_classifierParticleOrigin;
-   Int_t           wp_childq1_classifierParticleType;
-   Int_t           wp_childq1_mother_pdgId;
-   Int_t           wp_childq1_mother_status;
-   Int_t           wp_childq1_origin;
-   TLorentzVector  *wp_childq1_p4;
-   Int_t           wp_childq1_pdgId;
-   Float_t         wp_childq1_pz;
-   Float_t         wp_childq1_q;
-   Int_t           wp_childq1_status;
-   Int_t           wp_childq1_type;
-   UInt_t          wp_childq2;
-   Int_t           wp_childq2_classifierParticleOrigin;
-   Int_t           wp_childq2_classifierParticleType;
-   Int_t           wp_childq2_mother_pdgId;
-   Int_t           wp_childq2_mother_status;
-   Int_t           wp_childq2_origin;
-   TLorentzVector  *wp_childq2_p4;
-   Int_t           wp_childq2_pdgId;
-   Float_t         wp_childq2_pz;
-   Float_t         wp_childq2_q;
-   Int_t           wp_childq2_status;
-   Int_t           wp_childq2_type;
-   Float_t         theory_weights_LHE3Weight_muR_05_muF_05;
-   Float_t         theory_weights_LHE3Weight_muR_05_muF_10;
-   Float_t         theory_weights_LHE3Weight_muR_05_muF_20;
-   Float_t         theory_weights_LHE3Weight_muR_10_muF_05;
-   Float_t         theory_weights_LHE3Weight_muR_10_muF_20;
-   Float_t         theory_weights_LHE3Weight_muR_20_muF_05;
-   Float_t         theory_weights_LHE3Weight_muR_20_muF_10;
-   Float_t         theory_weights_LHE3Weight_muR_20_muF_20;
 
-   // List of branches
-   TBranch        *b_HLT_tau35_loose1_tracktwo_tau25_loose1_tracktwo;   //!
-   TBranch        *b_HLT_tau35_medium1_tracktwoEF_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;   //!
-   TBranch        *b_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I_J25;   //!
-   TBranch        *b_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1DR_TAU20ITAU12I_J25;   //!
-   TBranch        *b_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;   //!
-   TBranch        *b_HLT_tau40_medium1_tracktwoEF_tau35_medium1_tracktwoEF;   //!
-   TBranch        *b_HLT_tau40_medium1_tracktwo_tau35_medium1_tracktwo;   //!
-   TBranch        *b_HLT_tau40_mediumRNN_tracktwoMVA_tau35_mediumRNN_tracktwoMVA;   //!
-   TBranch        *b_HLT_tau80_medium1_TAU60_tau50_medium1_L1TAU12;   //!
-   TBranch        *b_HLT_tau80_medium1_tracktwoEF_L1TAU60_tau35_medium1_tracktwoEF_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I;   //!
-   TBranch        *b_HLT_tau80_medium1_tracktwoEF_L1TAU60_tau60_medium1_tracktwoEF_L1TAU40;   //!
-   TBranch        *b_HLT_tau80_medium1_tracktwo_L1TAU60_tau35_medium1_tracktwo_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I;   //!
-   TBranch        *b_HLT_tau80_medium1_tracktwo_L1TAU60_tau50_medium1_tracktwo_L1TAU12;   //!
-   TBranch        *b_HLT_tau80_medium1_tracktwo_L1TAU60_tau60_medium1_tracktwo_L1TAU40;   //!
-   TBranch        *b_HLT_tau80_mediumRNN_tracktwoMVA_L1TAU60_tau35_mediumRNN_tracktwoMVA_L1TAU12IM_L1TAU60_DR_TAU20ITAU12I;   //!
-   TBranch        *b_HLT_tau80_mediumRNN_tracktwoMVA_L1TAU60_tau60_mediumRNN_tracktwoMVA_L1TAU40;   //!
+   TBranch        *b_truth_passedVBFFilter;   //!
+   TBranch        *b_AMI_cross_section;   //!
+   TBranch        *b_HTXS_Higgs_eta;   //!
+   TBranch        *b_HTXS_Higgs_pt;   //!
    TBranch        *b_HTXS_Njets_pTjet25;   //!
    TBranch        *b_HTXS_Njets_pTjet30;   //!
    TBranch        *b_HTXS_Stage0_Category;   //!
+   TBranch        *b_HTXS_Stage1_2_Category_pTjet25GeV;   //!
+   TBranch        *b_HTXS_Stage1_2_Category_pTjet30GeV;   //!
+   TBranch        *b_HTXS_Stage1_2_Fine_Category_pTjet25GeV;   //!
+   TBranch        *b_HTXS_Stage1_2_Fine_Category_pTjet30GeV;   //!
    TBranch        *b_HTXS_Stage1_Category_pTjet25GeV;   //!
    TBranch        *b_HTXS_Stage1_Category_pTjet30GeV;   //!
    TBranch        *b_HTXS_errorMode;   //!
    TBranch        *b_HTXS_prodMode;   //!
+   TBranch        *b_HTjets;   //!
    TBranch        *b_NOMINAL_pileup_combined_weight;   //!
    TBranch        *b_NOMINAL_pileup_random_lb_number;   //!
    TBranch        *b_NOMINAL_pileup_random_run_number;   //!
    TBranch        *b_PRW_DATASF_1down_pileup_combined_weight;   //!
    TBranch        *b_PRW_DATASF_1up_pileup_combined_weight;   //!
+   TBranch        *b_SumPtBjet;   //!
    TBranch        *b_boson_0_truth_p4;   //!
    TBranch        *b_boson_0_truth_pdgId;   //!
    TBranch        *b_boson_0_truth_q;   //!
    TBranch        *b_boson_0_truth_status;   //!
    TBranch        *b_channel_index;   //!
+   TBranch        *b_cross_section;   //!
    TBranch        *b_dijet_p4;   //!
+   TBranch        *b_ditau_CP_alphaminus_ip;   //!
+   TBranch        *b_ditau_CP_alphaminus_ip_rho;   //!
+   TBranch        *b_ditau_CP_alphaminus_rho_rho;   //!
+   TBranch        *b_ditau_CP_ip_tau0_mag;   //!
+   TBranch        *b_ditau_CP_ip_tau0_x_ip;   //!
+   TBranch        *b_ditau_CP_ip_tau0_y_ip;   //!
+   TBranch        *b_ditau_CP_ip_tau0_z_ip;   //!
+   TBranch        *b_ditau_CP_ip_tau1_mag;   //!
+   TBranch        *b_ditau_CP_ip_tau1_x_ip;   //!
+   TBranch        *b_ditau_CP_ip_tau1_y_ip;   //!
+   TBranch        *b_ditau_CP_ip_tau1_z_ip;   //!
+   TBranch        *b_ditau_CP_phi_star_cp_a1_rho;   //!
+   TBranch        *b_ditau_CP_phi_star_cp_ip_ip;   //!
+   TBranch        *b_ditau_CP_phi_star_cp_ip_rho;   //!
+   TBranch        *b_ditau_CP_phi_star_cp_ip_rho_opt;   //!
+   TBranch        *b_ditau_CP_phi_star_cp_rho_ip;   //!
+   TBranch        *b_ditau_CP_phi_star_cp_rho_rho;   //!
+   TBranch        *b_ditau_CP_tau0_upsilon;   //!
+   TBranch        *b_ditau_CP_tau1_upsilon;   //!
+   TBranch        *b_ditau_CP_upsilon_a1;   //!
    TBranch        *b_ditau_coll_approx;   //!
    TBranch        *b_ditau_coll_approx_m;   //!
    TBranch        *b_ditau_coll_approx_x0;   //!
@@ -1238,6 +1221,26 @@ public :
    TBranch        *b_ditau_dr;   //!
    TBranch        *b_ditau_higgspt;   //!
    TBranch        *b_ditau_matched;   //!
+   TBranch        *b_ditau_matched_CP_alphaminus_ip;   //!
+   TBranch        *b_ditau_matched_CP_alphaminus_ip_rho;   //!
+   TBranch        *b_ditau_matched_CP_alphaminus_rho_rho;   //!
+   TBranch        *b_ditau_matched_CP_ip_tau0_mag;   //!
+   TBranch        *b_ditau_matched_CP_ip_tau0_x_ip;   //!
+   TBranch        *b_ditau_matched_CP_ip_tau0_y_ip;   //!
+   TBranch        *b_ditau_matched_CP_ip_tau0_z_ip;   //!
+   TBranch        *b_ditau_matched_CP_ip_tau1_mag;   //!
+   TBranch        *b_ditau_matched_CP_ip_tau1_x_ip;   //!
+   TBranch        *b_ditau_matched_CP_ip_tau1_y_ip;   //!
+   TBranch        *b_ditau_matched_CP_ip_tau1_z_ip;   //!
+   TBranch        *b_ditau_matched_CP_phi_star_cp_a1_rho;   //!
+   TBranch        *b_ditau_matched_CP_phi_star_cp_ip_ip;   //!
+   TBranch        *b_ditau_matched_CP_phi_star_cp_ip_rho;   //!
+   TBranch        *b_ditau_matched_CP_phi_star_cp_ip_rho_opt;   //!
+   TBranch        *b_ditau_matched_CP_phi_star_cp_rho_ip;   //!
+   TBranch        *b_ditau_matched_CP_phi_star_cp_rho_rho;   //!
+   TBranch        *b_ditau_matched_CP_tau0_upsilon;   //!
+   TBranch        *b_ditau_matched_CP_tau1_upsilon;   //!
+   TBranch        *b_ditau_matched_CP_upsilon_a1;   //!
    TBranch        *b_ditau_matched_cosalpha;   //!
    TBranch        *b_ditau_matched_deta;   //!
    TBranch        *b_ditau_matched_dphi;   //!
@@ -1260,12 +1263,8 @@ public :
    TBranch        *b_ditau_mmc_maxw_eta;   //!
    TBranch        *b_ditau_mmc_maxw_fit_status;   //!
    TBranch        *b_ditau_mmc_maxw_m;   //!
-   TBranch        *b_ditau_mmc_maxw_met_et;   //!
-   TBranch        *b_ditau_mmc_maxw_met_phi;   //!
    TBranch        *b_ditau_mmc_maxw_phi;   //!
    TBranch        *b_ditau_mmc_maxw_pt;   //!
-   TBranch        *b_ditau_mmc_maxw_x0;   //!
-   TBranch        *b_ditau_mmc_maxw_x1;   //!
    TBranch        *b_ditau_mmc_mlm_fit_status;   //!
    TBranch        *b_ditau_mmc_mlm_m;   //!
    TBranch        *b_ditau_mt_lep0_met;   //!
@@ -1274,69 +1273,13 @@ public :
    TBranch        *b_ditau_qxq;   //!
    TBranch        *b_ditau_scal_sum_pt;   //!
    TBranch        *b_event_clean_EC_TightBad;   //!
+   TBranch        *b_event_is_bad_batman;   //!
    TBranch        *b_event_number;   //!
-   TBranch        *b_higgs;   //!
-   TBranch        *b_higgs_child1;   //!
-   TBranch        *b_higgs_child1_classifierParticleOrigin;   //!
-   TBranch        *b_higgs_child1_classifierParticleType;   //!
-   TBranch        *b_higgs_child1_mother_pdgId;   //!
-   TBranch        *b_higgs_child1_mother_status;   //!
-   TBranch        *b_higgs_child1_origin;   //!
-   TBranch        *b_higgs_child1_p4;   //!
-   TBranch        *b_higgs_child1_pdgId;   //!
-   TBranch        *b_higgs_child1_pz;   //!
-   TBranch        *b_higgs_child1_q;   //!
-   TBranch        *b_higgs_child1_status;   //!
-   TBranch        *b_higgs_child1_type;   //!
-   TBranch        *b_higgs_child2;   //!
-   TBranch        *b_higgs_child2_classifierParticleOrigin;   //!
-   TBranch        *b_higgs_child2_classifierParticleType;   //!
-   TBranch        *b_higgs_child2_mother_pdgId;   //!
-   TBranch        *b_higgs_child2_mother_status;   //!
-   TBranch        *b_higgs_child2_origin;   //!
-   TBranch        *b_higgs_child2_p4;   //!
-   TBranch        *b_higgs_child2_pdgId;   //!
-   TBranch        *b_higgs_child2_pz;   //!
-   TBranch        *b_higgs_child2_q;   //!
-   TBranch        *b_higgs_child2_status;   //!
-   TBranch        *b_higgs_child2_type;   //!
-   TBranch        *b_higgs_child3;   //!
-   TBranch        *b_higgs_child3_classifierParticleOrigin;   //!
-   TBranch        *b_higgs_child3_classifierParticleType;   //!
-   TBranch        *b_higgs_child3_mother_pdgId;   //!
-   TBranch        *b_higgs_child3_mother_status;   //!
-   TBranch        *b_higgs_child3_origin;   //!
-   TBranch        *b_higgs_child3_p4;   //!
-   TBranch        *b_higgs_child3_pdgId;   //!
-   TBranch        *b_higgs_child3_pz;   //!
-   TBranch        *b_higgs_child3_q;   //!
-   TBranch        *b_higgs_child3_status;   //!
-   TBranch        *b_higgs_child3_type;   //!
-   TBranch        *b_higgs_child4;   //!
-   TBranch        *b_higgs_child4_classifierParticleOrigin;   //!
-   TBranch        *b_higgs_child4_classifierParticleType;   //!
-   TBranch        *b_higgs_child4_mother_pdgId;   //!
-   TBranch        *b_higgs_child4_mother_status;   //!
-   TBranch        *b_higgs_child4_origin;   //!
-   TBranch        *b_higgs_child4_p4;   //!
-   TBranch        *b_higgs_child4_pdgId;   //!
-   TBranch        *b_higgs_child4_pz;   //!
-   TBranch        *b_higgs_child4_q;   //!
-   TBranch        *b_higgs_child4_status;   //!
-   TBranch        *b_higgs_child4_type;   //!
-   TBranch        *b_higgs_classifierParticleOrigin;   //!
-   TBranch        *b_higgs_classifierParticleType;   //!
-   TBranch        *b_higgs_mother_pdgId;   //!
-   TBranch        *b_higgs_mother_status;   //!
-   TBranch        *b_higgs_origin;   //!
-   TBranch        *b_higgs_p4;   //!
-   TBranch        *b_higgs_pdgId;   //!
-   TBranch        *b_higgs_pz;   //!
-   TBranch        *b_higgs_q;   //!
-   TBranch        *b_higgs_status;   //!
-   TBranch        *b_higgs_type;   //!
+   TBranch        *b_filter_efficiency;   //!
    TBranch        *b_is_dijet_centrality;   //!
-   TBranch        *b_jet_0_b_tagged;   //!
+   TBranch        *b_jet_0_b_tag_score;   //!
+   TBranch        *b_jet_0_b_tagged_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_0_b_tagged_DL1r_FixedCutBEff_85;   //!
    TBranch        *b_jet_0_fjvt;   //!
    TBranch        *b_jet_0_flavorlabel_part;   //!
    TBranch        *b_jet_0_is_Jvt_HS;   //!
@@ -1345,7 +1288,9 @@ public :
    TBranch        *b_jet_0_width;   //!
    TBranch        *b_jet_0_wztruth_p4;   //!
    TBranch        *b_jet_0_wztruth_pdgid;   //!
-   TBranch        *b_jet_1_b_tagged;   //!
+   TBranch        *b_jet_1_b_tag_score;   //!
+   TBranch        *b_jet_1_b_tagged_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_1_b_tagged_DL1r_FixedCutBEff_85;   //!
    TBranch        *b_jet_1_fjvt;   //!
    TBranch        *b_jet_1_flavorlabel_part;   //!
    TBranch        *b_jet_1_is_Jvt_HS;   //!
@@ -1354,7 +1299,9 @@ public :
    TBranch        *b_jet_1_width;   //!
    TBranch        *b_jet_1_wztruth_p4;   //!
    TBranch        *b_jet_1_wztruth_pdgid;   //!
-   TBranch        *b_jet_2_b_tagged;   //!
+   TBranch        *b_jet_2_b_tag_score;   //!
+   TBranch        *b_jet_2_b_tagged_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_2_b_tagged_DL1r_FixedCutBEff_85;   //!
    TBranch        *b_jet_2_fjvt;   //!
    TBranch        *b_jet_2_flavorlabel_part;   //!
    TBranch        *b_jet_2_is_Jvt_HS;   //!
@@ -1366,7 +1313,8 @@ public :
    TBranch        *b_jet_3;   //!
    TBranch        *b_jet_3_b_tag_quantile;   //!
    TBranch        *b_jet_3_b_tag_score;   //!
-   TBranch        *b_jet_3_b_tagged;   //!
+   TBranch        *b_jet_3_b_tagged_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_3_b_tagged_DL1r_FixedCutBEff_85;   //!
    TBranch        *b_jet_3_cleanJet_EC_LooseBad;   //!
    TBranch        *b_jet_3_fjvt;   //!
    TBranch        *b_jet_3_flavorlabel;   //!
@@ -1384,7 +1332,8 @@ public :
    TBranch        *b_jet_4;   //!
    TBranch        *b_jet_4_b_tag_quantile;   //!
    TBranch        *b_jet_4_b_tag_score;   //!
-   TBranch        *b_jet_4_b_tagged;   //!
+   TBranch        *b_jet_4_b_tagged_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_4_b_tagged_DL1r_FixedCutBEff_85;   //!
    TBranch        *b_jet_4_cleanJet_EC_LooseBad;   //!
    TBranch        *b_jet_4_fjvt;   //!
    TBranch        *b_jet_4_flavorlabel;   //!
@@ -1402,7 +1351,8 @@ public :
    TBranch        *b_jet_5;   //!
    TBranch        *b_jet_5_b_tag_quantile;   //!
    TBranch        *b_jet_5_b_tag_score;   //!
-   TBranch        *b_jet_5_b_tagged;   //!
+   TBranch        *b_jet_5_b_tagged_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_5_b_tagged_DL1r_FixedCutBEff_85;   //!
    TBranch        *b_jet_5_cleanJet_EC_LooseBad;   //!
    TBranch        *b_jet_5_fjvt;   //!
    TBranch        *b_jet_5_flavorlabel;   //!
@@ -1420,7 +1370,8 @@ public :
    TBranch        *b_jet_6;   //!
    TBranch        *b_jet_6_b_tag_quantile;   //!
    TBranch        *b_jet_6_b_tag_score;   //!
-   TBranch        *b_jet_6_b_tagged;   //!
+   TBranch        *b_jet_6_b_tagged_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_6_b_tagged_DL1r_FixedCutBEff_85;   //!
    TBranch        *b_jet_6_cleanJet_EC_LooseBad;   //!
    TBranch        *b_jet_6_fjvt;   //!
    TBranch        *b_jet_6_flavorlabel;   //!
@@ -1435,86 +1386,140 @@ public :
    TBranch        *b_jet_6_width;   //!
    TBranch        *b_jet_6_wztruth_p4;   //!
    TBranch        *b_jet_6_wztruth_pdgid;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_0_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_0_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_0_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_0_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_1_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_1_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_1_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_1_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_2_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_2_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_2_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_3_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_3_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_3_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_3_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_4_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_4_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_4_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_4_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_5_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_5_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_5_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_5_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_6_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_6_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_6_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_6_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_7_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_7_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_7_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_7_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_8_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_8_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_8_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_B_8_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_0_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_0_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_0_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_0_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_1_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_1_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_1_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_1_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_2_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_2_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_2_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_2_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_3_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_3_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_3_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_C_3_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_0_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_0_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_0_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_0_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_1_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_1_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_1_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_1_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_2_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_2_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_2_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_2_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_3_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_3_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_3_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_3_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_4_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_4_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_4_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_Eigen_Light_4_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_extrapolation_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_extrapolation_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_extrapolation_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_extrapolation_1up_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_extrapolation_from_charm_1down_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_extrapolation_from_charm_1down_global_ineffSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_extrapolation_from_charm_1up_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_FT_EFF_extrapolation_from_charm_1up_global_ineffSF_MV2c10;   //!
+   TBranch        *b_jet_7;   //!
+   TBranch        *b_jet_7_b_tag_quantile;   //!
+   TBranch        *b_jet_7_b_tag_score;   //!
+   TBranch        *b_jet_7_b_tagged_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_7_b_tagged_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_7_cleanJet_EC_LooseBad;   //!
+   TBranch        *b_jet_7_fjvt;   //!
+   TBranch        *b_jet_7_flavorlabel;   //!
+   TBranch        *b_jet_7_flavorlabel_cone;   //!
+   TBranch        *b_jet_7_flavorlabel_part;   //!
+   TBranch        *b_jet_7_is_Jvt_HS;   //!
+   TBranch        *b_jet_7_jvt;   //!
+   TBranch        *b_jet_7_origin;   //!
+   TBranch        *b_jet_7_p4;   //!
+   TBranch        *b_jet_7_q;   //!
+   TBranch        *b_jet_7_type;   //!
+   TBranch        *b_jet_7_width;   //!
+   TBranch        *b_jet_7_wztruth_p4;   //!
+   TBranch        *b_jet_7_wztruth_pdgid;   //!
+
+
+
+   TBranch        *b_jet_FT_EFF_Eigen_B_0_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_0_1down_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_0_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_0_1down_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_0_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_0_1up_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_0_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_0_1up_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_1_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_1_1down_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_1_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_1_1down_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_1_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_1_1up_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_1_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_1_1up_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_2_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_2_1down_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_2_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_2_1down_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_2_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_2_1up_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_0_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_0_1down_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_0_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_0_1down_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_0_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_0_1up_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_0_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_0_1up_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_1_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_1_1down_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_1_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_1_1down_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_1_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_1_1up_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_1_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_1_1up_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_2_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_2_1down_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_2_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_2_1down_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_2_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_2_1up_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_2_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_2_1up_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_3_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_3_1down_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_3_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_3_1down_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_3_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_3_1up_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_3_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_C_3_1up_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_0_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_0_1down_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_0_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_0_1down_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_0_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_0_1up_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_0_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_0_1up_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_1_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_1_1down_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_1_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_1_1down_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_1_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_1_1up_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_1_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_1_1up_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_2_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_2_1down_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_2_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_2_1down_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_2_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_2_1up_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_2_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_2_1up_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_3_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_3_1down_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_3_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_3_1down_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_3_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_3_1up_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_3_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_3_1up_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_4_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_4_1down_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_4_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_4_1down_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_4_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_4_1up_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_4_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_Light_4_1up_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_1down_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_1down_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_1up_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_1up_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_from_charm_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_from_charm_1down_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_from_charm_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_from_charm_1down_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_from_charm_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_from_charm_1up_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_from_charm_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_extrapolation_from_charm_1up_global_ineffSF_DL1r_FixedCutBEff_85;   //!
    TBranch        *b_jet_JET_JvtEfficiency_1down_central_jets_global_effSF_JVT;   //!
    TBranch        *b_jet_JET_JvtEfficiency_1down_central_jets_global_ineffSF_JVT;   //!
    TBranch        *b_jet_JET_JvtEfficiency_1up_central_jets_global_effSF_JVT;   //!
@@ -1527,9 +1532,16 @@ public :
    TBranch        *b_jet_NOMINAL_central_jets_global_ineffSF_JVT;   //!
    TBranch        *b_jet_NOMINAL_forward_jets_global_effSF_JVT;   //!
    TBranch        *b_jet_NOMINAL_forward_jets_global_ineffSF_JVT;   //!
-   TBranch        *b_jet_NOMINAL_global_effSF_MV2c10;   //!
-   TBranch        *b_jet_NOMINAL_global_ineffSF_MV2c10;   //!
+   TBranch        *b_jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jjdrmin;   //!
+   TBranch        *b_kfactor;   //!
    TBranch        *b_lepton_eta_centrality;   //!
+   TBranch        *b_mTopWbest;   //!
+   TBranch        *b_mWbest;   //!
+   TBranch        *b_mWsubbest;   //!
    TBranch        *b_mc_channel_number;   //!
    TBranch        *b_met_hpto_p4;   //!
    TBranch        *b_met_more_met_et_ele;   //!
@@ -1571,7 +1583,8 @@ public :
    TBranch        *b_n_actual_int_cor;   //!
    TBranch        *b_n_avg_int;   //!
    TBranch        *b_n_avg_int_cor;   //!
-   TBranch        *b_n_bjets;   //!
+   TBranch        *b_n_bjets_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_n_bjets_DL1r_FixedCutBEff_85;   //!
    TBranch        *b_n_electrons;   //!
    TBranch        *b_n_jets;   //!
    TBranch        *b_n_jets_30;   //!
@@ -1588,248 +1601,248 @@ public :
    TBranch        *b_n_photons;   //!
    TBranch        *b_n_pvx;   //!
    TBranch        *b_n_taus;   //!
-   TBranch        *b_n_taus_loose;   //!
-   TBranch        *b_n_taus_medium;   //!
-   TBranch        *b_n_taus_tight;   //!
-   TBranch        *b_n_taus_veryloose;   //!
+   TBranch        *b_n_taus_rnn_loose;   //!
+   TBranch        *b_n_taus_rnn_medium;   //!
+   TBranch        *b_n_taus_rnn_tight;   //!
+   TBranch        *b_n_taus_rnn_veryloose;   //!
    TBranch        *b_n_truth_gluon_jets;   //!
    TBranch        *b_n_truth_jets;   //!
    TBranch        *b_n_truth_jets_pt20_eta45;   //!
    TBranch        *b_n_truth_quark_jets;   //!
    TBranch        *b_n_vx;   //!
+   TBranch        *b_pmg_truth_weight_FSRHi;   //!
+   TBranch        *b_pmg_truth_weight_FSRLo;   //!
+   TBranch        *b_pmg_truth_weight_ISRLo;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_0;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_1;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_10;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_11;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_12;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_13;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_14;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_15;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_16;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_17;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_18;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_19;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_2;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_20;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_21;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_22;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_23;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_24;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_25;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_26;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_27;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_28;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_29;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_3;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_30;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_4;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_5;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_6;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_7;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_8;   //!
+   TBranch        *b_pmg_truth_weight_pdf_signal_weight_9;   //!
    TBranch        *b_primary_vertex;   //!
    TBranch        *b_primary_vertex_v;   //!
    TBranch        *b_pt_total;   //!
    TBranch        *b_run_number;   //!
    TBranch        *b_scalar_sum_pt;   //!
    TBranch        *b_tau_0;   //!
-   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
    TBranch        *b_tau_0_NOMINAL_TauEffSF_HadTauEleOLR_tauhad;   //!
-   TBranch        *b_tau_0_NOMINAL_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_NOMINAL_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_NOMINAL_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_NOMINAL_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_NOMINAL_TauEffSF_JetRNNtight;   //!
    TBranch        *b_tau_0_NOMINAL_TauEffSF_LooseEleBDT_electron;   //!
-   TBranch        *b_tau_0_NOMINAL_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_0_NOMINAL_TauEffSF_MediumEleBDT_electron;   //!
-   TBranch        *b_tau_0_NOMINAL_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
    TBranch        *b_tau_0_NOMINAL_TauEffSF_reco;   //!
    TBranch        *b_tau_0_NOMINAL_TauEffSF_selection;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDT_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDT_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDT_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDT_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDT_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDT_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDT_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDT_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1down_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1up_TauEffSF_LooseEleBDT_electron;   //!
    TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDT_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDT_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
    TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDT_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDT_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_selection;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1up_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1up_TauEffSF_selection;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1down_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1down_TauEffSF_selection;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1up_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1up_TauEffSF_selection;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1down_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1down_TauEffSF_selection;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1up_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
-   TBranch        *b_tau_0_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1up_TauEffSF_selection;   //!
    TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1down_TauEffSF_HadTauEleOLR_tauhad;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1down_TauEffSF_selection;   //!
    TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1up_TauEffSF_HadTauEleOLR_tauhad;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1up_TauEffSF_selection;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_SYST_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_SYST_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_SYST_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_SYST_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_SYST_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_JETID_SYST_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1down_TauEffSF_reco;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1down_TauEffSF_selection;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1up_TauEffSF_reco;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1up_TauEffSF_selection;   //!
    TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1down_TauEffSF_reco;   //!
    TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1down_TauEffSF_selection;   //!
    TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1up_TauEffSF_reco;   //!
    TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1up_TauEffSF_selection;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
    TBranch        *b_tau_0_allTrk_eta;   //!
    TBranch        *b_tau_0_allTrk_n;   //!
    TBranch        *b_tau_0_allTrk_phi;   //!
    TBranch        *b_tau_0_allTrk_pt;   //!
    TBranch        *b_tau_0_b_tagged;   //!
+   TBranch        *b_tau_0_decay_charged_p4;   //!
    TBranch        *b_tau_0_decay_mode;   //!
+   TBranch        *b_tau_0_decay_neutral_p4;   //!
    TBranch        *b_tau_0_ele_bdt_eff_sf;   //!
    TBranch        *b_tau_0_ele_bdt_loose_retuned;   //!
    TBranch        *b_tau_0_ele_bdt_medium_retuned;   //!
@@ -1840,11 +1853,6 @@ public :
    TBranch        *b_tau_0_ele_bdt_tight_retuned;   //!
    TBranch        *b_tau_0_ele_match_lhscore;   //!
    TBranch        *b_tau_0_ele_olr_pass;   //!
-   TBranch        *b_tau_0_jet_bdt_loose;   //!
-   TBranch        *b_tau_0_jet_bdt_medium;   //!
-   TBranch        *b_tau_0_jet_bdt_score_trans;   //!
-   TBranch        *b_tau_0_jet_bdt_tight;   //!
-   TBranch        *b_tau_0_jet_bdt_veryloose;   //!
    TBranch        *b_tau_0_jet_jvt;   //!
    TBranch        *b_tau_0_jet_rnn_loose;   //!
    TBranch        *b_tau_0_jet_rnn_medium;   //!
@@ -1853,13 +1861,28 @@ public :
    TBranch        *b_tau_0_jet_rnn_tight;   //!
    TBranch        *b_tau_0_jet_rnn_veryloose;   //!
    TBranch        *b_tau_0_jet_width;   //!
+   TBranch        *b_tau_0_jetseed_TrackWidthPt1000_wrt_PV;   //!
+   TBranch        *b_tau_0_jetseed_TrackWidthPt1000_wrt_TV;   //!
+   TBranch        *b_tau_0_jetseed_p4;   //!
+   TBranch        *b_tau_0_leadTrk_d0;   //!
+   TBranch        *b_tau_0_leadTrk_d0_sig;   //!
    TBranch        *b_tau_0_leadTrk_eta;   //!
    TBranch        *b_tau_0_leadTrk_phi;   //!
    TBranch        *b_tau_0_leadTrk_pt;   //!
+   TBranch        *b_tau_0_leadTrk_pvx_z0;   //!
+   TBranch        *b_tau_0_leadTrk_pvx_z0_sig;   //!
+   TBranch        *b_tau_0_leadTrk_pvx_z0_sintheta;   //!
+   TBranch        *b_tau_0_leadTrk_vertex_v;   //!
+   TBranch        *b_tau_0_leadTrk_z0;   //!
+   TBranch        *b_tau_0_leadTrk_z0_sig;   //!
+   TBranch        *b_tau_0_leadTrk_z0_sintheta;   //!
    TBranch        *b_tau_0_matched;   //!
    TBranch        *b_tau_0_matched_classifierParticleOrigin;   //!
    TBranch        *b_tau_0_matched_classifierParticleType;   //!
+   TBranch        *b_tau_0_matched_decay_charged_p4;   //!
    TBranch        *b_tau_0_matched_decay_mode;   //!
+   TBranch        *b_tau_0_matched_decay_neutral_p4;   //!
+   TBranch        *b_tau_0_matched_decay_neutrino_p4;   //!
    TBranch        *b_tau_0_matched_isEle;   //!
    TBranch        *b_tau_0_matched_isHadTau;   //!
    TBranch        *b_tau_0_matched_isJet;   //!
@@ -1905,243 +1928,221 @@ public :
    TBranch        *b_tau_0_track1_p4;   //!
    TBranch        *b_tau_0_track2_p4;   //!
    TBranch        *b_tau_0_trig_HLT_tau25_medium1_tracktwo;   //!
+   TBranch        *b_tau_0_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_0_trig_HLT_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_0_trig_HLT_tau25_mediumRNN_tracktwoMVA_03dR30_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_0_trig_HLT_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;   //!
    TBranch        *b_tau_0_trig_HLT_tau35_medium1_tracktwo;   //!
+   TBranch        *b_tau_0_trig_HLT_tau35_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_0_trig_HLT_tau35_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_0_trig_HLT_tau35_medium1_tracktwoEF_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_0_trig_HLT_tau35_medium1_tracktwoEF_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;   //!
    TBranch        *b_tau_0_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo;   //!
    TBranch        *b_tau_0_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I;   //!
    TBranch        *b_tau_0_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I_J25;   //!
    TBranch        *b_tau_0_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1DR_TAU20ITAU12I;   //!
    TBranch        *b_tau_0_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1DR_TAU20ITAU12I_J25;   //!
    TBranch        *b_tau_0_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1TAU20IM_2TAU12IM;   //!
+   TBranch        *b_tau_0_trig_HLT_tau35_mediumRNN_tracktwoMVA_03dR30_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_0_trig_HLT_tau35_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_0_trig_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_03dR30_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_0_trig_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;   //!
    TBranch        *b_tau_0_trig_trigger_matched;   //!
    TBranch        *b_tau_0_type;   //!
    TBranch        *b_tau_1;   //!
-   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
    TBranch        *b_tau_1_NOMINAL_TauEffSF_HadTauEleOLR_tauhad;   //!
-   TBranch        *b_tau_1_NOMINAL_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_NOMINAL_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_NOMINAL_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_NOMINAL_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_NOMINAL_TauEffSF_JetRNNtight;   //!
    TBranch        *b_tau_1_NOMINAL_TauEffSF_LooseEleBDT_electron;   //!
-   TBranch        *b_tau_1_NOMINAL_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_1_NOMINAL_TauEffSF_MediumEleBDT_electron;   //!
-   TBranch        *b_tau_1_NOMINAL_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
    TBranch        *b_tau_1_NOMINAL_TauEffSF_reco;   //!
    TBranch        *b_tau_1_NOMINAL_TauEffSF_selection;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_LooseEleBDT_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1down_TauEffSF_MediumEleBDT_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_LooseEleBDT_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16A_1up_TauEffSF_MediumEleBDT_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_LooseEleBDT_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1down_TauEffSF_MediumEleBDT_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_LooseEleBDT_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STATMC16D_1up_TauEffSF_MediumEleBDT_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1down_TauEffSF_LooseEleBDT_electron;   //!
+   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1up_TauEffSF_LooseEleBDT_electron;   //!
    TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDT_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_MediumEleBDT_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDTPlusVeto_electron;   //!
    TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDT_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDTPlusVeto_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_MediumEleBDT_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1down_TauEffSF_selection;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1up_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATHIGHMU_1up_TauEffSF_selection;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1down_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1down_TauEffSF_selection;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1up_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_STATLOWMU_1up_TauEffSF_selection;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1down_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1down_TauEffSF_selection;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1up_TauEffSF_VeryLooseLlhEleOLR_electron;   //!
-   TBranch        *b_tau_1_TAUS_TRUEELECTRON_EFF_ELEOLR_SYST_1up_TauEffSF_selection;   //!
    TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1down_TauEffSF_HadTauEleOLR_tauhad;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1down_TauEffSF_selection;   //!
    TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1up_TauEffSF_HadTauEleOLR_tauhad;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1up_TauEffSF_selection;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2025_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR2530_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORR3040_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_1PRONGSTATSYSTUNCORRGE40_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORR2030_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_3PRONGSTATSYSTUNCORRGE30_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_HIGHPT_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_SYST_1down_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_SYST_1down_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_SYST_1down_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_SYST_1up_TauEffSF_JetBDTloose;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_SYST_1up_TauEffSF_JetBDTmedium;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_JETID_SYST_1up_TauEffSF_JetBDTtight;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1down_TauEffSF_reco;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1down_TauEffSF_selection;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1up_TauEffSF_reco;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RECO_HIGHPT_1up_TauEffSF_selection;   //!
    TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1down_TauEffSF_reco;   //!
    TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1down_TauEffSF_selection;   //!
    TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1up_TauEffSF_reco;   //!
    TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1up_TauEffSF_selection;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2015_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2016_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTTIGHT;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;   //!
-   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2017_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1down_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1down_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1down_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1up_TauEffSF_JetRNNloose;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1up_TauEffSF_JetRNNmedium;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1up_TauEffSF_JetRNNtight;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNLOOSE;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM;   //!
+   TBranch        *b_tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNTIGHT;   //!
    TBranch        *b_tau_1_allTrk_eta;   //!
    TBranch        *b_tau_1_allTrk_n;   //!
    TBranch        *b_tau_1_allTrk_phi;   //!
    TBranch        *b_tau_1_allTrk_pt;   //!
    TBranch        *b_tau_1_b_tagged;   //!
+   TBranch        *b_tau_1_decay_charged_p4;   //!
    TBranch        *b_tau_1_decay_mode;   //!
+   TBranch        *b_tau_1_decay_neutral_p4;   //!
    TBranch        *b_tau_1_ele_bdt_eff_sf;   //!
    TBranch        *b_tau_1_ele_bdt_loose_retuned;   //!
    TBranch        *b_tau_1_ele_bdt_medium_retuned;   //!
@@ -2152,11 +2153,6 @@ public :
    TBranch        *b_tau_1_ele_bdt_tight_retuned;   //!
    TBranch        *b_tau_1_ele_match_lhscore;   //!
    TBranch        *b_tau_1_ele_olr_pass;   //!
-   TBranch        *b_tau_1_jet_bdt_loose;   //!
-   TBranch        *b_tau_1_jet_bdt_medium;   //!
-   TBranch        *b_tau_1_jet_bdt_score_trans;   //!
-   TBranch        *b_tau_1_jet_bdt_tight;   //!
-   TBranch        *b_tau_1_jet_bdt_veryloose;   //!
    TBranch        *b_tau_1_jet_jvt;   //!
    TBranch        *b_tau_1_jet_rnn_loose;   //!
    TBranch        *b_tau_1_jet_rnn_medium;   //!
@@ -2165,13 +2161,28 @@ public :
    TBranch        *b_tau_1_jet_rnn_tight;   //!
    TBranch        *b_tau_1_jet_rnn_veryloose;   //!
    TBranch        *b_tau_1_jet_width;   //!
+   TBranch        *b_tau_1_jetseed_TrackWidthPt1000_wrt_PV;   //!
+   TBranch        *b_tau_1_jetseed_TrackWidthPt1000_wrt_TV;   //!
+   TBranch        *b_tau_1_jetseed_p4;   //!
+   TBranch        *b_tau_1_leadTrk_d0;   //!
+   TBranch        *b_tau_1_leadTrk_d0_sig;   //!
    TBranch        *b_tau_1_leadTrk_eta;   //!
    TBranch        *b_tau_1_leadTrk_phi;   //!
    TBranch        *b_tau_1_leadTrk_pt;   //!
+   TBranch        *b_tau_1_leadTrk_pvx_z0;   //!
+   TBranch        *b_tau_1_leadTrk_pvx_z0_sig;   //!
+   TBranch        *b_tau_1_leadTrk_pvx_z0_sintheta;   //!
+   TBranch        *b_tau_1_leadTrk_vertex_v;   //!
+   TBranch        *b_tau_1_leadTrk_z0;   //!
+   TBranch        *b_tau_1_leadTrk_z0_sig;   //!
+   TBranch        *b_tau_1_leadTrk_z0_sintheta;   //!
    TBranch        *b_tau_1_matched;   //!
    TBranch        *b_tau_1_matched_classifierParticleOrigin;   //!
    TBranch        *b_tau_1_matched_classifierParticleType;   //!
+   TBranch        *b_tau_1_matched_decay_charged_p4;   //!
    TBranch        *b_tau_1_matched_decay_mode;   //!
+   TBranch        *b_tau_1_matched_decay_neutral_p4;   //!
+   TBranch        *b_tau_1_matched_decay_neutrino_p4;   //!
    TBranch        *b_tau_1_matched_isEle;   //!
    TBranch        *b_tau_1_matched_isHadTau;   //!
    TBranch        *b_tau_1_matched_isJet;   //!
@@ -2217,122 +2228,36 @@ public :
    TBranch        *b_tau_1_track1_p4;   //!
    TBranch        *b_tau_1_track2_p4;   //!
    TBranch        *b_tau_1_trig_HLT_tau25_medium1_tracktwo;   //!
+   TBranch        *b_tau_1_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_1_trig_HLT_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_1_trig_HLT_tau25_mediumRNN_tracktwoMVA_03dR30_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_1_trig_HLT_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;   //!
    TBranch        *b_tau_1_trig_HLT_tau35_medium1_tracktwo;   //!
+   TBranch        *b_tau_1_trig_HLT_tau35_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_1_trig_HLT_tau35_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_1_trig_HLT_tau35_medium1_tracktwoEF_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_1_trig_HLT_tau35_medium1_tracktwoEF_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25;   //!
    TBranch        *b_tau_1_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo;   //!
    TBranch        *b_tau_1_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I;   //!
    TBranch        *b_tau_1_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_03dR30_L1DR_TAU20ITAU12I_J25;   //!
    TBranch        *b_tau_1_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1DR_TAU20ITAU12I;   //!
    TBranch        *b_tau_1_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1DR_TAU20ITAU12I_J25;   //!
    TBranch        *b_tau_1_trig_HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1TAU20IM_2TAU12IM;   //!
+   TBranch        *b_tau_1_trig_HLT_tau35_mediumRNN_tracktwoMVA_03dR30_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_1_trig_HLT_tau35_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_1_trig_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_03dR30_L1DR_TAU20ITAU12I_J25;   //!
+   TBranch        *b_tau_1_trig_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25;   //!
    TBranch        *b_tau_1_trig_trigger_matched;   //!
    TBranch        *b_tau_1_type;   //!
-   TBranch        *b_tau_eta_centrality;   //!
-   TBranch        *b_tb;   //!
-   TBranch        *b_tb_childq;   //!
-   TBranch        *b_tb_childq_classifierParticleOrigin;   //!
-   TBranch        *b_tb_childq_classifierParticleType;   //!
-   TBranch        *b_tb_childq_mother_pdgId;   //!
-   TBranch        *b_tb_childq_mother_status;   //!
-   TBranch        *b_tb_childq_origin;   //!
-   TBranch        *b_tb_childq_p4;   //!
-   TBranch        *b_tb_childq_pdgId;   //!
-   TBranch        *b_tb_childq_pz;   //!
-   TBranch        *b_tb_childq_q;   //!
-   TBranch        *b_tb_childq_status;   //!
-   TBranch        *b_tb_childq_type;   //!
-   TBranch        *b_tb_classifierParticleOrigin;   //!
-   TBranch        *b_tb_classifierParticleType;   //!
-   TBranch        *b_tb_mother_pdgId;   //!
-   TBranch        *b_tb_mother_status;   //!
-   TBranch        *b_tb_origin;   //!
-   TBranch        *b_tb_p4;   //!
-   TBranch        *b_tb_pdgId;   //!
-   TBranch        *b_tb_pz;   //!
-   TBranch        *b_tb_q;   //!
-   TBranch        *b_tb_status;   //!
-   TBranch        *b_tb_type;   //!
-   TBranch        *b_top;   //!
-   TBranch        *b_top_childq;   //!
-   TBranch        *b_top_childq_classifierParticleOrigin;   //!
-   TBranch        *b_top_childq_classifierParticleType;   //!
-   TBranch        *b_top_childq_mother_pdgId;   //!
-   TBranch        *b_top_childq_mother_status;   //!
-   TBranch        *b_top_childq_origin;   //!
-   TBranch        *b_top_childq_p4;   //!
-   TBranch        *b_top_childq_pdgId;   //!
-   TBranch        *b_top_childq_pz;   //!
-   TBranch        *b_top_childq_q;   //!
-   TBranch        *b_top_childq_status;   //!
-   TBranch        *b_top_childq_type;   //!
-   TBranch        *b_top_classifierParticleOrigin;   //!
-   TBranch        *b_top_classifierParticleType;   //!
-   TBranch        *b_top_mother_pdgId;   //!
-   TBranch        *b_top_mother_status;   //!
-   TBranch        *b_top_origin;   //!
-   TBranch        *b_top_p4;   //!
-   TBranch        *b_top_pdgId;   //!
-   TBranch        *b_top_pz;   //!
-   TBranch        *b_top_q;   //!
-   TBranch        *b_top_status;   //!
-   TBranch        *b_top_type;   //!
-   TBranch        *b_truth_passedVBFFilter;   //!
-   TBranch        *b_weight_mc;   //!
-   TBranch        *b_wm_childq1;   //!
-   TBranch        *b_wm_childq1_classifierParticleOrigin;   //!
-   TBranch        *b_wm_childq1_classifierParticleType;   //!
-   TBranch        *b_wm_childq1_mother_pdgId;   //!
-   TBranch        *b_wm_childq1_mother_status;   //!
-   TBranch        *b_wm_childq1_origin;   //!
-   TBranch        *b_wm_childq1_p4;   //!
-   TBranch        *b_wm_childq1_pdgId;   //!
-   TBranch        *b_wm_childq1_pz;   //!
-   TBranch        *b_wm_childq1_q;   //!
-   TBranch        *b_wm_childq1_status;   //!
-   TBranch        *b_wm_childq1_type;   //!
-   TBranch        *b_wm_childq2;   //!
-   TBranch        *b_wm_childq2_classifierParticleOrigin;   //!
-   TBranch        *b_wm_childq2_classifierParticleType;   //!
-   TBranch        *b_wm_childq2_mother_pdgId;   //!
-   TBranch        *b_wm_childq2_mother_status;   //!
-   TBranch        *b_wm_childq2_origin;   //!
-   TBranch        *b_wm_childq2_p4;   //!
-   TBranch        *b_wm_childq2_pdgId;   //!
-   TBranch        *b_wm_childq2_pz;   //!
-   TBranch        *b_wm_childq2_q;   //!
-   TBranch        *b_wm_childq2_status;   //!
-   TBranch        *b_wm_childq2_type;   //!
-   TBranch        *b_wp_childq1;   //!
-   TBranch        *b_wp_childq1_classifierParticleOrigin;   //!
-   TBranch        *b_wp_childq1_classifierParticleType;   //!
-   TBranch        *b_wp_childq1_mother_pdgId;   //!
-   TBranch        *b_wp_childq1_mother_status;   //!
-   TBranch        *b_wp_childq1_origin;   //!
-   TBranch        *b_wp_childq1_p4;   //!
-   TBranch        *b_wp_childq1_pdgId;   //!
-   TBranch        *b_wp_childq1_pz;   //!
-   TBranch        *b_wp_childq1_q;   //!
-   TBranch        *b_wp_childq1_status;   //!
-   TBranch        *b_wp_childq1_type;   //!
-   TBranch        *b_wp_childq2;   //!
-   TBranch        *b_wp_childq2_classifierParticleOrigin;   //!
-   TBranch        *b_wp_childq2_classifierParticleType;   //!
-   TBranch        *b_wp_childq2_mother_pdgId;   //!
-   TBranch        *b_wp_childq2_mother_status;   //!
-   TBranch        *b_wp_childq2_origin;   //!
-   TBranch        *b_wp_childq2_p4;   //!
-   TBranch        *b_wp_childq2_pdgId;   //!
-   TBranch        *b_wp_childq2_pz;   //!
-   TBranch        *b_wp_childq2_q;   //!
-   TBranch        *b_wp_childq2_status;   //!
-   TBranch        *b_wp_childq2_type;   //!
-   TBranch        *b_theory_weights_LHE3Weight_muR_05_muF_05;
-   TBranch        *b_theory_weights_LHE3Weight_muR_05_muF_10;
-   TBranch        *b_theory_weights_LHE3Weight_muR_05_muF_20;
-   TBranch        *b_theory_weights_LHE3Weight_muR_10_muF_05;
-   TBranch        *b_theory_weights_LHE3Weight_muR_10_muF_20;
-   TBranch        *b_theory_weights_LHE3Weight_muR_20_muF_05;
-   TBranch        *b_theory_weights_LHE3Weight_muR_20_muF_10;
-   TBranch        *b_theory_weights_LHE3Weight_muR_20_muF_20;
+   TBranch        *b_tau_eta_centrality; 
 
 };
 #endif // #ifdef hadhadtree_cxx
+
+
+
+
+
+
+
+
