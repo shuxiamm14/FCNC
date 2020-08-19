@@ -162,7 +162,7 @@ regions.push_back("reg2ltau1b3jos");
 	analysis->dofit = 0;
 	analysis->reduce = reduce;
 	analysis->debug = debug;
-	analysis->plotTauFake = 0;
+	analysis->plotTauFake = 1;
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
 	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
 	analysis->doubleCounting = 1;
@@ -170,6 +170,7 @@ regions.push_back("reg2ltau1b3jos");
 	char inputline[500];
 
 	if(reduce > 1){
+        if(framework == "xTFW")analysis->dovetobwp["btagwp70"] = 1;
 		if(framework == "tthML"){
 			if(!dofake) {
 				analysis->dovetobwp["btagwp70"] = 1;

@@ -17,8 +17,8 @@ void nominal::initMVA(TString fcnc_region){
   reader[fcnc_region]->AddVariable("etmiss",&etmiss);
   reader[fcnc_region]->AddVariable("ttvismass",&ttvismass);
   reader[fcnc_region]->AddVariable("drtaujmin",&drtaujmin);
-  reader[fcnc_region]->AddVariable("mttjmin",&mttjmin);
-  if(!fcnc_region.Contains("2mtau")) {
+  //reader[fcnc_region]->AddVariable("mttjmin",&mttjmin);
+  if(!fcnc_region.Contains("2mtau")&& !fcnc_region.Contains("2ltau")) {
     reader[fcnc_region]->AddVariable("drlb",&drlb);
     if(fcnc_region.Contains("2lSS")) reader[fcnc_region]->AddVariable("lep_pt_0",&lep_pt_0);
   }
@@ -917,11 +917,13 @@ vector<int> nominal::findwpair(int cjet){
 }
 
 void nominal::fillhist(histSaver* plots, TString region, int nprong, TString sample, float taubtag, TString NP){
+ // std::cout<<"tau btag: "<<taubtag<<std::endl;
   for (int i = 0; i < 4; ++i){
-    if(taubtag>btagwpCut[i]) {
-      if(dobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[i],NP);
+ //   std::cout<<"i: "<<i<<std::endl;
+    if(taubtag) {
+      if(dobwp[bwps[i]] == 1) {plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[i],NP);}
     }else{
-      if(dovetobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[i],NP);
+      if(dovetobwp[bwps[i]] == 1){plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[i],NP);}
     }
   }
 }
@@ -1359,7 +1361,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       BDTG_train  = 0;
       if(doBDT){
         if(debug) printf("eval BDTG\n");
-        if(belong_regions.have("2mtau")){
+        if(belong_regions.have("2mtau")||belong_regions.have("2ltau")){
           if(belong_regions.have("3j")) {
             BDTG_test = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2) );
             BDTG_train = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)) );
@@ -1441,7 +1443,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
 
         TString    leporigin;
         TString    tauorigin;
-        if (sample.Contains("data")) {
+    /*    if (sample.Contains("data")) {
           leporigin = "data";
           sample = "data";
         } else {
@@ -1454,7 +1456,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           if(nfakelep == 0) leporigin = sample + "_realLep";
           else if(nfakelep >= 2) leporigin = sample + "_doubleFakeLep";
         }
-        if (sample.Contains("data")) {
+      */  if (sample.Contains("data")) {
           tauorigin = "data";
           sample = "data";
         } else {
@@ -1476,12 +1478,12 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           else if(nfaketau >= 2) tauorigin = sample + "_doublefake";
         }
         if(debug) printf("fill hist\n");
-
+     
         if(mcChannelNumber!=0){
           auto weightvec = weightsysmap.at(mcChannelNumber);
           for (int iNP = 0; iNP < plotNPs.size(); ++iNP){
             auto theNP = plotNPs.at(iNP);
-            if(debug) printf("fill NP %s\n", theNP.Data());
+            //if(debug||true) printf("fill NP %s\n", theNP.Data());
             weight = weights->at(0);
             if(applyNewFakeSF){
               if(theNP.Contains("fakeSF")){

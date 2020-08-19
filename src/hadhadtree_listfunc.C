@@ -5,7 +5,7 @@ void hadhadtree::definetree(TTree * tree) {
   tree->Branch("event_number", &event_number);
   tree->Branch("mc_channel_number", &mc_channel_number);
   tree->Branch("run_number",&run_number);
-//  tree->Branch("weights",&weights);
+//tree->Branch("weights",&weights);
   if(reduce == 1){
     //setVecBranch(tree);
     vecBranch(tree);//调用基类nominal的函数  
@@ -53,7 +53,7 @@ void hadhadtree::definetree(TTree * tree) {
       if(nominaltree){
         tree->Branch("met_truth_p4", &met_truth_p4);
         tree->Branch("met_truth_sumet", &met_truth_sumet);
-  //      tree->Branch("taus_matched_mother_pdgId",&taus_matched_mother_pdgId);
+       // tree->Branch("taus_matched_mother_pdgId",&taus_matched_mother_pdgId);
         tree->Branch("taus_matched_mother_status",&taus_matched_mother_status);
         tree->Branch("taus_matched_vis_p4",&taus_matched_vis_p4);
       }
@@ -62,6 +62,13 @@ void hadhadtree::definetree(TTree * tree) {
   }
   if(reduce == 2){
     BDTBranch(tree);
+<<<<<<< HEAD
+    //tree->Branch("chi2",&chi2);
+    tree->Branch("allmass", &allmass);
+    tree->Branch("allpz", &allpz);
+   /*
+    tree->Branch("taus_b_tagged",&taus_b_tagged);
+=======
    // tree->Branch("chi2",&chi2);
     tree->Branch("allmass", &allmass);
     tree->Branch("allpz", &allpz);
@@ -81,8 +88,9 @@ void hadhadtree::definetree(TTree * tree) {
     tree->Branch("wmass",&wmass);
     tree->Branch("t2mass",&t2mass);
     tree->Branch("x1fit",&x1fit);
+   */ 
     tree->Branch("x2fit",&x2fit);
-   */tree->Branch("tau0RNN",&tau0RNN);
+    tree->Branch("tau0RNN",&tau0RNN);
     tree->Branch("tau1RNN",&tau1RNN);
     tree->Branch("ditau_coll_approx_m", &ditau_coll_approx_m);
     tree->Branch("totaljets_p4",&totaljets_p4);
@@ -354,6 +362,16 @@ void hadhadtree::initRaw(TTree *tree)
 
   // Set object pointer
   if(reduce == 2){
+<<<<<<< HEAD
+    tree->SetBranchAddress("event_number", &event_number); // tree->SetBranchAddress("eventNumber", &eventNumber);
+    tree->SetBranchAddress("mc_channel_number", &mc_channel_number); //  tree->SetBranchAddress("mc_channel_number", &mcChannelNumber);
+    tree->SetBranchAddress("run_number", &run_number); 
+   setBDTBranch(tree);
+  // tree->SetBranchAddress("chi2",&chi2);
+   tree->SetBranchAddress("allmass", &allmass);
+   tree->SetBranchAddress("allpz", &allpz);
+ /*  tree->SetBranchAddress("taus_b_tagged",&taus_b_tagged);
+=======
    
    
    tree->SetBranchAddress("event_number", &event_number); // tree->SetBranchAddress("eventNumber", &eventNumber);
@@ -385,8 +403,7 @@ void hadhadtree::initRaw(TTree *tree)
    tree->SetBranchAddress("t2mass", &t2mass);
    tree->SetBranchAddress("x1fit", &x1fit);
    tree->SetBranchAddress("x2fit", &x2fit);
-  */ 
-   tree->SetBranchAddress("ditau_coll_approx_m", &ditau_coll_approx_m);
+ */tree->SetBranchAddress("ditau_coll_approx_m", &ditau_coll_approx_m);
    tree->SetBranchAddress("tau0RNN", &tau0RNN);
    tree->SetBranchAddress("tau1RNN", &tau1RNN);
    tree->SetBranchAddress("totaljets_p4",&totaljets_p4);
@@ -429,7 +446,7 @@ void hadhadtree::initRaw(TTree *tree)
     tree->SetBranchAddress("event_number", &event_number); // tree->SetBranchAddress("eventNumber", &eventNumber);
     tree->SetBranchAddress("mc_channel_number", &mc_channel_number); //  tree->SetBranchAddress("mc_channel_number", &mcChannelNumber);
     tree->SetBranchAddress("run_number", &run_number); //tree->SetBranchAddress("runNumber", &runNumber);
-  //  tree->SetBranchAddress("weights", &weights);
+    //tree->SetBranchAddress("weights", &weights);
     tree->SetBranchAddress("tau_pt_0", &tau_pt_0);
     tree->SetBranchAddress("tau_pt_1", &tau_pt_1);
     tree->SetBranchAddress("bjets_fjvt", &bjets_fjvt);
@@ -466,7 +483,7 @@ void hadhadtree::initRaw(TTree *tree)
     if(nominaltree){
         tree->SetBranchAddress("met_truth_p4", &met_truth_p4);
         tree->SetBranchAddress("met_truth_sumet", &met_truth_sumet);
-        //tree->SetBranchAddress("taus_matched_mother_pdgId",&taus_matched_mother_pdgId);
+      //tree->SetBranchAddress("taus_matched_mother_pdgId",&taus_matched_mother_pdgId);
         tree->SetBranchAddress("taus_matched_mother_status",&taus_matched_mother_status);
         tree->SetBranchAddress("taus_matched_vis_p4",&taus_matched_vis_p4);
     }

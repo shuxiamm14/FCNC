@@ -17,9 +17,9 @@ if [ -z ${ttH_fakes_DIR+x} ] ; then
 	alias tthmake='cd $ttH_fakes_DIR/build; make; cd -'
 fi
 
-export TOOL_DIR=/afs/cern.ch/work/m/mxia/xTFW/FCNC_analysis/tools
-export PLOT_LIB_DIR=/afs/cern.ch/work/m/mxia/xTFW/FCNC_analysis/PlotTools
-
+export TOOL_DIR=/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/FCNC_analysis/tools/
+export PLOT_LIB_DIR=/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/FCNC_analysis/PlotTools/
+export FCNC_DIR=/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/FCNC_analysis/FCNCAnalysis/
 
 Order(){
   infile=$1

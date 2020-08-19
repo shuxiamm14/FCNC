@@ -67,6 +67,8 @@ void hadhadtree::init_hist(TString histfilename){
   if(reduce == 3){
     initMVA("reg2mtau1b3jos");
     initMVA("reg2mtau1b2jos");
+    initMVA("reg2ltau1b3jos");
+    initMVA("reg2ltau1b2jos");
   }
   fcnc_plots = new histSaver(histfilename);
   fcnc_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV,  fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
@@ -115,12 +117,12 @@ void hadhadtree::init_sample(TString sample, TString sampletitle){
    // weights = new vector<double> ();
     //taus_id = new vector<Int_t> ();
     taus_decay_mode = new vector<UInt_t> ();
- // taus_matched_mother_pdgId = new vector<Int_t> ();
+    //taus_matched_mother_pdgId = new vector<Int_t> ();
     taus_matched_mother_status = new vector<Int_t> ();
     taus_matched_p4 = new vector<TLorentzVector*>();
- // taus_matched_pdgId = new vector<Int_t> ();
+   // taus_matched_pdgId = new vector<Int_t> ();
     taus_matched_vis_p4 = new vector<TLorentzVector*>();
-  //taus_n_charged_tracks = new vector<UInt_t> ();
+   // taus_n_charged_tracks = new vector<UInt_t> ();
     bjets_fjvt = new vector<Float_t> ();
     bjets_is_Jvt_HS = new vector<Int_t> ();
     bjets_jvt = new vector<Float_t> ();

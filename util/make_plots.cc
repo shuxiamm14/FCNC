@@ -11,7 +11,7 @@
 using namespace std;
 
 TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir, TString nominalname){
-	TFile *inputfile = new TFile(NPdir + "/" + sample + "_" + (NPdir==nominaldir? NPname : nominalname) + ".root");
+         TFile *inputfile = new TFile(NPdir + "/" + sample + "_" + (NPdir==nominaldir? NPname : nominalname) + ".root");
 	if(inputfile->IsZombie()) {
 		deletepointer(inputfile);
 		inputfile = new TFile(nominaldir + "/" + sample + "_" + nominalname + ".root");
@@ -37,7 +37,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 1;
 	bool wfake = 0;
-	bool mergeFake = 0;
+	bool mergeFake = 1;// template: mergeFake=0,showfake=0
 	bool doTrex = 1;
 	bool plotnj = 0;
 	bool doPlots = 1;
@@ -174,13 +174,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
   	}else{
 		tau_plots->sensitivevariable = "BDTG_test";
 		for(auto var : vars){
-			if(   var.first!="tau_pt_0"
-				&&var.first!="tau_pt_1"
-				&&var.first!="etmiss"
-				&&var.first!="ttvismass"
-				&&var.first!="lep_pt_0"
-				&&var.first!="BDTG_test"
-			) continue;
+			if(   var.first!="tau_pt_0"&&var.first!="tau_pt_1"&&var.first!="etmiss" &&var.first!="ttvismass" &&var.first!="BDTG_test"&&var.first!="dphitauetmiss"&&var.first!="BDTG_train"&&var.first!="x1fit"&&var.first!="x2fit"&&var.first!="phicent") continue;
 			tau_plots->add(var.second);
 		}
 	}
@@ -188,13 +182,13 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
   	tau_plots->blinding = 2;
 	vector<TString> regions_xTFW = {
 		//"reg1mtau1ltau1b2jss",
-		//"reg2ltau1b2jss",
+		"reg2ltau1b2jss",
 		//"reg1mtau1ltau1b3jss",
-		//"reg2ltau1b3jss",
+		"reg2ltau1b3jss",
 		//"reg1mtau1ltau1b2jos",
-		//"reg2ltau1b2jos",
+		"reg2ltau1b2jos",
 		//"reg1mtau1ltau1b3jos",
-		//"reg2ltau1b3jos",
+		"reg2ltau1b3jos",
 		"reg2mtau1b2jss",
 		"reg2mtau1b2jos",
 		"reg2mtau1b3jss",
@@ -349,12 +343,11 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 							}
 						}
 					}else{
-						for (int i = 0; i < origin.size()-2; i++){
+				      	/*	for (int i = 0; i < origin.size()-2; i++){
 							if(origin[i] == "wjet-fake")
 								tau_plots->read_sample( samples[j].name, samplename + "_wjet", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
-							else tau_plots->read_sample( samples[j].name, samplename + "_" + origin[i], histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
-						}
-					}
+							else tau_plots->read_sample( samples[j].name, samplename + "_" + origin[i], histmiddlename, samples[j].title, samples[j].color, norm, inputfile);	                                         	}
+					*/}
 					deletepointer(inputfile);
 				}
 			}
@@ -506,9 +499,14 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
   			}
   			if(!mergeFake && framework == "xTFW") {
   				tau_plots->stackorder.push_back("fakeSS");
-  				tau_plots->templatesample("reg2mtau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 othertop -1 fake","reg2mtau1b3jos","fakeSS","Fake",kYellow,0,1.31597);
-  				tau_plots->templatesample("reg2mtau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 othertop -1 fake","reg2mtau1b2jos","fakeSS","Fake",kYellow,0,1.31597);
-  				//tau_plots->templatesample("reg2mtau2b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b3jos","fakeSS","Fake",kYellow,1);
+  				tau_plots->templatesample("reg2mtau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2mtau1b3jos","fakeSS","Fake",kYellow,1,1.31597);
+  				tau_plots->templatesample("reg2mtau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2mtau1b2jos","fakeSS","Fake",kYellow,1,1.31597);
+                                tau_plots->templatesample("reg2ltau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2ltau1b3jos","fakeSS","Fake",kYellow,1,1.31597);
+                                tau_plots->templatesample("reg2ltau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2ltau1b2jos","fakeSS","Fake",kYellow,1,1.31597);  				
+
+
+
+//tau_plots->templatesample("reg2mtau2b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b3jos","fakeSS","Fake",kYellow,1);
   				//tau_plots->templatesample("reg2mtau2b2jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b2jos","fakeSS","Fake",kYellow,1);
 	
   				//tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
@@ -550,13 +548,14 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 
 		//if(!calculate_fake_calibration)
 			for (auto samp : sigsamples)
-			{
+			{       std::cout<<"i am filling the signal"<<std::endl;
+                                std::cout<<"sample name: "<<samp.name.Data()<<std::endl;
   				tau_plots->overlay(samp.name);
 			}
 		if(fittodata) tau_plots->plot_stack(histmiddlename, "plots_" + NPname, "charts_" + NPname);
-		else{
-			if(figuredir == "") figuredir = ".";
-			if(chartdir == "") chartdir = ".";
+		else{   std::cout<<"figuredir: "<<figuredir<<std::endl;
+			if(figuredir == "") figuredir = "/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/FCNC_analysis/FCNCAnalysis/run/reduce3";
+			if(chartdir == "") chartdir = "/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/FCNC_analysis/FCNCAnalysis/run/reduce3";
 			TString savename = framework;
 			gSystem->mkdir(figuredir + "/" + savename);
 			gSystem->mkdir(chartdir + "/" + savename);
