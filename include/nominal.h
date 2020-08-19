@@ -302,5 +302,9 @@ public :
   static RooAddPdf   _pdf_;
 
   std::map<TString,std::vector<TLorentzVector*>*> fitvec;
+
+  float      tau0RNN;
+  float      tau1RNN;
+
 };
 #endif

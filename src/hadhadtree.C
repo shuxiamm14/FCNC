@@ -236,11 +236,10 @@ void hadhadtree::prepare(){
   mcChannelNumber = mc_channel_number;
   eventNumber     = event_number;
   runNumber       = run_number;
-   
   if(reduce==1){
   tau0RNN=tau_0_jet_rnn_score_trans;
   tau1RNN=tau_1_jet_rnn_score_trans; 
-if(isData){
+  if(isData){
     if(0 < run_number && run_number <= 284484){year=2015;}
     else if(284484 < run_number && run_number <= 311563){year=2016;}
     else if(311563 <= run_number && run_number <= 341649){year=2017;}

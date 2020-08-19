@@ -5,7 +5,7 @@ void hadhadtree::definetree(TTree * tree) {
   tree->Branch("event_number", &event_number);
   tree->Branch("mc_channel_number", &mc_channel_number);
   tree->Branch("run_number",&run_number);
-  //tree->Branch("weights",&weights);
+//tree->Branch("weights",&weights);
   if(reduce == 1){
     //setVecBranch(tree);
     vecBranch(tree);//调用基类nominal的函数  
@@ -62,11 +62,17 @@ void hadhadtree::definetree(TTree * tree) {
   }
   if(reduce == 2){
     BDTBranch(tree);
+<<<<<<< HEAD
     //tree->Branch("chi2",&chi2);
     tree->Branch("allmass", &allmass);
     tree->Branch("allpz", &allpz);
    /*
     tree->Branch("taus_b_tagged",&taus_b_tagged);
+=======
+   // tree->Branch("chi2",&chi2);
+    tree->Branch("allmass", &allmass);
+    tree->Branch("allpz", &allpz);
+   /* tree->Branch("taus_b_tagged",&taus_b_tagged);
     tree->Branch("taus_n_charged_tracks",&taus_n_charged_tracks);
     tree->Branch("tauabspdg",&tauabspdg);
     tree->Branch("tau_pt_0",&tau_pt_0);
@@ -356,6 +362,7 @@ void hadhadtree::initRaw(TTree *tree)
 
   // Set object pointer
   if(reduce == 2){
+<<<<<<< HEAD
     tree->SetBranchAddress("event_number", &event_number); // tree->SetBranchAddress("eventNumber", &eventNumber);
     tree->SetBranchAddress("mc_channel_number", &mc_channel_number); //  tree->SetBranchAddress("mc_channel_number", &mcChannelNumber);
     tree->SetBranchAddress("run_number", &run_number); 
@@ -364,6 +371,17 @@ void hadhadtree::initRaw(TTree *tree)
    tree->SetBranchAddress("allmass", &allmass);
    tree->SetBranchAddress("allpz", &allpz);
  /*  tree->SetBranchAddress("taus_b_tagged",&taus_b_tagged);
+=======
+   
+   
+   tree->SetBranchAddress("event_number", &event_number); // tree->SetBranchAddress("eventNumber", &eventNumber);
+   tree->SetBranchAddress("mc_channel_number", &mc_channel_number); //  tree->SetBranchAddress("mc_channel_number", &mcChannelNumber);
+   tree->SetBranchAddress("run_number", &run_number);
+   setBDTBranch(tree);
+   //tree->SetBranchAddress("chi2",&chi2);
+   tree->SetBranchAddress("allmass", &allmass);
+   tree->SetBranchAddress("allpz", &allpz);
+  /* tree->SetBranchAddress("taus_b_tagged",&taus_b_tagged);
    tree->SetBranchAddress("taus_n_charged_tracks",&taus_n_charged_tracks);
    tree->SetBranchAddress("tauabspdg",&tauabspdg);
    tree->SetBranchAddress("event_number", &event_number);// tree->SetBranchAddress("eventNumber", &eventNumber);

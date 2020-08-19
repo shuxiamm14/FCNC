@@ -1115,7 +1115,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       
     }else{
       weight = weights->at(0);
-      std::cout<<"weight_size: "<<weights->size()<<"  weight[0]: "<<weights->at(0)<<std::endl;
+      if(debug)std::cout<<"weight_size: "<<weights->size()<<"  weight[0]: "<<weights->at(0)<<std::endl;
     }
     //===============================pre-selections===============================
     if(reduce == 2) {
@@ -1145,7 +1145,6 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       if(!nominaltree && taus_p4->size()) {
         taus_matched_mother_pdgId = taumatchmap[eventNumber];
       }
-      
       if(bjets_p4->size() >= 2){
          if(!bjets_score || !bjets_score->size() || bjets_score->at(0) > bjets_score->at(1)){
            ljets_p4->push_back(bjets_p4->at(1));
@@ -1155,7 +1154,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
            bjets_p4->erase(bjets_p4->begin());
          }
       }
-      ljet_indice = findcjet();
+        ljet_indice = findcjet();
       TLorentzVector *tau2 = 0;
       TLorentzVector *wlep = 0;
       if(taus_p4->size() == 2) {
@@ -1289,7 +1288,6 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         x1fit = 1 - neutrinos_p4->at(0)->E() / (*(taus_p4->at(0)) + *neutrinos_p4->at(0)).E();
         x2fit = 1 - neutrinos_p4->at(1)->E() / (*(tau2) + *neutrinos_p4->at(1)).E();
       }
-      
       phicent = phi_centrality(taus_p4->at(0)->Phi(),tau2->Phi(),met_p4->Phi());
       tautauvispt = (*taus_p4->at(0) + *tau2).Pt();
      // t2vismass = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2 + *ljets_p4->at(ljet_indice->at(0))).M() : 0;
@@ -1522,8 +1520,8 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
               else if(index !=0)
                 weight *= weights->at(index);
             }
-      if(debug)std::cout<<"tauorigin: "<<tauorigin.Data()<<std::endl;
-      if (fcnc) {
+            if(debug)std::cout<<"tauorigin: "<<tauorigin.Data()<<std::endl;
+            if (fcnc) {
               if(plotTauFake) fillhist(fcnc_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), theNP);
               else if(!taus_b_tagged->at(0) && region.Contains("2l")) fcnc_plots->fill_hist(leporigin,region,theNP);
             }
