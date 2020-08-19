@@ -1113,7 +1113,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       
     }else{
       weight = weights->at(0);
-      std::cout<<"weight_size: "<<weights->size()<<"  weight[0]: "<<weight[0]<<std::endl;
+      if(debug)std::cout<<"weight_size: "<<weights->size()<<"  weight[0]: "<<weights->at(0)<<std::endl;
     }
     //===============================pre-selections===============================
     if(reduce == 2) {
