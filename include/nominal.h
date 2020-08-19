@@ -277,8 +277,6 @@ public :
   float      drtaujmin;
   float      drtauj;
   float      MET_RefFinal_et;
-  float      tau1RNN;
-  float      tau0RNN;
   //======================================================variables for kinematic fit========================================
   static TH2F* prob_20_40;
   static TH2F* prob_40_60;

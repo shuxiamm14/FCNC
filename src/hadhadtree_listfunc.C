@@ -62,14 +62,7 @@ void hadhadtree::definetree(TTree * tree) {
   }
   if(reduce == 2){
     BDTBranch(tree);
-<<<<<<< HEAD
     //tree->Branch("chi2",&chi2);
-    tree->Branch("allmass", &allmass);
-    tree->Branch("allpz", &allpz);
-   /*
-    tree->Branch("taus_b_tagged",&taus_b_tagged);
-=======
-   // tree->Branch("chi2",&chi2);
     tree->Branch("allmass", &allmass);
     tree->Branch("allpz", &allpz);
    /* tree->Branch("taus_b_tagged",&taus_b_tagged);
@@ -362,7 +355,6 @@ void hadhadtree::initRaw(TTree *tree)
 
   // Set object pointer
   if(reduce == 2){
-<<<<<<< HEAD
     tree->SetBranchAddress("event_number", &event_number); // tree->SetBranchAddress("eventNumber", &eventNumber);
     tree->SetBranchAddress("mc_channel_number", &mc_channel_number); //  tree->SetBranchAddress("mc_channel_number", &mcChannelNumber);
     tree->SetBranchAddress("run_number", &run_number); 
@@ -370,17 +362,7 @@ void hadhadtree::initRaw(TTree *tree)
   // tree->SetBranchAddress("chi2",&chi2);
    tree->SetBranchAddress("allmass", &allmass);
    tree->SetBranchAddress("allpz", &allpz);
- /*  tree->SetBranchAddress("taus_b_tagged",&taus_b_tagged);
-=======
-   
-   
-   tree->SetBranchAddress("event_number", &event_number); // tree->SetBranchAddress("eventNumber", &eventNumber);
-   tree->SetBranchAddress("mc_channel_number", &mc_channel_number); //  tree->SetBranchAddress("mc_channel_number", &mcChannelNumber);
-   tree->SetBranchAddress("run_number", &run_number);
-   setBDTBranch(tree);
-   //tree->SetBranchAddress("chi2",&chi2);
-   tree->SetBranchAddress("allmass", &allmass);
-   tree->SetBranchAddress("allpz", &allpz);
+  //tree->SetBranchAddress("taus_b_tagged",&taus_b_tagged);
   /* tree->SetBranchAddress("taus_b_tagged",&taus_b_tagged);
    tree->SetBranchAddress("taus_n_charged_tracks",&taus_n_charged_tracks);
    tree->SetBranchAddress("tauabspdg",&tauabspdg);
