@@ -106,6 +106,7 @@ void tthmltree_v3::defineObjects(){
   bjets_p4->clear();
   bjets_score->clear();
   ljets_p4->clear();
+  ljets_bscore->clear();
 
   for (int i = 0; i < jets_pt->size(); ++i) {
     if(debug == 2) printf("%dth jet btag: %f\n", i, jets_score_DL1r->at(i));
@@ -121,6 +122,7 @@ void tthmltree_v3::defineObjects(){
       TLorentzVector *tmp = new TLorentzVector();
       tmp->SetPtEtaPhiE(jets_pt->at(i), jets_eta->at(i), jets_phi->at(i), jets_e->at(i));
       ljets_p4->push_back(tmp);
+      ljets_bscore->push_back(jets_score_DL1r->at(i));
     }
   }
   met_p4->SetXYZM(met_met*cos(met_phi), met_met*sin(met_phi), MET_RefFinal_sumet, 0);

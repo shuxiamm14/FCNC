@@ -117,24 +117,28 @@ regions.push_back("reg2ltau1b3jos");
 			regions.push_back("reg1l2tau2bnj_os");
 			regions.push_back("reg1l2tau2bnj_ss");
 			regions.push_back("reg2lSS1tau1bnj_os");
-			//regions.push_back("reg2lSS1tau1bnj_ss");
-			//regions.push_back("reg2lSS1tau2bnj_os");
-			//regions.push_back("reg2lSS1tau2bnj_ss");
 			regions.push_back("reg2lSS1tau1bnj_os_antiiso");
-			//regions.push_back("reg2lSS1tau1bnj_ss_antiiso");
-			//regions.push_back("reg2lSS1tau2bnj_os_antiiso");
-			//regions.push_back("reg2lSS1tau2bnj_ss_antiiso");
 			regions.push_back("reg2lSS1tau1bnj_os_antiisolead");
 			regions.push_back("reg2l1tau1bnj");
 			regions.push_back("reg2l1tau2bnj");
+
+			//regions.push_back("reg2lSS1tau1bnj_ss");
+			//regions.push_back("reg2lSS1tau2bnj_os");
+			//regions.push_back("reg2lSS1tau2bnj_ss");
+			//regions.push_back("reg2lSS1tau1bnj_ss_antiiso");
+			//regions.push_back("reg2lSS1tau2bnj_os_antiiso");
+			//regions.push_back("reg2lSS1tau2bnj_ss_antiiso");
 		}
 		if(dofake || reduce == 1){
-			regions_fake.push_back("reg2l1tau2b");
-			regions_fake.push_back("reg1l1tau2b1j_os");
-			regions_fake.push_back("reg1l1tau2b1j_ss");
-			regions_fake.push_back("reg1l1tau2b_os");
-			regions_fake.push_back("reg1l1tau2b_ss");
-			regions_fake.push_back("reg2l1tau1b");
+			regions_fake.push_back("reg2lSS1taunj_os");
+			regions_fake.push_back("reg2lSS1taunj_os_antiiso");
+			regions_fake.push_back("reg2lSS1taunj_os_antiisolead");
+//			regions_fake.push_back("reg2l1tau2b");
+//			regions_fake.push_back("reg1l1tau2b1j_os");
+//			regions_fake.push_back("reg1l1tau2b1j_ss");
+//			regions_fake.push_back("reg1l1tau2b_os");
+//			regions_fake.push_back("reg1l1tau2b_ss");
+//			regions_fake.push_back("reg2l1tau1b");
 		}
 
 	}
@@ -163,6 +167,7 @@ regions.push_back("reg2ltau1b3jos");
 	analysis->reduce = reduce;
 	analysis->debug = debug;
 	analysis->plotTauFake = 1;
+	analysis->ctagFCNC = 0;
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
 	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
 	analysis->doubleCounting = 1;
@@ -180,12 +185,14 @@ regions.push_back("reg2ltau1b3jos");
 				doplot = 1;
 				analysis->writetree = 0;
 				analysis->dovetobwp["btagwp70"] = 1;
-				analysis->dobwp["btagwp70"] = 1;
-				analysis->dobwp["btagwp85"] = 1;
+				//analysis->dobwp["btagwp70"] = 1;
+				//analysis->dobwp["btagwp85"] = 1;
 				analysis->belong_regions.enable(regions_fake);
 				analysis->belong_regions.enable(regions_notau);
 				analysis->fake_regions = regions_fake;
 				analysis->fake_regions_notau = regions_notau;
+				regions = regions_fake;
+				regions.insert(regions.end(),regions_notau.begin(),regions_notau.end());
 			}
 			analysis->dumpeventnumber = 1;
 		}

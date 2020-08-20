@@ -46,6 +46,9 @@ tthmltree::tthmltree():nominal::nominal(){
     "reg1l1tau2b1j_ss",
     "reg1l1tau2b_os",
     "reg1l1tau2b_ss",
+    "reg2lSS1taunj_os",
+    "reg2lSS1taunj_os_antiiso",
+    "reg2lSS1taunj_os_antiisolead",
     "reg2l2bnj",
   };
 
@@ -66,7 +69,7 @@ void tthmltree::init_hist(TString outputfilename){
   }
   auto vars = getVariables("tthML");
   if(fcnc_nregions && plotNPs.size()){
-    fcnc_plots = new histSaver(outputfilename + "_fcnc");
+    fcnc_plots = new histSaver(outputfilename);
     fcnc_plots->set_weight(&weight);
     fcnc_plots->debug = !!debug;
     if(reduce >= 2) {
@@ -135,12 +138,14 @@ void tthmltree::init_hist(TString outputfilename){
 
   fake_nregions = fake_regions.size();
   if(fake_nregions){
-    fake_plots = new histSaver(outputfilename + "_fake");
+    fake_plots = new histSaver(outputfilename);
     fake_plots->set_weight(&weight);
     fake_plots->debug = !!debug;
     fake_plots->add(vars["tau_pt_0"],&tau_pt_0);
-    fake_plots->add(vars["bpt"],&pt_b);
-    fake_plots->add(vars["ljetpt"],&pt_ljet);
+    fake_plots->add(vars["lep_pt_0"],&lep_pt_0);
+    fake_plots->add(vars["lep_pt_1"],&lep_pt_1);
+//    fake_plots->add(vars["bpt"],&pt_b);
+//    fake_plots->add(vars["ljetpt"],&pt_ljet);
     fake_plots->add(vars["etmiss"],&etmiss);
     for (int j = 0; j < fake_nregions; ++j){
       if(plotTauFake){
@@ -170,7 +175,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
     gSystem->mkdir(outdir + "/" + SystematicsName);
     TString outfile=(outdir + "/" + SystematicsName + "/" + sample + "_tree.root").Data();
     printf("create outputfile: %s\n", outfile.Data());
-    outputtreefile = new TFile(outfile,"recreate");
+    outputtreefile = new TFile(outfile,"update");
     for (int i = 0; i < fcnc_nregions; ++i)
     {
       if(debug) printf("init sample:: get region: %s\n",fcnc_regions[i].Data());

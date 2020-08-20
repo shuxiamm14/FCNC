@@ -8,6 +8,7 @@ std::vector<fcncSample> getBkgSamples(TString framework){
 	samples.emplace_back("smhiggs","SM Higgs",kViolet);
 	samples.emplace_back("wjet","W+jets",kOrange);
 	samples.emplace_back("diboson","Diboson",(enum EColor)7);
+//<<<<<<< HEAD
 //	samples.emplace_back("zll","Z#rightarrowll",kBlue);
 	samples.emplace_back("ztt","Z#rightarrow#tau#tau",kGreen);
 	if(framework=="tthML"){
@@ -22,7 +23,14 @@ std::vector<fcncSample> getBkgSamples(TString framework){
 	//samples.push_back(fcncSample("others","Rare",kTeal));
 	//samples.push_back(fcncSample("ttbar","t#bar{t}",kYellow));
 	//samples.push_back(fcncSample("ttV","t#bar{t}V",kAzure));
-	return samples;
+/*=======
+	samples.emplace_back("zll","Z#rightarrowll",kBlue);
+	samples.emplace_back("ztautau","Z#rightarrow#tau#tau",kGreen);
+	samples.emplace_back("others","Rare",kMagenta);
+	samples.emplace_back("ttbar","t#bar{t}",kYellow);
+	samples.emplace_back("ttV","t#bar{t}V",(enum EColor)((kAzure)+1));
+>>>>>>> upstream/master
+*/	return samples;
 }
 
 std::vector<fcncSample> getSigSamples(TString framework, float BRbenchmark){
