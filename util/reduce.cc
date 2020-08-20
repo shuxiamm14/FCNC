@@ -163,7 +163,7 @@ regions.push_back("reg2ltau1b3jos");
 	analysis->SystematicsName = systname;
 	analysis->dumptruth = 0;
 	analysis->doBDT = 1;
-	analysis->dofit = 0;
+	analysis->dofit = 1;
 	analysis->reduce = reduce;
 	analysis->debug = debug;
 	analysis->plotTauFake = 1;

@@ -147,6 +147,8 @@ void hadhadtree::definejets(){
   if(bjets_p4->size()) bjets_p4->clear();
   if(bjets_width->size()) bjets_width->clear();
   if(totaljets_p4->size()) totaljets_p4->clear();
+  if(ljets_bscore->size())ljets_bscore->clear();
+  if(bjets_score->size())bjets_score->clear();
   totaljets_p4->push_back(jet_0_p4);
   if(jet_0_b_tagged_DL1r_FixedCutBEff_70){
     bjets_fjvt->push_back(jet_0_fjvt);
@@ -154,6 +156,7 @@ void hadhadtree::definejets(){
     bjets_jvt->push_back(jet_0_jvt);
     bjets_p4->push_back(jet_0_p4);
     bjets_width->push_back(jet_0_width);
+    bjets_score->push_back(jet_0_b_tag_score);
   }
   else{
     ljets_fjvt->push_back(jet_0_fjvt);
@@ -161,6 +164,7 @@ void hadhadtree::definejets(){
     ljets_jvt->push_back(jet_0_jvt);
     ljets_p4->push_back(jet_0_p4);
     ljets_width->push_back(jet_0_width);
+    ljets_bscore->push_back(jet_0_b_tag_score);
   }
   totaljets_p4->push_back(jet_1_p4);
   if(jet_1_b_tagged_DL1r_FixedCutBEff_70){
@@ -169,6 +173,7 @@ void hadhadtree::definejets(){
     bjets_jvt->push_back(jet_1_jvt);
     bjets_p4->push_back(jet_1_p4);
     bjets_width->push_back(jet_1_width);
+    bjets_score->push_back(jet_1_b_tag_score);
   }
   else{
     ljets_fjvt->push_back(jet_1_fjvt);
@@ -176,6 +181,7 @@ void hadhadtree::definejets(){
     ljets_jvt->push_back(jet_1_jvt);
     ljets_p4->push_back(jet_1_p4);
     ljets_width->push_back(jet_1_width);
+    ljets_bscore->push_back(jet_1_b_tag_score);
   }
   totaljets_p4->push_back(jet_2_p4);
   if(jet_2_b_tagged_DL1r_FixedCutBEff_70){
@@ -184,6 +190,7 @@ void hadhadtree::definejets(){
     bjets_jvt->push_back(jet_2_jvt);
     bjets_p4->push_back(jet_2_p4);
     bjets_width->push_back(jet_2_width);
+     bjets_score->push_back(jet_2_b_tag_score);
   }
   else{
     ljets_fjvt->push_back(jet_2_fjvt);
@@ -191,6 +198,7 @@ void hadhadtree::definejets(){
     ljets_jvt->push_back(jet_2_jvt);
     ljets_p4->push_back(jet_2_p4);
     ljets_width->push_back(jet_2_width);
+    ljets_bscore->push_back(jet_2_b_tag_score);
   }
   if (jet_3)
   { totaljets_p4->push_back(jet_3_p4);
@@ -200,6 +208,7 @@ void hadhadtree::definejets(){
       bjets_jvt->push_back(jet_3_jvt);
       bjets_p4->push_back(jet_3_p4);
       bjets_width->push_back(jet_3_width);
+      bjets_score->push_back(jet_3_b_tag_score);
     }
     else{
       ljets_fjvt->push_back(jet_3_fjvt);
@@ -207,6 +216,7 @@ void hadhadtree::definejets(){
       ljets_jvt->push_back(jet_3_jvt);
       ljets_p4->push_back(jet_3_p4);
       ljets_width->push_back(jet_3_width);
+      ljets_bscore->push_back(jet_3_b_tag_score);
     }
   }
   if (jet_4)
@@ -217,6 +227,7 @@ void hadhadtree::definejets(){
       bjets_jvt->push_back(jet_4_jvt);
       bjets_p4->push_back(jet_4_p4);
       bjets_width->push_back(jet_4_width);
+      bjets_score->push_back(jet_4_b_tag_score);
     }
     else{
       ljets_fjvt->push_back(jet_4_fjvt);
@@ -224,6 +235,7 @@ void hadhadtree::definejets(){
       ljets_jvt->push_back(jet_4_jvt);
       ljets_p4->push_back(jet_4_p4);
       ljets_width->push_back(jet_4_width);
+      ljets_bscore->push_back(jet_4_b_tag_score);
     }
   }
   if (jet_5)
@@ -234,6 +246,7 @@ void hadhadtree::definejets(){
       bjets_jvt->push_back(jet_5_jvt);
       bjets_p4->push_back(jet_5_p4);
       bjets_width->push_back(jet_5_width);
+      bjets_score->push_back(jet_5_b_tag_score);
     }
     else{
       ljets_fjvt->push_back(jet_5_fjvt);
@@ -241,6 +254,7 @@ void hadhadtree::definejets(){
       ljets_jvt->push_back(jet_5_jvt);
       ljets_p4->push_back(jet_5_p4);
       ljets_width->push_back(jet_5_width);
+      ljets_bscore->push_back(jet_5_b_tag_score);
     }
   }
   if (jet_6)
@@ -251,6 +265,7 @@ void hadhadtree::definejets(){
       bjets_jvt->push_back(jet_6_jvt);
       bjets_p4->push_back(jet_6_p4);
       bjets_width->push_back(jet_6_width);
+      bjets_score->push_back(jet_6_b_tag_score);
     }
     else{
       ljets_fjvt->push_back(jet_6_fjvt);
@@ -258,6 +273,7 @@ void hadhadtree::definejets(){
       ljets_jvt->push_back(jet_6_jvt);
       ljets_p4->push_back(jet_6_p4);
       ljets_width->push_back(jet_6_width);
+      ljets_bscore->push_back(jet_6_b_tag_score);
     }
   }
   if (jet_7)
@@ -268,6 +284,7 @@ void hadhadtree::definejets(){
       bjets_jvt->push_back(jet_7_jvt);
       bjets_p4->push_back(jet_7_p4);
       bjets_width->push_back(jet_7_width);
+      bjets_score->push_back(jet_7_b_tag_score);
     }
     else{
       ljets_fjvt->push_back(jet_7_fjvt);
@@ -275,6 +292,7 @@ void hadhadtree::definejets(){
       ljets_jvt->push_back(jet_7_jvt);
       ljets_p4->push_back(jet_7_p4);
       ljets_width->push_back(jet_7_width);
+      ljets_bscore->push_back(jet_7_b_tag_score);
     }
   }
 }
