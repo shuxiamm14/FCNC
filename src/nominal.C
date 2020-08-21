@@ -373,8 +373,10 @@ void nominal::initFit(){
   fitvec["leps"] = leps_p4;
   fitvec["bjets"] = bjets_p4;
   fitvec["ljets"] = ljets_p4;
-  fitvec["met"] = new vector<TLorentzVector*>();
-  fitvec["met"]->push_back(met_p4);
+  if(fitvec.find("met") == fitvec.end()){
+  	fitvec["met"] = new vector<TLorentzVector*>();
+  	fitvec["met"]->push_back(met_p4);
+  }
 }
 
 void nominal::init_dsid(){
@@ -1009,7 +1011,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
   reduce -= 1;
   init(inputtree);
   reduce += 1;
-  if(reduce == 2 && fitvec.size() == 0) initFit();
+  if(reduce == 2) initFit();
   if(debug) printf("reduce scheme: %d\n", reduce);
   Long64_t nentries = inputtree->GetEntriesFast();
   cut_flow.sample = samplename;
