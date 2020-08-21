@@ -373,8 +373,10 @@ void nominal::initFit(){
   fitvec["leps"] = leps_p4;
   fitvec["bjets"] = bjets_p4;
   fitvec["ljets"] = ljets_p4;
-  fitvec["met"] = new vector<TLorentzVector*>();
-  fitvec["met"]->push_back(met_p4);
+  if(fitvec.find("met") == fitvec.end()){
+  	fitvec["met"] = new vector<TLorentzVector*>();
+  	fitvec["met"]->push_back(met_p4);
+  }
 }
 
 void nominal::init_dsid(){
@@ -1009,7 +1011,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
   reduce -= 1;
   init(inputtree);
   reduce += 1;
-  if(reduce == 2 && fitvec.size() == 0) initFit();
+  if(reduce == 2) initFit();
   if(debug) printf("reduce scheme: %d\n", reduce);
   Long64_t nentries = inputtree->GetEntriesFast();
   cut_flow.sample = samplename;
@@ -1649,10 +1651,28 @@ TString nominal::classifyLepFakes(int ilep){ //https://indico.cern.ch/event/7259
 
   int T = leps_truth_type->at(ilep);
   int O = leps_truth_origin->at(ilep);
-  int RecoCharge = leps_id->at(ilep);
+  int RecoCharge = -leps_id->at(ilep);
   int firstEgMotherPdgId = leps_first_EgMother_pdgId->at(ilep);
   int firstEgMotherO = leps_first_EgMother_truth_origin->at(ilep);
   int firstEgMotherT = leps_first_EgMother_truth_type->at(ilep);
+
+  //Prompt muon
+  if(
+    T==6 && (O==10 || O==12 || O==13 || O==14 || O==15 || O==22 || O==43)
+  ) return "realLep";
+
+  bool C1 = T==2 || ( T==4 && O==5 && fabs(firstEgMotherPdgId) == 11) ||
+  ( T==4 && O==7 && firstEgMotherT==2 && (firstEgMotherO == 10 || firstEgMotherO == 12 || firstEgMotherO == 13 || firstEgMotherO == 14 || firstEgMotherO == 43) && fabs(firstEgMotherPdgId) == 11);
+
+  //Prompt electron
+  if(
+    (C1 && firstEgMotherPdgId*RecoCharge<0) || (T==4 && (O==5 || O==7) && firstEgMotherO==40) || ( T==15 && O==40 )
+  ) return "realLep";
+  //charge flip
+  if(
+    C1 && firstEgMotherPdgId*RecoCharge>0
+  ) return "chargeFlip";
+
    //Non-prompt
   if(
     ((T==3 || T==15 ) && O==9) || ( T==4 && O==5 && firstEgMotherT==15 && firstEgMotherO==9 ) || (T==7 && O==9) ||
@@ -1679,23 +1699,6 @@ TString nominal::classifyLepFakes(int ilep){ //https://indico.cern.ch/event/7259
   if(
     (T==14 && O==37) || (T==4 && (O==5 || O==7)&& firstEgMotherT==14 && firstEgMotherO==37) || (T==4 && O==5 && firstEgMotherT==16 && firstEgMotherO==38) || (T==16 && O==38)
   ) return "conversion";
-
-  //Prompt muon
-  if(
-    T==6 && (O==10 || O==12 || O==13 || O==14 || O==15 || O==22 || O==43)
-  ) return "realLep";
-
-  bool C1 = T==2 || ( T==4 && O==5 && fabs(firstEgMotherPdgId) == 11) ||
-  ( T==4 && O==7 && firstEgMotherT==2 && (firstEgMotherO == 10 || firstEgMotherO == 12 || firstEgMotherO == 13 || firstEgMotherO == 14 || firstEgMotherO == 43) && fabs(firstEgMotherPdgId) == 11);
-
-  //Prompt electron
-  if(
-    (C1 && firstEgMotherPdgId*RecoCharge<0) || (T==4 && (O==5 || O==7) && firstEgMotherO==40) || ( T==15 && O==40 )
-  ) return "realLep";
-  //charge flip
-  if(
-    C1 && firstEgMotherPdgId*RecoCharge>0
-  ) return "chargeFlip";
 
   printf("Warning: fake origin not found: T==%d,O==%d,RecoCharge==%d,firstEgMotherPdgId==%d,firstEgMotherO==%d ; classify as unknown_fakes\n",T,O,RecoCharge,firstEgMotherPdgId,firstEgMotherO);
   return "unknownFakeLep";
