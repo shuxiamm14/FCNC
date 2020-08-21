@@ -17,7 +17,7 @@ void nominal::initMVA(TString fcnc_region){
   reader[fcnc_region]->AddVariable("etmiss",&etmiss);
   reader[fcnc_region]->AddVariable("ttvismass",&ttvismass);
   reader[fcnc_region]->AddVariable("drtaujmin",&drtaujmin);
-  reader[fcnc_region]->AddVariable("mttjmin",&mttjmin);
+//  reader[fcnc_region]->AddVariable("mttjmin",&mttjmin);
   if(!fcnc_region.Contains("2mtau")) {
     reader[fcnc_region]->AddVariable("drlb",&drlb);
     if(fcnc_region.Contains("2lSS")) reader[fcnc_region]->AddVariable("lep_pt_0",&lep_pt_0);
@@ -204,6 +204,7 @@ void nominal::initReduce1(){
   leps_matched_pdgId = new std::vector<int>();
   leps_truth_type = new std::vector<int>();
   bjets_score = new vector<float> ();
+  ljets_bscore = new vector<float> ();
   leps_truth_origin = new vector<int>;
   leps_first_EgMother_pdgId = new vector<int>;
   leps_first_EgMother_truth_origin = new vector<int>;
@@ -211,6 +212,7 @@ void nominal::initReduce1(){
 }
 
 void nominal::setBDTBranch(TTree *tree){
+  tree->SetBranchAddress("fcncjetbscore", &fcncjetbscore);
   tree->SetBranchAddress("taus_matched_pdgId", &taus_matched_pdgId);
   tree->SetBranchAddress("taus_matched_mother_pdgId", &taus_matched_mother_pdgId);
   tree->SetBranchAddress("weights", & weights);
@@ -260,6 +262,7 @@ void nominal::setBDTBranch(TTree *tree){
 }
 
 void nominal::BDTBranch(TTree *tree){
+  tree->Branch("fcncjetbscore", &fcncjetbscore);
   tree->Branch("taus_b_tagged", &taus_b_tagged);
   tree->Branch("taus_n_charged_tracks", &taus_n_charged_tracks);
   tree->Branch("taus_matched_pdgId", &taus_matched_pdgId);
@@ -311,6 +314,7 @@ void nominal::BDTBranch(TTree *tree){
 
 void nominal::setVecBranch(TTree *tree){
   tree->SetBranchAddress("bjets_score", &bjets_score);
+  tree->SetBranchAddress("ljets_bscore", &ljets_bscore);
   tree->SetBranchAddress("weights", &weights);
   tree->SetBranchAddress("ljet_indice", &ljet_indice);
   tree->SetBranchAddress("taus_n_charged_tracks", &taus_n_charged_tracks);
@@ -338,6 +342,7 @@ void nominal::setVecBranch(TTree *tree){
 
 void nominal::vecBranch(TTree *tree){
   tree->Branch("bjets_score", &bjets_score);
+  tree->Branch("ljets_bscore", &ljets_bscore);
   tree->Branch("weights", &weights);
   tree->Branch("ljet_indice", &ljet_indice);
   tree->Branch("taus_n_charged_tracks", &taus_n_charged_tracks);
@@ -913,14 +918,16 @@ vector<int> nominal::findwpair(int cjet){
   return output;
 }
 
-void nominal::fillhist(histSaver* plots, TString region, int nprong, TString sample, float taubtag, TString NP){
-  for (int i = 0; i < 4; ++i){
-    if(taubtag>btagwpCut[i]) {
-      if(dobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[i],NP);
-    }else{
-      if(dovetobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[i],NP);
-    }
-  }
+void nominal::fillhist(histSaver* plots, TString region, int nprong, TString sample, int taubtag, TString NP){
+  //for (int i = 0; i < 4; ++i){
+  //  if(taubtag>btagwpCut[i]) {
+  //    if(dobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[i],NP);
+  //  }else{
+  //    if(dovetobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[i],NP);
+  //  }
+  //}
+  if(dobwp[bwps[1]] == 1 && taubtag) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[1],NP);
+  if(dovetobwp[bwps[1]] == 1 && !taubtag) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[1],NP);
 }
 
 void nominal::readweightsysmap(int dsid, TString framework){
@@ -980,7 +987,6 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
     return;
   }
   samplename = _samplename;
-  if(debug && dohist) for (int iNP = 0; iNP < plotNPs.size(); ++iNP) fcnc_plots->show();
   if(isData) {
     campaign = samplename.Contains("1516") ? 1: (samplename.Contains("17")? 2:3);
   }else{
@@ -1123,18 +1129,26 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       if(!nominaltree && taus_p4->size()) {
         taus_matched_mother_pdgId = taumatchmap[eventNumber];
       }
+
       if(fcnc){
         if(bjets_p4->size() >= 2){
            if(!bjets_score || !bjets_score->size() || bjets_score->at(0) > bjets_score->at(1)){
              ljets_p4->push_back(bjets_p4->at(1));
+             ljets_bscore->push_back(bjets_score->at(1));
              bjets_p4->erase(bjets_p4->begin()+1);
+             bjets_score->erase(bjets_score->begin()+1);
            }else{
              ljets_p4->push_back(bjets_p4->at(0));
+             ljets_bscore->push_back(bjets_score->at(0));
              bjets_p4->erase(bjets_p4->begin());
+             bjets_score->erase(bjets_score->begin());
            }
         }
-        ljet_indice = findcjet();
   
+        ljet_indice = findcjet();
+        if(ljet_indice->size()) fcncjetbscore = ljets_bscore->at(ljet_indice->at(0));
+        else fcncjetbscore = 0;
+      
         TLorentzVector *tau2 = 0;
         TLorentzVector *wlep = 0;
         if(taus_p4->size() == 2) {
@@ -1335,12 +1349,20 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           tau_pt_0 = taus_p4->at(0)->Pt();
           if(leps_p4->size()>=2) lep_pt_1 = leps_p4->at(1)->Pt();
         }
+      }else {
+        tau_pt_0 = taus_p4->at(0)->Pt();
+        lep_pt_0 = leps_p4->at(0)->Pt();
+        lep_pt_1 = leps_p4->at(1)->Pt();
       }
     }
 
     if(reduce == 3){
       BDTG_test  = 0;
       BDTG_train  = 0;
+      if(ctagFCNC && fcncjetbscore < btagwpCut[3]) {
+        continue;
+      }
+      cut_flow.fill("Loose btag FCNC jet");
       if(doBDT){
         if(debug) printf("eval BDTG\n");
         if(belong_regions.have("2mtau")){
@@ -1507,21 +1529,14 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
               else if(index !=0)
                 weight *= weights->at(index);
             }
-            if (fcnc) {
-              if(plotTauFake) fillhist(fcnc_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), theNP);
-              else if(!taus_b_tagged->at(0) && region.Contains("2l")) fcnc_plots->fill_hist(leporigin,region,theNP);
-            }
-            else if(region.Contains("tau")) fillhist(fake_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), theNP);
-            else fill_notau(region, sample, theNP);
+            if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), theNP);
+            else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0)) && region.Contains("2l")) (fcnc?fcnc_plots:fake_plots)->fill_hist(leporigin,region,theNP);
+            if(!region.Contains("tau")) fill_notau(region, sample, theNP);
           }
         }else{ //data
-          if (region.Contains("tau")) {
-            if (fcnc) {
-              if(plotTauFake) fillhist(fcnc_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), "NOMINAL");
-              else if(!taus_b_tagged->at(0) && region.Contains("2l")) fcnc_plots->fill_hist("data",region,"NOMINAL");
-            }
-            else fillhist(fake_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), "NOMINAL");
-          } else fill_notau(region, sample, "NOMINAL");
+            if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), "NOMINAL");
+            else if(!taus_b_tagged->at(0) && region.Contains("2l")) (fcnc?fcnc_plots:fake_plots)->fill_hist("data",region,"NOMINAL");
+            if(!region.Contains("tau")) fill_notau(region, sample, "NOMINAL");
         }
       }
       if(debug == 2) printf("finish hist\n");

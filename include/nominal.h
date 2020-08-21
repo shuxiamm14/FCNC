@@ -21,7 +21,7 @@
 #ifndef NO_TMINUIT
 static TMinuit* gM = 0;
 #endif
-const double btag70wt = 0.8303;
+const double btag70wt = 2.96;
 
 class nominal {
 public :
@@ -29,6 +29,7 @@ public :
   //=============================configurations===============================
   bool dofit1l2tau = 0;
   bool applyfakeSF = 0;
+  bool ctagFCNC = 0;
   std::map<TString,bool> dobwp;
   std::map<TString,bool> dovetobwp;
   bool doubleCounting = 0;
@@ -43,6 +44,7 @@ public :
   bool dofit;
   double BDTG_train;
   double BDTG_test;
+  double fcncjetbscore;
   int debug;
   bool dosys;
   int reduce;
@@ -157,7 +159,7 @@ public :
   Double_t phi_centrality(Double_t aPhi, Double_t bPhi, Double_t cPhi);
   void finalise_sample();
   static  void    fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
-  void fillhist(histSaver *plots, TString region, int nprong, TString sample, float taubtag, TString NP);
+  void fillhist(histSaver *plots, TString region, int nprong, TString sample, int taubtag, TString NP);
   void fill_notau(TString region, TString sample, TString NP);
   bool SelectTLepid(int id);
   void calcfakesf(std::vector<int> origin);
@@ -224,6 +226,7 @@ public :
 
   std::vector<std::vector<int>*> taumatchmap;
   std::vector<float>           *bjets_score;
+  std::vector<float>           *ljets_bscore;
   //======================================================flat variables for BDT========================================
   float      drttjmin;
   float      t2vismass;
