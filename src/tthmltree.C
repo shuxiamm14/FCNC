@@ -119,7 +119,10 @@ void tthmltree::init_hist(TString outputfilename){
           }
         }
       }else{
-        fcnc_plots->add_region(fcnc_regions[j]);
+        fcnc_plots->add_region(fcnc_regions[j]+"emu");
+        fcnc_plots->add_region(fcnc_regions[j]+"ee");
+        fcnc_plots->add_region(fcnc_regions[j]+"mumu");
+        fcnc_plots->add_region(fcnc_regions[j]+"mue");
       }
     }
   }
@@ -154,7 +157,10 @@ void tthmltree::init_hist(TString outputfilename){
           }
         }
       }else{
-        fake_plots->add_region(fake_regions[j]);
+        fake_plots->add_region(fake_regions[j]+"emu");
+        fake_plots->add_region(fake_regions[j]+"ee");
+        fake_plots->add_region(fake_regions[j]+"mumu");
+        fake_plots->add_region(fake_regions[j]+"mue");
       }
     }
   }

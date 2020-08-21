@@ -1184,7 +1184,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             gMinside->mnparm(4, "phi3", 0, 0.1, -PI, PI, ierflg);
             arglist[0] = 5;
           } else {
-            gMinside->mnparm(0, "v1pt",  tau_pt_0, 1*GeV, 0., 1000*GeV, ierflg);
+            gMinside->mnparm(0, "v1pt",  taus_p4->at(0)->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
             gMinside->mnparm(1, "v1eta", taus_p4->at(0)->Eta(), 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
             gMinside->mnparm(2, "v1phi", taus_p4->at(0)->Phi(), 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
             gMinside->mnparm(3, "v2pt",  tau2->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
@@ -1193,17 +1193,17 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             if(leps_p4->size()) gMinside->mnparm(6, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
             arglist[0] = 7;
           }
-      
+
           gMinside->SetObjectFit((TObject*)&fitvec);
           arglist[1] = 60.;
           Double_t val[7] = {0,0,0,0,0,0,0};
           Double_t err[7] = {0,0,0,0,0,0,0};
-  
+
           if(debug) printf("start kinematic fit\n");
           gMinside->mnexcm("SCAN", arglist, 2, ierflg);
           for (int i = 0; i < 7; ++i) gMinside->GetParameter(i, val[i], err[i]);
-      
-          if (taus_p4->size() >= 2) {
+
+          if (taus_p4->size() + leps_p4->size() >= 3) {
             gMinside->mnparm(0, "rpt1", val[0], 0.01, 0., 2., ierflg);
             gMinside->mnparm(1, "rpt2", val[1], 0.01, 0., 2., ierflg);
             gMinside->mnparm(2, "pt3",  val[2], 10*GeV, 0., 1000*GeV, ierflg);
@@ -1218,17 +1218,17 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             gMinside->mnparm(5, "v2phi", val[5], 0.01, tau2->Phi()-0.25, tau2->Phi()+0.25, ierflg);
             if(leps_p4->size()) gMinside->mnparm(6, "v2m",   val[6], 0.01, 0, 1776, ierflg);
           }
-      
+
           arglist[0] = 1000;
           arglist[1] = 0;
           gMinside->mnexcm("MIGRADE", arglist, 2, ierflg);
-      
+
           Double_t fmin,edm,errdef;
           Int_t nvpar,nparx,icstat;
           gMinuit->mnstat(fmin,edm,errdef,nvpar,nparx,icstat);
-  
+
           chi2 = fmin;
-  
+
           for (int i = 0; i < (taus_p4->size() + leps_p4->size() >= 3 ? 5 : (leps_p4->size()?7:6)); ++i) gMinside->GetParameter(i, val[i], err[i]);
           neutrinos_p4->clear();
   
@@ -1462,6 +1462,10 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         }
         if(debug) printf("fill hist\n");
 
+        if(!plotTauFake){
+          region += abs(leps_id->at(0)) == 11?"_e":"_mu";
+          region += abs(leps_id->at(1)) == 11?"e":"mu";
+      	}
         if(mcChannelNumber!=0){
           auto weightvec = weightsysmap.at(mcChannelNumber);
           for (int iNP = 0; iNP < plotNPs.size(); ++iNP){
@@ -1604,6 +1608,7 @@ void nominal::defineRegions(){
         if(bjets_p4->size() == 2 && taus_p4->size() == 0) belong_regions.add("reg2l2bnj");
       }
       if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau1bnj_os");
+      if(bjets_p4->size() == 0 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1taunj_os");
       if(bjets_p4->size() == 0 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1taunj_os");
       //if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau1bnj_ss");
       //if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau2bnj_os");
