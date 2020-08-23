@@ -56,6 +56,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	int plotvar = 0;
 	bool doFakeFactor = 0;
 	bool realOnly = 0;
+	bool mergeDiletype = 1;
 	if(method.Contains("nofake")){
                 showFake = 0;
 	}
@@ -249,6 +250,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	//}
 	int nregions = regions.size();
 	TString nprong[] = {"_1prong","_3prong",""};
+	vector<TString> dileptype = {"ee","emu","mue","mumu"};
 	for (int j = 0; j < nregions; ++j){
 		if(plotFakeLep){
 			tau_plots->add_region(regions[j]);
@@ -380,8 +382,16 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 
 	}
 	if(!plotFakeLep){
+		if(mergeprong){
+			for (int j = 0; j < nregions; ++j){
+				tau_plots->merge_regions(regions[j] + nprong[0] + "_vetobtagwp70",regions[j] + nprong[1] + "_vetobtagwp70",regions[j]);
+			}
+		}
+	}else if(mergeDiletype){
 		for (int j = 0; j < nregions; ++j){
-			if(mergeprong) tau_plots->merge_regions(regions[j] + nprong[0] + "_vetobtagwp70",regions[j] + nprong[1] + "_vetobtagwp70",regions[j]);
+			vector<TString> mergeregions;
+			for(auto type : dileptype) mergeregions.push_back(regions[j] + "_" + type);
+			tau_plots->merge_regions(mergeregions,regions[j]);
 		}
 	}
 	if(plot_option == 2){
