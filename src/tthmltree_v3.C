@@ -48,8 +48,8 @@ bool tthmltree_v3::passBasicCut(){
   if(
       !onelep_type &&
       (
-        ( abs(lep_ID_0)==11 && (lep_chargeIDBDTLoose_0 || lep_ambiguityType_0 != 0) ) ||
-        ( abs(lep_ID_1)==11 && (lep_chargeIDBDTLoose_1 || lep_ambiguityType_1 != 0) )
+        ( abs(lep_ID_0)==11 && (!lep_chargeIDBDTLoose_0 || lep_ambiguityType_0 != 0) ) ||
+        ( abs(lep_ID_1)==11 && (!lep_chargeIDBDTLoose_1 || lep_ambiguityType_1 != 0) )
       )
   ) return false;
   cut_flow.fill("2lSS chargeBDT");
