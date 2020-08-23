@@ -253,7 +253,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	vector<TString> dileptype = {"ee","emu","mue","mumu"};
 	for (int j = 0; j < nregions; ++j){
 		if(plotFakeLep){
-			tau_plots->add_region(regions[j]);
+			tau_plots->add_region(regions[j]+"_ee");
+			tau_plots->add_region(regions[j]+"_emu");
+			tau_plots->add_region(regions[j]+"_mue");
+			tau_plots->add_region(regions[j]+"_mumu");
 		}else{
 			for (int k = 0; k < 2; ++k){
 				for (int i = 1; i < 2; i+=2){

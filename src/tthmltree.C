@@ -253,7 +253,7 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
           fake_plots->init_sample(sample + "_chargeFlip","NOMINAL",sampletitle + "(lepton charge flip)",kBlue);
           fake_plots->init_sample(sample + "_conversion","NOMINAL",sampletitle + "(lepton flavor flip)",kViolet);
           fake_plots->init_sample(sample + "_nonPrompt","NOMINAL",sampletitle + "(non-prompt lepton)",kGreen);
-          fake_plots->init_sample(sample + "_otherFakes","NOMINAL",sampletitle + "(fake lepton)",kOrange);
+          fake_plots->init_sample(sample + "_otherFakeLep","NOMINAL",sampletitle + "(fake lepton)",kOrange);
           fake_plots->init_sample(sample + "_unknownFakeLep","NOMINAL",sampletitle + "(fake lepton)",kOrange);
           fake_plots->init_sample(sample + "_doubleFake","NOMINAL",sampletitle + "(double fake lepton)",kGray);
         }

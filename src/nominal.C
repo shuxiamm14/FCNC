@@ -1487,7 +1487,6 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         if(debug) printf("fill hist\n");
 
         if(!plotTauFake){
-          printf("lepton pdg: %d, %d\n",leps_id->at(0),leps_id->at(1));
           region += abs(leps_id->at(0)) == 11?"_e":"_mu";
           region += abs(leps_id->at(1)) == 11?"e":"mu";
       	}
