@@ -140,6 +140,7 @@ nominal::nominal(){
   tau_pt_ss = 0;
   tau_pt_os = 0;
   etamax = 0;
+  mll = 0;
   drltau   = 0;
   drttj   = 0;
   drtautau = 0;
@@ -238,6 +239,7 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("lep_pt_1", & lep_pt_1);
   tree->SetBranchAddress("mtw", & mtw);
   tree->SetBranchAddress("etamax", & etamax);
+  tree->SetBranchAddress("mll", & mll);
   tree->SetBranchAddress("drltau", & drltau);
   tree->SetBranchAddress("drttj", & drttj);
   tree->SetBranchAddress("drtautau", & drtautau);
@@ -290,6 +292,7 @@ void nominal::BDTBranch(TTree *tree){
   tree->Branch("lep_pt_1", & lep_pt_1);
   tree->Branch("mtw", & mtw);
   tree->Branch("etamax", & etamax);
+  tree->Branch("mll", & mll);
   tree->Branch("drltau", & drltau);
   tree->Branch("drttj", & drttj);
   tree->Branch("drtautau", & drtautau);
@@ -1300,6 +1303,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         drlb = leps_p4->at(0)->DeltaR(*bjets_p4->at(0));
         drtaub = taus_p4->at(0)->DeltaR(*bjets_p4->at(0));
         drltau = taus_p4->at(0)->DeltaR(*leps_p4->at(0));
+        if(leps_p4->size() >= 2) mll = (*leps_p4->at(0)+*leps_p4->at(1)).M();
   
         if(wlep && wlep != leps_p4->at(0)) drltau = taus_p4->at(0)->DeltaR(*wlep);
         etamax = 0;
@@ -1626,19 +1630,19 @@ void nominal::defineRegions(){
       }
       if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau1bnj_os");
       if(bjets_p4->size() == 0 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1taunj_os");
-      if(bjets_p4->size() == 0 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1taunj_os");
+      if(ljets_p4->size() >= 1 && bjets_p4->size() == 0 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1taunj_os");
       //if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau1bnj_ss");
       //if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau2bnj_os");
       //if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau2bnj_ss");
     }else if(leps_iso->at(0) && !leps_iso->at(1)){ //reverse iso only for 2nd lepton
       if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau1bnj_os_antiiso");
-      if(bjets_p4->size() == 0 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1taunj_os_antiiso");
+      if(ljets_p4->size() >= 1 && bjets_p4->size() == 0 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1taunj_os_antiiso");
       //if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau1bnj_ss_antiiso");
       //if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau2bnj_os_antiiso");
       //if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau2bnj_ss_antiiso");
     }else if(leps_iso->at(1) && !leps_iso->at(0)){ //reverse iso only for 1st lepton
       if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau1bnj_os_antiisolead");
-      if(bjets_p4->size() == 0 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1taunj_os_antiisolead");
+      if(ljets_p4->size() >= 1 && bjets_p4->size() == 0 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1taunj_os_antiisolead");
       //if(bjets_p4->size() == 1 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau1bnj_ss_antiisolead");
       //if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1tau2bnj_os_antiisolead");
       //if(bjets_p4->size() == 2 && taus_p4->size() == 1 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg2lSS1tau2bnj_ss_antiisolead");

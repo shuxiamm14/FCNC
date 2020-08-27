@@ -21,9 +21,9 @@ bool tthmltree_v3::passBasicCut(){
   if(nTaus_OR>=2 && (!(taus_numTrack_1 == 1 || taus_numTrack_1 == 3) || !(taus_passEleBDT_1 && taus_passMuonOLR_1)) ) return false; // assuming triggers for 2017 is same for 2016 
   cut_flow.fill("subtauOLR");
 
-  //bool trig_match = !onelep_type && (lep_isTrigMatch_0 || lep_isTrigMatch_1 || lep_isTrigMatch_2 || lep_isTrigMatch_3 || matchDLTll01 || matchDLTll02 || matchDLTll12 || matchDLTll03 || matchDLTll13 || matchDLTll23);
+  bool trig_match = !onelep_type && (lep_isTrigMatch_0 || lep_isTrigMatch_1 || lep_isTrigMatch_2 || lep_isTrigMatch_3 || matchDLTll01 || matchDLTll02 || matchDLTll12 || matchDLTll03 || matchDLTll13 || matchDLTll23);
 
-  bool trig_match = !onelep_type && lep_isTrigMatch_0 && lep_isTrigMatch_1;
+  //bool trig_match = !onelep_type && lep_isTrigMatch_0 || lep_isTrigMatch_1;
   //bool trig_match = !onelep_type && lep_isTrigMatchDLT_0 && lep_isTrigMatchDLT_1;
   bool SLtrig_match = onelep_type &&
     ((RunYear == 2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose)) ||
