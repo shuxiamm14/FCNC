@@ -73,41 +73,42 @@ void tthmltree::init_hist(TString outputfilename){
     fcnc_plots->set_weight(&weight);
     fcnc_plots->debug = !!debug;
     if(reduce >= 2) {
-      fcnc_plots->add(vars["chi2"],&chi2);
+      fcnc_plots->add(vars->at("chi2"),&chi2);
       if(reduce == 3 && doBDT) {
-        fcnc_plots->add(vars["BDTG_test"],&BDTG_test);
-        fcnc_plots->add(vars["BDTG_train"],&BDTG_train);
+        fcnc_plots->add(vars->at("BDTG_test"),&BDTG_test);
+        fcnc_plots->add(vars->at("BDTG_train"),&BDTG_train);
       }
-      fcnc_plots->add(vars["t1mass"],&t1mass);
-      fcnc_plots->add(vars["mtw"],&mtw);
-      fcnc_plots->add(vars["tautaumass"],&tautaumass);
-      fcnc_plots->add(vars["wmass"],&wmass);
-      fcnc_plots->add(vars["t2mass"],&t2mass);
-      fcnc_plots->add(vars["ttvismass"],&ttvismass);
-      fcnc_plots->add(vars["tautauvispt"],&tautauvispt);
-      fcnc_plots->add(vars["t2vismass"],&t2vismass);
-      fcnc_plots->add(vars["t1vismass"],&t1vismass);
-      fcnc_plots->add(vars["mtaujmin"],&mtaujmin);
-      fcnc_plots->add(vars["mjjmin"],&mjjmin);
-      fcnc_plots->add(vars["etmiss"],&etmiss);
-      fcnc_plots->add(vars["x1fit"],&x1fit);
-      fcnc_plots->add(vars["x2fit"],&x2fit);
-      fcnc_plots->add(vars["drlbditau"],&drlbditau);
-      fcnc_plots->add(vars["drlb"],&drlb);
-      fcnc_plots->add(vars["drtaub"],&drtaub);
-      fcnc_plots->add(vars["etamax"],&etamax);
-      fcnc_plots->add(vars["drltau"],&drltau);
-      fcnc_plots->add(vars["drtauj"],&drtauj);
-      fcnc_plots->add(vars["drtautau"],&drtautau);
-      fcnc_plots->add(vars["drtaujmin"],&drtaujmin);
-      fcnc_plots->add(vars["nljet"],&nljet);
-      fcnc_plots->add(vars["dphitauetmiss"],&dphitauetmiss);
-      fcnc_plots->add(vars["phicent"],&phicent);
+      fcnc_plots->add(vars->at("t1mass"),&t1mass);
+      fcnc_plots->add(vars->at("mtw"),&mtw);
+      fcnc_plots->add(vars->at("tautaumass"),&tautaumass);
+      fcnc_plots->add(vars->at("wmass"),&wmass);
+      fcnc_plots->add(vars->at("t2mass"),&t2mass);
+      fcnc_plots->add(vars->at("ttvismass"),&ttvismass);
+      fcnc_plots->add(vars->at("tautauvispt"),&tautauvispt);
+      fcnc_plots->add(vars->at("t2vismass"),&t2vismass);
+      fcnc_plots->add(vars->at("t1vismass"),&t1vismass);
+      fcnc_plots->add(vars->at("mtaujmin"),&mtaujmin);
+      fcnc_plots->add(vars->at("mjjmin"),&mjjmin);
+      fcnc_plots->add(vars->at("etmiss"),&etmiss);
+      fcnc_plots->add(vars->at("x1fit"),&x1fit);
+      fcnc_plots->add(vars->at("x2fit"),&x2fit);
+      fcnc_plots->add(vars->at("drlbditau"),&drlbditau);
+      fcnc_plots->add(vars->at("drlb"),&drlb);
+      fcnc_plots->add(vars->at("drtaub"),&drtaub);
+      fcnc_plots->add(vars->at("etamax"),&etamax);
+      fcnc_plots->add(vars->at("drltau"),&drltau);
+      fcnc_plots->add(vars->at("drtauj"),&drtauj);
+      fcnc_plots->add(vars->at("drtautau"),&drtautau);
+      fcnc_plots->add(vars->at("drtaujmin"),&drtaujmin);
+      fcnc_plots->add(vars->at("nljet"),&nljet);
+      fcnc_plots->add(vars->at("dphitauetmiss"),&dphitauetmiss);
+      fcnc_plots->add(vars->at("phicent"),&phicent);
     }
-    fcnc_plots->add(vars["tau_pt_0"],&tau_pt_0);
-    fcnc_plots->add(vars["tau_pt_1"],&tau_pt_1);
-    fcnc_plots->add(vars["lep_pt_0"],&lep_pt_0);
-    fcnc_plots->add(vars["lep_pt_1"],&lep_pt_1);
+    fcnc_plots->add(vars->at("tau_pt_0"),&tau_pt_0);
+    fcnc_plots->add(vars->at("tau_pt_1"),&tau_pt_1);
+    fcnc_plots->add(vars->at("lep_pt_0"),&lep_pt_0);
+    fcnc_plots->add(vars->at("lep_pt_1"),&lep_pt_1);
+    fcnc_plots->add(vars->at("mll"),&mll);
     for (int j = 0; j < fcnc_nregions; ++j){
       if(plotTauFake){
         for (int k = 0; k < 2; ++k)
@@ -132,8 +133,8 @@ void tthmltree::init_hist(TString outputfilename){
     fake_notau_plots = new histSaver(outputfilename + "_fake_notau");
     fake_notau_plots->set_weight(&weight);
     fake_notau_plots->debug = !!debug;
-    fake_notau_plots->add(vars["bpt"],&pt_b);
-    fake_notau_plots->add(vars["ljetpt"],&pt_ljet);
+    fake_notau_plots->add(vars->at("bpt"),&pt_b);
+    fake_notau_plots->add(vars->at("ljetpt"),&pt_ljet);
     for (int j = 0; j < fake_nregions_notau; ++j){
       fake_notau_plots->add_region(fake_regions_notau[j]);
     }
@@ -144,12 +145,13 @@ void tthmltree::init_hist(TString outputfilename){
     fake_plots = new histSaver(outputfilename);
     fake_plots->set_weight(&weight);
     fake_plots->debug = !!debug;
-    fake_plots->add(vars["tau_pt_0"],&tau_pt_0);
-    fake_plots->add(vars["lep_pt_0"],&lep_pt_0);
-    fake_plots->add(vars["lep_pt_1"],&lep_pt_1);
-//    fake_plots->add(vars["bpt"],&pt_b);
-//    fake_plots->add(vars["ljetpt"],&pt_ljet);
-    fake_plots->add(vars["etmiss"],&etmiss);
+    fake_plots->add(vars->at("tau_pt_0"),&tau_pt_0);
+    fake_plots->add(vars->at("lep_pt_0"),&lep_pt_0);
+    fake_plots->add(vars->at("lep_pt_1"),&lep_pt_1);
+//    fake_plots->add(atvars->("bpt"),&pt_b);
+//    fake_plots->add(atvars->("ljetpt"),&pt_ljet);
+    fake_plots->add(vars->at("etmiss"),&etmiss);
+    fake_plots->add(vars->at("mll"),&mll);
     for (int j = 0; j < fake_nregions; ++j){
       if(plotTauFake){
         for (int k = 0; k < 2; ++k){
