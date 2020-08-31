@@ -25,7 +25,8 @@ const double btag70wt = 2.96;
 
 class nominal {
 public :
-
+  TString frameWork="xTFW"; 
+  int  year=2015;
   //=============================configurations===============================
   bool dofit1l2tau = 0;
   bool applyfakeSF = 0;
@@ -121,6 +122,10 @@ public :
   std::vector < TLorentzVector > ljets_v;
   std::vector < float > ljets_score;
   std::fstream filetruth[6][2];
+  std::fstream file_event_number;
+  std::fstream event_info;
+  std::fstream srcr_file_event_number;
+  std::fstream srcr_event_info;
   Double_t arglist[10];
   std::vector<TString> fcnc_regions;
   std::vector<TString> fake_regions;
@@ -189,6 +194,7 @@ public :
   virtual void defineLepTruth(){ printf("WARNING: virtual function defineLepTruth is used in nominal.h\n"); }
   virtual bool addWeightSys(){ printf("WARNING: virtual function addWeightSys is used in nominal.h\n"); return 1;}
   virtual bool passRegionCut(){return 1;}
+  virtual void prepare(){ printf("WARNING: virtual function prepare is used in nominal.h\n"); }
   TString classifyLepFakes(int ilep);
   //======================================================general necessary variables========================================
   ULong64_t  eventNumber;
@@ -223,7 +229,7 @@ public :
   std::vector<int> *leps_first_EgMother_pdgId;
   std::vector<int> *leps_first_EgMother_truth_origin;
   std::vector<int> *leps_first_EgMother_truth_type;
-
+  std::vector<TLorentzVector*>  *totaljets_p4;
   std::vector<std::vector<int>*> taumatchmap;
   std::vector<float>           *bjets_score;
   std::vector<float>           *ljets_bscore;
@@ -294,5 +300,13 @@ public :
   static RooAddPdf   _pdf_;
 
   std::map<TString,std::vector<TLorentzVector*>*> fitvec;
+  // hadhad specific
+  float      tau0RNN;
+  float      tau1RNN;
+  float      ditau_coll_approx_m;
+  float      ditau_coll_approx_x0;
+  float      ditau_coll_approx_x1;
+  float      met_sumet;
+
 };
 #endif
