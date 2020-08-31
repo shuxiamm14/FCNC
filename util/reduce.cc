@@ -58,7 +58,7 @@ int main(int argc, char const *argv[])
 	}
 	vector<TString> regions, regions_fake, regions_notau;
 	if(framework == "xTFW"){
-	      /*	regions.push_back("reg2mtau1b2jss");
+	        /*regions.push_back("reg2mtau1b2jss");
 		regions.push_back("reg2mtau1b3jss");
 		regions.push_back("reg2mtau1b3jos");
 		regions.push_back("reg2mtau1b2jos");
@@ -83,25 +83,25 @@ int main(int argc, char const *argv[])
 		regions.push_back("reg2ttau1b3jos");
 		regions.push_back("reg1ttau1mtau1b3jos");*/
                 regions.push_back("reg2mtau1b2jss");
-regions.push_back("reg2mtau1b3jss");
-regions.push_back("reg2mtau1b2jos");
-regions.push_back("reg2mtau1b3jos");
-regions.push_back("reg2mtau2b2jss");
-regions.push_back("reg2mtau2b3jss");
-regions.push_back("reg2mtau2b2jos");
-regions.push_back("reg2mtau2b3jos");
-//regions.push_back("reg2mtau0b4jos");
-//regions.push_back("reg2mtau0b3jos");
-//regions.push_back("reg2mtau0b4jss");
-//regions.push_back("reg2mtau0b3jss");
-//regions.push_back("reg2mtau4jos");
-//regions.push_back("reg2mtau3jos");
-//regions.push_back("reg2mtau4jss");
-//regions.push_back("reg2mtau3jss");
-regions.push_back("reg2ltau1b2jss");
-regions.push_back("reg2ltau1b3jss");
-regions.push_back("reg2ltau1b2jos");
-regions.push_back("reg2ltau1b3jos");
+                regions.push_back("reg2mtau1b3jss");
+                regions.push_back("reg2mtau1b2jos");
+		regions.push_back("reg2mtau1b3jos");
+		regions.push_back("reg2mtau2b2jss");
+		regions.push_back("reg2mtau2b3jss");
+		regions.push_back("reg2mtau2b2jos");
+		regions.push_back("reg2mtau2b3jos");
+		//regions.push_back("reg2mtau0b4jos");
+		//regions.push_back("reg2mtau0b3jos");
+		//regions.push_back("reg2mtau0b4jss");
+		//regions.push_back("reg2mtau0b3jss");
+		//regions.push_back("reg2mtau4jos");
+		//regions.push_back("reg2mtau3jos");
+		//regions.push_back("reg2mtau4jss");
+		//regions.push_back("reg2mtau3jss");
+		regions.push_back("reg2ltau1b2jss");
+		regions.push_back("reg2ltau1b3jss");
+		regions.push_back("reg2ltau1b2jos");
+		regions.push_back("reg2ltau1b3jos");
 	}else{
 		if(tthdofcnc || reduce == 1){
 			regions.push_back("reg1l1tau1b2j_os");
@@ -172,8 +172,9 @@ regions.push_back("reg2ltau1b3jos");
 	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
 	analysis->doubleCounting = 1;
   	analysis->belong_regions.enable(regions);
-	char inputline[500];
-
+	analysis->frameWork=framework;
+        char inputline[500];
+        std::cout<<"nominal: "<<analysis->nominaltree<<std::endl;
 	if(reduce > 1){
         if(framework == "xTFW")analysis->dovetobwp["btagwp70"] = 1;
 		if(framework == "tthML"){
@@ -428,7 +429,7 @@ regions.push_back("reg2ltau1b3jos");
 		else sscanf(inputline,"%s",filename);
 		printf("reading file: DSID: %d name %s\n", isData? 0 : dsid, filename);
 		TFile inputfile(filename);
-		if(framework == "xTFW"){
+		if(framework == "xTFW"&&analysis->nominaltree){
 			if(!isData && xsecs.find(dsid) == xsecs.end())
 				printf("xsec for DSID %d not found, please update your Xsec file\n", dsid);
 			TH1D *inputcutflow = (TH1D*)inputfile.Get("cutflow_HSM_common");

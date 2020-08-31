@@ -124,9 +124,9 @@ public :
    Float_t         ditau_CP_tau1_upsilon;
    Float_t         ditau_CP_upsilon_a1;
    Int_t           ditau_coll_approx;
-   Float_t         ditau_coll_approx_m;
-   Float_t         ditau_coll_approx_x0;
-   Float_t         ditau_coll_approx_x1;
+   Float_t         ditau_coll_approx_m_;
+   Float_t         ditau_coll_approx_x0_;
+   Float_t         ditau_coll_approx_x1_;
    Float_t         ditau_cosalpha;
    Float_t         ditau_deta;
    Float_t         ditau_dphi;
@@ -483,7 +483,7 @@ public :
    Float_t         met_sign_met_valL_ttdir;
    Float_t         met_sign_met_varT;
    Float_t         met_sign_met_varT_ttdir;
-   Float_t         met_sumet;
+   Float_t         met_sumet_;
    TLorentzVector  *met_truth_p4;
    Float_t         met_truth_sumet;
    Double_t        mva_random_number;

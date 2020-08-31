@@ -74,8 +74,9 @@ std::map<TString,variable*> getVariables(TString framework){
 		ret["dphitauetmiss"] = new variable("dphitauetmiss","#Delta#phi(#tau#tau,P^{T}_{miss})",60,0.,3.,"",1,6);
 		ret["ttvismass"] = new variable("ttvismass","m_{#tau#tau,vis}",80,50.,130.,"GeV",scale,8);
 		ret["drtautau"] = new variable("drtautau","#DeltaR(#tau,#tau)",100,0.4,3.4,"",1,10);
-		ret["drttjmin"] = new variable("drttjmin","#DeltaR(#tau,light-jet,min)",80,0.2,4.2,"",1,8);
-		ret["phicent"] = new variable("phicent","E^{T}_{miss} centrality",60,-1.5,1.5,"",1,6);
+	      	ret["drttjmin"] = new variable("drttjmin","#DeltaR(#tau,light-jet,min)",80,0.2,4.2,"",1,8);
+		ret["drttj"] = new variable("drttj","#DeltaR(#tau,light-jet)",80,0.2,4.2,"",1,8);
+                ret["phicent"] = new variable("phicent","E^{T}_{miss} centrality",60,-1.5,1.5,"",1,6);
 		ret["t1mass"] = new variable("t1mass","m_{t,SM}",900,100.,1000.,"GeV",scale,90);
 		ret["tautaumass"] = new variable("tautaumass","m_{#tau,#tau}",100,70.,170.,"GeV",scale,10);
 		ret["wmass"] = new variable("wmass","m_{W}",100,30.,530.,"GeV",scale,10);

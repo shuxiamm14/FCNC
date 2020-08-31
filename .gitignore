@@ -11,6 +11,3 @@ config/weights
 tthcutflow
 weiming
 config/theoryweightlist
-FCNCFigures
-FCNCTables
-bdt*

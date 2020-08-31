@@ -33,7 +33,7 @@ namespace TMVA{
       }
    };
 }
-void RunMVA( TString region = "", TCut cut = "(event_number%2)!=0" , TString weightfile = "", TString ncuts = "", TString ntrees = "", char ipart = '0') 
+void RunMVA( TString region = "", TCut cut = "(EventNumber%2)!=0" , TString weightfile = "", TString ncuts = "", TString ntrees = "", char ipart = '0') 
 {
    TString framework = (region.Contains("2mtau") || region.Contains("2ltau") || region.Contains("1mtau1ltau")) ? "xTFW" : "tthML";
    TString prefix = PACKAGE_DIR;
@@ -130,7 +130,7 @@ void RunMVA( TString region = "", TCut cut = "(event_number%2)!=0" , TString wei
    TCut mycuts = "abs(taus_matched_pdgId[0]) == 15 && abs(taus_matched_pdgId[1]) == 15 && weights[0] >0";
 
    //double norm = region == "reg2mtau1b2jos"? 4097.810002/2816.409586 : 4331.872451/3191.282355;
-     double norm = region == "reg2mtau1b2jos"? 1.09 : 1.57;
+   double norm = region == "reg2mtau1b2jos"? 1.09 : 1.57;
 
    if(framework == "tthML") mycuts = region.Contains("2tau") ? "abs(taus_matched_pdgId[0]) == 15 && abs(taus_matched_pdgId[1]) == 15 && weights[0] >0" : "abs(taus_matched_pdgId[0]) == 15 && weights[0] >0";
    TCut mycutb = "weights[0]>0";
@@ -185,7 +185,7 @@ int main(int argc, char const *argv[])
    bool testonly = 0;
    TString catname=argv[1];
    int classnb(*argv[2]-'0');
-   TString cutnb = "(event_number%";
+   TString cutnb = "(EventNumber%";
    cutnb += char(*argv[2]);
    cutnb += ")!=";
    TFile *outputfile[5];
@@ -200,11 +200,11 @@ int main(int argc, char const *argv[])
    }
    if(classnb == 2){
       SetAtlasStyle();
-      TH1D* testeven = (TH1D*) outputfile[0]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
+      TH1D* testeven = (TH1D*) outputfile[0]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
       testeven->SetNameTitle("Test Even","Test Even");
       testeven->SetLineColor(2);
       testeven->SetMarkerSize(0);
-      TH1D* testodd = (TH1D*) outputfile[1]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
+      TH1D* testodd = (TH1D*) outputfile[1]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
       testodd->SetNameTitle("Test Odd","Test Odd");
       testodd->SetLineColor(4);
       testodd->SetMarkerSize(0);

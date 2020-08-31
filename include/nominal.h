@@ -25,11 +25,7 @@ const double btag70wt = 2.96;
 
 class nominal {
 public :
-  
-  TString mode="inclusive";
-  bool isHtt=0;
-  bool isjvt=0;
-  bool info=0;
+  TString frameWork="xTFW"; 
   int  year=2015;
   //=============================configurations===============================
   bool dofit1l2tau = 0;
@@ -303,9 +299,13 @@ public :
   static RooAddPdf   _pdf_;
 
   std::map<TString,std::vector<TLorentzVector*>*> fitvec;
-
+  // hadhad specific
   float      tau0RNN;
   float      tau1RNN;
+  float      ditau_coll_approx_m;
+  float      ditau_coll_approx_x0;
+  float      ditau_coll_approx_x1;
+  float      met_sumet;
 
 };
 #endif
