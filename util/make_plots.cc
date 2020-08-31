@@ -33,6 +33,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString histmiddlename =  (dirname==NPname || NPname.Contains("fake_mismodelling"))? nominalname:NPname;
 	TString figuredir = method.Contains("test")?"." : FIGURE_DIR;
 	TString chartdir = method.Contains("test")?"." : TABLE_DIR;
+	observable fakeFactor;
 	bool prefit = 1;
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 1;
@@ -55,6 +56,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	int plotvar = 0;
 	bool doFakeFactor = 0;
 	bool realOnly = 0;
+	bool mergeDiletype = 1;
 	if(method.Contains("nofake")){
                 showFake = 0;
 	}
@@ -65,6 +67,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		else calculate_fake_calibration = 0;
 	}
 	if(method.Contains("IFF")){
+		calculate_fake_calibration = 1;
 		doFakeFactor = 1;
 		plotFakeLep = 1;
 		wfake = 0;
@@ -130,9 +133,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	auto vars = getVariables(framework);
 	if(framework == "tthML"){
 		if(calculate_fake_calibration){
-			tau_plots->add(vars["tau_pt_0"]);
-			tau_plots->add(vars["lep_pt_0"]);
-			if(!fittodata){
+			if(!fittodata && !(fakeFactor.nominal == 0 && doFakeFactor)){
 				tau_plots->sensitivevariable = "BDTG_test";
 				for(auto var : vars){
 					
@@ -153,6 +154,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				//tau_plots->add(vars["bpt"]);
   				//tau_plots->add(vars["etmiss"]);
 				//tau_plots->add(vars["ljetpt"]);
+			}else{
+				tau_plots->add(vars["tau_pt_0"]);
+				tau_plots->add(vars["lep_pt_0"]);
+				if(doFakeFactor) tau_plots->add(vars["lep_pt_1"]);
 			}
 			//tau_plots->add("p_{T,b}","bpt","GeV");
 			//tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
@@ -239,9 +244,13 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	//}
 	int nregions = regions.size();
 	TString nprong[] = {"_1prong","_3prong",""};
+	vector<TString> dileptype = {"ee","emu","mue","mumu"};
 	for (int j = 0; j < nregions; ++j){
 		if(plotFakeLep){
-			tau_plots->add_region(regions[j]);
+			tau_plots->add_region(regions[j]+"_ee");
+			tau_plots->add_region(regions[j]+"_emu");
+			tau_plots->add_region(regions[j]+"_mue");
+			tau_plots->add_region(regions[j]+"_mumu");
 		}else{
 			for (int k = 0; k < 2; ++k){
 				for (int i = 1; i < 2; i+=2){
@@ -370,8 +379,16 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 
 	}
 	if(!plotFakeLep){
+		if(mergeprong){
+			for (int j = 0; j < nregions; ++j){
+				tau_plots->merge_regions(regions[j] + nprong[0] + "_vetobtagwp70",regions[j] + nprong[1] + "_vetobtagwp70",regions[j]);
+			}
+		}
+	}else if(mergeDiletype){
 		for (int j = 0; j < nregions; ++j){
-			if(mergeprong) tau_plots->merge_regions(regions[j] + nprong[0] + "_vetobtagwp70",regions[j] + nprong[1] + "_vetobtagwp70",regions[j]);
+			vector<TString> mergeregions;
+			for(auto type : dileptype) mergeregions.push_back(regions[j] + "_" + type);
+			tau_plots->merge_regions(mergeregions,regions[j]);
 		}
 	}
 	if(plot_option == 2){
@@ -380,6 +397,16 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
   		}
   		if(plotFakeLep){
   			for (int i = 0; i < origin.size() - 2; i++) tau_plots->stackorder.push_back(origin[i]);
+  			if(doFakeFactor && framework == "tthML") {
+  				tau_plots->stackorder.push_back("non-prompt_lead");
+  				tau_plots->stackorder.push_back("non-prompt_sub-lead");
+  				string fakeFormular="1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 ttV -1 others";
+				if(fakeFactor.nominal == 0)
+  					fakeFactor=tau_plots->calculateYield("reg2lSS1taunj_os",fakeFormular,NPname)/(tau_plots->calculateYield("reg2lSS1taunj_os_antiisolead",fakeFormular,NPname)+tau_plots->calculateYield("reg2lSS1taunj_os_antiiso",fakeFormular,NPname));
+				printf("Calculated Lepton Fake Factor: %f+/-%f",fakeFactor.nominal,fakeFactor.error);
+  				tau_plots->templatesample("reg2lSS1tau1bnj_os_antiisolead",histmiddlename,fakeFormular,"reg2lSS1tau1bnj_os","non-prompt_lead","non-prompt lead",(enum EColor)40,0,fakeFactor.nominal);
+  				tau_plots->templatesample("reg2lSS1tau1bnj_os_antiiso",histmiddlename,fakeFormular,"reg2lSS1tau1bnj_os","non-prompt_sub-lead","non-prompt sub-lead",(enum EColor)41,0,fakeFactor.nominal);
+  			}
   		}else{
   			if(showFake){
   				if(mergeFake){
@@ -538,14 +565,6 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
   				////tau_plots->templatesample("reg1mtau1ltau1b3jss","1 data -1 mergeFake -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b3jos","fake","Fake",kYellow,1);
   				////tau_plots->templatesample("reg1mtau1ltau1b2jss","1 data -1 mergeFake -1 wjet -1 diboson -1 zll -1 ztautau -1 top","reg1mtau1ltau1b2jos","fake","Fake",kYellow,1);
   			}
-  			if(doFakeFactor && framework == "tthML") {
-  				tau_plots->stackorder.push_back("non-prompt_lead");
-  				tau_plots->stackorder.push_back("non-prompt_sub-lead");
-  				string fakeFormular="1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 othertop";
-  				observable fakeFactor=(tau_plots->calculateYield("reg2lSS1taunj_os_antiisolead",fakeFormular,NPname)+tau_plots->calculateYield("reg2lSS1taunj_os_antiiso",fakeFormular,NPname))/tau_plots->calculateYield("reg2lSS1taunj_os",fakeFormular,NPname);
-  				tau_plots->templatesample("reg2lSS1tau1bnj_os_antiisolead",histmiddlename,fakeFormular,"reg2lSS1tau1bnj_os","non-prompt_lead","non-prompt lead",kYellow,0,fakeFactor.nominal);
-  				tau_plots->templatesample("reg2lSS1tau1bnj_os_antiiso",histmiddlename,fakeFormular,"reg2lSS1tau1bnj_os","non-prompt_sub-lead","non-prompt sub-lead",kYellow,0,fakeFactor.nominal);
-  			}
   		}
   	}
   	//tau_plots->printyield("reg1l1tau1b3j_os");
@@ -627,7 +646,7 @@ int main(int argc, char const *argv[])
 	{
 		printf("=============================generating NP %d : %s=============================\n", i, findNPname(dirname,i,framework).Data());
 		for(int ipart = 0;1;ipart++)
-			if(!plot(i,framework,method,ipart)) break;
+			if(!plot(i,framework,method,ipart) || method.Contains("IFF") || method.Contains("fit")) break;
 	}
 	return 0;
 }

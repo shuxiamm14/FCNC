@@ -123,6 +123,7 @@ std::map<TString,variable*> getVariables(TString framework){
 		ret["nljet"] = new variable("nljet","N_{l-jet}",10,0.,10.,"",1);
 		ret["dphitauetmiss"] = new variable("dphitauetmiss","#Delta#phi(#tau#tau,P^{T}_{miss})",60,0.,3.,"",1,5);
 		ret["phicent"] = new variable("phicent","E^{T}_{miss} centrality",60,-1.5,1.5,"",1,5);
+		ret["mll"] = new variable("mll","m_{ll}",100,15,215,"GeV",scale,10);
 
     	//ret["bpt"] = new variable("bpt","p_{T,b}",10,25.,125.,"GeV",scale);
     	//ret["ljetpt"] = new variable("ljetpt","p_{T,light-jet}",10,25.,125.,"GeV",scale);

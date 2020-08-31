@@ -14,6 +14,13 @@ if [ -z ${TOOL_DIR} ] ; then
 	return
 fi
 
+
+LAUNCHER="-DCMAKE_CXX_COMPILER_LAUNCHER=distcc"
+command -v distcc >/dev/null 2>&1 || { 
+	echo >&2 "distcc is not installed, distributed compilation is disabled.";
+	LAUNCHER=
+}
+
 for word in `root-config --cflags`
 do
 	if [[ "$word" =~ "-std=" ]] ; then
@@ -35,5 +42,8 @@ do
 done
 
 echo "-- Detected root CXX standard:" $CXX_STANDARD
-
-mkdir build ; cd build ; cmake .. -DCMAKE_CXX_STANDARD=$CXX_STANDARD ; make install ; cd ..
+if ((CXX_STANDARD==11)) ; then
+	echo "-- Detected CXX standard less than 14 is not supported. Using CXX 14."
+	CXX_STANDARD=14
+fi
+mkdir -p build ; cd build ; cmake .. -DCMAKE_CXX_STANDARD=$CXX_STANDARD $LAUNCHER; make -j4 install ; cd ..
