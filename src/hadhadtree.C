@@ -225,8 +225,16 @@ float hadhadtree::calcRegionSF(TString region){
 
 bool hadhadtree::passRegionCut(){
   cut_flow.fill("this region");
-  if(!isData && samplename.Contains("fcnc") && !(abs(taus_matched_pdgId->at(0)) == 15 && abs(taus_matched_pdgId->at(1)) == 15)) return false;
-  cut_flow.fill("Only real tau");
+
+  drtautau = taus_p4->at(0)->DeltaR(*(taus_p4->at(1)));
+
+  for(auto bjets: *bjets_p4){
+    if(bjets->Pt() > 30 && abs(bjets->Eta()) < 2.5) return false;
+  }
+  cut_flow.fill("bjet pt>30 eta<2.5");
+
+  //if(!isData && samplename.Contains("fcnc") && !(abs(taus_matched_pdgId->at(0)) == 15 && abs(taus_matched_pdgId->at(1)) == 15)) return false;
+  //cut_flow.fill("Only real tau");
   return true;
 }
 
@@ -269,17 +277,6 @@ bool hadhadtree::passBasicCut(){
   if(!loose_atleast) return false;
   cut_flow.fill("at least loose");
  
-  if(bjets_p4->size()<1) return false;
-  cut_flow.fill("bjet num >=1");
-
-  if(totaljets_p4->size()<3)return false;
-  cut_flow.fill("jet num>=3");
-
-  bool fix_bug= (totaljets_p4->size()>3)||(totaljets_p4->size()==3&&totaljets_p4->at(2)->Pt()>1);
-  if(!fix_bug)return false;
-  cut_flow.fill("fix jet number bug");
-
-  drtautau = taus_p4->at(0)->DeltaR(*(taus_p4->at(1)));
   if(drtautau > 2.5) return false;
   cut_flow.fill("$\\Delta R(\\tau,\\tau)$<2.5");
 
@@ -292,21 +289,9 @@ bool hadhadtree::passBasicCut(){
   if(!tau_0_ele_bdt_medium_retuned || !tau_1_ele_bdt_medium_retuned) return false;
   cut_flow.fill("ele veto");
 
-  if(bjets_p4->size()==0){
-    cut_flow.fill("bjet pt>30 eta<2.5");
-  }else if(bjets_p4->size()==1){
-    bool passbjetcut = 0;
-    if(bjets_p4->at(0)->Pt() > 30 && abs(bjets_p4->at(0)->Eta()) < 2.5) passbjetcut = 1;
-    if(!passbjetcut) return false;
-    cut_flow.fill("bjet pt>30 eta<2.5");
-  }else if(bjets_p4->size()==2){
-    bool passbjetcut = 0;
-    if(bjets_p4->at(0)->Pt() > 30 && abs(bjets_p4->at(0)->Eta()) < 2.5&&bjets_p4->at(1)->Pt() > 30 && abs(bjets_p4->at(1)->Eta()) < 2.5) passbjetcut = 1;
-    if(!passbjetcut) return false;
-    cut_flow.fill("bjet pt>30 eta<2.5");
-  }else{
-    return false;
-  }
+  if(jet_2_p4->Pt() < 1e-5) return false;
+  cut_flow.fill("jet num>=3");
+
   return true;
 }
 

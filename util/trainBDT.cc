@@ -185,7 +185,7 @@ int main(int argc, char const *argv[])
    bool testonly = 0;
    TString catname=argv[1];
    int classnb(*argv[2]-'0');
-   TString cutnb = "(EventNumber%";
+   TString cutnb = "(eventNumber%";
    cutnb += char(*argv[2]);
    cutnb += ")!=";
    TFile *outputfile[5];
@@ -200,11 +200,11 @@ int main(int argc, char const *argv[])
    }
    if(classnb == 2){
       SetAtlasStyle();
-      TH1D* testeven = (TH1D*) outputfile[0]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
+      TH1D* testeven = (TH1D*) outputfile[0]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
       testeven->SetNameTitle("Test Even","Test Even");
       testeven->SetLineColor(2);
       testeven->SetMarkerSize(0);
-      TH1D* testodd = (TH1D*) outputfile[1]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
+      TH1D* testodd = (TH1D*) outputfile[1]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
       testodd->SetNameTitle("Test Odd","Test Odd");
       testodd->SetLineColor(4);
       testodd->SetMarkerSize(0);

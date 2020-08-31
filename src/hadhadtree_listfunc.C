@@ -26,7 +26,6 @@ void hadhadtree::definetree(TTree * tree) {
     tree->Branch("ljets_jvt",ljets_jvt);
     tree->Branch("ljets_origin",ljets_origin);
     tree->Branch("ljets_q",ljets_q);
-    tree->Branch("totaljets_p4",&totaljets_p4);
     tree->Branch("tau0RNN",&tau_0_jet_rnn_score_trans);
     tree->Branch("tau1RNN",&tau_1_jet_rnn_score_trans);
     if(nominaltree) tree->Branch("ljets_type",ljets_type);
@@ -50,7 +49,6 @@ void hadhadtree::definetree(TTree * tree) {
     tree->Branch("tau0RNN",&tau0RNN);
     tree->Branch("tau1RNN",&tau1RNN);
     tree->Branch("ditau_coll_approx_m", &ditau_coll_approx_m);
-    tree->Branch("totaljets_p4",&totaljets_p4);
     return;
   }
 }
@@ -110,10 +108,8 @@ void hadhadtree::definejets(){
   if(bjets_jvt->size()) bjets_jvt->clear();
   if(bjets_p4->size()) bjets_p4->clear();
   if(bjets_width->size()) bjets_width->clear();
-  if(totaljets_p4->size()) totaljets_p4->clear();
   if(ljets_bscore->size())ljets_bscore->clear();
   if(bjets_score->size())bjets_score->clear();
-  totaljets_p4->push_back(jet_0_p4);
   if(jet_0_b_tagged_DL1r_FixedCutBEff_70){
     bjets_fjvt->push_back(jet_0_fjvt);
     bjets_is_Jvt_HS->push_back(jet_0_is_Jvt_HS);
@@ -130,7 +126,6 @@ void hadhadtree::definejets(){
     ljets_width->push_back(jet_0_width);
     ljets_bscore->push_back(jet_0_b_tag_score);
   }
-  totaljets_p4->push_back(jet_1_p4);
   if(jet_1_b_tagged_DL1r_FixedCutBEff_70){
     bjets_fjvt->push_back(jet_1_fjvt);
     bjets_is_Jvt_HS->push_back(jet_1_is_Jvt_HS);
@@ -147,14 +142,13 @@ void hadhadtree::definejets(){
     ljets_width->push_back(jet_1_width);
     ljets_bscore->push_back(jet_1_b_tag_score);
   }
-  totaljets_p4->push_back(jet_2_p4);
   if(jet_2_b_tagged_DL1r_FixedCutBEff_70){
     bjets_fjvt->push_back(jet_2_fjvt);
     bjets_is_Jvt_HS->push_back(jet_2_is_Jvt_HS);
     bjets_jvt->push_back(jet_2_jvt);
     bjets_p4->push_back(jet_2_p4);
     bjets_width->push_back(jet_2_width);
-     bjets_score->push_back(jet_2_b_tag_score);
+    bjets_score->push_back(jet_2_b_tag_score);
   }
   else{
     ljets_fjvt->push_back(jet_2_fjvt);
@@ -165,7 +159,7 @@ void hadhadtree::definejets(){
     ljets_bscore->push_back(jet_2_b_tag_score);
   }
   if (jet_3)
-  { totaljets_p4->push_back(jet_3_p4);
+  {
     if(jet_3_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_3_fjvt);
       bjets_is_Jvt_HS->push_back(jet_3_is_Jvt_HS);
@@ -184,7 +178,7 @@ void hadhadtree::definejets(){
     }
   }
   if (jet_4)
-  { totaljets_p4->push_back(jet_4_p4);
+  {
     if(jet_4_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_4_fjvt);
       bjets_is_Jvt_HS->push_back(jet_4_is_Jvt_HS);
@@ -203,7 +197,7 @@ void hadhadtree::definejets(){
     }
   }
   if (jet_5)
-  { totaljets_p4->push_back(jet_5_p4);
+  {
     if(jet_5_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_5_fjvt);
       bjets_is_Jvt_HS->push_back(jet_5_is_Jvt_HS);
@@ -222,7 +216,7 @@ void hadhadtree::definejets(){
     }
   }
   if (jet_6)
-  { totaljets_p4->push_back(jet_6_p4);
+  {
     if(jet_6_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_6_fjvt);
       bjets_is_Jvt_HS->push_back(jet_6_is_Jvt_HS);
@@ -241,7 +235,7 @@ void hadhadtree::definejets(){
     }
   }
   if (jet_7)
-  { totaljets_p4->push_back(jet_7_p4);
+  {
     if(jet_7_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_7_fjvt);
       bjets_is_Jvt_HS->push_back(jet_7_is_Jvt_HS);
@@ -370,7 +364,6 @@ void hadhadtree::initRaw(TTree *tree)
  */tree->SetBranchAddress("ditau_coll_approx_m", &ditau_coll_approx_m);
    tree->SetBranchAddress("tau0RNN", &tau0RNN);
    tree->SetBranchAddress("tau1RNN", &tau1RNN);
-   tree->SetBranchAddress("totaljets_p4",&totaljets_p4);
    return;
   }
   if(reduce == 1) {
@@ -405,7 +398,6 @@ void hadhadtree::initRaw(TTree *tree)
     ljets_q = 0;
     ljets_type = 0;
     ljets_width = 0;
-    totaljets_p4=0;
     setVecBranch(tree);
     tree->SetBranchAddress("event_number", &event_number); // tree->SetBranchAddress("eventNumber", &eventNumber);
     tree->SetBranchAddress("mc_channel_number", &mc_channel_number); //  tree->SetBranchAddress("mc_channel_number", &mcChannelNumber);
@@ -416,7 +408,6 @@ void hadhadtree::initRaw(TTree *tree)
     tree->SetBranchAddress("bjets_fjvt", &bjets_fjvt);
     tree->SetBranchAddress("bjets_is_Jvt_HS", &bjets_is_Jvt_HS);
     tree->SetBranchAddress("bjets_jvt", &bjets_jvt);
-    tree->SetBranchAddress("totaljets_p4", &totaljets_p4);
     tree->SetBranchAddress("bjets_origin", &bjets_origin);
     tree->SetBranchAddress("bjets_p4", &bjets_p4);
     tree->SetBranchAddress("bjets_type", &bjets_type);

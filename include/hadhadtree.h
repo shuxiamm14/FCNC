@@ -18,10 +18,13 @@ public :
    void definetaus();
    void definejets();
    void init_hist(TString histfilename);
-   void     initRaw(TTree *tree);
+   void initRaw(TTree *tree);
    void init_sample(TString sample, TString sampletitle);
    void fill_fcnc(TString region, int nprong, TString sample, bool taubtag, TString NPname);
    void definetree(TTree *tree);
+   void defineTauTruth(){}
+   void defineLepTruth(){}
+
    bool addWeightSys();
    bool passRegionCut();
    bool passBasicCut();
@@ -43,6 +46,7 @@ public :
    UInt_t tau_0_allTrk_n,UInt_t tau_1_allTrk_n,double& x0,double& x1);
    
    bool passtrigger=1;
+   int year;
    TString mode="";
 
    //std::vector<Int_t>           *taus_id = 0;

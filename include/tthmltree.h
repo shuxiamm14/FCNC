@@ -15,6 +15,7 @@ public:
    void constructTruth();
    truthpart* truthmatch(TLorentzVector *p4);
    void constructwmatchmap(TTree *tree);
+   bool passRegionCut();
    std::vector<truthpart*> truthparticles;
 
 

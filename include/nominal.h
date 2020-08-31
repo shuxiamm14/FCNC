@@ -25,8 +25,6 @@ const double btag70wt = 2.96;
 
 class nominal {
 public :
-  TString frameWork="xTFW"; 
-  int  year=2015;
   //=============================configurations===============================
   bool dofit1l2tau = 0;
   bool applyfakeSF = 0;

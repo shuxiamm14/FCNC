@@ -170,6 +170,14 @@ void tthmltree::init_hist(TString outputfilename){
   }
 }
 
+bool tthmltree::passRegionCut(){
+  if(belong_regions.have("1l1tau")){
+    if(met_p4->Pt()<20*GeV) return false;
+    cut_flow.fill("$MET>20$");
+  }
+  return true;
+}
+
 void tthmltree::init_sample(TString sample, TString sampletitle){
 //==========================init output n-tuple==========================
   if(reduce == 1) initReduce1();
