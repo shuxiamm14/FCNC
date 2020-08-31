@@ -42,5 +42,8 @@ do
 done
 
 echo "-- Detected root CXX standard:" $CXX_STANDARD
-
+if ((CXX_STANDARD==11)) ; then
+	echo "-- Detected CXX standard less than 14 is not supported. Using CXX 14."
+	CXX_STANDARD=14
+fi
 mkdir -p build ; cd build ; cmake .. -DCMAKE_CXX_STANDARD=$CXX_STANDARD $LAUNCHER; make -j4 install ; cd ..
