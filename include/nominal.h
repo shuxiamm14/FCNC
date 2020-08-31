@@ -238,6 +238,7 @@ public :
   std::vector<float>           *bjets_score;
   std::vector<float>           *ljets_bscore;
   //======================================================flat variables for BDT========================================
+  float      mll;
   float      drttjmin;
   float      t2vismass;
   float      t1vismass;
