@@ -229,7 +229,7 @@ bool hadhadtree::passRegionCut(){
   drtautau = taus_p4->at(0)->DeltaR(*(taus_p4->at(1)));
 
   for(auto bjets: *bjets_p4){
-    if(bjets->Pt() > 30 && abs(bjets->Eta()) < 2.5) return false;
+    if(bjets->Pt() < 30 || abs(bjets->Eta()) > 2.5) return false;
   }
   cut_flow.fill("bjet pt>30 eta<2.5");
 
