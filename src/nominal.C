@@ -214,6 +214,7 @@ void nominal::initReduce1(){
 
 void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("fcncjetbscore", &fcncjetbscore);
+  tree->SetBranchAddress("taus_q", &taus_q);
   tree->SetBranchAddress("taus_matched_pdgId", &taus_matched_pdgId);
   tree->SetBranchAddress("taus_matched_mother_pdgId", &taus_matched_mother_pdgId);
   tree->SetBranchAddress("weights", & weights);
@@ -273,6 +274,7 @@ void nominal::setBDTBranch(TTree *tree){
 void nominal::BDTBranch(TTree *tree){
   tree->Branch("fcncjetbscore", &fcncjetbscore);
   tree->Branch("taus_b_tagged", &taus_b_tagged);
+  tree->Branch("taus_q", &taus_q);
   tree->Branch("taus_n_charged_tracks", &taus_n_charged_tracks);
   tree->Branch("taus_matched_pdgId", &taus_matched_pdgId);
   tree->Branch("taus_matched_mother_pdgId", &taus_matched_mother_pdgId);
@@ -1468,7 +1470,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
   
         TString    leporigin;
         TString    tauorigin;
-        if(leps_p4->size()>=1){
+        if(leps_id->size()){
           if (sample.Contains("data")) {
             leporigin = "data";
             sample = "data";
@@ -1490,7 +1492,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           int nfaketau = 0;
           for (int i = 0; i < taus_matched_pdgId->size(); ++i){
             int tauabspdg = abs(taus_matched_pdgId->at(i));
-            if(tauabspdg != 15) {
+            if(tauabspdg != 15 || taus_matched_pdgId->at(i) * taus_q->at(i) > 0) {
               nfaketau++;
               if (tauabspdg == 13 || tauabspdg == 11) tauorigin = sample + "_lep";
               else if (tauabspdg == 5) tauorigin = sample + "_b";
