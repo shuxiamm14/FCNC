@@ -269,6 +269,12 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("met_sumet", &met_sumet);
   tree->SetBranchAddress("tau0RNN",&tau0RNN);
   tree->SetBranchAddress("tau1RNN",&tau1RNN);
+  tree->SetBranchAddress("tauvis0E", &tauvis0E);
+  tree->SetBranchAddress("tauvis1E", &tauvis1E);
+  tree->SetBranchAddress("tau0E", &tau0E);
+  tree->SetBranchAddress("tau1E", &tau1E);
+  tree->SetBranchAddress("neu0E", &neu0E);
+  tree->SetBranchAddress("neu1E", &neu1E);
 }
 
 void nominal::BDTBranch(TTree *tree){
@@ -328,6 +334,12 @@ void nominal::BDTBranch(TTree *tree){
   tree->Branch("met_sumet", &met_sumet);
   tree->Branch("tau0RNN",&tau0RNN);
   tree->Branch("tau1RNN",&tau1RNN);
+  tree->Branch("tauvis0E", &tauvis0E);
+  tree->Branch("tauvis1E", &tauvis1E);
+  tree->Branch("tau0E", &tau0E);
+  tree->Branch("tau1E", &tau1E);
+  tree->Branch("neu0E", &neu0E);
+  tree->Branch("neu1E", &neu1E);
 }
 
 
@@ -1306,12 +1318,21 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           x1fit = 1 - neutrinos_p4->at(0)->E() / (*(taus_p4->at(0)) + *neutrinos_p4->at(0)).E();
           x2fit = 1 - neutrinos_p4->at(1)->E() / (*(tau2) + *neutrinos_p4->at(1)).E();
         }
+       if(leps_p4->size()==0){
+          tauvis0E=taus_p4->at(0)->E();
+          tauvis1E=tau2->E();
+          tau0E=(*(taus_p4->at(0)) + *neutrinos_p4->at(0)).E();
+          tau1E=(*(tau2) + *neutrinos_p4->at(1)).E();
+          neu0E=neutrinos_p4->at(0)->E();
+          neu1E=neutrinos_p4->at(1)->E();
+        }
         phicent = phi_centrality(taus_p4->at(0)->Phi(),tau2->Phi(),met_p4->Phi());
         tautauvispt = (*taus_p4->at(0) + *tau2).Pt();
         t2vismass = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2 + *ljets_p4->at(ljet_indice->at(0))).M() : 0;
         drttj = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2).DeltaR(*ljets_p4->at(ljet_indice->at(0))) : 0;
         dphitauetmiss = fabs(met_p4->DeltaPhi(*taus_p4->at(0) + *tau2));
         etmiss = met_p4->Pt();
+        if(debug)std::cout<<"x1: "<<x1fit<<", x2fit:"<<x2fit<<std::endl;
         mtaujmin = 0;
         drttjmin = 999;
         mttjmin = 0;
@@ -1485,7 +1506,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             else if(nfakelep >= 2) leporigin = sample + "_doubleFakeLep";
           }
         }
-        if (sample.Contains("data")) {
+       if (sample.Contains("data")) {
           tauorigin = "data";
           sample = "data";
         } else {

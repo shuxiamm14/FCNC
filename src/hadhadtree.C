@@ -96,6 +96,12 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots->add(vars["chi2"],&chi2);
   fcnc_plots->add(vars["allmass"],&allmass);
   fcnc_plots->add(vars["allpz"],&allpz);
+  fcnc_plots->add(vars["tauvis0E"],&tauvis0E);
+  fcnc_plots->add(vars["tauvis1E"],&tauvis1E);
+  fcnc_plots->add(vars["tau0E"],&tau0E);
+  fcnc_plots->add(vars["tau1E"],&tau1E);
+  fcnc_plots->add(vars["neu0E"],&neu0E);
+  fcnc_plots->add(vars["neu1E"],&neu1E);
   //fcnc_plots->add(vars["etamax"],&etamax);
   //fcnc_plots->add(vars["drtauj"],&drtauj);
   for (int j = 0; j < fcnc_regions.size(); ++j)
@@ -227,7 +233,6 @@ bool hadhadtree::passRegionCut(){
   cut_flow.fill("this region");
 
   drtautau = taus_p4->at(0)->DeltaR(*(taus_p4->at(1)));
-
   for(auto bjets: *bjets_p4){
     if(bjets->Pt() > 30 && abs(bjets->Eta()) < 2.5) return false;
   }

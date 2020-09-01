@@ -89,6 +89,12 @@ std::map<TString,variable*> getVariables(TString framework){
 		ret["chi2"] = new variable("chi2","#chi^2",60,-13.,17.,"",1,6);
 		ret["allmass"] = new variable("allmass","m_{all}",500,0.,1000.,"GeV",scale,50);
 		ret["allpz"] = new variable("allpz","P_{z,all}",500,0.,1000.,"GeV",scale,50);
+                ret["tauvis0E"] = new variable("tauvis0E","#tau vis0-E",100,40,140,"GeV",scale,10); // taus_p4->at(0)->E();
+                ret["tauvis1E"] = new variable("tauvis1E","#tau vis1-E",100,20,120,"GeV",scale,10); // tau2->E()
+                ret["tau0E"] = new variable("tau0E","#tau0-E",100,40,140,"GeV",scale,10); // (*(taus_p4->at(0)) + *neutrinos_p4->at(0)).E()
+                ret["tau1E"] = new variable("tau1E","#tau1-E",100,20,120,"GeV",scale,10); // (*(tau2) + *neutrinos_p4->at(1)).E()
+                ret["neu0E"] = new variable("neu0E","#neu0-E",100,40,140,"GeV",scale,10); // neutrinos_p4->at(0)->E()
+                ret["neu1E"] = new variable("neu1E","#neu1-E",100,20,120,"GeV",scale,10); // neutrinos_p4->at(1)->E()
 	}else{
 		ret["BDTG_train"] = new variable("BDTG_train","BDT discriminant",100,-1.,1.,"",1,10);
 		ret["BDTG_test"] = new variable("BDTG_test","BDT discriminant",100,-1.,1.,"",1,10);
