@@ -156,10 +156,9 @@ nominal::nominal(){
     dobwp[bwps[i]] = 0;
     dovetobwp[bwps[i]] = 0;
   }
-
+  gMinside = 0;
   fake_plots = 0;
   fake_notau_plots = 0;
-  gMinside = initgM();
   
   cut_flow.setWeight(&weight);
   cut_flow.setEventNumber(&eventNumber);
@@ -402,6 +401,7 @@ void nominal::vecBranch(TTree *tree){
 }
 
 void nominal::initFit(){
+  if(!gMinside) gMinside = initgM();
   fitvec["taus"] = taus_p4;
   fitvec["leps"] = leps_p4;
   fitvec["bjets"] = bjets_p4;
@@ -505,7 +505,65 @@ void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t 
   }
 }
 
+void nominal::fcn_collinear(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag) {
+  auto *fitvec = (std::map<TString,std::vector<TLorentzVector*>*>*) gM->GetObjectFit();
+  if (!fitvec)
+  {
+    printf("list isnt found\n");
+    exit(1);
+  }
+  std::vector<TLorentzVector*> *taus = fitvec->at("taus");
+  std::vector<TLorentzVector*> *leps = fitvec->at("leps");
+  std::vector<TLorentzVector*> *bjets = fitvec->at("bjets");
+  std::vector<TLorentzVector*> *ljets = fitvec->at("ljets");
+  std::vector<TLorentzVector*> *met = fitvec->at("met");
+  TString channel;
+  if(taus->size() == 2 && leps->size() == 0) channel = "hadhad";
+  else if(taus->size() == 1 && leps->size() == 1) channel = "lephad";
+  else if(taus->size() == 2 && leps->size() == 1) channel = "lep2tau";
+  else if(taus->size() == 1 && leps->size() == 2) channel = "2lSStau";
+  else {
+    printf("nominal::fcn() Error: Channel not found: %lu leptons, %lu taus\n", leps->size(), taus->size());
+    exit(1);
+  }
 
+  TLorentzVector neutrino[3];
+  //neutrino 0 is from leading tau. neutrino 1 is from subleading tau or leptonic tau.
+
+  if(channel == "lep2tau"){
+
+    neutrino[0].SetPtEtaPhiM(par[0]*taus->at(0)->Pt(),taus->at(0)->Eta(),taus->at(0)->Phi(),0);
+    neutrino[1].SetPtEtaPhiM(par[1]*taus->at(1)->Pt(),taus->at(1)->Eta(),taus->at(1)->Phi(),0);
+    Float_t Hmass = (*taus->at(0)+neutrino[0]+*taus->at(1)+neutrino[1]).M();
+    Float_t met_resol = 13.1*GeV+0.50*sqrt(met->at(0)->Pz()*GeV);
+    f = 1e10;
+  
+    neutrino[2].SetPtEtaPhiM(par[2],par[3],par[4],0);
+    TLorentzVector t1 = neutrino[2]+*leps->at(0)+*bjets->at(0);
+    //Float_t t2mass= (*taus->at(0)+neutrino[0]+*taus->at(1)+neutrino[1]+*ljet->at(0)).M();
+    Float_t wmass = (*leps->at(0) + neutrino[2]).M();
+    Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px()+neutrino[2].Px();
+    Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py()+neutrino[2].Py();
+    //Float_t pConstrain = (bjets->at(0).Dot(leps->at(0))/100) + (bjets->at(0).Dot(neutrino[2])/100);
+    f =  pow((wmass-81*GeV)/10/GeV,2) + pow((t1.M()-172.5*GeV)/25/GeV,2) +pow((pxMiss-met->at(0)->Px())/met_resol,2) + pow((pyMiss-met->at(0)->Py())/met_resol,2) + pow((Hmass-125*GeV)/10/GeV,2);// + pow((t2mass-172.5)/30,2);// + pow((pConstrain-110)/20,2);
+  }else{
+    Float_t mass;
+    neutrino[0].SetPtEtaPhiM(par[0]*taus->at(0)->Pt(),taus->at(0)->Eta(),taus->at(0)->Phi(),0);
+    if(channel == "lephad") {
+      neutrino[1].SetPtEtaPhiM(par[1]*leps->at(0)->Pt(),leps->at(0)->Eta(),leps->at(0)->Phi(),par[2]);
+      mass = (*taus->at(0)+neutrino[0]+*leps->at(0)+neutrino[1]).M();
+    }
+    else if(channel == "hadhad") {
+      neutrino[1].SetPtEtaPhiM(par[1]*taus->at(1)->Pt(),taus->at(1)->Eta(),taus->at(1)->Phi(),0);
+      mass = (*taus->at(0)+neutrino[0]+*taus->at(1)+neutrino[1]).M();
+    }
+    Float_t pxMiss = neutrino[0].Px()+neutrino[1].Px();
+    Float_t pyMiss = neutrino[0].Py()+neutrino[1].Py();
+    
+    Float_t met_resol = (13.1+0.50*sqrt(met->at(0)->Pz()/GeV))*GeV;
+    f = pow((mass-125*GeV)/20/GeV,2) + pow((pxMiss-met->at(0)->Px())/met_resol,2) + pow((pyMiss-met->at(0)->Py())/met_resol,2);
+  }
+}
 
 vector<int>* nominal::findcjet(){
   double m_w = 81*GeV;
@@ -1005,7 +1063,8 @@ void nominal::finalise_sample(){
 TMinuit* nominal::initgM(){
   deletepointer(gM);
   gM = new TMinuit(5);
-  gM->SetFCN(fcn);
+  if(fit_collinear)  gM->SetFCN(fcn_collinear);
+  else gM->SetFCN(fcn);
   gM->SetPrintLevel(-1);
   
   Double_t arglist[10];
@@ -1212,7 +1271,6 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           }
         }
         if(dofit && (taus_p4->size() + leps_p4->size() == 2 || dofit1l2tau)){
-  
           if (taus_p4->size() + leps_p4->size() >= 3) {
             gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
             gMinside->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
@@ -1220,6 +1278,14 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             gMinside->mnparm(3, "eta3", 0, 0.1, -5, 5, ierflg);
             gMinside->mnparm(4, "phi3", 0, 0.1, -PI, PI, ierflg);
             arglist[0] = 5;
+          } else if (fit_collinear){
+          	gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
+            gMinside->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
+            arglist[0] = 2;
+            if(leps_p4->size()) {
+              gMinside->mnparm(2, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
+              arglist[0]++;
+            }
           } else {
             gMinside->mnparm(0, "v1pt",  taus_p4->at(0)->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
             gMinside->mnparm(1, "v1eta", taus_p4->at(0)->Eta(), 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
@@ -1227,8 +1293,11 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             gMinside->mnparm(3, "v2pt",  tau2->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
             gMinside->mnparm(4, "v2eta", tau2->Eta(), 0.01, tau2->Eta()-0.25, tau2->Eta()+0.25, ierflg);
             gMinside->mnparm(5, "v2phi", tau2->Phi(), 0.01, tau2->Phi()-0.25, tau2->Phi()+0.25, ierflg);
-            if(leps_p4->size()) gMinside->mnparm(6, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
-            arglist[0] = 7;
+            arglist[0] = 6;
+            if(leps_p4->size()) {
+              gMinside->mnparm(6, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
+              arglist[0]++;
+            }
           }
 
           gMinside->SetObjectFit((TObject*)&fitvec);
@@ -1246,6 +1315,10 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             gMinside->mnparm(2, "pt3",  val[2], 10*GeV, 0., 1000*GeV, ierflg);
             gMinside->mnparm(3, "eta3", val[3], 0.1, -5, 5, ierflg);
             gMinside->mnparm(4, "phi3", val[4], 0.1, -PI, PI, ierflg);
+          } else if (fit_collinear){
+            gMinside->mnparm(0, "rpt1", val[0], 0.01, 0., 2., ierflg);
+            gMinside->mnparm(1, "rpt2", val[1], 0.01, 0., 2., ierflg);
+            if(leps_p4->size()) gMinside->mnparm(2, "v2m",   val[2], 0.01, 0, 1776, ierflg);
           } else {
             gMinside->mnparm(0, "v1pt",  val[0], 1, 0., 1000*GeV, ierflg);
             gMinside->mnparm(1, "v1eta", val[1], 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
@@ -1273,13 +1346,18 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           TLorentzVector *tauv2_v = new TLorentzVector();
           TLorentzVector *wv_v = new TLorentzVector();
           if(taus_p4->size() + leps_p4->size() >= 3) {
-            tauv1_v->SetPtEtaPhiM(val[0]*taus_p4->at(0)->Pt(), taus_p4->at(0)->Eta(), taus_p4->at(0)->Phi(), ljets_p4->size() >= 2 ? 0 : val[2]);
+            tauv1_v->SetPtEtaPhiM(val[0]*taus_p4->at(0)->Pt(), taus_p4->at(0)->Eta(), taus_p4->at(0)->Phi(),0);
             tauv2_v->SetPtEtaPhiM(val[1]*tau2->Pt(), tau2->Eta(), tau2->Phi(), 0);
             x1fit = 1 / (1 + val[0]);
             x2fit = 1 / (1 + val[1]);
             wv_v->SetPtEtaPhiM(val[2], val[3], val[4], 0);
             t1mass = (*wlep + *wv_v + *bjets_p4->at(0)).M();
             wmass = (*wlep + *wv_v).M();
+          } else if (fit_collinear){
+            x1fit = 1 / (1 + val[0]);
+            x2fit = 1 / (1 + val[1]);
+            tauv1_v->SetPtEtaPhiM(val[0]*taus_p4->at(0)->Pt(), taus_p4->at(0)->Eta(), taus_p4->at(0)->Phi(), 0);
+            tauv2_v->SetPtEtaPhiM(val[1]*tau2->Pt(), tau2->Eta(), tau2->Phi(), leps_p4->size()? val[2]:0);
           }
           else {
             tauv1_v->SetPtEtaPhiM(val[0],val[1],val[2],0);
