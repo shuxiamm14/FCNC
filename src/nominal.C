@@ -1335,7 +1335,8 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
 
           Double_t fmin,edm,errdef;
           Int_t nvpar,nparx,icstat;
-          gMinuit->mnstat(fmin,edm,errdef,nvpar,nparx,icstat);
+          //gMinuit->mnstat(fmin,edm,errdef,nvpar,nparx,icstat);
+          gMinside->mnstat(fmin,edm,errdef,nvpar,nparx,icstat);
 
           chi2 = fmin;
 
