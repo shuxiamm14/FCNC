@@ -31,7 +31,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool prefit = 1;
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 1;
-	bool wfake = 0;
+	bool wfake = 1;
 	bool mergeFake = 0;// template: mergeFake=0,showfake=0
 	bool doTrex = 1;
 	bool plotnj = 0;
@@ -41,7 +41,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	int plot_option = 2;
 	bool fittodata = 0;
 	bool plotFakeLep = 0;
-	bool showFake = 0;
+	bool showFake = 1;
 	TString fitcharge = "os";
 	int campaignfrom = 0;
 	int campaignto = 3;
@@ -90,7 +90,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString lumitag = "#it{#sqrt{s}} = 13TeV, ";
 	lumitag += campaignto == 3 ? "140 fb^{-1}" : (campaignto==2?"80 fb^{-1}":"36.1 fb^{-1}");
 	tau_plots->SetLumiAnaWorkflow(lumitag,"FCNC tqH H#rightarrow tautau","Internal");
-	tau_plots->debug = 1;
+	tau_plots->debug = 0;
 /*
 	tau_plots->checkread = 1;
 	tau_plots->checkread_sample = "fake";
@@ -640,7 +640,7 @@ int main(int argc, char const *argv[])
 	{
 		printf("=============================generating NP %d : %s=============================\n", i, findNPname(dirname,i,framework).Data());
 		for(int ipart = 0;1;ipart++)
-			if(!plot(i,framework,method,ipart) || method.Contains("IFF") || method.Contains("fit")) break;
+			if(!plot(i,framework,method,ipart) || method.Contains("IFF") || (method.Contains("fit")&&!method.Contains("postfit"))) break;
 	}
 	return 0;
 }
