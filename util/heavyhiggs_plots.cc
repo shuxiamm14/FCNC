@@ -38,7 +38,7 @@ int plot(int iNP, TString method, int ipart = 0) //method = fitss / fitos / plot
 	TString lumitag = "#it{#sqrt{s}} = 13TeV, ";
 	lumitag += "140 fb^{-1}";
 	tau_plots->SetLumiAnaWorkflow(lumitag,"Heavy Higgs 2lSS","Internal");
-	tau_plots->debug = 1;
+	tau_plots->debug = 0;
 /*
 	tau_plots->checkread = 1;
 	tau_plots->checkread_sample = "fake";
