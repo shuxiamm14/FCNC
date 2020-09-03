@@ -13,7 +13,7 @@ using namespace std;
 
 std::map<TString,variable*> getVariablesHH(){
 	std::map<TString,variable*> ret;
-	ret["Meff2l"]=new variable("Meff2l","M_{eff}^{2l}",30,0,3000,"GeV",1e-3, 1);
+	ret["Meff"]=new variable("Meff","M_{eff}^{2l}",30,0,3000,"GeV",1e-3, 1);
 	ret["met"]=new variable("met","E_{T}^{miss}",200,0,1000,"GeV",1e-3, 1);
 	ret["Reg3lMhh"]=new variable("Reg3lMhh", "M_{H}", 9, 150, 1050,"GeV", 1e-3, 1);
 	return ret;
@@ -22,7 +22,7 @@ std::map<TString,variable*> getVariablesHH(){
 int plot(int iNP, TString method, int ipart = 0) //method = fitss / fitos / plot / trex
 {
 	TString NPname = "NOMINAL";
-	bool doTrex = 1;
+	bool doTrex = 0;
 	bool doPlots = 1;
 	int perpart = 5;
 	int varcount = 0;
@@ -89,56 +89,56 @@ int plot(int iNP, TString method, int ipart = 0) //method = fitss / fitos / plot
 	// SampleColorMap["Charge Flip"] = "Blue"
 	// SampleColorMap["OtherSS"] = "Red"
 
-	vector<fcncSample> samples;
+	vector<fcncSample> sigsamples;
 	int signorm = 1;
 	TString tmp = "";
- 	samples.emplace_back("GHH300X","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH300Y","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH3f600f0","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH3fm600f0","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH3f350f2100","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH3fm350f2100","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH3fm350fm2100","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH3f350fm2100","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH3f0f3000","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH3f0fm3000","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH600X","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH600Y","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH6f650f0","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH6fm650f0","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH6f400f2400","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH6fm400f2400","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH6fm400fm2400","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH6f400fm2400","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH6f0f3500","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH6f0fm3500","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH900X","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH9f800f0","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH9fm800f0","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH9f600f3600","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH9fm600f3600","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH9fm600fm3600","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH9f600fm3600","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH9f0f5000","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	samples.emplace_back("GHH9f0fm5000","VH#rightarrow VVV"+tmp,kRed,signorm);
- 	vector<fcncSample> bkgsamples = samples;
-	vector<fcncSample> sigsamples;
-	sigsamples.emplace_back("WWW","WWW",ColorMap["Yellow"]);
-	sigsamples.emplace_back("ssWW","same sign WW",ColorMap["Brown"]);
-	sigsamples.emplace_back("VVV","VVV not include WWW",ColorMap["Pink"]);
-	sigsamples.emplace_back("DiBoson","Diboson",ColorMap["LightPurple"]); // ZZ + WZ
-	//sigsamples.emplace_back("ZZ","ZZ",ColorMap["Grey"]);
-	//sigsamples.emplace_back("WZ","WZ",ColorMap["LightPurple"]);
-	sigsamples.emplace_back("TopX","top + X",ColorMap["Wjets1"]); // tZ + ttW + ttZ
-	//sigsamples.emplace_back("tZ","tZ",ColorMap["Wjets3"]);
-	//sigsamples.emplace_back("ttW","ttW",ColorMap["Wjets1"]);
-	//sigsamples.emplace_back("ttZ","ttZ",ColorMap["Wjets2"]);
-	sigsamples.emplace_back("Others","from data-driven",ColorMap["LightBlue"]); // SingleTop + Wjets + Zjets + ttbar + Vgamma
-	//sigsamples.emplace_back("SingleTop","SingleTop",ColorMap["Skin"]);
-	//sigsamples.emplace_back("Wjets","Wjets",ColorMap["Blue"]);
-	//sigsamples.emplace_back("Zjets","Zjets",ColorMap["Green"]);
-	//sigsamples.emplace_back("ttbar","ttbar",ColorMap["LightBlue"]);
-	//sigsamples.emplace_back("Vgamma","Vgamma",ColorMap["Orange"]);
+ 	sigsamples.emplace_back("GHH300X","VH#rightarrow VVV,300X"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH300Y","VH#rightarrow VVV,300Y"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH3f600f0","VH#rightarrow VVV,3f600f0"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH3fm600f0","VH#rightarrow VVV,3fm600f0"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH3f350f2100","VH#rightarrow VVV,3f350f2100"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH3fm350f2100","VH#rightarrow VVV,3fm350f2100"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH3fm350fm2100","VH#rightarrow VVV,3fm350fm2100"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH3f350fm2100","VH#rightarrow VVV,3f350fm2100"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH3f0f3000","VH#rightarrow VVV,3f0f3000"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH3f0fm3000","VH#rightarrow VVV,3f0fm3000"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH600X","VH#rightarrow VVV,600X"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH600Y","VH#rightarrow VVV,600Y"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH6f650f0","VH#rightarrow VVV,6f650f0"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH6fm650f0","VH#rightarrow VVV,6fm650f0"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH6f400f2400","VH#rightarrow VVV,6f400f2400"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH6fm400f2400","VH#rightarrow VVV,6fm400f2400"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH6fm400fm2400","VH#rightarrow VVV,6fm400fm2400"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH6f400fm2400","VH#rightarrow VVV,6f400fm2400"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH6f0f3500","VH#rightarrow VVV,6f0f3500"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH6f0fm3500","VH#rightarrow VVV,6f0fm3500"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH900X","VH#rightarrow VVV,900X"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH9f800f0","VH#rightarrow VVV,9f800f0"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH9fm800f0","VH#rightarrow VVV,9fm800f0"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH9f600f3600","VH#rightarrow VVV,9f600f3600"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH9fm600f3600","VH#rightarrow VVV,9fm600f3600"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH9fm600fm3600","VH#rightarrow VVV,9fm600fm3600"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH9f600fm3600","VH#rightarrow VVV,9f600fm3600"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH9f0f5000","VH#rightarrow VVV,9f0f5000"+tmp,kRed,signorm);
+ 	sigsamples.emplace_back("GHH9f0fm5000","VH#rightarrow VVV,9f0fm5000"+tmp,kRed,signorm);
+	vector<fcncSample> bkgsamples;
+	bkgsamples.emplace_back("WWW","WWW",ColorMap["Yellow"]);
+	bkgsamples.emplace_back("ssWW","same sign WW",ColorMap["Brown"]);
+	bkgsamples.emplace_back("VVV","VVV not include WWW",ColorMap["Pink"]);
+	bkgsamples.emplace_back("DiBoson","Diboson",ColorMap["LightPurple"]); // ZZ + WZ
+//	bkgsamples.emplace_back("ZZ","ZZ",ColorMap["Grey"]);
+//	bkgsamples.emplace_back("WZ","WZ",ColorMap["LightPurple"]);
+	bkgsamples.emplace_back("TopX","top + X",ColorMap["Wjets1"]); // tZ + ttW + ttZ
+//	bkgsamples.emplace_back("tZ","tZ",ColorMap["Wjets3"]);
+//	bkgsamples.emplace_back("ttW","ttW",ColorMap["Wjets1"]);
+//	bkgsamples.emplace_back("ttZ","ttZ",ColorMap["Wjets2"]);
+	bkgsamples.emplace_back("Others","from data-driven",ColorMap["LightBlue"]); // SingleTop + Wjets + Zjets + ttbar + Vgamma
+//	bkgsamples.emplace_back("SingleTop","SingleTop",ColorMap["Skin"]);
+//	bkgsamples.emplace_back("Wjets","Wjets",ColorMap["Blue"]);
+//	bkgsamples.emplace_back("Zjets","Zjets",ColorMap["Green"]);
+//	bkgsamples.emplace_back("ttbar","ttbar",ColorMap["LightBlue"]);
+//	bkgsamples.emplace_back("Vgamma","Vgamma",ColorMap["Orange"]);
+ 	vector<fcncSample> samples = bkgsamples;
 	map<TString, std::vector<TString>> merge = {
 		{"Others",{"SingleTop", "Wjets", "Zjets", "ttbar", "Vgamma"}},
 		{"TopX",{"tZ","ttW","ttZ"}},
@@ -168,7 +168,7 @@ int plot(int iNP, TString method, int ipart = 0) //method = fitss / fitos / plot
 	//	}
 	//}
 	auto vars = getVariablesHH();
-	tau_plots->sensitivevariable = "Meff2l";
+	tau_plots->sensitivevariable = "Meff";
 	for(auto var : vars){
 			if(varcount / perpart == ipart){
 			tau_plots->add(var.second);
@@ -191,7 +191,7 @@ int plot(int iNP, TString method, int ipart = 0) //method = fitss / fitos / plot
 	}
 
 	TFile *inputfile = new TFile("GHH_v1.root");
-	tau_plots->read_sample("data","Data","NOMINAL","data",kBlack, 1, inputfile);
+	//tau_plots->read_sample("data","Data","NOMINAL","data",kBlack, 1, inputfile);
 	TString histmiddlename = "NOMINAL";
 	for (int j = 0; j < samples.size(); ++j){
 		if(merge.find(samples[j].name) == merge.end()) tau_plots->read_sample( samples[j].name, samples[j].name, histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
@@ -213,21 +213,21 @@ int plot(int iNP, TString method, int ipart = 0) //method = fitss / fitos / plot
 		tau_plots->stackorder.push_back(samp.name);
 	}
 
-	//if(doTrex){
-	//	std::string nptmp = NPname.Data();
-	//	findAndReplaceAll(nptmp,"__1down","_down");
-	//	findAndReplaceAll(nptmp,"__1up","_up");
-	//	findAndReplaceAll(nptmp,"JET_EffectiveNP","JES");
-	//	findAndReplaceAll(nptmp,"JET_CategoryReduction_","JES");
-	//	findAndReplaceAll(nptmp,"JET_JER_EffectiveNP","JER");
-	//	findAndReplaceAll(nptmp,"JET_EtaIntercalibration","JET_EtaInt");
-	//	findAndReplaceAll(nptmp,"TAUS_TRUEHADTAU_SME_TES","TES");
-	//	NPname = nptmp;
-	//	if(NPname.Contains("PDF")) tau_plots->trexdir = "PDF_trexinputs";
-	//	else if(NPname.Contains("muR")) tau_plots->trexdir = "scale_trexinputs";
-	//	else tau_plots->trexdir = "trexinputs";
-	//	tau_plots->write_trexinput(histmiddlename,NPname);
-	//}
+	if(doTrex){
+		std::string nptmp = NPname.Data();
+//		findAndReplaceAll(nptmp,"__1down","_down");
+//		findAndReplaceAll(nptmp,"__1up","_up");
+//		findAndReplaceAll(nptmp,"JET_EffectiveNP","JES");
+//		findAndReplaceAll(nptmp,"JET_CategoryReduction_","JES");
+//		findAndReplaceAll(nptmp,"JET_JER_EffectiveNP","JER");
+//		findAndReplaceAll(nptmp,"JET_EtaIntercalibration","JET_EtaInt");
+//		findAndReplaceAll(nptmp,"TAUS_TRUEHADTAU_SME_TES","TES");
+		NPname = nptmp;
+		if(NPname.Contains("PDF")) tau_plots->trexdir = "PDF_trexinputs";
+		else if(NPname.Contains("muR")) tau_plots->trexdir = "scale_trexinputs";
+		else tau_plots->trexdir = "trexinputs";
+		tau_plots->write_trexinput(histmiddlename,NPname);
+	}
 	if(doPlots){
 		for (auto samp : sigsamples)
 		{
