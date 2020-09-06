@@ -1,8 +1,0 @@
-ReplacementFile:myFit.config
-XXXjobname:Meff
-XXXvariable:Meff
-XXXxaxis:M_{eff}^{2l}[GeV]
-XXXsig:GHH6fm400f2400
-XXXsrvt:"VH#rightarrow VVV"
-XXXlog:FALSE
-XXXrebin:1
