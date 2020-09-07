@@ -14,6 +14,7 @@ void setlimit(LatexChart *chart, TString filename, string row, string column){
 int main(int argc, char const *argv[])
 {
 	vector<TString> signals = {
+		"GHH300X",
 		"GHH300Y",
 		"GHH3f600f0",
 		"GHH3fm600f0",
