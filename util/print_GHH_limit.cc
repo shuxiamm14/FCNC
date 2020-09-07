@@ -1,4 +1,5 @@
 #include "LatexChart.h"
+#include "TTree.h"
 #include "TFile.h"
 #include "TH1D.h"
 using namespace std;
@@ -6,9 +7,19 @@ using namespace std;
 void setlimit(LatexChart *chart, TString filename, string row, string column){
 	TFile thefile(filename);
 	if(thefile.IsZombie()) return;
-	TH1D *thehist = (TH1D*) thefile.Get("limit");
-	printf("chart->set(%f,%f,%f)\n", thehist->GetBinContent(2),thehist->GetBinContent(4)-thehist->GetBinContent(2),thehist->GetBinContent(2)-thehist->GetBinContent(5));
-	chart->set(row,column,thehist->GetBinContent(2),thehist->GetBinContent(4)-thehist->GetBinContent(2),thehist->GetBinContent(2)-thehist->GetBinContent(5));
+	TTree *thetree = (TTree*) thefile.Get("stats");
+	float exp_upperlimit,exp_upperlimit_plus1,exp_upperlimit_minus1;
+	//TBranch *b_exp_upperlimit,*b_exp_upperlimit_plus1,*b_exp_upperlimit_minus1;
+	thetree->SetBranchAddress("exp_upperlimit",&exp_upperlimit);
+	thetree->SetBranchAddress("exp_upperlimit_plus1",&exp_upperlimit_plus1);
+	thetree->SetBranchAddress("exp_upperlimit_minus1",&exp_upperlimit_minus1);
+	thetree->GetEntry(0);
+	observable limit;
+	limit.nominal = exp_upperlimit;
+	limit.error = exp_upperlimit_plus1-exp_upperlimit;
+	limit.errordown = exp_upperlimit-exp_upperlimit_minus1;
+	//printf("chart->set(%f,%f,%f)\n", thehist->GetBinContent(2),thehist->GetBinContent(4)-thehist->GetBinContent(2),thehist->GetBinContent(2)-thehist->GetBinContent(5));
+	chart->set(row,column,limit);
 }
 
 int main(int argc, char const *argv[])
@@ -56,7 +67,7 @@ int main(int argc, char const *argv[])
 			TString filename=signals[isig] + "/Fit" + channelsjob[ichan] + "/Limits/asymptotics/myLimit_BLIND_CL95.root";
 			setlimit(chart, filename, signalstitle[isig].Data(), channelstitle[ichan].Data());
 		}
-		TString filename=signals[isig] + "/combined/Limits/asymptotics/myLimit_BLIND_CL95.root";
+		TString filename=signals[isig] + "/combined/Limits/asymptotics/myLimit_CL95.root";
 		setlimit(chart, filename, signalstitle[isig].Data(), "Combined");
 	}
 	chart->caption="The limits derived from leptonic channels.";

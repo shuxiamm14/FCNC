@@ -22,8 +22,8 @@ std::map<TString,variable*> getVariablesHH(){
 int plot(int iNP, TString method, int ipart = 0) //method = fitss / fitos / plot / trex
 {
 	TString NPname = "NOMINAL";
-	bool doTrex = 0;
-	bool doPlots = 1;
+	bool doTrex = 1;
+	bool doPlots = 0;
 	int perpart = 5;
 	int varcount = 0;
 	int plotvar = 0;
