@@ -37,7 +37,7 @@ int plot(int iNP, TString method, int ipart = 0) //method = fitss / fitos / plot
 	tau_plots->doROC = 0;
 	TString lumitag = "#it{#sqrt{s}} = 13TeV, ";
 	lumitag += "140 fb^{-1}";
-	tau_plots->SetLumiAnaWorkflow(lumitag,"Heavy Higgs 2lSS","Internal");
+	tau_plots->SetLumiAnaWorkflow(lumitag,"Heavy Higgs","Internal");
 	tau_plots->debug = 0;
 /*
 	tau_plots->checkread = 1;
@@ -123,8 +123,8 @@ int plot(int iNP, TString method, int ipart = 0) //method = fitss / fitos / plot
  	sigsamples.emplace_back("GHH9f0fm5000","VH#rightarrow VVV,9f0fm5000"+tmp,kRed,signorm);
 	vector<fcncSample> bkgsamples;
 	bkgsamples.emplace_back("WWW","WWW",ColorMap["Yellow"]);
-	bkgsamples.emplace_back("ssWW","same sign WW",ColorMap["Brown"]);
-	bkgsamples.emplace_back("VVV","VVV not include WWW",ColorMap["Pink"]);
+	bkgsamples.emplace_back("ssWW","ssWW",ColorMap["Brown"]);
+	bkgsamples.emplace_back("VVV","VVV",ColorMap["Pink"]);
 	bkgsamples.emplace_back("DiBoson","Diboson",ColorMap["LightPurple"]); // ZZ + WZ
 //	bkgsamples.emplace_back("ZZ","ZZ",ColorMap["Grey"]);
 //	bkgsamples.emplace_back("WZ","WZ",ColorMap["LightPurple"]);
@@ -132,7 +132,7 @@ int plot(int iNP, TString method, int ipart = 0) //method = fitss / fitos / plot
 //	bkgsamples.emplace_back("tZ","tZ",ColorMap["Wjets3"]);
 //	bkgsamples.emplace_back("ttW","ttW",ColorMap["Wjets1"]);
 //	bkgsamples.emplace_back("ttZ","ttZ",ColorMap["Wjets2"]);
-	bkgsamples.emplace_back("Others","from data-driven",ColorMap["LightBlue"]); // SingleTop + Wjets + Zjets + ttbar + Vgamma
+	bkgsamples.emplace_back("Others","Others",ColorMap["LightBlue"]); // SingleTop + Wjets + Zjets + ttbar + Vgamma
 //	bkgsamples.emplace_back("SingleTop","SingleTop",ColorMap["Skin"]);
 //	bkgsamples.emplace_back("Wjets","Wjets",ColorMap["Blue"]);
 //	bkgsamples.emplace_back("Zjets","Zjets",ColorMap["Green"]);
