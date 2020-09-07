@@ -14,7 +14,7 @@ using namespace std;
 std::map<TString,variable*> getVariablesHH(){
 	std::map<TString,variable*> ret;
 	ret["Meff"]=new variable("Meff","M_{eff}^{2l}",30,0,3000,"GeV",1e-3, 1);
-	ret["met"]=new variable("met","E_{T}^{miss}",0,0,1000,"GeV",1e-3, 1);
+	ret["met"]=new variable("met","E_{T}^{miss}",20,0,1000,"GeV",1e-3, 1);
 	ret["Reg3lMhh"]=new variable("Reg3lMhh", "M_{H}", 9, 150, 1050,"GeV", 1e-3, 1);
 	return ret;
 }
