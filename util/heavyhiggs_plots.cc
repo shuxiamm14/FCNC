@@ -246,10 +246,10 @@ int plot(int iNP, TString method, int ipart = 0) //method = fitss / fitos / plot
 
 int main(int argc, char const *argv[])
 {
-	int from = atoi(argv[2]);
-	int to = atoi(argv[3]);
+	int from = atoi(argv[1]);
+	int to = atoi(argv[2]);
 	TString dirname;
-	TString method = argv[4];
+	TString method = argv[3];
 	for (int i = from; i <= to; ++i)
 	{
 		//printf("=============================generating NP %d : %s=============================\n", i, findNPname(dirname,i,framework).Data());

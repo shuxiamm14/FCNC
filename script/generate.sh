@@ -11,8 +11,7 @@ sigstring=${signals[@]}
 cat $GHHTrexConfigDir/job_3l.config > myFit_3l_allsig.config
 cat $GHHTrexConfigDir/job_ss2l.config > myFit_ss2l_allsig.config
 
-echo "
-  Samples: "${sigstring// /,} | tee -a myFit_3l_allsig.config myFit_ss2l_allsig.config > /dev/null
+echo "  Samples: "${sigstring// /,} | tee -a myFit_3l_allsig.config myFit_ss2l_allsig.config > /dev/null
 
 cat $GHHTrexConfigDir/samples_3l.config >> myFit_3l_allsig.config
 cat $GHHTrexConfigDir/samples_ss2l.config >> myFit_ss2l_allsig.config

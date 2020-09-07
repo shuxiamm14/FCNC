@@ -40,6 +40,7 @@ if (( $# >= 1 )) ; then
 else
 for sig in "${signals[@]}"
 do
-	runfit $sig
+	#runfit $sig
+	run3lfit $sig
 done
 fi
