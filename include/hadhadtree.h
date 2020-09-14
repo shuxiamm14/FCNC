@@ -77,7 +77,7 @@ public :
    std::vector<TLorentzVector*>  *jets_wztruth_p4;
 
    int tau_origin=0;
-   double weight_mc_d;
+   Double_t        weight_mc_d;
    Double_t        AMI_cross_section;
    ULong64_t       event_number;
    Float_t         HTXS_Higgs_eta;
@@ -344,6 +344,30 @@ public :
    Float_t         jet_FT_EFF_Eigen_B_2_1up_global_effSF_DL1r_FixedCutBEff_85;
    Float_t         jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_DL1r_FixedCutBEff_70;
    Float_t         jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_DL1r_FixedCutBEff_85;
+   Float_t         jet_FT_EFF_Eigen_B_3_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_3_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_3_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_3_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_4_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_4_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_4_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_4_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_5_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_5_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_5_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_5_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_6_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_6_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_6_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_6_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_7_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_7_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_7_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_7_1up_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_8_1down_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_8_1down_global_ineffSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_8_1up_global_effSF_DL1r_FixedCutBEff_70;
+   Float_t         jet_FT_EFF_Eigen_B_8_1up_global_ineffSF_DL1r_FixedCutBEff_70;
    Float_t         jet_FT_EFF_Eigen_C_0_1down_global_effSF_DL1r_FixedCutBEff_70;
    Float_t         jet_FT_EFF_Eigen_C_0_1down_global_effSF_DL1r_FixedCutBEff_85;
    Float_t         jet_FT_EFF_Eigen_C_0_1down_global_ineffSF_DL1r_FixedCutBEff_70;
@@ -1163,7 +1187,18 @@ public :
    Int_t           tau_1_type;
    Float_t         tau_eta_centrality;
    UInt_t          truth_passedVBFFilter;
+   Float_t         theory_weights_CT14_pdfset;
+   Float_t         theory_weights_MMHT_pdfset;
+   Float_t         theory_weights_alphaS_down;
+   Float_t         theory_weights_alphaS_up;
 
+
+   
+
+   TBranch        *b_theory_weights_CT14_pdfset;   //!
+   TBranch        *b_theory_weights_MMHT_pdfset;   //!
+   TBranch        *b_theory_weights_alphaS_down;   //!
+   TBranch        *b_theory_weights_alphaS_up;   //!
    TBranch        *b_truth_passedVBFFilter;   //!
    TBranch        *b_AMI_cross_section;   //!
    TBranch        *b_HTXS_Higgs_eta;   //!
@@ -1434,6 +1469,30 @@ public :
    TBranch        *b_jet_FT_EFF_Eigen_B_2_1up_global_effSF_DL1r_FixedCutBEff_85;   //!
    TBranch        *b_jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
    TBranch        *b_jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_DL1r_FixedCutBEff_85;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_3_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_3_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_3_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_3_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_4_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_4_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_4_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_4_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_5_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_5_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_5_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_5_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_6_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_6_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_6_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_6_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_7_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_7_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_7_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_7_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_8_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_8_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_8_1up_global_effSF_DL1r_FixedCutBEff_70;   //!
+   TBranch        *b_jet_FT_EFF_Eigen_B_8_1up_global_ineffSF_DL1r_FixedCutBEff_70;   //!
    TBranch        *b_jet_FT_EFF_Eigen_C_0_1down_global_effSF_DL1r_FixedCutBEff_70;   //!
    TBranch        *b_jet_FT_EFF_Eigen_C_0_1down_global_effSF_DL1r_FixedCutBEff_85;   //!
    TBranch        *b_jet_FT_EFF_Eigen_C_0_1down_global_ineffSF_DL1r_FixedCutBEff_70;   //!

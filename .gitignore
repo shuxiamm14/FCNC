@@ -11,3 +11,5 @@ config/weights
 tthcutflow
 weiming
 config/theoryweightlist
+FCNC*
+bdt_result

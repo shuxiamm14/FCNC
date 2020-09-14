@@ -196,9 +196,9 @@ public :
   TString classifyLepFakes(int ilep);
   //======================================================general necessary variables========================================
   ULong64_t  eventNumber;
-  UInt_t        runNumber;
+  UInt_t     runNumber;
   UInt_t     mcChannelNumber;
-  float     weight_mc;
+  Double_t   weight_mc;
   float      generalweight;
   TString    samplename;
   int        campaign;
