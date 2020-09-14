@@ -49,7 +49,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	int varcount = 0;
 	int plotvar = 0;
 	bool doFakeFactor = 0;
-	bool realOnly = 0;
+	bool realOnly = 1;
 	bool mergeDiletype = 1;
 	if(method.Contains("nofake")){
 		showFake = 0;
@@ -90,7 +90,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString lumitag = "#it{#sqrt{s}} = 13TeV, ";
 	lumitag += campaignto == 3 ? "140 fb^{-1}" : (campaignto==2?"80 fb^{-1}":"36.1 fb^{-1}");
 	tau_plots->SetLumiAnaWorkflow(lumitag,"FCNC tqH H#rightarrow tautau","Internal");
-	tau_plots->debug = 1;
+	tau_plots->debug = 0;
 /*
 	tau_plots->checkread = 1;
 	tau_plots->checkread_sample = "fake";
@@ -182,6 +182,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	}else{
 		tau_plots->sensitivevariable = "BDTG_test";
 		for(auto var : vars){
+                std::cout<<"---------------"<<std::endl;
 		//	if(var.first!="tautauvispt"&&var.first!="t2vismass"&&var.first!="drttj" && var.first!="tau_pt_0"&&var.first!="tau_pt_1"&&var.first!="etmiss" &&var.first!="ttvismass" &&var.first!="BDTG_test"&&var.first!="dphitauetmiss"&&var.first!="BDTG_train"&&var.first!="x1fit"&&var.first!="x2fit"&&var.first!="phicent") continue;
 			tau_plots->add(var.second);
 		}
@@ -590,9 +591,11 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			}
 		if(fittodata) tau_plots->plot_stack(histmiddlename, "plots_" + NPname, "charts_" + NPname);
 		else{
-			if(figuredir == "") figuredir = ".";
-			if(chartdir == "") chartdir = ".";
-			TString savename = framework;
+		//	if(figuredir == "") figuredir = ".";
+		//	if(chartdir == "") chartdir = ".";
+		        figuredir ="/afs/cern.ch/work/m/mxia/xTFW/FCNC_analysis/FCNCAnalysis/";
+                 	chartdir="/afs/cern.ch/work/m/mxia/xTFW/FCNC_analysis/FCNCAnalysis/";
+                        TString savename = framework;
 			gSystem->mkdir(figuredir + "/" + savename);
 			gSystem->mkdir(chartdir + "/" + savename);
 			savename += showFake? "/showFake" : "/raw";
