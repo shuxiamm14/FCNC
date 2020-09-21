@@ -77,7 +77,7 @@ void hadhadtree::definetaus(){
   if(!isData && nominaltree) taus_matched_p4->push_back(tau_0_matched_p4);
   if(!isData) taus_matched_pdgId->push_back(tau_0_matched_pdgId);
   if(!isData && nominaltree) taus_matched_vis_p4->push_back(tau_0_matched_vis_p4);
-  taus_n_charged_tracks->push_back(tau_0_allTrk_n);
+  taus_n_charged_tracks->push_back(tau_0_n_charged_tracks);
   taus_p4->push_back(tau_0_p4);
   taus_q->push_back(tau_0_q);
 
@@ -89,7 +89,7 @@ void hadhadtree::definetaus(){
   if(!isData && nominaltree) taus_matched_p4->push_back(tau_1_matched_p4);
   if(!isData) taus_matched_pdgId->push_back(tau_1_matched_pdgId);
   if(!isData && nominaltree) taus_matched_vis_p4->push_back(tau_1_matched_vis_p4);
-  taus_n_charged_tracks->push_back(tau_1_allTrk_n);
+  taus_n_charged_tracks->push_back(tau_1_n_charged_tracks);
   taus_p4->push_back(tau_1_p4);
   taus_q->push_back(tau_1_q);
 }
@@ -670,30 +670,16 @@ void hadhadtree::initRaw(TTree *tree)
     tree->SetBranchAddress("tau_1_n_all_tracks", &tau_1_n_all_tracks, &b_tau_1_n_all_tracks);
     tree->SetBranchAddress("tau_1_n_charged_tracks", &tau_1_n_charged_tracks, &b_tau_1_n_charged_tracks);
     tree->SetBranchAddress("tau_1_n_conversion_tracks", &tau_1_n_conversion_tracks, &b_tau_1_n_conversion_tracks);
-    tree->SetBranchAddress("tau_1_n_core_tracks", &tau_1_n_core_tracks, &b_tau_1_n_core_tracks);
-    tree->SetBranchAddress("tau_1_n_failTrackFilter_tracks", &tau_1_n_failTrackFilter_tracks, &b_tau_1_n_failTrackFilter_tracks);
     tree->SetBranchAddress("tau_1_n_fake_tracks", &tau_1_n_fake_tracks, &b_tau_1_n_fake_tracks);
     tree->SetBranchAddress("tau_1_n_isolation_tracks", &tau_1_n_isolation_tracks, &b_tau_1_n_isolation_tracks);
-    tree->SetBranchAddress("tau_1_n_modified_isolation_tracks", &tau_1_n_modified_isolation_tracks, &b_tau_1_n_modified_isolation_tracks);
-    tree->SetBranchAddress("tau_1_n_old_tracks", &tau_1_n_old_tracks, &b_tau_1_n_old_tracks);
-    tree->SetBranchAddress("tau_1_n_passTrkSelectionTight_tracks", &tau_1_n_passTrkSelectionTight_tracks, &b_tau_1_n_passTrkSelectionTight_tracks);
-    tree->SetBranchAddress("tau_1_n_passTrkSelector_tracks", &tau_1_n_passTrkSelector_tracks, &b_tau_1_n_passTrkSelector_tracks);
     tree->SetBranchAddress("tau_1_n_unclassified_tracks", &tau_1_n_unclassified_tracks, &b_tau_1_n_unclassified_tracks);
-    tree->SetBranchAddress("tau_1_n_wide_tracks", &tau_1_n_wide_tracks, &b_tau_1_n_wide_tracks);
     tree->SetBranchAddress("tau_1_type", &tau_1_type, &b_tau_1_type);
     tree->SetBranchAddress("tau_0_n_all_tracks", &tau_0_n_all_tracks, &b_tau_0_n_all_tracks);
     tree->SetBranchAddress("tau_0_n_charged_tracks", &tau_0_n_charged_tracks, &b_tau_0_n_charged_tracks);
     tree->SetBranchAddress("tau_0_n_conversion_tracks", &tau_0_n_conversion_tracks, &b_tau_0_n_conversion_tracks);
-    tree->SetBranchAddress("tau_0_n_core_tracks", &tau_0_n_core_tracks, &b_tau_0_n_core_tracks);
-    tree->SetBranchAddress("tau_0_n_failTrackFilter_tracks", &tau_0_n_failTrackFilter_tracks, &b_tau_0_n_failTrackFilter_tracks);
     tree->SetBranchAddress("tau_0_n_fake_tracks", &tau_0_n_fake_tracks, &b_tau_0_n_fake_tracks);
     tree->SetBranchAddress("tau_0_n_isolation_tracks", &tau_0_n_isolation_tracks, &b_tau_0_n_isolation_tracks);
-    tree->SetBranchAddress("tau_0_n_modified_isolation_tracks", &tau_0_n_modified_isolation_tracks, &b_tau_0_n_modified_isolation_tracks);
-    tree->SetBranchAddress("tau_0_n_old_tracks", &tau_0_n_old_tracks, &b_tau_0_n_old_tracks);
-    tree->SetBranchAddress("tau_0_n_passTrkSelectionTight_tracks", &tau_0_n_passTrkSelectionTight_tracks, &b_tau_0_n_passTrkSelectionTight_tracks);
-    tree->SetBranchAddress("tau_0_n_passTrkSelector_tracks", &tau_0_n_passTrkSelector_tracks, &b_tau_0_n_passTrkSelector_tracks);
     tree->SetBranchAddress("tau_0_n_unclassified_tracks", &tau_0_n_unclassified_tracks, &b_tau_0_n_unclassified_tracks);
-    tree->SetBranchAddress("tau_0_n_wide_tracks", &tau_0_n_wide_tracks, &b_tau_0_n_wide_tracks);
     tree->SetBranchAddress("tau_0_type", &tau_0_type, &b_tau_0_type);
   }
   tree->SetBranchAddress("met_p4", &met_p4, &b_met_p4);
@@ -744,18 +730,11 @@ void hadhadtree::initRaw(TTree *tree)
   tree->SetBranchAddress("run_number", &run_number, &b_run_number); // tree->SetBranchAddress("runNumber", &runNumber, &b_run_number);
   tree->SetBranchAddress("scalar_sum_pt", &scalar_sum_pt, &b_scalar_sum_pt);
   tree->SetBranchAddress("tau_0", &tau_0, &b_tau_0);
-  tree->SetBranchAddress("tau_0_allTrk_eta", &tau_0_allTrk_eta, &b_tau_0_allTrk_eta);
-  tree->SetBranchAddress("tau_0_allTrk_n", &tau_0_allTrk_n, &b_tau_0_allTrk_n);
-  tree->SetBranchAddress("tau_0_allTrk_phi", &tau_0_allTrk_phi, &b_tau_0_allTrk_phi);
-  tree->SetBranchAddress("tau_0_allTrk_pt", &tau_0_allTrk_pt, &b_tau_0_allTrk_pt);
   tree->SetBranchAddress("tau_0_b_tagged", &tau_0_b_tagged, &b_tau_0_b_tagged);
   tree->SetBranchAddress("tau_0_decay_mode", &tau_0_decay_mode, &b_tau_0_decay_mode);
-  tree->SetBranchAddress("tau_0_ele_bdt_eff_sf", &tau_0_ele_bdt_eff_sf, &b_tau_0_ele_bdt_eff_sf);
   tree->SetBranchAddress("tau_0_ele_bdt_loose_retuned", &tau_0_ele_bdt_loose_retuned, &b_tau_0_ele_bdt_loose_retuned);
   tree->SetBranchAddress("tau_0_ele_bdt_medium_retuned", &tau_0_ele_bdt_medium_retuned, &b_tau_0_ele_bdt_medium_retuned);
-  tree->SetBranchAddress("tau_0_ele_bdt_score", &tau_0_ele_bdt_score, &b_tau_0_ele_bdt_score);
   tree->SetBranchAddress("tau_0_ele_bdt_score_retuned", &tau_0_ele_bdt_score_retuned, &b_tau_0_ele_bdt_score_retuned);
-  tree->SetBranchAddress("tau_0_ele_bdt_score_trans", &tau_0_ele_bdt_score_trans, &b_tau_0_ele_bdt_score_trans);
   tree->SetBranchAddress("tau_0_ele_bdt_score_trans_retuned", &tau_0_ele_bdt_score_trans_retuned, &b_tau_0_ele_bdt_score_trans_retuned);
   tree->SetBranchAddress("tau_0_ele_bdt_tight_retuned", &tau_0_ele_bdt_tight_retuned, &b_tau_0_ele_bdt_tight_retuned);
   tree->SetBranchAddress("tau_0_ele_match_lhscore", &tau_0_ele_match_lhscore, &b_tau_0_ele_match_lhscore);
@@ -768,15 +747,9 @@ void hadhadtree::initRaw(TTree *tree)
   tree->SetBranchAddress("tau_0_jet_rnn_tight", &tau_0_jet_rnn_tight, &b_tau_0_jet_rnn_tight);
   tree->SetBranchAddress("tau_0_jet_rnn_veryloose", &tau_0_jet_rnn_veryloose, &b_tau_0_jet_rnn_veryloose);
   tree->SetBranchAddress("tau_0_jet_width", &tau_0_jet_width, &b_tau_0_jet_width);
-  tree->SetBranchAddress("tau_0_leadTrk_eta", &tau_0_leadTrk_eta, &b_tau_0_leadTrk_eta);
-  tree->SetBranchAddress("tau_0_leadTrk_phi", &tau_0_leadTrk_phi, &b_tau_0_leadTrk_phi);
-  tree->SetBranchAddress("tau_0_leadTrk_pt", &tau_0_leadTrk_pt, &b_tau_0_leadTrk_pt);
   tree->SetBranchAddress("tau_0_origin", &tau_0_origin, &b_tau_0_origin);
   tree->SetBranchAddress("tau_0_p4", &tau_0_p4, &b_tau_0_p4);
   tree->SetBranchAddress("tau_0_q", &tau_0_q, &b_tau_0_q);
-  tree->SetBranchAddress("tau_0_track0_p4", &tau_0_track0_p4, &b_tau_0_track0_p4);
-  tree->SetBranchAddress("tau_0_track1_p4", &tau_0_track1_p4, &b_tau_0_track1_p4);
-  tree->SetBranchAddress("tau_0_track2_p4", &tau_0_track2_p4, &b_tau_0_track2_p4);
   tree->SetBranchAddress("tau_0_trig_HLT_tau25_medium1_tracktwo", &tau_0_trig_HLT_tau25_medium1_tracktwo, &b_tau_0_trig_HLT_tau25_medium1_tracktwo);
   tree->SetBranchAddress("tau_0_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25", &tau_0_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25, &b_tau_0_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25);
   tree->SetBranchAddress("tau_0_trig_HLT_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25", &tau_0_trig_HLT_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25, &b_tau_0_trig_HLT_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25);
@@ -799,18 +772,11 @@ void hadhadtree::initRaw(TTree *tree)
   tree->SetBranchAddress("tau_0_trig_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25", &tau_0_trig_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25, &b_tau_0_trig_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25);
   tree->SetBranchAddress("tau_0_trig_trigger_matched", &tau_0_trig_trigger_matched, &b_tau_0_trig_trigger_matched);
   tree->SetBranchAddress("tau_1", &tau_1, &b_tau_1);
-  tree->SetBranchAddress("tau_1_allTrk_eta", &tau_1_allTrk_eta, &b_tau_1_allTrk_eta);
-  tree->SetBranchAddress("tau_1_allTrk_n", &tau_1_allTrk_n, &b_tau_1_allTrk_n);
-  tree->SetBranchAddress("tau_1_allTrk_phi", &tau_1_allTrk_phi, &b_tau_1_allTrk_phi);
-  tree->SetBranchAddress("tau_1_allTrk_pt", &tau_1_allTrk_pt, &b_tau_1_allTrk_pt);
   tree->SetBranchAddress("tau_1_b_tagged", &tau_1_b_tagged, &b_tau_1_b_tagged);
   tree->SetBranchAddress("tau_1_decay_mode", &tau_1_decay_mode, &b_tau_1_decay_mode);
-  tree->SetBranchAddress("tau_1_ele_bdt_eff_sf", &tau_1_ele_bdt_eff_sf, &b_tau_1_ele_bdt_eff_sf);
   tree->SetBranchAddress("tau_1_ele_bdt_loose_retuned", &tau_1_ele_bdt_loose_retuned, &b_tau_1_ele_bdt_loose_retuned);
   tree->SetBranchAddress("tau_1_ele_bdt_medium_retuned", &tau_1_ele_bdt_medium_retuned, &b_tau_1_ele_bdt_medium_retuned);
-  tree->SetBranchAddress("tau_1_ele_bdt_score", &tau_1_ele_bdt_score, &b_tau_1_ele_bdt_score);
   tree->SetBranchAddress("tau_1_ele_bdt_score_retuned", &tau_1_ele_bdt_score_retuned, &b_tau_1_ele_bdt_score_retuned);
-  tree->SetBranchAddress("tau_1_ele_bdt_score_trans", &tau_1_ele_bdt_score_trans, &b_tau_1_ele_bdt_score_trans);
   tree->SetBranchAddress("tau_1_ele_bdt_score_trans_retuned", &tau_1_ele_bdt_score_trans_retuned, &b_tau_1_ele_bdt_score_trans_retuned);
   tree->SetBranchAddress("tau_1_ele_bdt_tight_retuned", &tau_1_ele_bdt_tight_retuned, &b_tau_1_ele_bdt_tight_retuned);
   tree->SetBranchAddress("tau_1_ele_match_lhscore", &tau_1_ele_match_lhscore, &b_tau_1_ele_match_lhscore);
@@ -823,15 +789,9 @@ void hadhadtree::initRaw(TTree *tree)
   tree->SetBranchAddress("tau_1_jet_rnn_tight", &tau_1_jet_rnn_tight, &b_tau_1_jet_rnn_tight);
   tree->SetBranchAddress("tau_1_jet_rnn_veryloose", &tau_1_jet_rnn_veryloose, &b_tau_1_jet_rnn_veryloose);
   tree->SetBranchAddress("tau_1_jet_width", &tau_1_jet_width, &b_tau_1_jet_width);
-  tree->SetBranchAddress("tau_1_leadTrk_eta", &tau_1_leadTrk_eta, &b_tau_1_leadTrk_eta);
-  tree->SetBranchAddress("tau_1_leadTrk_phi", &tau_1_leadTrk_phi, &b_tau_1_leadTrk_phi);
-  tree->SetBranchAddress("tau_1_leadTrk_pt", &tau_1_leadTrk_pt, &b_tau_1_leadTrk_pt);
   tree->SetBranchAddress("tau_1_origin", &tau_1_origin, &b_tau_1_origin);
   tree->SetBranchAddress("tau_1_p4", &tau_1_p4, &b_tau_1_p4);
   tree->SetBranchAddress("tau_1_q", &tau_1_q, &b_tau_1_q);
-  tree->SetBranchAddress("tau_1_track0_p4", &tau_1_track0_p4, &b_tau_1_track0_p4);
-  tree->SetBranchAddress("tau_1_track1_p4", &tau_1_track1_p4, &b_tau_1_track1_p4);
-  tree->SetBranchAddress("tau_1_track2_p4", &tau_1_track2_p4, &b_tau_1_track2_p4);
   tree->SetBranchAddress("tau_1_trig_trigger_matched", &tau_1_trig_trigger_matched, &b_tau_1_trig_trigger_matched);
   tree->SetBranchAddress("tau_1_trig_HLT_tau25_medium1_tracktwo", &tau_1_trig_HLT_tau25_medium1_tracktwo, &b_tau_1_trig_HLT_tau25_medium1_tracktwo);
   tree->SetBranchAddress("tau_1_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25", &tau_1_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25, &b_tau_1_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25);
@@ -1364,6 +1324,13 @@ void hadhadtree::initRaw(TTree *tree)
       tree->SetBranchAddress("jet_JET_JvtEfficiency_1down_central_jets_global_ineffSF_JVT", &jet_JET_JvtEfficiency_1down_central_jets_global_ineffSF_JVT, &b_jet_JET_JvtEfficiency_1down_central_jets_global_ineffSF_JVT);
       tree->SetBranchAddress("jet_JET_JvtEfficiency_1up_central_jets_global_effSF_JVT", &jet_JET_JvtEfficiency_1up_central_jets_global_effSF_JVT, &b_jet_JET_JvtEfficiency_1up_central_jets_global_effSF_JVT);
       tree->SetBranchAddress("jet_JET_JvtEfficiency_1up_central_jets_global_ineffSF_JVT", &jet_JET_JvtEfficiency_1up_central_jets_global_ineffSF_JVT, &b_jet_JET_JvtEfficiency_1up_central_jets_global_ineffSF_JVT);
+      
+      tree->SetBranchAddress("jet_JET_fJvtEfficiency_1down_forward_jets_global_effSF_JVT", &jet_JET_fJvtEfficiency_1down_forward_jets_global_effSF_JVT, &b_jet_JET_fJvtEfficiency_1down_forward_jets_global_effSF_JVT);
+      tree->SetBranchAddress("jet_JET_fJvtEfficiency_1down_forward_jets_global_ineffSF_JVT", &jet_JET_fJvtEfficiency_1down_forward_jets_global_ineffSF_JVT, &b_jet_JET_fJvtEfficiency_1down_forward_jets_global_ineffSF_JVT);
+      tree->SetBranchAddress("jet_JET_fJvtEfficiency_1up_forward_jets_global_effSF_JVT", &jet_JET_fJvtEfficiency_1up_forward_jets_global_effSF_JVT, &b_jet_JET_fJvtEfficiency_1up_forward_jets_global_effSF_JVT);
+      tree->SetBranchAddress("jet_JET_fJvtEfficiency_1up_forward_jets_global_ineffSF_JVT", &jet_JET_fJvtEfficiency_1up_forward_jets_global_ineffSF_JVT, &b_jet_JET_fJvtEfficiency_1up_forward_jets_global_ineffSF_JVT);
+
+
       tree->SetBranchAddress("tau_1_matched", &tau_1_matched, &b_tau_1_matched);
       tree->SetBranchAddress("tau_1_matched_classifierParticleOrigin", &tau_1_matched_classifierParticleOrigin, &b_tau_1_matched_classifierParticleOrigin);
       tree->SetBranchAddress("tau_1_matched_classifierParticleType", &tau_1_matched_classifierParticleType, &b_tau_1_matched_classifierParticleType);

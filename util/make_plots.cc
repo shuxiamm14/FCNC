@@ -330,7 +330,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					double norm = samples[j].norm;
 					if(plotFakeLep) tau_plots->read_sample( samples[j].name, samplename + "_realLep", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 					else tau_plots->read_sample( samples[j].name, samplename + "_real", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
-					//tau_plots->read_sample( samples[j].name, samplename + "_lep", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
+				std::cout<<"samplename:"<<samples[j].name<<std::endl;	//tau_plots->read_sample( samples[j].name, samplename + "_lep", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 					if(!realOnly){
 						if(showFake){
 							if (mergeFake) {
@@ -537,10 +537,11 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			if(!mergeFake && framework == "xTFW") {
 				std::cout<<"starting template!"<<std::endl;
 				tau_plots->stackorder.push_back("fakeSS");
-				tau_plots->templatesample("reg2mtau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2mtau1b3jos","fakeSS","Fake",kYellow,1,1.31597);
-				tau_plots->templatesample("reg2mtau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2mtau1b2jos","fakeSS","Fake",kYellow,1,1.31597);
-				tau_plots->templatesample("reg2ltau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2ltau1b3jos","fakeSS","Fake",kYellow,1,1.31597);
-				tau_plots->templatesample("reg2ltau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2ltau1b2jos","fakeSS","Fake",kYellow,1,1.31597);				
+				tau_plots->templatesample("reg2mtau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztautau -1 top -1 other","reg2mtau1b3jos","fakeSS","Fake",kYellow,1,1.31597);
+				tau_plots->templatesample("reg2mtau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztautau -1 top -1 other","reg2mtau1b2jos","fakeSS","Fake",kYellow,1,1.31597);
+
+//				tau_plots->templatesample("reg2ltau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2ltau1b3jos","fakeSS","Fake",kYellow,1,1.31597);
+//				tau_plots->templatesample("reg2ltau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2ltau1b2jos","fakeSS","Fake",kYellow,1,1.31597);				
 
 
 
@@ -593,8 +594,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		else{
 		//	if(figuredir == "") figuredir = ".";
 		//	if(chartdir == "") chartdir = ".";
-		        figuredir ="/afs/cern.ch/work/m/mxia/xTFW/FCNC_analysis/FCNCAnalysis/";
-                 	chartdir="/afs/cern.ch/work/m/mxia/xTFW/FCNC_analysis/FCNCAnalysis/";
+		        figuredir ="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/FCNC_analysis/FCNCAnalysis/";
+                 	chartdir="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/FCNC_analysis/FCNCAnalysis/";
                         TString savename = framework;
 			gSystem->mkdir(figuredir + "/" + savename);
 			gSystem->mkdir(chartdir + "/" + savename);

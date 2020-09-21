@@ -288,7 +288,7 @@ bool hadhadtree::passBasicCut(){
   if(!tau_0_trig_trigger_matched || !tau_1_trig_trigger_matched) return false;
   cut_flow.fill("trigger matching");
 
-  if((tau_1_allTrk_n!=1 && tau_1_allTrk_n!=3) || (tau_0_allTrk_n!=1 && tau_0_allTrk_n!=3)) return false;
+  if((tau_1_n_charged_tracks!=1 && tau_1_n_charged_tracks!=3) || (tau_0_n_charged_tracks!=1 && tau_0_n_charged_tracks!=3)) return false;
   cut_flow.fill("ntrack = 1,3");
 
   if(!tau_0_ele_bdt_medium_retuned || !tau_1_ele_bdt_medium_retuned) return false;

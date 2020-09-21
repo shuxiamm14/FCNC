@@ -974,6 +974,7 @@ void nominal::fillhist(histSaver* plots, TString region, int nprong, TString sam
   //    if(dovetobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[i],NP);
   //  }
   //}
+  std::cout<<"dobwp[bwps[1]]: "<<dobwp[bwps[1]]<<", taubtag:"<<taubtag<<std::endl;
   if(dobwp[bwps[1]] == 1 && taubtag) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[1],NP);
   if(dovetobwp[bwps[1]] == 1 && !taubtag) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[1],NP);
 }
@@ -1137,9 +1138,8 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       cut_flow.fill("SR+CR");
       
       defineTauTruth();
-
       defineLepTruth();
-  
+      
       tau_pt_0 = taus_p4->at(0)->Pt();
       if(taus_p4->size()>=2) tau_pt_1 = taus_p4->at(1)->Pt();
       if(leps_p4->size()) {

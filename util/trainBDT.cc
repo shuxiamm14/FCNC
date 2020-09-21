@@ -201,10 +201,16 @@ int main(int argc, char const *argv[])
    if(classnb == 2){
       SetAtlasStyle();
       TH1D* testeven = (TH1D*) outputfile[0]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
+      if(testeven==0){
+      testeven=(TH1D*) outputfile[0]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
+      }
       testeven->SetNameTitle("Test Even","Test Even");
       testeven->SetLineColor(2);
       testeven->SetMarkerSize(0);
       TH1D* testodd = (TH1D*) outputfile[1]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
+      if(testodd==0){
+        testodd=(TH1D*) outputfile[0]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
+      }
       testodd->SetNameTitle("Test Odd","Test Odd");
       testodd->SetLineColor(4);
       testodd->SetMarkerSize(0);
