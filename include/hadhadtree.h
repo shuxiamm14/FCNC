@@ -32,18 +32,17 @@ public :
    float calcRegionSF(TString region);
    int tauabspdg = 0;
    void  prepare();
-
-  bool MassCollinearCore(const TLorentzVector &k1, const TLorentzVector &k2,  // particles
+   
+   bool MassCollinearCore(const TLorentzVector &k1, const TLorentzVector &k2,  // particles
                                const double metetx, const double metety,            // met
                                double &mass, double &xp1, double &xp2);
-  bool MassCollinear(const std::vector<TLorentzVector*>  *taus_p4,
+   bool MassCollinear(const std::vector<TLorentzVector*>  *taus_p4,
                            const TLorentzVector *met,
                            UInt_t tau_0_allTrk_n,UInt_t tau_1_allTrk_n,             // met
                            const bool kMMCsynchronize,                // mmc sychronization
                            double &mass, double &xp1, double &xp2);
-   bool x0_x1_cut(const std::vector<TLorentzVector*>  *taus_p4,
-   const TLorentzVector *met,
-   UInt_t tau_0_allTrk_n,UInt_t tau_1_allTrk_n,double& x0,double& x1);
+   bool x0_x1_cut(const std::vector<TLorentzVector*>  *taus_p4, const TLorentzVector *met, UInt_t tau_0_allTrk_n,UInt_t tau_1_allTrk_n,double& x0,double& x1);
+
    
    bool passtrigger=1;
    int year;

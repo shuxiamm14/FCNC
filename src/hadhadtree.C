@@ -60,6 +60,84 @@ hadhadtree::hadhadtree() : nominal::nominal(){
   };
 }
 
+bool hadhadtree::MassCollinearCore(const TLorentzVector &k1, const TLorentzVector &k2,  // particles
+                               const double metetx, const double metety,            // met
+                               double &mass, double &xp1, double &xp2) {            // result
+    TMatrixD K(2, 2);
+    K(0, 0) = k1.Px();
+    K(0, 1) = k2.Px();
+    K(1, 0) = k1.Py();
+    K(1, 1) = k2.Py();
+
+    if (K.Determinant() == 0) return false;
+
+    TMatrixD M(2, 1);
+    M(0, 0) = metetx;
+    M(1, 0) = metety;
+
+    TMatrixD Kinv = K.Invert();
+
+    TMatrixD X(2, 1);
+    X = Kinv * M;
+
+    double X1 = X(0, 0);
+    double X2 = X(1, 0);
+    double x1 = 1. / (1. + X1);
+    double x2 = 1. / (1. + X2);
+
+    TLorentzVector p1 = k1 * (1 / x1);
+    TLorentzVector p2 = k2 * (1 / x2);
+
+    double m = (p1 + p2).M();
+
+
+    mass = m; // return to caller
+
+    if (k1.Pt() > k2.Pt()) {
+        xp1 = x1;
+        xp2 = x2;
+    } else {
+        xp1 = x2;
+        xp2 = x1;
+    }
+    return true;
+}
+
+bool hadhadtree::MassCollinear(const std::vector<TLorentzVector*>  *taus_p4,
+                           const TLorentzVector *met,
+                           UInt_t tau_0_allTrk_n,UInt_t tau_1_allTrk_n,             // met
+                           const bool kMMCsynchronize,                // mmc sychronization
+                           double &mass, double &xp1, double &xp2) {  // result
+
+    TLorentzVector k1;
+    TLorentzVector k2;
+
+
+    if (kMMCsynchronize) { /// redefine tau vectors if necessary - MMC sychronization
+            k1.SetPtEtaPhiM(taus_p4->at(0)->Pt(), taus_p4->at(0)->Eta(), taus_p4->at(0)->Phi(), tau_0_allTrk_n < 3 ? 800. : 1200.);  // MeV
+            k2.SetPtEtaPhiM(taus_p4->at(1)->Pt(), taus_p4->at(1)->Eta(), taus_p4->at(1)->Phi(), tau_1_allTrk_n < 3 ? 800. : 1200.);  // MeV
+    }
+
+    return MassCollinearCore(k1, k2, met->Px(), met->Py(), mass, xp1, xp2);
+}
+
+bool hadhadtree::x0_x1_cut(const std::vector<TLorentzVector*>  *taus_p4,const TLorentzVector *met, UInt_t tau_0_allTrk_n,UInt_t tau_1_allTrk_n,double& x0,double& x1) { // false ==> cannot pass ====> 被 continue
+
+        double m(0);// x0(0), x1(0);
+        if (MassCollinear(taus_p4, met_p4,tau_0_allTrk_n, tau_1_allTrk_n,true, m, x0, x1)) {
+          //  std::cout<<"mass_collinear: "<<"  x0: "<<x0<<",  x1:"<<x1<<std::endl;
+                        if (x0 > 1.400000 || x0 < -0.100000) return false;
+                        if (x1 > 1.400000 || x1 < -0.100000) return false;
+       }
+        return true;
+}
+
+
+
+
+
+
+
 void hadhadtree::init_hist(TString histfilename){
   //init histSaver here:
   dohist = 1;
