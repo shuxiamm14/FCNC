@@ -228,14 +228,14 @@ int main(int argc, char const *argv[])
 		printf("reading file: %s\n", inputfilename.Data());
 		TFile inputfile(inputfilename,"read");
 		TFile *inputfile_nominal = 0;
-		if(!analysis->nominaltree && framework == "tthML" && reduce == 2) {
-			printf("reading nominal file to get truth: %s\n", inputfilename_nominal.Data());
-			inputfile_nominal = new TFile(inputfilename_nominal,"read");
+		if(!analysis->nominaltree  && reduce == 2) {
+			printf("reading nominal file to get truth: %s\n",inputfilename_nominal.Data():inputfilename.Data());
+			inputfile_nominal = new TFile(framework == "tthML"?inputfilename_nominal:inputfilename,"read");
 		}
 		for(auto reg : regions){
 			printf("Loop region: %s\n", reg.Data());
 
-			if(!analysis->nominaltree && framework == "tthML" && reduce == 2){
+			if(!analysis->nominaltree  && reduce == 2){
 				TTree *nominalinputtree;
 				inputfile_nominal->GetObject(reg,nominalinputtree);
 				analysis->constructwmatchmap(nominalinputtree);
