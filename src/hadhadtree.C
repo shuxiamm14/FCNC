@@ -115,6 +115,26 @@ void hadhadtree::init_hist(TString histfilename){
   }
 }
 
+
+void hadhadtree::constructwmatchmap(TTree *tmptree){
+  std::cout<<"i am in hadhadtree"<<std::endl;
+  ULong64_t eventnumber;
+  std::vector<int> *matched;
+  tmptree->SetBranchStatus("*",0);
+  tmptree->SetBranchStatus("eventNumber",1);
+  tmptree->SetBranchStatus("taus_matched_mother_pdgId",1);
+  tmptree->SetBranchAddress("eventNumber",&eventnumber);
+  tmptree->SetBranchAddress("taus_matched_mother_pdgId",&matched);
+  Long64_t nentries = tmptree->GetEntriesFast();
+  std::cout<<"entries: "<<nentries<<std::endl;
+  for (int i = 0; i < nentries; ++i)
+  {
+    tmptree->GetEntry(i);
+    //std::cout<<"capture exception"<<std::endl;
+    taumatchmap[eventnumber] = matched;
+  }
+}
+
 void hadhadtree::init_sample(TString sample, TString sampletitle){ // in reduce.cc, invoke definetree in hadhad_listfunc.C
 //==========================init output n-tuple==========================
   if(reduce == 1){

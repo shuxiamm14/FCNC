@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
 	bool onlyMajorNP = 0; // set to 0 for current xTFW analysis.
 	bool applynewSF = 0; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
 	int version = 8;
-	bool nominalOnly = 1;
+	bool nominalOnly = 0;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	TString framework = argv[1];

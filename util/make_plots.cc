@@ -32,7 +32,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 1;
 	bool wfake = 0;
-	bool mergeFake = 0;// template: mergeFake=0,showfake=0
+	bool mergeFake = 1;// template: mergeFake=0,showfake=0
 	bool doTrex = 1;
 	bool plotnj = 0;
 	bool doPlots = 1;
@@ -41,7 +41,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	int plot_option = 2;
 	bool fittodata = 0;
 	bool plotFakeLep = 0;
-	bool showFake = 0;
+	bool showFake = 1;
 	TString fitcharge = "os";
 	int campaignfrom = 0;
 	int campaignto = 3;
@@ -49,7 +49,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	int varcount = 0;
 	int plotvar = 0;
 	bool doFakeFactor = 0;
-	bool realOnly = 1;
+	bool realOnly = 0;
 	bool mergeDiletype = 1;
 	if(method.Contains("nofake")){
 		showFake = 0;
@@ -182,7 +182,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	}else{
 		tau_plots->sensitivevariable = "BDTG_test";
 		for(auto var : vars){
-                std::cout<<"---------------"<<std::endl;
+         //       std::cout<<"---------------"<<std::endl;
 		//	if(var.first!="tautauvispt"&&var.first!="t2vismass"&&var.first!="drttj" && var.first!="tau_pt_0"&&var.first!="tau_pt_1"&&var.first!="etmiss" &&var.first!="ttvismass" &&var.first!="BDTG_test"&&var.first!="dphitauetmiss"&&var.first!="BDTG_train"&&var.first!="x1fit"&&var.first!="x2fit"&&var.first!="phicent") continue;
 			tau_plots->add(var.second);
 		}
@@ -330,15 +330,15 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					double norm = samples[j].norm;
 					if(plotFakeLep) tau_plots->read_sample( samples[j].name, samplename + "_realLep", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 					else tau_plots->read_sample( samples[j].name, samplename + "_real", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
-				std::cout<<"samplename:"<<samples[j].name<<std::endl;	//tau_plots->read_sample( samples[j].name, samplename + "_lep", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
-					if(!realOnly){
-						if(showFake){
-							if (mergeFake) {
+		//		std::cout<<"samplename:"<<samples[j].name<<std::endl;	//tau_plots->read_sample( samples[j].name, samplename + "_lep", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
+					if(!realOnly){//0
+						if(showFake){//1
+							if (mergeFake) { //1
 								for (int i = 0; i < origin.size() - 3; i++) {
-									if(origin[i] == "wjet-fake") tau_plots->read_sample( "fake1truth", samplename + "_wjet", histmiddlename, "Fake MC, 1 truth #tau", kMagenta, norm, inputfile);
-									else tau_plots->read_sample( "fake1truth", samplename + "_wjet", histmiddlename, "Fake MC, 1 truth #tau", kMagenta, norm, inputfile);
+                                                                       // if(origin[i] == "wjet-fake") tau_plots->read_sample( "fake1truth", samplename + "_wjet", histmiddlename, "Fake MC, 1 truth #tau", kMagenta, norm, inputfile);
+									  if(origin[i] !="wjet-fake") tau_plots->read_sample( "fake1truth", samplename + "_" + origin[i], histmiddlename, "Fake MC, 1 truth #tau", kMagenta, norm, inputfile);
 								}
-								tau_plots->read_sample( "fake0truth", samplename + "_" + origin[origin.size() - 3], histmiddlename, "fake, 0 truth #tau", kTeal, norm,inputfile);
+						//		tau_plots->read_sample( "fake0truth", samplename + "_" + origin[origin.size() - 3], histmiddlename, "fake, 0 truth #tau", kTeal, norm,inputfile);
 							}else if(wfake){
 								for (int i = 0; i < origin.size() - 2; i++) {
 									if(origin[i] == "wjet-fake")
@@ -360,7 +360,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 								}
 							}
 						}else{
-							for (int i = 0; i < origin.size()-2; i++){
+							for (int i = 0; i < origin.size()-2; i++){ //-2
 								if(origin[i] == "wjet-fake")
 									tau_plots->read_sample( samples[j].name, samplename + "_wjet", histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 								else tau_plots->read_sample( samples[j].name, samplename + "_" + origin[i], histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
@@ -405,8 +405,9 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		}else{
 			if(showFake){
 				if(mergeFake){
+                                        std::cout<<"stackorder"<<std::endl;
 					tau_plots->stackorder.push_back("fake1truth");
-					tau_plots->stackorder.push_back("fake0truth");
+				//	tau_plots->stackorder.push_back("fake0truth");
 				}
 				else if(wfake) {
 					tau_plots->stackorder.push_back("lep-fake");
@@ -534,11 +535,11 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					}
 				}
 			}
-			if(!mergeFake && framework == "xTFW") {
+			if(/*!mergeFake &&*/ framework == "xTFW") {
 				std::cout<<"starting template!"<<std::endl;
 				tau_plots->stackorder.push_back("fakeSS");
-				tau_plots->templatesample("reg2mtau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztautau -1 top -1 other","reg2mtau1b3jos","fakeSS","Fake",kYellow,1,1.31597);
-				tau_plots->templatesample("reg2mtau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztautau -1 top -1 other","reg2mtau1b2jos","fakeSS","Fake",kYellow,1,1.31597);
+				tau_plots->templatesample("reg2mtau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztautau -1 top -1 other -1 fake1truth","reg2mtau1b3jos","fakeSS","Fake",kYellow,1,1.31597);
+				tau_plots->templatesample("reg2mtau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztautau -1 top -1 other -1 fake1truth","reg2mtau1b2jos","fakeSS","Fake",kYellow,1,1.31597);
 
 //				tau_plots->templatesample("reg2ltau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2ltau1b3jos","fakeSS","Fake",kYellow,1,1.31597);
 //				tau_plots->templatesample("reg2ltau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2ltau1b2jos","fakeSS","Fake",kYellow,1,1.31597);				

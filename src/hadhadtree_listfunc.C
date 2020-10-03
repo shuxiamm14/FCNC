@@ -33,13 +33,13 @@ void hadhadtree::definetree(TTree * tree) {
     if(!isData) {
       tree->Branch("taus_matched_p4",taus_matched_p4);
       tree->Branch("taus_matched_pdgId",taus_matched_pdgId);
-      if(nominaltree){
+    /*  if(nominaltree){*/
         tree->Branch("met_truth_p4", &met_truth_p4);
         tree->Branch("met_truth_sumet", &met_truth_sumet);
        // tree->Branch("taus_matched_mother_pdgId",&taus_matched_mother_pdgId);
         tree->Branch("taus_matched_mother_status",&taus_matched_mother_status);
         tree->Branch("taus_matched_vis_p4",&taus_matched_vis_p4);
-      }
+    //  }
     }
     return;
   }
@@ -56,11 +56,11 @@ void hadhadtree::definetaus(){
   if(taus_id->size()) taus_id->clear();
   if(taus_b_tagged->size()) taus_b_tagged->clear();
   if(taus_decay_mode->size()) taus_decay_mode->clear();
-  if(!isData && nominaltree) if(taus_matched_mother_pdgId->size()) taus_matched_mother_pdgId->clear();
-  if(!isData && nominaltree) if(taus_matched_mother_status->size()) taus_matched_mother_status->clear();
-  if(!isData && nominaltree) if(taus_matched_p4->size()) taus_matched_p4->clear();
+  if(!isData/* && nominaltree*/) if(taus_matched_mother_pdgId->size()) taus_matched_mother_pdgId->clear();
+  if(!isData /*&& nominaltree*/) if(taus_matched_mother_status->size()) taus_matched_mother_status->clear();
+  if(!isData /*&& nominaltree*/) if(taus_matched_p4->size()) taus_matched_p4->clear();
   if(!isData) if(taus_matched_pdgId->size()) taus_matched_pdgId->clear();
-  if(!isData && nominaltree) if(taus_matched_vis_p4->size()) taus_matched_vis_p4->clear();
+  if(!isData /*&& nominaltree*/) if(taus_matched_vis_p4->size()) taus_matched_vis_p4->clear();
   if(taus_n_charged_tracks->size()) taus_n_charged_tracks->clear();
   if(taus_p4->size()) taus_p4->clear();
   if(taus_q->size()) taus_q->clear();
@@ -72,11 +72,11 @@ void hadhadtree::definetaus(){
   taus_id->push_back(tau0id);
   taus_b_tagged->push_back(tau_0_b_tagged);
   taus_decay_mode->push_back(tau_0_decay_mode);
-  if(!isData && nominaltree) taus_matched_mother_pdgId->push_back(tau_0_matched_mother_pdgId);
-  if(!isData && nominaltree) taus_matched_mother_status->push_back(tau_0_matched_mother_status);
-  if(!isData && nominaltree) taus_matched_p4->push_back(tau_0_matched_p4);
+  if(!isData /*&& nominaltree*/) taus_matched_mother_pdgId->push_back(tau_0_matched_mother_pdgId);
+  if(!isData /* && nominaltree*/) taus_matched_mother_status->push_back(tau_0_matched_mother_status);
+  if(!isData /* && nominaltree*/) taus_matched_p4->push_back(tau_0_matched_p4);
   if(!isData) taus_matched_pdgId->push_back(tau_0_matched_pdgId);
-  if(!isData && nominaltree) taus_matched_vis_p4->push_back(tau_0_matched_vis_p4);
+  if(!isData /*&& nominaltree*/) taus_matched_vis_p4->push_back(tau_0_matched_vis_p4);
   taus_n_charged_tracks->push_back(tau_0_n_charged_tracks);
   taus_p4->push_back(tau_0_p4);
   taus_q->push_back(tau_0_q);
@@ -84,11 +84,11 @@ void hadhadtree::definetaus(){
   taus_id->push_back(tau1id);
   taus_b_tagged->push_back(tau_1_b_tagged);
   taus_decay_mode->push_back(tau_1_decay_mode);
-  if(!isData && nominaltree) taus_matched_mother_pdgId->push_back(tau_1_matched_mother_pdgId);
-  if(!isData && nominaltree) taus_matched_mother_status->push_back(tau_1_matched_mother_status);
-  if(!isData && nominaltree) taus_matched_p4->push_back(tau_1_matched_p4);
+  if(!isData /* && nominaltree*/) taus_matched_mother_pdgId->push_back(tau_1_matched_mother_pdgId);
+  if(!isData /*&& nominaltree*/) taus_matched_mother_status->push_back(tau_1_matched_mother_status);
+  if(!isData /*&& nominaltree*/) taus_matched_p4->push_back(tau_1_matched_p4);
   if(!isData) taus_matched_pdgId->push_back(tau_1_matched_pdgId);
-  if(!isData && nominaltree) taus_matched_vis_p4->push_back(tau_1_matched_vis_p4);
+  if(!isData /*&& nominaltree*/) taus_matched_vis_p4->push_back(tau_1_matched_vis_p4);
   taus_n_charged_tracks->push_back(tau_1_n_charged_tracks);
   taus_p4->push_back(tau_1_p4);
   taus_q->push_back(tau_1_q);
@@ -306,9 +306,11 @@ bool hadhadtree::addWeightSys(){
   // jvt fjvt
   addweights(jet_JET_JvtEfficiency_1up_central_jets_global_effSF_JVT/jet_NOMINAL_central_jets_global_effSF_JVT*jet_JET_JvtEfficiency_1up_central_jets_global_ineffSF_JVT/jet_NOMINAL_central_jets_global_ineffSF_JVT,"jvt_up");
   addweights(jet_JET_JvtEfficiency_1down_central_jets_global_effSF_JVT/jet_NOMINAL_central_jets_global_effSF_JVT*jet_JET_JvtEfficiency_1down_central_jets_global_ineffSF_JVT/jet_NOMINAL_central_jets_global_ineffSF_JVT,"jvt_down");
-  addweights(jet_JET_fJvtEfficiency_1up_forward_jets_global_effSF_JVT/jet_NOMINAL_forward_jets_global_effSF_JVT*jet_JET_fJvtEfficiency_1up_forward_jets_global_ineffSF_JVT/jet_NOMINAL_forward_jets_global_ineffSF_JVT,"fjvt_up");
-  addweights(jet_JET_fJvtEfficiency_1down_forward_jets_global_effSF_JVT/jet_NOMINAL_forward_jets_global_effSF_JVT*jet_JET_fJvtEfficiency_1down_forward_jets_global_ineffSF_JVT/jet_NOMINAL_forward_jets_global_ineffSF_JVT,"fjvt_down");
-  // tau weight systematics  12
+//  addweights(jet_JET_fJvtEfficiency_1up_forward_jets_global_effSF_JVT/jet_NOMINAL_forward_jets_global_effSF_JVT*jet_JET_fJvtEfficiency_1up_forward_jets_global_ineffSF_JVT/jet_NOMINAL_forward_jets_global_ineffSF_JVT,"fjvt_up");
+//  addweights(jet_JET_fJvtEfficiency_1down_forward_jets_global_effSF_JVT/jet_NOMINAL_forward_jets_global_effSF_JVT*jet_JET_fJvtEfficiency_1down_forward_jets_global_ineffSF_JVT/jet_NOMINAL_forward_jets_global_ineffSF_JVT,"fjvt_down");
+
+
+// tau weight systematics  12
   addweights(tau_1_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1up_TauEffSF_reco/tau_1_NOMINAL_TauEffSF_reco*tau_0_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1up_TauEffSF_reco/tau_0_NOMINAL_TauEffSF_reco,"tauRecon_TOTAL_up");
   addweights(tau_1_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1down_TauEffSF_reco/tau_1_NOMINAL_TauEffSF_reco*tau_0_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1down_TauEffSF_reco/tau_0_NOMINAL_TauEffSF_reco,"tauRecon_TOTAL_down");
   addweights(tau_1_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1up_TauEffSF_HadTauEleOLR_tauhad/tau_1_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*tau_0_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1up_TauEffSF_HadTauEleOLR_tauhad/tau_0_NOMINAL_TauEffSF_HadTauEleOLR_tauhad,"tauEveto_TOTAL_up");
@@ -463,13 +465,13 @@ void hadhadtree::initRaw(TTree *tree)
     tree->SetBranchAddress("taus_id", &taus_id);
     tree->SetBranchAddress("taus_b_tagged", &taus_b_tagged);
     tree->SetBranchAddress("taus_decay_mode", &taus_decay_mode);
-    if(nominaltree){
+   /* if(nominaltree){*/
         tree->SetBranchAddress("met_truth_p4", &met_truth_p4);
         tree->SetBranchAddress("met_truth_sumet", &met_truth_sumet);
       //tree->SetBranchAddress("taus_matched_mother_pdgId",&taus_matched_mother_pdgId);
         tree->SetBranchAddress("taus_matched_mother_status",&taus_matched_mother_status);
         tree->SetBranchAddress("taus_matched_vis_p4",&taus_matched_vis_p4);
-    }
+   // }
     tree->SetBranchAddress("taus_matched_p4", &taus_matched_p4);
     tree->SetBranchAddress("taus_matched_pdgId", &taus_matched_pdgId);
     tree->SetBranchAddress("taus_n_charged_tracks", &taus_n_charged_tracks);
@@ -648,7 +650,7 @@ void hadhadtree::initRaw(TTree *tree)
   tree->SetBranchAddress("jet_7_width", &jet_7_width, &b_jet_7_width);
   tree->SetBranchAddress("lepton_eta_centrality", &lepton_eta_centrality, &b_lepton_eta_centrality);
   tree->SetBranchAddress("met_hpto_p4", &met_hpto_p4, &b_met_hpto_p4);
-  if(nominaltree){
+ /* if(nominaltree){*/
     tree->SetBranchAddress("met_more_met_et_ele", &met_more_met_et_ele, &b_met_more_met_et_ele);
     tree->SetBranchAddress("met_more_met_et_jet", &met_more_met_et_jet, &b_met_more_met_et_jet);
     tree->SetBranchAddress("met_more_met_et_muon", &met_more_met_et_muon, &b_met_more_met_et_muon);
@@ -681,7 +683,7 @@ void hadhadtree::initRaw(TTree *tree)
     tree->SetBranchAddress("tau_0_n_isolation_tracks", &tau_0_n_isolation_tracks, &b_tau_0_n_isolation_tracks);
     tree->SetBranchAddress("tau_0_n_unclassified_tracks", &tau_0_n_unclassified_tracks, &b_tau_0_n_unclassified_tracks);
     tree->SetBranchAddress("tau_0_type", &tau_0_type, &b_tau_0_type);
-  }
+ // }
   tree->SetBranchAddress("met_p4", &met_p4, &b_met_p4);
   tree->SetBranchAddress("met_sign_met_over_sqrt_ht", &met_sign_met_over_sqrt_ht, &b_met_sign_met_over_sqrt_ht);
   tree->SetBranchAddress("met_sign_met_over_sqrt_sumet", &met_sign_met_over_sqrt_sumet, &b_met_sign_met_over_sqrt_sumet);
@@ -1043,7 +1045,6 @@ void hadhadtree::initRaw(TTree *tree)
    tree->SetBranchAddress("tau_1_NOMINAL_TauEffSF_reco", &tau_1_NOMINAL_TauEffSF_reco, &b_tau_1_NOMINAL_TauEffSF_reco);
    tree->SetBranchAddress("tau_1_NOMINAL_TauEffSF_selection", &tau_1_NOMINAL_TauEffSF_selection, &b_tau_1_NOMINAL_TauEffSF_selection);
    tree->SetBranchAddress("tau_0_matched_pdgId", &tau_0_matched_pdgId, &b_tau_0_matched_pdgId);
-   if(nominaltree){
       tree->SetBranchAddress("tau_0_matched", &tau_0_matched, &b_tau_0_matched);
       tree->SetBranchAddress("tau_0_matched_classifierParticleOrigin", &tau_0_matched_classifierParticleOrigin, &b_tau_0_matched_classifierParticleOrigin);
       tree->SetBranchAddress("tau_0_matched_classifierParticleType", &tau_0_matched_classifierParticleType, &b_tau_0_matched_classifierParticleType);
@@ -1072,7 +1073,8 @@ void hadhadtree::initRaw(TTree *tree)
       tree->SetBranchAddress("tau_0_matched_vis_neutral_p4", &tau_0_matched_vis_neutral_p4, &b_tau_0_matched_vis_neutral_p4);
       tree->SetBranchAddress("tau_0_matched_vis_neutral_pions_p4", &tau_0_matched_vis_neutral_pions_p4, &b_tau_0_matched_vis_neutral_pions_p4);
       tree->SetBranchAddress("tau_0_matched_vis_p4", &tau_0_matched_vis_p4, &b_tau_0_matched_vis_p4);     
-      tree->SetBranchAddress("tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1down_TauEffSF_LooseEleBDT_electron", &tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1down_TauEffSF_LooseEleBDT_electron, &b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1down_TauEffSF_LooseEleBDT_electron);
+   if(nominaltree){
+     tree->SetBranchAddress("tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1down_TauEffSF_LooseEleBDT_electron", &tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1down_TauEffSF_LooseEleBDT_electron, &b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1down_TauEffSF_LooseEleBDT_electron);
       tree->SetBranchAddress("tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1up_TauEffSF_LooseEleBDT_electron", &tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1up_TauEffSF_LooseEleBDT_electron, &b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1up_TauEffSF_LooseEleBDT_electron);
       tree->SetBranchAddress("tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDT_electron", &tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDT_electron, &b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1down_TauEffSF_LooseEleBDT_electron);
       tree->SetBranchAddress("tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDT_electron", &tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDT_electron, &b_tau_1_TAUS_TRUEELECTRON_EFF_ELEBDT_SYST_1up_TauEffSF_LooseEleBDT_electron);
@@ -1329,8 +1331,7 @@ void hadhadtree::initRaw(TTree *tree)
       tree->SetBranchAddress("jet_JET_fJvtEfficiency_1down_forward_jets_global_ineffSF_JVT", &jet_JET_fJvtEfficiency_1down_forward_jets_global_ineffSF_JVT, &b_jet_JET_fJvtEfficiency_1down_forward_jets_global_ineffSF_JVT);
       tree->SetBranchAddress("jet_JET_fJvtEfficiency_1up_forward_jets_global_effSF_JVT", &jet_JET_fJvtEfficiency_1up_forward_jets_global_effSF_JVT, &b_jet_JET_fJvtEfficiency_1up_forward_jets_global_effSF_JVT);
       tree->SetBranchAddress("jet_JET_fJvtEfficiency_1up_forward_jets_global_ineffSF_JVT", &jet_JET_fJvtEfficiency_1up_forward_jets_global_ineffSF_JVT, &b_jet_JET_fJvtEfficiency_1up_forward_jets_global_ineffSF_JVT);
-
-
+}
       tree->SetBranchAddress("tau_1_matched", &tau_1_matched, &b_tau_1_matched);
       tree->SetBranchAddress("tau_1_matched_classifierParticleOrigin", &tau_1_matched_classifierParticleOrigin, &b_tau_1_matched_classifierParticleOrigin);
       tree->SetBranchAddress("tau_1_matched_classifierParticleType", &tau_1_matched_classifierParticleType, &b_tau_1_matched_classifierParticleType);
@@ -1359,7 +1360,6 @@ void hadhadtree::initRaw(TTree *tree)
       tree->SetBranchAddress("tau_1_matched_vis_neutral_p4", &tau_1_matched_vis_neutral_p4, &b_tau_1_matched_vis_neutral_p4);
       tree->SetBranchAddress("tau_1_matched_vis_neutral_pions_p4", &tau_1_matched_vis_neutral_pions_p4, &b_tau_1_matched_vis_neutral_pions_p4);
       tree->SetBranchAddress("tau_1_matched_vis_p4", &tau_1_matched_vis_p4, &b_tau_1_matched_vis_p4);
-    }
     tree->SetBranchAddress("tau_1_matched_pdgId", &tau_1_matched_pdgId, &b_tau_1_matched_pdgId);
     tree->SetBranchAddress("tau_eta_centrality", &tau_eta_centrality, &b_tau_eta_centrality);   
     tree->SetBranchAddress("HTXS_Njets_pTjet25", &HTXS_Njets_pTjet25, &b_HTXS_Njets_pTjet25);

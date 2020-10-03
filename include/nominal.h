@@ -228,7 +228,7 @@ public :
   std::vector<int> *leps_first_EgMother_truth_origin;
   std::vector<int> *leps_first_EgMother_truth_type;
   std::vector<TLorentzVector*>  *totaljets_p4;
-  std::vector<std::vector<int>*> taumatchmap;
+  std::map<ULong64_t,std::vector<int>*> taumatchmap;
   std::vector<float>           *bjets_score;
   std::vector<float>           *ljets_bscore;
   //======================================================flat variables for BDT========================================

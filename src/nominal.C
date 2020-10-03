@@ -775,6 +775,7 @@ bool nominal::addTheorySys(){
     {
       TString weightName = theoryweightsum->GetXaxis()->GetBinLabel(i);
       if(weightName!=""){ //https://twiki.cern.ch/twiki/bin/view/AtlasProtected/PmgTopProcesses, Top, Single Top, ttH
+        
         if((weightName.Contains("muR=") && weightName.Contains(",muF=")) || weightName.Contains("PDFset=260") ){
           addweights(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),weightName);
         }else if(weightName.Contains("isr:muRfac=10_fsr:muRfac=20")){
@@ -974,7 +975,6 @@ void nominal::fillhist(histSaver* plots, TString region, int nprong, TString sam
   //    if(dovetobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[i],NP);
   //  }
   //}
-  std::cout<<"dobwp[bwps[1]]: "<<dobwp[bwps[1]]<<", taubtag:"<<taubtag<<std::endl;
   if(dobwp[bwps[1]] == 1 && taubtag) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[1],NP);
   if(dovetobwp[bwps[1]] == 1 && !taubtag) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[1],NP);
 }
@@ -1161,7 +1161,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           continue;
       cut_flow.fill("tau b-veto");  
   
-      if(!nominaltree && taus_p4->size()) {
+      if(!nominaltree && leps_p4->size()!=0) {
         taus_matched_mother_pdgId = taumatchmap[eventNumber];
       }
       if(fcnc){
@@ -1399,7 +1399,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         if(leps_p4->size() >= 2) mll = (*leps_p4->at(0)+*leps_p4->at(1)).M();
       }
     }
-
+printf("mother size:%i\n",taus_matched_mother_pdgId->size());
     if(reduce == 3){
       BDTG_test  = 0;
       BDTG_train  = 0;
@@ -1511,10 +1511,10 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           sample = "data";
         } else {
           int nfaketau = 0;
-          for (int i = 0; i < taus_matched_pdgId->size(); ++i){
+          for (int i = 0; i < taus_matched_pdgId->size(); ++i){ 
             int tauabspdg = abs(taus_matched_pdgId->at(i));
             if(tauabspdg != 15 || taus_matched_pdgId->at(i) * taus_q->at(i) > 0) {
-              nfaketau++;
+              nfaketau++; 
               if (tauabspdg == 13 || tauabspdg == 11) tauorigin = sample + "_lep";
               else if (tauabspdg == 5) tauorigin = sample + "_b";
               else if (tauabspdg == 4) tauorigin = sample + "_c";
@@ -1522,7 +1522,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
               else if (tauabspdg == 21) tauorigin = sample + "_g";
               else tauorigin = sample + "_nomatch";
               if((tauabspdg == 4 || (tauabspdg <= 3 && tauabspdg >=1)) && abs(taus_matched_mother_pdgId->at(i)) == 24) tauorigin = sample + "_wjet";
-            }
+             } 
           }
           if(nfaketau == 0) tauorigin = sample + "_real";
           else if(nfaketau >= 2) tauorigin = sample + "_doublefake";
