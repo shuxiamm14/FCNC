@@ -132,21 +132,6 @@ bool hadhadtree::x0_x1_cut(const std::vector<TLorentzVector*>  *taus_p4,const TL
         return true;
 }
 
-void hadhadtree::constructwmatchmap(TTree *tree){
-  ULong64_t eventnumber;
-  std::vector<int> *matched;
-  tree->SetBranchStatus("*",0);
-  tree->SetBranchStatus("eventNumber",1);
-  tree->SetBranchStatus("taus_matched_mother_pdgId",1);
-  tree->SetBranchAddress("eventNumber",&eventnumber);
-  tree->SetBranchAddress("taus_matched_mother_pdgId",&matched);
-  Long64_t nentries = tree->GetEntriesFast();
-  for (int i = 0; i < nentries; ++i)
-  {
-    tree->GetEntry(i);
-    taumatchmap[eventnumber] = matched;
-  }
-}
 
 void hadhadtree::init_hist(TString histfilename){
   //init histSaver here:
