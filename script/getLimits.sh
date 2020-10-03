@@ -1,6 +1,7 @@
 variable=BDTG_test
 signals=("tcH" "tuH" "fcnc_ch" "fcnc_uh" "fcnc_prod_ch" "fcnc_prod_uh")
 regions=("reg1l1tau1b2j_os" "reg1l1tau1b3j_os" "reg1l2tau1bnj_os")
+usecombJO=1
 runfit(){
 	sig=$1
 	for reg in ${regions[@]}
@@ -43,18 +44,38 @@ runfitcomb(){
 }
 
 if (( $# >= 1 )) ; then
-	for reg in ${regions[@]} "combined"
-	do
-		trex-fitter h config/$reg/$variable.config
-	done
-	runfitcomb $1
+	if ((usecombJO==1)) ; then
+		for reg in ${regions[@]}
+		do
+			trex-fitter h config/$reg/$variable.config
+		done
+		runfit $1
+	else
+		for reg in ${regions[@]} "combined"
+		do
+			trex-fitter h config/$reg/$variable.config
+		done
+		runfitcomb $1
+	fi
 else
-	for reg in ${regions[@]} "combined"
-	do
-		trex-fitter h config/$reg/$variable.config
-	done
-	for sig in "${signals[@]}"
-	do
-		runfitcomb $sig
-	done
+	if ((usecombJO==1)) ; then
+		for reg in ${regions[@]}
+		do
+			trex-fitter h config/$reg/$variable.config
+		done
+		for sig in "${signals[@]}"
+		do
+			runfit $sig
+		done
+	else
+
+		for reg in ${regions[@]} "combined"
+		do
+			trex-fitter h config/$reg/$variable.config
+		done
+		for sig in "${signals[@]}"
+		do
+			runfitcomb $sig
+		done
+	fi
 fi

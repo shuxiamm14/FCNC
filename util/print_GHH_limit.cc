@@ -26,7 +26,9 @@ void setlimit(LatexChart *chart, TString filename, string row, string column){
 
 int main(int argc, char const *argv[])
 {
-	auto signals = getSigSamples("tthML",0.2);
+	TString method=argv[1];
+	TString framework = "tthML";
+	auto signals = getSigSamples(framework,0.2);
 	TString variable = "BDTG_test";
 	vector<TString> channels = {"reg1l1tau1b2j_os","reg1l1tau1b3j_os","reg1l2tau1bnj_os"};
 
@@ -48,6 +50,9 @@ int main(int argc, char const *argv[])
 		setlimit(chart, filename, signaltitle, "Combined");
 	}
 	chart->caption="The limits derived from leptonic channels.";
-	chart->print("limits");
+	string tablepath=method.Contains("test")?"." : TABLE_DIR;
+	tablepath = tablepath + "/" + framework.Data() + "/trexfitter";
+	gSystem->mkdir(tablepath.c_str());
+	chart->print(tablepath + "/limits");
 	return 0;
 }
