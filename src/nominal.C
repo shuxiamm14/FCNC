@@ -1208,7 +1208,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           continue;
       cut_flow.fill("tau b-veto");  
   
-      if(!nominaltree && taus_p4->size()) {
+      if(!nominaltree && leps_p4->size()!=0) {
         taus_matched_mother_pdgId = taumatchmap[eventNumber];
       }
       if(fcnc){
