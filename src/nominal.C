@@ -1279,7 +1279,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             gMinside->mnparm(4, "phi3", 0, 0.1, -PI, PI, ierflg);
             arglist[0] = 5;
           } else if (fit_collinear){
-          	gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
+            gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
             gMinside->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
             arglist[0] = 2;
             if(leps_p4->size()) {

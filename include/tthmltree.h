@@ -43,5 +43,6 @@ public:
    virtual bool IsoLepid(int id) { printf("Warning: virtual function IsoLepid(int id) is used in class tthmltree\n");  return 1;};
    virtual bool addWeightSys() { printf("Warning: virtual function addWeightSys() is used in class tthmltree\n");  return 1;};
    virtual void init(TTree*tree) { printf("Warning: virtual function init(TTree*tree) is used in class tthmltree\n"); };
+   void prepare(){};
 };
 #endif
