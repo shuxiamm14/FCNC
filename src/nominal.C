@@ -565,6 +565,65 @@ void nominal::fcn_collinear(Int_t &npar, Double_t *gin, Double_t &f, Double_t *p
   }
 }
 
+bool nominal::MassCollinearCore(const TLorentzVector &k1, const TLorentzVector &k2,  // particles
+                               const float metetx, const float metety,            // met
+                               float &mass, float &xp1, float &xp2) {            // result
+    TMatrixD K(2, 2);
+    K(0, 0) = k1.Px();
+    K(0, 1) = k2.Px();
+    K(1, 0) = k1.Py();
+    K(1, 1) = k2.Py();
+
+    if (K.Determinant() == 0) return false;
+
+    TMatrixD M(2, 1);
+    M(0, 0) = metetx;
+    M(1, 0) = metety;
+
+    TMatrixD Kinv = K.Invert();
+
+    TMatrixD X(2, 1);
+    X = Kinv * M;
+
+    double X1 = X(0, 0);
+    double X2 = X(1, 0);
+    double x1 = 1. / (1. + X1);
+    double x2 = 1. / (1. + X2);
+
+    TLorentzVector p1 = k1 * (1 / x1);
+    TLorentzVector p2 = k2 * (1 / x2);
+
+    double m = (p1 + p2).M();
+
+
+    mass = m; // return to caller
+
+    //if (k1.Pt() > k2.Pt()) {
+        xp1 = x1;
+        xp2 = x2;
+    //} else {
+    //    xp1 = x2;
+    //    xp2 = x1;
+    //}
+    return true;
+}
+
+bool nominal::MassCollinear(bool kMMCsynchronize,                // mmc sychronization
+                           float &mass, float &xp1, float &xp2) {  // result
+
+    TLorentzVector k1;
+    TLorentzVector k2;
+    TLorentzVector *tau2;
+    if(taus_p4->size() == 1) tau2 = leps_p4->at(0);
+    else tau2 = taus_p4->at(1);
+    if (kMMCsynchronize) { /// redefine tau vectors if necessary - MMC sychronization
+            k1.SetPtEtaPhiM(taus_p4->at(0)->Pt(), taus_p4->at(0)->Eta(), taus_p4->at(0)->Phi(), taus_n_charged_tracks->at(0) < 3 ? 800. : 1200.);  // MeV
+            k2.SetPtEtaPhiM(tau2->Pt(), tau2->Eta(), tau2->Phi(), (taus_p4->size() == 1 || taus_n_charged_tracks->at(1)) < 3 ? 800. : 1200.);  // MeV
+    }
+
+    return MassCollinearCore(k1, k2, met_p4->Px(), met_p4->Py(), mass, xp1, xp2);
+}
+
 vector<int>* nominal::findcjet(){
   double m_w = 81*GeV;
   vector<int> *output = new vector<int>();
@@ -1271,76 +1330,79 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           }
         }
         if(dofit && (taus_p4->size() + leps_p4->size() == 2 || dofit1l2tau)){
-          if (taus_p4->size() + leps_p4->size() >= 3) {
-            gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
-            gMinside->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
-            gMinside->mnparm(2, "pt3", 10*GeV, 10*GeV, 0., 1000*GeV, ierflg);
-            gMinside->mnparm(3, "eta3", 0, 0.1, -5, 5, ierflg);
-            gMinside->mnparm(4, "phi3", 0, 0.1, -PI, PI, ierflg);
-            arglist[0] = 5;
-          } else if (fit_collinear){
-          	gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
-            gMinside->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
-            arglist[0] = 2;
-            if(leps_p4->size()) {
-              gMinside->mnparm(2, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
-              arglist[0]++;
-            }
-          } else {
-            gMinside->mnparm(0, "v1pt",  taus_p4->at(0)->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
-            gMinside->mnparm(1, "v1eta", taus_p4->at(0)->Eta(), 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
-            gMinside->mnparm(2, "v1phi", taus_p4->at(0)->Phi(), 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
-            gMinside->mnparm(3, "v2pt",  tau2->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
-            gMinside->mnparm(4, "v2eta", tau2->Eta(), 0.01, tau2->Eta()-0.25, tau2->Eta()+0.25, ierflg);
-            gMinside->mnparm(5, "v2phi", tau2->Phi(), 0.01, tau2->Phi()-0.25, tau2->Phi()+0.25, ierflg);
-            arglist[0] = 6;
-            if(leps_p4->size()) {
-              gMinside->mnparm(6, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
-              arglist[0]++;
-            }
-          }
-
-          gMinside->SetObjectFit((TObject*)&fitvec);
-          arglist[1] = 60.;
           Double_t val[7] = {0,0,0,0,0,0,0};
           Double_t err[7] = {0,0,0,0,0,0,0};
-
-          if(debug) printf("start kinematic fit\n");
-          gMinside->mnexcm("SCAN", arglist, 2, ierflg);
-          for (int i = 0; i < 7; ++i) gMinside->GetParameter(i, val[i], err[i]);
-
-          if (taus_p4->size() + leps_p4->size() >= 3) {
-            gMinside->mnparm(0, "rpt1", val[0], 0.01, 0., 2., ierflg);
-            gMinside->mnparm(1, "rpt2", val[1], 0.01, 0., 2., ierflg);
-            gMinside->mnparm(2, "pt3",  val[2], 10*GeV, 0., 1000*GeV, ierflg);
-            gMinside->mnparm(3, "eta3", val[3], 0.1, -5, 5, ierflg);
-            gMinside->mnparm(4, "phi3", val[4], 0.1, -PI, PI, ierflg);
-          } else if (fit_collinear){
-            gMinside->mnparm(0, "rpt1", val[0], 0.01, 0., 2., ierflg);
-            gMinside->mnparm(1, "rpt2", val[1], 0.01, 0., 2., ierflg);
-            if(leps_p4->size()) gMinside->mnparm(2, "v2m",   val[2], 0.01, 0, 1776, ierflg);
-          } else {
-            gMinside->mnparm(0, "v1pt",  val[0], 1, 0., 1000*GeV, ierflg);
-            gMinside->mnparm(1, "v1eta", val[1], 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
-            gMinside->mnparm(2, "v1phi", val[2], 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
-            gMinside->mnparm(3, "v2pt",  val[3], 1, 0., 1000*GeV, ierflg);
-            gMinside->mnparm(4, "v2eta", val[4], 0.01, tau2->Eta()-0.25, tau2->Eta()+0.25, ierflg);
-            gMinside->mnparm(5, "v2phi", val[5], 0.01, tau2->Phi()-0.25, tau2->Phi()+0.25, ierflg);
-            if(leps_p4->size()) gMinside->mnparm(6, "v2m",   val[6], 0.01, 0, 1776, ierflg);
+          if(!mass_collinear){
+            if (taus_p4->size() + leps_p4->size() >= 3) {
+              gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
+              gMinside->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
+              gMinside->mnparm(2, "pt3", 10*GeV, 10*GeV, 0., 1000*GeV, ierflg);
+              gMinside->mnparm(3, "eta3", 0, 0.1, -5, 5, ierflg);
+              gMinside->mnparm(4, "phi3", 0, 0.1, -PI, PI, ierflg);
+              arglist[0] = 5;
+            } else if (fit_collinear){
+            	gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
+              gMinside->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
+              arglist[0] = 2;
+              if(leps_p4->size()) {
+                gMinside->mnparm(2, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
+                arglist[0]++;
+              }
+            } else {
+              gMinside->mnparm(0, "v1pt",  taus_p4->at(0)->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
+              gMinside->mnparm(1, "v1eta", taus_p4->at(0)->Eta(), 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
+              gMinside->mnparm(2, "v1phi", taus_p4->at(0)->Phi(), 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
+              gMinside->mnparm(3, "v2pt",  tau2->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
+              gMinside->mnparm(4, "v2eta", tau2->Eta(), 0.01, tau2->Eta()-0.25, tau2->Eta()+0.25, ierflg);
+              gMinside->mnparm(5, "v2phi", tau2->Phi(), 0.01, tau2->Phi()-0.25, tau2->Phi()+0.25, ierflg);
+              arglist[0] = 6;
+              if(leps_p4->size()) {
+                gMinside->mnparm(6, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
+                arglist[0]++;
+              }
+            }
+  
+            gMinside->SetObjectFit((TObject*)&fitvec);
+            arglist[1] = 60.;
+  
+            if(debug) printf("start kinematic fit\n");
+            gMinside->mnexcm("SCAN", arglist, 2, ierflg);
+            for (int i = 0; i < 7; ++i) gMinside->GetParameter(i, val[i], err[i]);
+  
+            if (taus_p4->size() + leps_p4->size() >= 3) {
+              gMinside->mnparm(0, "rpt1", val[0], 0.01, 0., 2., ierflg);
+              gMinside->mnparm(1, "rpt2", val[1], 0.01, 0., 2., ierflg);
+              gMinside->mnparm(2, "pt3",  val[2], 10*GeV, 0., 1000*GeV, ierflg);
+              gMinside->mnparm(3, "eta3", val[3], 0.1, -5, 5, ierflg);
+              gMinside->mnparm(4, "phi3", val[4], 0.1, -PI, PI, ierflg);
+            } else if (fit_collinear){
+              gMinside->mnparm(0, "rpt1", val[0], 0.01, 0., 2., ierflg);
+              gMinside->mnparm(1, "rpt2", val[1], 0.01, 0., 2., ierflg);
+              if(leps_p4->size()) gMinside->mnparm(2, "v2m",   val[2], 0.01, 0, 1776, ierflg);
+            } else {
+              gMinside->mnparm(0, "v1pt",  val[0], 1, 0., 1000*GeV, ierflg);
+              gMinside->mnparm(1, "v1eta", val[1], 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
+              gMinside->mnparm(2, "v1phi", val[2], 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
+              gMinside->mnparm(3, "v2pt",  val[3], 1, 0., 1000*GeV, ierflg);
+              gMinside->mnparm(4, "v2eta", val[4], 0.01, tau2->Eta()-0.25, tau2->Eta()+0.25, ierflg);
+              gMinside->mnparm(5, "v2phi", val[5], 0.01, tau2->Phi()-0.25, tau2->Phi()+0.25, ierflg);
+              if(leps_p4->size()) gMinside->mnparm(6, "v2m",   val[6], 0.01, 0, 1776, ierflg);
+            }
+  
+            arglist[0] = 1000;
+            arglist[1] = 0;
+            gMinside->mnexcm("MIGRADE", arglist, 2, ierflg);
+  
+            Double_t fmin,edm,errdef;
+            Int_t nvpar,nparx,icstat;
+            //gMinuit->mnstat(fmin,edm,errdef,nvpar,nparx,icstat);
+            gMinside->mnstat(fmin,edm,errdef,nvpar,nparx,icstat);
+  
+            chi2 = fmin;
+  
+            for (int i = 0; i < (taus_p4->size() + leps_p4->size() >= 3 ? 5 : (leps_p4->size()?7:6)); ++i) gMinside->GetParameter(i, val[i], err[i]);
           }
-
-          arglist[0] = 1000;
-          arglist[1] = 0;
-          gMinside->mnexcm("MIGRADE", arglist, 2, ierflg);
-
-          Double_t fmin,edm,errdef;
-          Int_t nvpar,nparx,icstat;
-          //gMinuit->mnstat(fmin,edm,errdef,nvpar,nparx,icstat);
-          gMinside->mnstat(fmin,edm,errdef,nvpar,nparx,icstat);
-
-          chi2 = fmin;
-
-          for (int i = 0; i < (taus_p4->size() + leps_p4->size() >= 3 ? 5 : (leps_p4->size()?7:6)); ++i) gMinside->GetParameter(i, val[i], err[i]);
+//=======================fit stops here========================
           neutrinos_p4->clear();
   
           TLorentzVector *tauv1_v = new TLorentzVector();
@@ -1359,6 +1421,12 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             x2fit = 1 / (1 + val[1]);
             tauv1_v->SetPtEtaPhiM(val[0]*taus_p4->at(0)->Pt(), taus_p4->at(0)->Eta(), taus_p4->at(0)->Phi(), 0);
             tauv2_v->SetPtEtaPhiM(val[1]*tau2->Pt(), tau2->Eta(), tau2->Phi(), leps_p4->size()? val[2]:0);
+          } else if(mass_collinear){
+            if(leps_p4->size() + taus_p4->size() == 2){
+              MassCollinear(true,tautaumass,x1fit,x2fit);
+              tauv1_v->SetPtEtaPhiM((1-x1fit)/x1fit*taus_p4->at(0)->Pt(), taus_p4->at(0)->Eta(), taus_p4->at(0)->Phi(), 0);
+              tauv2_v->SetPtEtaPhiM((1-x1fit)/x1fit*tau2->Pt(), tau2->Eta(), tau2->Phi(), 0);
+            }
           }
           else {
             tauv1_v->SetPtEtaPhiM(val[0],val[1],val[2],0);

@@ -169,6 +169,7 @@ int main(int argc, char const *argv[])
 	analysis->plotTauFake = 1;
 	analysis->ctagFCNC = 0;
 	analysis->fit_collinear = 0;
+	analysis->mass_collinear = 1;
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
 	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
 	analysis->doubleCounting = 1;

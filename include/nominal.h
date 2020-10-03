@@ -56,6 +56,7 @@ public :
   bool tightLep = 1;
   bool tightTau;
   bool fit_collinear;
+  bool mass_collinear;
   //=============================configurations===============================
 
   TString SystematicsName = "NOMINAL";
@@ -164,6 +165,11 @@ public :
   void finalise_sample();
   static  void    fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
   static  void    fcn_collinear(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag);
+
+  bool MassCollinearCore(const TLorentzVector &k1, const TLorentzVector &k2,  // particles
+                              const float metetx, const float metety,            // met
+                              float &mass, float &xp1, float &xp2);
+  bool MassCollinear(bool kMMCsynchronize, float &mass, float &xp1, float &xp2);
   void fillhist(histSaver *plots, TString region, int nprong, TString sample, int taubtag, TString NP);
   void fill_notau(TString region, TString sample, TString NP);
   bool SelectTLepid(int id);
