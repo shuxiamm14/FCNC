@@ -618,7 +618,7 @@ bool nominal::MassCollinear(bool kMMCsynchronize,                // mmc sychroni
     else tau2 = taus_p4->at(1);
     if (kMMCsynchronize) { /// redefine tau vectors if necessary - MMC sychronization
             k1.SetPtEtaPhiM(taus_p4->at(0)->Pt(), taus_p4->at(0)->Eta(), taus_p4->at(0)->Phi(), taus_n_charged_tracks->at(0) < 3 ? 800. : 1200.);  // MeV
-            k2.SetPtEtaPhiM(tau2->Pt(), tau2->Eta(), tau2->Phi(), (taus_p4->size() == 1 || taus_n_charged_tracks->at(1)) < 3 ? 800. : 1200.);  // MeV
+            k2.SetPtEtaPhiM(tau2->Pt(), tau2->Eta(), tau2->Phi(), (taus_p4->size() == 1 || taus_n_charged_tracks->at(1) < 3) ? 800. : 1200.);  // MeV
     }
 
     return MassCollinearCore(k1, k2, met_p4->Px(), met_p4->Py(), mass, xp1, xp2);

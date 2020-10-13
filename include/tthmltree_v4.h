@@ -1,6 +1,6 @@
 #include "tthmltree.h"
 using namespace std;
-class tthmltree_v3 : public tthmltree {
+class tthmltree_v4 : public tthmltree {
 public :
    void dumpTruth(int ipart) ;
    bool addWeightSys();
