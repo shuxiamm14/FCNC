@@ -20,10 +20,14 @@ int main(int argc, char const *argv[])
 		"reg1l1tau2b2j_os","reg1l1tau2b2j_ss","reg1l1tau2b3j_os","reg1l1tau2b3j_ss","reg1l2tau2bnj_os","reg1l2tau2bnj_ss","all"
 		"reg2l1tau1bnj", "reg2l1tau2bnj", "reg2lSS1tau1bnj_os", "reg2lSS1tau1bnj_os_antiiso", "reg2lSS1tau1bnj_os_antiisolead"
 	};
+        //string  cut_name_dict[]={"","this region","this region","bjet pt>30 eta<2.5","tau b-veto","$m_{\\tau\\tau,vis}>50$","$m_{\\tau\\tau,vis}<130$","$\\Delta R(\\tau,\\tau)<3.4$"}; 
 	vector<TString> region_xTFW = {
-		"all","reg2mtau1b2j_os","reg2mtau1b2j_ss",
-		"reg2mtau2b2j_os","reg2mtau2b2j_ss"
-	};
+	          "all","reg2mtau1b2jss","reg2mtau1b3jss","reg2mtau1b2jos","reg2mtau1b3jos","reg2mtau2b2jss","reg2mtau2b3jss","reg2mtau2b2jos",
+		  "reg2mtau2b3jos","reg2ltau1b2jss","reg2ltau1b3jss","reg2ltau1b2jos","reg2ltau1b3jos","reg2ltau2b2jss","reg2ltau2b3jss",
+		  "reg2ltau2b2jos","reg2ltau2b3jos","reg2ttau1b2jss","reg2ttau1b3jss","reg2ttau1b2jos","reg2ttau1b3jos","reg2mtau2b1jos",
+		  "reg2mtau2b1jss","reg1l1mtau1b2jos","reg1l1mtau1b2jss","reg1l1mtau1b3jos","reg1l1mtau1b3jss","reg1l1mtau2b2jos",
+		  "reg1l1mtau2b2jss","reg1l1mtau2b3jos","reg1l1mtau2b3jss"
+        };
 	vector<TString> datayear = {"1516","17","18"};
 	vector<TString> region;
 	if(framework == "tthML") region = region_tthML;
@@ -67,8 +71,17 @@ int main(int argc, char const *argv[])
 							cutflow_hist = (TH1D*)(inputfile->Get(region[ireg])->Clone());
 							cutflow_hist->SetDirectory(0);
 						}else{
-							cutflow_hist->Add((TH1D*)inputfile->Get(region[ireg]));
-						}
+						      //	cutflow_hist->Add((TH1D*)inputfile->Get(region[ireg]));
+						        TH1D *tmp_ = (TH1D*)(inputfile->Get(region[ireg]));
+					for(int i=1;i<=(tmp_->GetXaxis()->GetNbins()>=cutflow_hist->GetXaxis()->GetNbins()?tmp_->GetXaxis()->GetNbins():cutflow_hist->GetXaxis()->GetNbins());i++){
+					   double cutflowcontent_=cutflow_hist->GetBinContent(i);
+					   double cutflowerror_=cutflow_hist->GetBinError(i);
+					   double tmp_error=tmp_->GetBinError(i);
+					   cutflow_hist->SetBinContent(i,cutflowcontent_+tmp_->GetBinContent(i));
+					   cutflow_hist->SetBinError(i,sqrt(cutflowerror_*cutflowerror_+tmp_error*tmp_error));
+					   if(tmp_->GetXaxis()->GetBinLabel(i)==""&&cutflow_hist->GetXaxis()->GetBinLabel(i)=="") break;
+		                           }
+                                               }
 						deletepointer(inputfile);
 					}
 				}else{
@@ -93,9 +106,10 @@ int main(int argc, char const *argv[])
 				for (int ibin = 1; ibin <= cutflow_hist->GetNbinsX(); ++ibin)
 				{
 					TString cut_name = xaxis->GetBinLabel(ibin);
-					if(cut_name == "") break;
+                                 	if(cut_name == "") break;
 					if(cutflow_hist->GetBinContent(ibin)) chart->set(cut_name.Data(), sample.title.Data(), cutflow_hist->GetBinContent(ibin), cutflow_hist->GetBinError(ibin));
-				}
+                                    //    if(cut_name == "")chart->set(cut_name_dict[ibin], sample.title.Data(), 0.0,0.0);
+                                }
 			}
 		}
 		LatexChart* sum = 0;

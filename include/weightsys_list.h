@@ -189,7 +189,7 @@ std::vector<TString> theoryNPlist = { // theory uncertainties, the recipe is cha
 	"FSR_down"
 };
 
-std::vector<TString> xTFWNPlist = {
+/*std::vector<TString> xTFWNPlist = {
 	"fjvt_up",
 	"fjvt_down",
 	"tauEveto_E_STATHIGHMU_up",
@@ -262,7 +262,52 @@ std::vector<TString> xTFWNPlist = {
 	"tauTrigger_SYST2016_down",
 	"tauTrigger_SYST2017_up",
 	"tauTrigger_SYST2017_down"
+};*/
+
+std::vector<TString> xTFWNPlist = {
+	"tauRecon_TOTAL_up",
+	"tauRecon_TOTAL_down",
+	"tauEveto_TOTAL_up",
+	"tauEveto_TOTAL_down",
+	"MEDIUM_tauID_1P2025_up",
+	"MEDIUM_tauID_1P2025_down",
+	"MEDIUM_tauID_1P2530_up",
+	"MEDIUM_tauID_1P2530_down",
+	"MEDIUM_tauID_1P3040_up",
+	"MEDIUM_tauID_1P3040_down",
+	"MEDIUM_tauID_1PGE40_up",
+	"MEDIUM_tauID_1PGE40_down",
+	"MEDIUM_tauID_3P2030_up",
+	"MEDIUM_tauID_3P2030_down",
+	"MEDIUM_tauID_3P2530_up",
+	"MEDIUM_tauID_3P2530_down",
+	"MEDIUM_tauID_3P3040_up",
+	"MEDIUM_tauID_3P3040_down",
+	"MEDIUM_tauID_3PGE30_up",
+	"MEDIUM_tauID_3PGE30_down",
+	"MEDIUM_tauID_HIGHPT_up",
+	"MEDIUM_tauID_HIGHPT_down",
+	"MEDIUM_tauID_SYST_up",
+	"MEDIUM_tauID_SYST_down",
+	"tauTrigger_STATDATA2018up",
+	"tauTrigger_STATDATA2018down",
+	"tauTrigger_STATMC2018up",
+	"tauTrigger_STATMC2018down",
+	"tauTrigger_SYST2018up",
+	"tauTrigger_SYST2018down",
+	"tauTrigger_SYSTMU2018up",
+	"tauTrigger_SYSTMU2018down",
+	"tauTrigger_STATDATA161718up",
+	"tauTrigger_STATDATA161718down",
+	"tauTrigger_STATMC161718up",
+	"tauTrigger_STATMC161718down",
+	"tauTrigger_SYST161718up",
+	"tauTrigger_SYST161718down",
+	"tauTrigger_SYSTMU161718up",
+	"tauTrigger_SYSTMU161718down",    
 };
+
+
 std::vector<TString> tthMLNPlist = {
 	"Ele_Reco_up",
 	"Ele_Reco_down",
@@ -386,7 +431,7 @@ std::vector<TString> tthMLtreeNPlist = {
 	"TAUS_TRUEHADTAU_SME_TES_MODEL__1up"
 };
 
-std::vector<TString> xTFWtreeNPlist = {
+/*std::vector<TString> xTFWtreeNPlist = {
 	"TAUS_TRUEHADTAU_SME_TES_DETECTOR_1down",
 	"TAUS_TRUEHADTAU_SME_TES_DETECTOR_1up",
 	"TAUS_TRUEHADTAU_SME_TES_INSITU_1down",
@@ -473,6 +518,102 @@ std::vector<TString> xTFWtreeNPlist = {
 	"MET_SoftTrk_ResoPerp",
 	"MET_SoftTrk_ScaleDown",
 	"MET_SoftTrk_ScaleUp"
+};*/
+
+
+std::vector<TString> xTFWtreeNPlist = {
+	"ET_Flavor_Composition_1up",
+	"JET_Flavor_Response_1down",
+	"TAUS_TRUEHADTAU_SME_TES_DETECTOR_1down",
+	"JET_Pileup_RhoTopology_1up",
+	"TAUS_TRUEHADTAU_SME_TES_INSITUFIT_1up",
+	"JET_EffectiveNP_Modelling1_1up",
+	"TAUS_TRUEHADTAU_SME_TES_MODEL_CLOSURE_1up",
+	"TAUS_TRUEHADTAU_SME_TES_INSITUEXP_1up",
+	"JET_EffectiveNP_Detector1_1up",
+	"JET_EffectiveNP_Mixed1_1up",
+	"JET_EffectiveNP_Modelling2_1up",
+	"JET_EffectiveNP_Modelling3_1down",
+	"JET_EffectiveNP_Statistical4_1up",
+	"JET_EffectiveNP_Statistical6_1up",
+	"JET_JER_DataVsMC_MC16_1up",
+	"JET_JER_DataVsMC_MC16_1down",
+	"JET_JER_EffectiveNP_5_1up",
+	"JET_JER_EffectiveNP_5_1down",
+	"JET_Pileup_PtTerm_1up",
+	"MET_SoftTrk_ResoPerp",
+	"MET_SoftTrk_Scale_1down",
+	"JET_EffectiveNP_Mixed2_1down",
+	"JET_EffectiveNP_Modelling4_1up",
+	"JET_EffectiveNP_Statistical1_1up",
+	"JET_EffectiveNP_Statistical3_1down",
+	"JET_EffectiveNP_Statistical5_1up",
+	"JET_EtaIntercalibration_Modelling_1up",
+	"JET_EtaIntercalibration_Modelling_1down",
+	"JET_EtaIntercalibration_NonClosure_2018data_1up",
+	"JET_EtaIntercalibration_NonClosure_negEta_1up",
+	"JET_Pileup_OffsetNPV_1down",
+	"MET_SoftTrk_ResoPara",
+	"JET_BJES_Response_1up",
+	"JET_BJES_Response_1down",
+	"JET_EffectiveNP_Detector1_1down",
+	"JET_EffectiveNP_Detector2_1up",
+	"JET_EffectiveNP_Detector2_1down",
+	"JET_EffectiveNP_Mixed1_1down",
+	"JET_EffectiveNP_Mixed3_1up",
+	"JET_EffectiveNP_Mixed3_1down",
+	"JET_EffectiveNP_Modelling2_1down",
+	"JET_EffectiveNP_Modelling3_1up",
+	"JET_EffectiveNP_Modelling4_1down",
+	"JET_EffectiveNP_Statistical1_1down",
+	"JET_EffectiveNP_Statistical2_1up",
+	"JET_EffectiveNP_Statistical2_1down",
+	"JET_EffectiveNP_Statistical3_1up",
+	"JET_EffectiveNP_Statistical4_1down",
+	"JET_EffectiveNP_Statistical5_1down",
+	"JET_EffectiveNP_Statistical6_1down",
+	"JET_EtaIntercalibration_NonClosure_highE_1up",
+	"JET_EtaIntercalibration_NonClosure_highE_1down",
+	"JET_EtaIntercalibration_NonClosure_negEta_1down",
+	"JET_EtaIntercalibration_NonClosure_posEta_1up",
+	"JET_EtaIntercalibration_NonClosure_posEta_1down",
+	"JET_JER_EffectiveNP_2_1up",
+	"JET_JER_EffectiveNP_2_1down",
+	"JET_JER_EffectiveNP_3_1up",
+	"JET_JER_EffectiveNP_3_1down",
+	"JET_Pileup_OffsetMu_1up",
+	"JET_Pileup_OffsetNPV_1up",
+	"JET_PunchThrough_MC16_1up",
+	"JET_PunchThrough_MC16_1down",
+	"JET_SingleParticle_HighPt_1up",
+	"JET_SingleParticle_HighPt_1down",
+	"JET_TILECORR_Uncertainty_1down",
+	"JET_TILECORR_Uncertainty_1up",
+	"TAUS_TRUEHADTAU_SME_TES_PHYSICSLIST_1up",
+	"JET_EffectiveNP_Mixed2_1up",
+	"JET_EtaIntercalibration_TotalStat_1up",
+	"JET_EtaIntercalibration_TotalStat_1down",
+	"JET_JER_EffectiveNP_1_1up",
+	"JET_JER_EffectiveNP_1_1down",
+	"JET_Pileup_OffsetMu_1down",
+	"JET_Pileup_PtTerm_1down",
+	"MET_SoftTrk_Scale_1up",
+	"TAUS_TRUEHADTAU_SME_TES_DETECTOR_1up",
+	"JET_EtaIntercalibration_NonClosure_2018data_1down",
+	"JET_JER_EffectiveNP_7restTerm_1up",
+	"JET_JER_EffectiveNP_7restTerm_1down",
+	"TAUS_TRUEHADTAU_SME_TES_MODEL_CLOSURE_1down",
+	"TAUS_TRUEHADTAU_SME_TES_PHYSICSLIST_1down",
+	"JET_EffectiveNP_Modelling1_1down",
+	"JET_JER_EffectiveNP_6_1up",
+	"JET_JER_EffectiveNP_6_1down",
+	"JET_JER_EffectiveNP_4_1up",
+	"JET_JER_EffectiveNP_4_1down",
+	"TAUS_TRUEHADTAU_SME_TES_INSITUEXP_1down",
+	"JET_Pileup_RhoTopology_1down",
+	"TAUS_TRUEHADTAU_SME_TES_INSITUFIT_1down",
+	"JET_Flavor_Response_1up",
+	"JET_Flavor_Composition_1down",
 };
 
 std::vector<TString> sampleNPlist = {
@@ -541,10 +682,10 @@ TString findNPname(TString &dirname, int iNP = 0, TString framework = "tthML"){
 //printNPindex("tthML")
 void printNPindex(TString framework = "tthML"){
 
-	std::vector<TString> *specNPlist = framework == "xTFW"?&xTFWNPlist:&tthMLNPlist;
-	std::vector<TString> *treeNPlist = framework == "xTFW"?&xTFWtreeNPlist:&tthMLtreeNPlist;
+	std::vector<TString> *specNPlist = framework == "xTFW"?&xTFWNPlist:&tthMLNPlist;//tau related weight systematics
+	std::vector<TString> *treeNPlist = framework == "xTFW"?&xTFWtreeNPlist:&tthMLtreeNPlist;// tree systematics
 	std::vector<std::vector<TString>*> nlist = {&commonNPlist,specNPlist,treeNPlist,&fakeNPlist,&xsecNPlist,&theoryNPlist,&sampleNPlist};
-
+ // commonNPlist: jet related weight sys         fakeNPlist:fake sys   
 	//17 + 44 + 108 + 34 + 83 + 3
 	int iNP = 0;
 	std::ofstream file;

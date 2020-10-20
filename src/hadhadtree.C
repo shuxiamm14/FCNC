@@ -10,53 +10,33 @@ using namespace std;
 hadhadtree::hadhadtree() : nominal::nominal(){
   defGeV(1);
   cut_flow.setWeight(&weight);
-  belong_regions.m_region_map["SR"] = {
-/*  "reg2mtau1b2jss",
-    "reg1mtau1ltau1b2jss",
-    "reg2ltau1b2jss",
-    "reg2ttau1b2jss",
-    "reg1ttau1mtau1b2jss",
-    "reg2mtau1b3jss",
-    "reg1mtau1ltau1b3jss",
-    "reg2ltau1b3jss",
-    "reg2ttau1b3jss",
-    "reg1ttau1mtau1b3jss",
-    "reg2mtau1b2jos",
-    "reg1mtau1ltau1b2jos",
-    "reg2ltau1b2jos",
-    "reg2mtau1b3jos",
-    "reg1mtau1ltau1b3jos",
-    "reg2ltau1b3jos",
-    "reg2ttau1b2jos",
-    "reg1ttau1mtau1b2jos",
-    "reg2ttau1b3jos",
-    "reg1ttau1mtau1b3jos",
-    "reg2mtau2b2jss",
-    "reg2mtau2b3jss",
-    "reg2mtau2b2jos",
-    "reg2mtau2b3jos"*/
-    "reg2mtau1b2jss",
-    "reg2mtau1b3jss",
-    "reg2mtau1b2jos",
-    "reg2mtau1b3jos",
-    "reg2mtau2b2jss",
-    "reg2mtau2b3jss",
-    "reg2mtau2b2jos",
-    "reg2mtau2b3jos",
-    "reg2mtau2b1jos",
-    "reg2mtau2b1jss",
-    "reg2ltau1b2jss",
-    "reg2ltau1b3jss",
-    "reg2ltau1b2jos",
-    "reg2ltau1b3jos",
-    "reg2mtau0b3jos",
-    "reg2mtau0b4jos",
-    "reg2mtau0b3jss",
-    "reg2mtau0b4jss",
-    "reg2mtau3jos" ,
-    "reg2mtau4jos" ,
-    "reg2mtau0b3jss",
-    "reg2mtau0b4jss"
+  belong_regions.m_region_map["SR"] = {  
+	"reg2mtau1b2jss",
+	"reg2mtau1b3jss",
+	"reg2mtau1b2jos",
+	"reg2mtau1b3jos",
+	"reg2ttau1b2jss",
+	"reg2ttau1b3jss",
+	"reg2ttau1b2jos",
+	"reg2ttau1b3jos",
+	"reg2mtau2b1jos",
+	"reg2mtau2b1jss",
+	"reg2mtau2b2jos",
+	"reg2mtau2b2jss",
+	"reg2mtau2b3jos",
+	"reg2mtau2b3jss",
+	"reg1l1mtau1b2jos",
+	"reg1l1mtau1b2jss",
+	"reg1l1mtau1b3jos",
+	"reg1l1mtau1b3jss",
+	"reg1l1mtau2b2jos",
+	"reg1l1mtau2b2jss",
+	"reg1l1mtau2b3jos",
+	"reg1l1mtau2b3jss",
+        "reg2mtau1b5jos",
+        "reg2mtau1b5jss",
+        "reg2mtau2b4jos",
+        "reg2mtau2b4jss"
   };
 }
 
@@ -94,16 +74,37 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots->add(vars["x1fit"],&x1fit);
   fcnc_plots->add(vars["x2fit"],&x2fit);
   fcnc_plots->add(vars["chi2"],&chi2);
-  fcnc_plots->add(vars["allmass"],&allmass);
-  fcnc_plots->add(vars["allpz"],&allpz);
+ // fcnc_plots->add(vars["allmass"],&allmass);
+ // fcnc_plots->add(vars["allpz"],&allpz);
   fcnc_plots->add(vars["tauvis0E"],&tauvis0E);
   fcnc_plots->add(vars["tauvis1E"],&tauvis1E);
   fcnc_plots->add(vars["tau0E"],&tau0E);
   fcnc_plots->add(vars["tau1E"],&tau1E);
   fcnc_plots->add(vars["neu0E"],&neu0E);
   fcnc_plots->add(vars["neu1E"],&neu1E);
+  fcnc_plots->add(vars["njetNumber"],&njetNumber);
+  fcnc_plots->add(vars["leadingJetPt"],&leadingJetPt);
+  fcnc_plots->add(vars["subleadingJetPt"],&subleadingJetPt); 
   //fcnc_plots->add(vars["etamax"],&etamax);
   //fcnc_plots->add(vars["drtauj"],&drtauj);
+  fcnc_plots->add(vars["x0"],&ditau_coll_approx_x0);
+fcnc_plots->add(vars["x1"],&ditau_coll_approx_x1);
+fcnc_plots->add(vars["ditau_jet_2_deta"],&ditau_jet_2_deta); //
+fcnc_plots->add(vars["ditau_jet_1_deta"],&ditau_jet_1_deta);//
+fcnc_plots->add(vars["ditau_jet_0_deta"],&ditau_jet_0_deta);//
+fcnc_plots->add(vars["ditau_jet_2_delta_rapidity"],&ditau_jet_2_delta_rapidity); //
+fcnc_plots->add(vars["ditau_jet_1_delta_rapidity"],&ditau_jet_1_delta_rapidity);//
+fcnc_plots->add(vars["ditau_jet_0_delta_rapidity"],&ditau_jet_0_delta_rapidity);//
+fcnc_plots->add(vars["ditau_rapidity"],&ditau_rapidity);//
+fcnc_plots->add(vars["ditau_met_centrality"],&ditau_met_centrality_);
+fcnc_plots->add(vars["ditau_higgspt"],&ditau_higgspt_);
+fcnc_plots->add(vars["ditau_deta"],&ditau_deta_);
+fcnc_plots->add(vars["ditau_dphi"],&ditau_dphi_);
+fcnc_plots->add(vars["ditau_dr"],&ditau_dr_);
+fcnc_plots->add(vars["tau_0_rnn_score"],&tau0RNN);
+fcnc_plots->add(vars["tau_1_rnn_score"],&tau1RNN);
+fcnc_plots->add(vars["ditau_coll_approx_m"],&ditau_coll_approx_m);
+
   for (int j = 0; j < fcnc_regions.size(); ++j)
   {
     for (int k = 0; k < 2; ++k)
@@ -115,25 +116,6 @@ void hadhadtree::init_hist(TString histfilename){
   }
 }
 
-
-void hadhadtree::constructwmatchmap(TTree *tmptree){
-  std::cout<<"i am in hadhadtree"<<std::endl;
-  ULong64_t eventnumber;
-  std::vector<int> *matched;
-  tmptree->SetBranchStatus("*",0);
-  tmptree->SetBranchStatus("eventNumber",1);
-  tmptree->SetBranchStatus("taus_matched_mother_pdgId",1);
-  tmptree->SetBranchAddress("eventNumber",&eventnumber);
-  tmptree->SetBranchAddress("taus_matched_mother_pdgId",&matched);
-  Long64_t nentries = tmptree->GetEntriesFast();
-  std::cout<<"entries: "<<nentries<<std::endl;
-  for (int i = 0; i < nentries; ++i)
-  {
-    tmptree->GetEntry(i);
-    //std::cout<<"capture exception"<<std::endl;
-    taumatchmap[eventnumber] = matched;
-  }
-}
 
 void hadhadtree::init_sample(TString sample, TString sampletitle){ // in reduce.cc, invoke definetree in hadhad_listfunc.C
 //==========================init output n-tuple==========================
@@ -209,44 +191,23 @@ vector<TLorentzVector> convertv(vector<TLorentzVector*> vv){
 
 float hadhadtree::calcRegionSF(TString region){
   float ret = 1;
-  /*if(!region.Contains("ttau")){
-    if((taus_id->at(0)>=2)){
-      ret *= tau_0_NOMINAL_TauEffSF_JetBDTmedium;
-      ret *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-    }else{
-      ret *= tau_0_NOMINAL_TauEffSF_JetBDTloose;
-      ret *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-    }
-    if((taus_id->at(1)>=2)){
-      ret *= tau_1_NOMINAL_TauEffSF_JetBDTmedium;
-      ret *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-    }else{
-      ret *= tau_1_NOMINAL_TauEffSF_JetBDTloose;
-      ret *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTLOOSE;
-    }
-  }else{
-    if(taus_id->at(0)==3){
-      ret *= tau_0_NOMINAL_TauEffSF_JetBDTtight;
-      ret *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-    }else{
-      ret *= tau_0_NOMINAL_TauEffSF_JetBDTmedium;
-      ret *= tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-    }
-    if(taus_id->at(1)==3){
-      ret *= tau_1_NOMINAL_TauEffSF_JetBDTtight;
-      ret *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTTIGHT;
-    }else{
-      ret *= tau_1_NOMINAL_TauEffSF_JetBDTmedium;
-      ret *= tau_1_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM;
-    }
-  }*/
-  ret *= tau_0_NOMINAL_TauEffSF_JetRNNmedium*tau_1_NOMINAL_TauEffSF_JetRNNmedium;
-  if(year!=2018){
+  
+   if(region.Contains("2ttau")){
+     ret *=tau_0_NOMINAL_TauEffSF_JetRNNtight*tau_1_NOMINAL_TauEffSF_JetRNNtight;
+   }
+   if(region.Contains("2mtau")){
+     ret *=tau_0_NOMINAL_TauEffSF_JetRNNmedium*tau_1_NOMINAL_TauEffSF_JetRNNmedium;
+   }
+   if(region.Contains("1l1mtau")){
+     ret *=tau_0_NOMINAL_TauEffSF_JetRNNmedium*tau_1_NOMINAL_TauEffSF_JetRNNloose;
+   }
+
+   if(year!=2018){
       ret  *=tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM * tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM;
-  }else{
+   }else{
       ret  *=tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM * tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM;
-  }
-  return ret;
+   }
+   return ret;
 }
 
 bool hadhadtree::passRegionCut(){
@@ -275,6 +236,21 @@ void hadhadtree::prepare(){
     ditau_coll_approx_x0=ditau_coll_approx_x0_;
     ditau_coll_approx_x1=ditau_coll_approx_x1_;
     met_sumet=met_sumet_;
+    njetNumber=ljets_p4->size()+bjets_p4->size();
+    leadingJetPt=jet_0_p4->Pt();
+    subleadingJetPt=jet_1_p4->Pt();
+    ditau_dr_=ditau_dr;
+    ditau_dphi_=ditau_dphi;
+    ditau_deta_=ditau_deta;
+    ditau_higgspt_=ditau_higgspt;
+    ditau_met_centrality_=ditau_met_centrality;
+    ditau_rapidity=ditau_p4->Rapidity();
+    ditau_jet_2_delta_rapidity=fabs(ditau_p4->Rapidity() - jet_2_p4->Rapidity());
+    ditau_jet_1_delta_rapidity=fabs(ditau_p4->Rapidity() - jet_1_p4->Rapidity());
+    ditau_jet_0_delta_rapidity=fabs(ditau_p4->Rapidity() - jet_0_p4->Rapidity());
+    ditau_jet_2_deta=fabs(ditau_p4->Eta() - jet_2_p4->Eta());
+    ditau_jet_1_deta=fabs(ditau_p4->Eta() - jet_1_p4->Eta());
+    ditau_jet_0_deta=fabs(ditau_p4->Eta() - jet_0_p4->Eta());
     if(isData){
       if(0 < run_number && run_number <= 284484){year=2015;}
       else if(284484 < run_number && run_number <= 311563){year=2016;}
@@ -301,9 +277,6 @@ bool hadhadtree::passBasicCut(){
   bool loose_atleast=tau_0_jet_rnn_loose&&tau_1_jet_rnn_loose;
   if(!loose_atleast) return false;
   cut_flow.fill("at least loose");
- 
-  if(drtautau > 2.5) return false;
-  cut_flow.fill("$\\Delta R(\\tau,\\tau)$<2.5");
 
   if(!tau_0_trig_trigger_matched || !tau_1_trig_trigger_matched) return false;
   cut_flow.fill("trigger matching");

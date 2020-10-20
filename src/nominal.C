@@ -18,11 +18,11 @@ void nominal::initMVA(TString fcnc_region){
   reader[fcnc_region]->AddVariable("ttvismass",&ttvismass);
   reader[fcnc_region]->AddVariable("drtaujmin",&drtaujmin);
   //reader[fcnc_region]->AddVariable("mttjmin",&mttjmin);
-  if(!fcnc_region.Contains("2mtau")&& !fcnc_region.Contains("2ltau")) {
+  if(!fcnc_region.Contains("2mtau")&& !fcnc_region.Contains("2ltau")&&!fcnc_region.Contains("2ttau")&&!fcnc_region.Contains("1l1mtau")) {
     reader[fcnc_region]->AddVariable("drlb",&drlb);
     if(fcnc_region.Contains("2lSS")) reader[fcnc_region]->AddVariable("lep_pt_0",&lep_pt_0);
   }
-  if(fcnc_region.Contains("2j") || fcnc_region.Contains("3j")){
+  if(fcnc_region.Contains("1j")||fcnc_region.Contains("2j") || fcnc_region.Contains("3j")||fcnc_region.Contains("4j")||fcnc_region.Contains("5j")){
     reader[fcnc_region]->AddVariable("dphitauetmiss",&dphitauetmiss);
     reader[fcnc_region]->AddVariable("phicent",&phicent);
     reader[fcnc_region]->AddVariable("tautaumass",&tautaumass);
@@ -232,6 +232,7 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("ttvismass", & ttvismass);
   tree->SetBranchAddress("tautauvispt", & tautauvispt);
   tree->SetBranchAddress("drlbditau", & drlbditau);
+  tree->SetBranchAddress("taus_p4", &taus_p4);
   tree->SetBranchAddress("tau_pt_ss", & tau_pt_ss);
   tree->SetBranchAddress("tau_pt_os", & tau_pt_os);
   tree->SetBranchAddress("tau_pt_0", & tau_pt_0);
@@ -275,6 +276,21 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("tau1E", &tau1E);
   tree->SetBranchAddress("neu0E", &neu0E);
   tree->SetBranchAddress("neu1E", &neu1E);
+  tree->SetBranchAddress("njetNumber",&njetNumber);
+  tree->SetBranchAddress("leadingJetPt",&leadingJetPt);
+  tree->SetBranchAddress("subleadingJetPt",&subleadingJetPt);
+  tree->SetBranchAddress("ditau_dr_",&ditau_dr_);
+tree->SetBranchAddress("ditau_dphi_",&ditau_dphi_);
+tree->SetBranchAddress("ditau_deta_",&ditau_deta_);
+tree->SetBranchAddress("ditau_higgspt_",&ditau_higgspt_);
+tree->SetBranchAddress("ditau_met_centrality_",&ditau_met_centrality_);
+tree->SetBranchAddress("ditau_rapidity",&ditau_rapidity);
+tree->SetBranchAddress("ditau_jet_2_delta_rapidity",&ditau_jet_2_delta_rapidity);
+tree->SetBranchAddress("ditau_jet_1_delta_rapidity",&ditau_jet_1_delta_rapidity);
+tree->SetBranchAddress("ditau_jet_0_delta_rapidity",&ditau_jet_0_delta_rapidity);
+tree->SetBranchAddress("ditau_jet_2_deta",&ditau_jet_2_deta);
+tree->SetBranchAddress("ditau_jet_1_deta",&ditau_jet_1_deta);
+tree->SetBranchAddress("ditau_jet_0_deta",&ditau_jet_0_deta);
 }
 
 void nominal::BDTBranch(TTree *tree){
@@ -299,6 +315,7 @@ void nominal::BDTBranch(TTree *tree){
   tree->Branch("ttvismass", & ttvismass);
   tree->Branch("tautauvispt", & tautauvispt);
   tree->Branch("drlbditau", & drlbditau);
+  tree->Branch("taus_p4", &taus_p4);
   tree->Branch("tau_pt_ss", & tau_pt_ss);
   tree->Branch("tau_pt_os", & tau_pt_os);
   tree->Branch("tau_pt_0", & tau_pt_0);
@@ -340,6 +357,22 @@ void nominal::BDTBranch(TTree *tree){
   tree->Branch("tau1E", &tau1E);
   tree->Branch("neu0E", &neu0E);
   tree->Branch("neu1E", &neu1E);
+  tree->Branch("njetNumber",&njetNumber);
+  tree->Branch("leadingJetPt",&leadingJetPt);
+  tree->Branch("subleadingJetPt",&subleadingJetPt);
+  tree->Branch("ditau_dr_",&ditau_dr_);
+tree->Branch("ditau_dphi_",&ditau_dphi_);
+tree->Branch("ditau_deta_",&ditau_deta_);
+tree->Branch("ditau_higgspt_",&ditau_higgspt_);
+tree->Branch("ditau_met_centrality_",&ditau_met_centrality_);
+tree->Branch("ditau_rapidity",&ditau_rapidity);
+tree->Branch("ditau_jet_2_delta_rapidity",&ditau_jet_2_delta_rapidity);
+tree->Branch("ditau_jet_1_delta_rapidity",&ditau_jet_1_delta_rapidity);
+tree->Branch("ditau_jet_0_delta_rapidity",&ditau_jet_0_delta_rapidity);
+tree->Branch("ditau_jet_2_deta",&ditau_jet_2_deta);
+tree->Branch("ditau_jet_1_deta",&ditau_jet_1_deta);
+tree->Branch("ditau_jet_0_deta",&ditau_jet_0_deta);
+
 }
 
 
@@ -376,6 +409,21 @@ void nominal::setVecBranch(TTree *tree){
   tree->SetBranchAddress("met_sumet", &met_sumet);
   tree->SetBranchAddress("tau0RNN",&tau0RNN);
   tree->SetBranchAddress("tau1RNN",&tau1RNN);
+  tree->SetBranchAddress("njetNumber",&njetNumber);
+  tree->SetBranchAddress("leadingJetPt",&leadingJetPt);
+  tree->SetBranchAddress("subleadingJetPt",&subleadingJetPt);
+  tree->SetBranchAddress("ditau_dr_",&ditau_dr_);
+tree->SetBranchAddress("ditau_dphi_",&ditau_dphi_);
+tree->SetBranchAddress("ditau_deta_",&ditau_deta_);
+tree->SetBranchAddress("ditau_higgspt_",&ditau_higgspt_);
+tree->SetBranchAddress("ditau_met_centrality_",&ditau_met_centrality_);
+tree->SetBranchAddress("ditau_rapidity",&ditau_rapidity);
+tree->SetBranchAddress("ditau_jet_2_delta_rapidity",&ditau_jet_2_delta_rapidity);
+tree->SetBranchAddress("ditau_jet_1_delta_rapidity",&ditau_jet_1_delta_rapidity);
+tree->SetBranchAddress("ditau_jet_0_delta_rapidity",&ditau_jet_0_delta_rapidity);
+tree->SetBranchAddress("ditau_jet_2_deta",&ditau_jet_2_deta);
+tree->SetBranchAddress("ditau_jet_1_deta",&ditau_jet_1_deta);
+tree->SetBranchAddress("ditau_jet_0_deta",&ditau_jet_0_deta);
 }
 
 void nominal::vecBranch(TTree *tree){
@@ -411,6 +459,21 @@ void nominal::vecBranch(TTree *tree){
   tree->Branch("met_sumet", &met_sumet);
   tree->Branch("tau0RNN",&tau0RNN);
   tree->Branch("tau1RNN",&tau1RNN);
+  tree->Branch("njetNumber",&njetNumber);
+  tree->Branch("leadingJetPt",&leadingJetPt);
+  tree->Branch("subleadingJetPt",&subleadingJetPt);
+  tree->Branch("ditau_dr_",&ditau_dr_);
+tree->Branch("ditau_dphi_",&ditau_dphi_);
+tree->Branch("ditau_deta_",&ditau_deta_);
+tree->Branch("ditau_higgspt_",&ditau_higgspt_);
+tree->Branch("ditau_met_centrality_",&ditau_met_centrality_);
+tree->Branch("ditau_rapidity",&ditau_rapidity);
+tree->Branch("ditau_jet_2_delta_rapidity",&ditau_jet_2_delta_rapidity);
+tree->Branch("ditau_jet_1_delta_rapidity",&ditau_jet_1_delta_rapidity);
+tree->Branch("ditau_jet_0_delta_rapidity",&ditau_jet_0_delta_rapidity);
+tree->Branch("ditau_jet_2_deta",&ditau_jet_2_deta);
+tree->Branch("ditau_jet_1_deta",&ditau_jet_1_deta);
+tree->Branch("ditau_jet_0_deta",&ditau_jet_0_deta);
 }
 
 void nominal::initFit(){
@@ -728,7 +791,9 @@ void nominal::calcfakesf(std::vector<int> origin){ //origin=-1,0,1,2,3 for real/
 observable nominal::FindNewFakeSF(TString NP){ //origin=-1,0,1,2,3,4 for real/lep,b,c,g,j,wjet
   observable result = 1;
   if(belong_regions.have("tau")) result *= FindNewFakeSF(NP, 0);
+ // std::cout<<"hehe:0 complete "<<std::endl;
   if(belong_regions.have("2tau") || belong_regions.have("2mtau")) result *= FindNewFakeSF(NP, 1);
+ // std::cout<<"hehe:1 complete "<<std::endl;
   return result;
 }
 
@@ -739,6 +804,8 @@ observable nominal::FindNewFakeSF(TString NP, int itau, TString &name){ //origin
     exit(0);
   }
   TString origin;
+  //std::cout<<"in func:taus_matched_mother_pdgId->at(itau): "<<abs(taus_matched_mother_pdgId->at(itau))<<std::endl;
+  //std::cout<<"in func:taus_matched_pdgId->at(itau): "<<abs(taus_matched_pdgId->at(itau))<<std::endl;
   if(abs(taus_matched_pdgId->at(itau)) == 5) origin = "bjet-fake";
   else if(abs(taus_matched_pdgId->at(itau)) < 6) {
     if(abs(taus_matched_mother_pdgId->at(itau)) == 24) origin = "wjet-fake";
@@ -746,7 +813,6 @@ observable nominal::FindNewFakeSF(TString NP, int itau, TString &name){ //origin
   }else{
     return 1;
   }
-
   int slice = 0;
   for (int islice = 1; islice < fakePtSlices.size(); ++islice)
   {
@@ -760,7 +826,7 @@ observable nominal::FindNewFakeSF(TString NP, int itau, TString &name){ //origin
   string ss = "fakeSFNP_ptbin" + to_string(slice) + "_" + origin.Data();
   name = ss.c_str();
   if(!newFakeSF[NP].size()) printf("nominal::FindNewFakeSF : NP %s not found\n", NP.Data());
-  if(debug) printf("%s = %f +/- %f\n", name.Data(), result.nominal, result.error);
+  if(debug||true) printf("%s = %f +/- %f\n", name.Data(), result.nominal, result.error);
   return result;
 }
 
@@ -1146,7 +1212,6 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         tau_pt_0 = taus_p4->at(0)->Pt();
         if(leps_p4->size()>=2) lep_pt_1 = leps_p4->at(1)->Pt();
       }
-        
     }else{
       weight = weights->at(0);
       if(debug)std::cout<<"weight_size: "<<weights->size()<<"  weight[0]: "<<weights->at(0)<<std::endl;
@@ -1209,7 +1274,9 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         if(wlep) t1vismass = (*wlep + *bjets_p4->at(0)).M();
         ttvismass = (*taus_p4->at(0) + *tau2).M();
         drtautau = taus_p4->at(0)->DeltaR(*tau2);
-        if(belong_regions.have("2mtau")){
+        if(belong_regions.have("2ltau")||belong_regions.have("2mtau")||belong_regions.have("1l1mtau")||belong_regions.have("2ttau")){
+          if(ditau_coll_approx_x0<=0.1||ditau_coll_approx_x0>=1.4) continue;
+          if(ditau_coll_approx_x1<=0.1||ditau_coll_approx_x1>=1.4) continue; 
           if(ttvismass < 50*GeV) continue;
           cut_flow.fill("$m_{\\tau\\tau,vis}>50$");
           if(ttvismass > 130*GeV) continue;
@@ -1399,7 +1466,6 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         if(leps_p4->size() >= 2) mll = (*leps_p4->at(0)+*leps_p4->at(1)).M();
       }
     }
-printf("mother size:%i\n",taus_matched_mother_pdgId->size());
     if(reduce == 3){
       BDTG_test  = 0;
       BDTG_train  = 0;
@@ -1409,12 +1475,12 @@ printf("mother size:%i\n",taus_matched_mother_pdgId->size());
       cut_flow.fill("Loose btag FCNC jet");
       if(doBDT){
         if(debug) printf("eval BDTG\n");
-        if(belong_regions.have("2mtau")||belong_regions.have("2ltau")){
-          if(belong_regions.have("3j")) {
+        if(belong_regions.have("2mtau")||belong_regions.have("2ltau")||belong_regions.have("2ttau")||belong_regions.have("1l1mtau")){
+          if(belong_regions.have("3j")||belong_regions.have("4j")||belong_regions.have("5j")) {
             BDTG_test = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2) );
             BDTG_train = reader["reg2mtau1b3jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)) );
           }
-          if(belong_regions.have("2j")) {
+          if(belong_regions.have("2j")||belong_regions.have("1j")) {
             BDTG_test = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2) );
             BDTG_train = reader["reg2mtau1b2jos"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)) );
           }
@@ -1448,7 +1514,6 @@ printf("mother size:%i\n",taus_matched_mother_pdgId->size());
     }
   
     if(debug) printf("nominal::Loop : Finding origins\n");
-  
     if (dohist && mcChannelNumber && weightsysmap.find(mcChannelNumber) == weightsysmap.end()) {
       readweightsysmap(mcChannelNumber,(!(belong_regions.have("2l")||belong_regions.have("1l")) || belong_regions.have("ltau"))? "xTFW" : "tthML");
       if(weightsysmap.find(mcChannelNumber) == weightsysmap.end()) {
@@ -1514,7 +1579,7 @@ printf("mother size:%i\n",taus_matched_mother_pdgId->size());
           for (int i = 0; i < taus_matched_pdgId->size(); ++i){ 
             int tauabspdg = abs(taus_matched_pdgId->at(i));
             if(tauabspdg != 15 || taus_matched_pdgId->at(i) * taus_q->at(i) > 0) {
-              nfaketau++; 
+              nfaketau++;
               if (tauabspdg == 13 || tauabspdg == 11) tauorigin = sample + "_lep";
               else if (tauabspdg == 5) tauorigin = sample + "_b";
               else if (tauabspdg == 4) tauorigin = sample + "_c";
@@ -1534,12 +1599,12 @@ printf("mother size:%i\n",taus_matched_mother_pdgId->size());
           region += abs(leps_id->at(1)) == 11?"e":"mu";
       	}
         if(mcChannelNumber!=0){
-          auto weightvec = weightsysmap.at(mcChannelNumber);
-          for (int iNP = 0; iNP < plotNPs.size(); ++iNP){
+          auto weightvec = weightsysmap.at(mcChannelNumber);// get the whole weight_vector saved in this dsid events
+          for (int iNP = 0; iNP < plotNPs.size(); ++iNP){   // loop over NPs I want to plot
             auto theNP = plotNPs.at(iNP);
             if(debug) printf("fill NP %s\n", theNP.Data());
-            weight = weights->at(0);
-            if(applyNewFakeSF){
+            weight = weights->at(0); // get NOMINAL weight
+            if(applyNewFakeSF){// NOMINAL * weight *fakeSF ,this part deal with "fakeSF"
               if(theNP.Contains("fakeSF")){
                 TString SFname;
                 if(debug) printf("weight = %f\nPlotNP = %s\n",weight,theNP.Data());
@@ -1547,23 +1612,25 @@ printf("mother size:%i\n",taus_matched_mother_pdgId->size());
                 if(leps_id->size()) thefakeSF= FindNewFakeSF("NOMINAL", 0,SFname);
                 else thefakeSF= FindNewFakeSF("NOMINAL", 0,SFname);
                 weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);
+                
+  //              std::cout<<"tau size: "<<taus_p4->size()<<std::endl;
                 if(taus_p4->size() >= 2) {
                   if(leps_id->size()) thefakeSF= FindNewFakeSF("NOMINAL", 1,SFname);
                   else thefakeSF = FindNewFakeSF("NOMINAL", 1, SFname);
                   weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);
                 }
                 if(debug) printf("weight = %f after apply fakeSF\n",weight);
-              }else{
+              }else{// theNP not contain "fakeSF"
                 if(doubleCounting){
                   weight *= FindNewFakeSF("NOMINAL").nominal;
-                }else if(nominaltree) 
-                  weight *= FindNewFakeSF(theNP).nominal;
-                else if(theNP == "NOMINAL"){
+                }else if(nominaltree) // nominal tree
+                  {weight *= FindNewFakeSF(theNP).nominal;}
+                else if(theNP == "NOMINAL"){//tree sys have only NOMIINAL
                   weight *= FindNewFakeSF(SystematicsName).nominal;
                 }
               }
-            }
-            if(!theNP.Contains("Xsec") && !theNP.Contains("fakeSF") && nominaltree) {
+            }// end of applyNewFakeSF
+            if(!theNP.Contains("Xsec") && !theNP.Contains("fakeSF") && nominaltree) {//this part deal with "weight"
               std::vector<TString>::iterator it = std::find(weightvec.begin(), weightvec.end(), theNP);
               int index = 2;
               if(it != weightvec.end()) index = std::distance(weightvec.begin(), it);
@@ -1572,7 +1639,7 @@ printf("mother size:%i\n",taus_matched_mother_pdgId->size());
               //else if(index > 8 && index < 17)
               //  weight = weights->at(2) * weights->at(index);
               else if(index !=0)
-                weight *= weights->at(index);
+                weight *= weights->at(index);//weight
             }
             if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), theNP);
             else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0)) && region.Contains("2l")) (fcnc?fcnc_plots:fake_plots)->fill_hist(leporigin,region,theNP);
@@ -1619,26 +1686,43 @@ printf("mother size:%i\n",taus_matched_mother_pdgId->size());
 
 void nominal::defineRegions(){
   if(!leps_p4 || leps_p4->size()==0){
-    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau1b2jss");
-    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau1b3jss");
-    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau1b2jos");
-    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau1b3jos");
-    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau2b2jss");
-    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau2b3jss");
-    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b2jos");
-    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b3jos");
-    //if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 0 && ljets_p4->size() >= 4 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau0b4jos");
-    //if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 0 && ljets_p4->size() == 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau0b3jos");
-    //if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 0 && ljets_p4->size() >= 4 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau0b4jss");
-    //if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 0 && ljets_p4->size() == 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau0b3jss");
-    //if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && (bjets_p4->size()+ljets_p4->size()) >= 4 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau4jos");
-    //if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && (bjets_p4->size()+ljets_p4->size()) == 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau3jos");
-    //if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && (bjets_p4->size()+ljets_p4->size()) >= 4 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg2mtau4jss");
-    //if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && (bjets_p4->size()+ljets_p4->size()) == 3 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg2mtau3jss");
-    if((taus_id->at(0)>=1) && (taus_id->at(1)>=1) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ltau1b2jss");
-    if((taus_id->at(0)>=1) && (taus_id->at(1)>=1) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ltau1b3jss");
-    if((taus_id->at(0)>=1) && (taus_id->at(1)>=1) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ltau1b2jos");
-    if((taus_id->at(0)>=1) && (taus_id->at(1)>=1) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ltau1b3jos");
+    if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1)  belong_regions.add("reg2mtau1b2jss");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1)  belong_regions.add("reg2mtau1b3jss");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau1b2jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau1b3jos");
+if((taus_id->at(0)==3) && (taus_id->at(1)==3) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1)  belong_regions.add("reg2ttau1b2jss");
+if((taus_id->at(0)==3) && (taus_id->at(1)==3) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1)  belong_regions.add("reg2ttau1b3jss");        
+if((taus_id->at(0)==3) && (taus_id->at(1)==3) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ttau1b2jos"); 
+if((taus_id->at(0)==3) && (taus_id->at(1)==3) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ttau1b3jos");
+
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 1 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b1jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 1 && taus_q->at(0)*taus_q->at(1) == 1)  belong_regions.add("reg2mtau2b1jss");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b2jos");    
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1)  belong_regions.add("reg2mtau2b2jss");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b3jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1)  belong_regions.add("reg2mtau2b3jss");
+
+
+if((taus_id->at(0)>=2) && (taus_id->at(1)==1) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1l1mtau1b2jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)==1) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg1l1mtau1b2jss");
+if((taus_id->at(0)>=2) && (taus_id->at(1)==1) && bjets_p4->size() == 1 && ljets_p4->size() >= 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1l1mtau1b3jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)==1) && bjets_p4->size() == 1 && ljets_p4->size() >= 2 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg1l1mtau1b3jss");
+
+if((taus_id->at(0)>=2) && (taus_id->at(1)==1) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1l1mtau2b2jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)==1) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg1l1mtau2b2jss");
+if((taus_id->at(0)>=2) && (taus_id->at(1)==1) && bjets_p4->size() == 2 && ljets_p4->size() >= 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1l1mtau2b3jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)==1) && bjets_p4->size() == 2 && ljets_p4->size() >= 2 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg1l1mtau2b3jss"); 
+
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) == -1)  belong_regions.add("reg2mtau1b5jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) ==  1)  belong_regions.add("reg2mtau1b5jss");
+
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >=2 && taus_q->at(0)*taus_q->at(1) == -1)  belong_regions.add("reg2mtau2b4jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >=2 && taus_q->at(0)*taus_q->at(1) ==  1)  belong_regions.add("reg2mtau2b4jss");
+
+//   if((taus_id->at(0)!=2) && (taus_id->at(1)!=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ltau1b2jss");
+ //   if((taus_id->at(0)!=2) && (taus_id->at(1)!=2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ltau1b3jss");
+ //   if((taus_id->at(0)!=2) && (taus_id->at(1)!=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ltau1b2jos");
+ //   if((taus_id->at(0)!=2) && (taus_id->at(1)!=2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ltau1b3jos");
     /* if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau1b2jss");
     if((taus_id->at(0)>=2) + (taus_id->at(1)>=2) == 1 &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1mtau1ltau1b2jss");
     if(!(taus_id->at(0)>=2) && !(taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ltau1b2jss");

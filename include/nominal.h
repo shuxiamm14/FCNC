@@ -313,6 +313,20 @@ public :
   float      ditau_coll_approx_x0;
   float      ditau_coll_approx_x1;
   float      met_sumet;
-
+  int        njetNumber;
+  float      leadingJetPt;
+  float      subleadingJetPt;
+Float_t  ditau_dr_;
+Float_t  ditau_dphi_;
+Float_t  ditau_deta_;
+Double_t ditau_higgspt_;
+Float_t  ditau_met_centrality_;
+Float_t  ditau_rapidity;
+Float_t  ditau_jet_2_delta_rapidity;
+Float_t  ditau_jet_1_delta_rapidity;
+Float_t  ditau_jet_0_delta_rapidity;
+Float_t  ditau_jet_2_deta;
+Float_t  ditau_jet_1_deta;
+Float_t  ditau_jet_0_deta;
 };
 #endif

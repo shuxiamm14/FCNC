@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
 	bool onlyMajorNP = 0; // set to 0 for current xTFW analysis.
 	bool applynewSF = 0; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
 	int version = 8;
-	bool nominalOnly = 0;
+	bool nominalOnly = 1;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	TString framework = argv[1];
@@ -58,51 +58,33 @@ int main(int argc, char const *argv[])
 	}
 	vector<TString> regions, regions_fake, regions_notau;
 	if(framework == "xTFW"){
-	        /*regions.push_back("reg2mtau1b2jss");
+		regions.push_back("reg2mtau1b2jss");
 		regions.push_back("reg2mtau1b3jss");
-		regions.push_back("reg2mtau1b3jos");
 		regions.push_back("reg2mtau1b2jos");
-		regions.push_back("reg2mtau2b2jss");
-		regions.push_back("reg2mtau2b3jss");
-		regions.push_back("reg2mtau2b3jos");
-		regions.push_back("reg2mtau2b2jos");
-		regions.push_back("reg1mtau1ltau1b2jss");
-		regions.push_back("reg2ltau1b2jss");
-		regions.push_back("reg2ttau1b2jss");
-		regions.push_back("reg1ttau1mtau1b2jss");
-		regions.push_back("reg1mtau1ltau1b3jss");
-		regions.push_back("reg2ltau1b3jss");
-		regions.push_back("reg2ttau1b3jss");
-		regions.push_back("reg1ttau1mtau1b3jss");
-		regions.push_back("reg1mtau1ltau1b2jos");
-		regions.push_back("reg2ltau1b2jos");
-		regions.push_back("reg1mtau1ltau1b3jos");
-		regions.push_back("reg2ltau1b3jos");
-		regions.push_back("reg2ttau1b2jos");
-		regions.push_back("reg1ttau1mtau1b2jos");
-		regions.push_back("reg2ttau1b3jos");
-		regions.push_back("reg1ttau1mtau1b3jos");*/
-                regions.push_back("reg2mtau1b2jss");
-                regions.push_back("reg2mtau1b3jss");
-                regions.push_back("reg2mtau1b2jos");
 		regions.push_back("reg2mtau1b3jos");
-		regions.push_back("reg2mtau2b2jss");
-		regions.push_back("reg2mtau2b3jss");
+		regions.push_back("reg2ttau1b2jss");
+		regions.push_back("reg2ttau1b3jss");
+		regions.push_back("reg2ttau1b2jos");
+		regions.push_back("reg2ttau1b3jos");
+		regions.push_back("reg2mtau2b1jos");
+		regions.push_back("reg2mtau2b1jss");
 		regions.push_back("reg2mtau2b2jos");
+		regions.push_back("reg2mtau2b2jss");
 		regions.push_back("reg2mtau2b3jos");
-		//regions.push_back("reg2mtau0b4jos");
-		//regions.push_back("reg2mtau0b3jos");
-		//regions.push_back("reg2mtau0b4jss");
-		//regions.push_back("reg2mtau0b3jss");
-		//regions.push_back("reg2mtau4jos");
-		//regions.push_back("reg2mtau3jos");
-		//regions.push_back("reg2mtau4jss");
-		//regions.push_back("reg2mtau3jss");
-		regions.push_back("reg2ltau1b2jss");
-		regions.push_back("reg2ltau1b3jss");
-		regions.push_back("reg2ltau1b2jos");
-		regions.push_back("reg2ltau1b3jos");
-	}else{
+		regions.push_back("reg2mtau2b3jss");
+		regions.push_back("reg1l1mtau1b2jos");
+		regions.push_back("reg1l1mtau1b2jss");
+		regions.push_back("reg1l1mtau1b3jos");
+		regions.push_back("reg1l1mtau1b3jss");
+		regions.push_back("reg1l1mtau2b2jos");
+		regions.push_back("reg1l1mtau2b2jss");
+		regions.push_back("reg1l1mtau2b3jos");
+		regions.push_back("reg1l1mtau2b3jss");
+                regions.push_back("reg2mtau1b5jos");
+                regions.push_back("reg2mtau1b5jss");
+                regions.push_back("reg2mtau2b4jos");
+                regions.push_back("reg2mtau2b4jss");
+                }else{
 		if(tthdofcnc || reduce == 1){
 			regions.push_back("reg1l1tau1b2j_os");
 			regions.push_back("reg1l1tau1b3j_os");
@@ -209,7 +191,7 @@ int main(int argc, char const *argv[])
 							//for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
 							for(auto v: commonNPlist) analysis->plotNPs.push_back(v);
                                                         if(applynewSF) for(auto v: xsecNPlist) analysis->plotNPs.push_back(v);
-							for(auto v: fakeNPlist) if(v.Contains("fakeSFNP")) analysis->plotNPs.push_back(v);
+						//	for(auto v: fakeNPlist) if(v.Contains("fakeSFNP")) analysis->plotNPs.push_back(v);
 						}
 					}
 				}

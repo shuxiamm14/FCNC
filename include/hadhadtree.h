@@ -32,7 +32,7 @@ public :
    float calcRegionSF(TString region);
    int tauabspdg = 0;
    void  prepare();
-   void constructwmatchmap(TTree *tmptree);
+   void constructwmatchmap(TTree *tmptree){};
   bool MassCollinearCore(const TLorentzVector &k1, const TLorentzVector &k2,  // particles
                                const double metetx, const double metety,            // met
                                double &mass, double &xp1, double &xp2);
