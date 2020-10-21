@@ -1286,9 +1286,11 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         }
   
         ljet_indice = findcjet();
-        if(debug)std::cout<<"ljet_indice->size: "<<ljet_indice->size()<<std::endl;
-        if(debug)std::cout<<"ljets_bscore: "<<ljets_bscore->size()<<std::endl;
-        if(debug)std::cout<<"ljet_indice->at(0): "<<ljet_indice->at(0)<<std::endl;
+        if(debug){
+          std::cout<<"ljet_indice->size: "<<ljet_indice->size()<<std::endl;
+          std::cout<<"ljets_bscore: "<<ljets_bscore->size()<<std::endl;
+          std::cout<<"ljet_indice->at(0): "<<ljet_indice->at(0)<<std::endl;
+        }
         if(ljet_indice->size()) fcncjetbscore = ljets_bscore->at(ljet_indice->at(0));
         else fcncjetbscore = 0;
         TLorentzVector *tau2 = 0;
@@ -1821,9 +1823,13 @@ void nominal::defineRegions(){
     if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b2jos");
     if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b3jos");*/
   }else if(leps_p4->size()==1){
+    if(ljets_p4->size() == 0 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b_os");
+    if(ljets_p4->size() == 1 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b1j_os");
     if(ljets_p4->size() == 2 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b2j_os");
     if(ljets_p4->size() >= 3 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b3j_os");
     if(bjets_p4->size() == 1 && taus_p4->size() >= 2 && taus_q->at(0)*taus_q->at(1) < 0) belong_regions.add("reg1l2tau1bnj_os");
+    if(ljets_p4->size() == 0 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau1b_ss");
+    if(ljets_p4->size() == 1 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau1b1j_ss");
     if(ljets_p4->size() == 2 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau1b2j_ss");
     if(ljets_p4->size() >= 3 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau1b3j_ss");
     if(ljets_p4->size() == 2 && bjets_p4->size() == 2 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau2b2j_os");

@@ -13,10 +13,8 @@ tthmltree::tthmltree():nominal::nominal(){
   dofit1l2tau = 0;
   initialize_fit(TString(PACKAGE_DIR) + "/data/tau_pars.root");
 
-  belong_regions.m_region_map["SR"] = {"reg1l1tau1b2j_os","reg1l1tau1b3j_os","reg1l2tau1bnj_os","reg2lSS1tau1bnj_os","reg2l1tau1bnj"};
+  belong_regions.m_region_map["SR"] = {"reg1l1tau1b_os","reg1l1tau1b_ss","reg1l1tau1b1j_os","reg1l1tau1b1j_ss","reg1l1tau1b3j_ss","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_os","reg1l2tau1bnj_os","reg2lSS1tau1bnj_os","reg2l1tau1bnj"};
   belong_regions.m_region_map["SRCR"] = {
-    "reg1l1tau1b2j_ss",
-    "reg1l1tau1b3j_ss",
     "reg1l1tau2b2j_os",
     "reg1l1tau2b3j_os",
     "reg1l1tau2b2j_ss",

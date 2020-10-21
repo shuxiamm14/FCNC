@@ -109,12 +109,16 @@ int main(int argc, char const *argv[])
 		regions.push_back("reg2ltau1b3jos");
 	}else{
 		if(tthdofcnc || reduce == 1){
+			regions.push_back("reg1l1tau1b_os");
+			regions.push_back("reg1l1tau1b1j_os");
 			regions.push_back("reg1l1tau1b2j_os");
 			regions.push_back("reg1l1tau1b3j_os");
 			regions.push_back("reg1l1tau2b2j_os");
 			regions.push_back("reg1l1tau2b3j_os");
 			regions.push_back("reg1l1tau2b2j_ss");
 			regions.push_back("reg1l1tau2b3j_ss");
+			regions.push_back("reg1l1tau1b_ss");
+			regions.push_back("reg1l1tau1b1j_ss");
 			regions.push_back("reg1l1tau1b2j_ss");
 			regions.push_back("reg1l1tau1b3j_ss");
 			regions.push_back("reg1l2tau1bnj_os");

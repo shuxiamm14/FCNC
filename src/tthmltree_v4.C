@@ -131,10 +131,10 @@ void tthmltree_v4::defineObjects(){
 
 void tthmltree_v4::calcGeneralWeight(){
   generalweight = mcChannelNumber > 0 ? mc_norm*weight_mc*weight_pileup*bTagSF_weight_DL1r_70*jvtSF_customOR: 1.0;
-  if( mcChannelNumber > 0) generalweight*=lep_SF_CombinedTight_0*lep_SF_CombinedTight_1; // trigger SF is missing ...
+  if( mcChannelNumber > 0) generalweight*=lep_SF_CombinedTight_0*lep_SF_CombinedTight_1*custTrigSF_TightElMediumMuID_FCLooseIso_SLTorDLT;
   if(taus_p4->size() &&  mcChannelNumber > 0) generalweight*=tauSFRNNMedium_TAU_SF_NOMINAL;
   if(generalweight == 0 || debug) {
-    printf("weights:\nmc_norm=%f\nweight_mc=%f\nweight_pileup=%f\nbtag=%f\nJVT_EventWeight=%f\nlepSF=%f,leptrigSF=%f\n", mc_norm,weight_mc,weight_pileup,bTagSF_weight_DL1r_70,jvtSF_customOR,1.,lep_SF_CombinedTight_0*lep_SF_CombinedTight_1);
+    printf("weights:\nmc_norm=%f\nweight_mc=%f\nweight_pileup=%f\nbtag=%f\nJVT_EventWeight=%f\nlepSF=%f,%f\nleptrigSF=%f\n", mc_norm,weight_mc,weight_pileup,bTagSF_weight_DL1r_70,jvtSF_customOR,lep_SF_CombinedTight_0,lep_SF_CombinedTight_1,custTrigSF_TightElMediumMuID_FCLooseIso_SLTorDLT);
   }
 }
 
