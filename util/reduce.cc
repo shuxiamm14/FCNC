@@ -106,8 +106,10 @@ int main(int argc, char const *argv[])
 		if(tthdofcnc || reduce == 1){
 			regions.push_back("reg1l1tau1b2j_os");
 			regions.push_back("reg1l1tau1b3j_os");
+			regions.push_back("reg1l1tau2b1j_os");
 			regions.push_back("reg1l1tau2b2j_os");
 			regions.push_back("reg1l1tau2b3j_os");
+			regions.push_back("reg1l1tau2b1j_ss");
 			regions.push_back("reg1l1tau2b2j_ss");
 			regions.push_back("reg1l1tau2b3j_ss");
 			regions.push_back("reg1l1tau1b2j_ss");
