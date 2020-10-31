@@ -144,17 +144,17 @@ int main(int argc, char const *argv[])
 			//regions.push_back("reg2lSS1tau2bnj_ss_antiiso");
 		}
 		if(dofake || reduce == 1){
-			regions_fake.push_back("reg2lSS1taunj_os");
-			regions_fake.push_back("reg2lSS1taunj_os_antiiso");
-			regions_fake.push_back("reg2lSS1taunj_os_antiisolead");
+			//regions_fake.push_back("reg2lSS1taunj_os");
+			//regions_fake.push_back("reg2lSS1taunj_os_antiiso");
+			//regions_fake.push_back("reg2lSS1taunj_os_antiisolead");
 //			regions_fake.push_back("reg2l1tau2b");
 //			regions_fake.push_back("reg1l1tau2b1j_os");
 //			regions_fake.push_back("reg1l1tau2b1j_ss");
 //			regions_fake.push_back("reg1l1tau2b_os");
 //			regions_fake.push_back("reg1l1tau2b_ss");
 //			regions_fake.push_back("reg2l1tau1b");
-			regions_notau.push_back("reg2l1bnj");
-			regions_notau.push_back("reg2l2bnj");
+			regions_fake.push_back("reg2l1bnj");
+			regions_fake.push_back("reg2l2bnj");
 		}
 
 	}
