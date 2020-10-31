@@ -182,6 +182,7 @@ int main(int argc, char const *argv[])
     printf("please give the setting: region\nand mva splitting: 2 or 5\nnumber of cuts\nnumber of trees\n");
     return 0;
    }
+   TString figdir = FIGURE_DIR;
    bool testonly = 0;
    TString catname=argv[1];
    int classnb(*argv[2]-'0');
@@ -221,7 +222,8 @@ int main(int argc, char const *argv[])
       testeven->Draw();
       testodd->Draw("same");
       l1.Draw();
-      c1.SaveAs("roc_" + catname + ".pdf");
+      TString framework = (catname.Contains("2mtau") || catname.Contains("2ltau") || catname.Contains("1mtau1ltau")) ? "xTFW" : "tthML";
+      c1.SaveAs(figdir + "/" + framework + "BDT/roc_" + catname + ".pdf");
    }
    return 0;
 }

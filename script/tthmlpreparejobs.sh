@@ -1,22 +1,25 @@
-rundir=$ttH_fakes_DIR/datafiles/tthML/v2
+#rundir=$ttH_fakes_DIR/datafiles/tthML/v2
+rundir=$ttH_fakes_DIR/datafiles/tthML/v4
 mkdir -p $rundir/run
 rm $rundir/run/*
 allsamplefile=$rundir/run/allsamples.dat
 sysallsamplefile=$rundir/run/sys_allsamples.dat
-inputdir=/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimttV3
-for files in `ls $inputdir/*.list`
-do
-	if [ `grep -c "$files" $rundir/ignore.list` -ne '0' ] ; then
-		continue;
-	fi
-	cat $files | sort >> $allsamplefile
-	echo >> $allsamplefile
-done
-for files in `ls $inputdir/*.list`
-do
-	cat $files | sort >> $sysallsamplefile
-	echo >> $sysallsamplefile
-done
+#inputdir=/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimttV3
+inputdir=/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimttV4
+#for files in `ls $inputdir/*.list`
+#do
+#	if [ `grep -c "$files" $rundir/ignore.list` -ne '0' ] ; then
+#		continue;
+#	fi
+#	cat $files | sort >> $allsamplefile
+#	echo >> $allsamplefile
+#done
+#for files in `ls $inputdir/*.list`
+#do
+#	cat $files | sort >> $sysallsamplefile
+#	echo >> $sysallsamplefile
+#done
+ls $inputdir/*.root | grep -v dup | tee $allsamplefile $sysallsamplefile > /dev/null
 
 Order $allsamplefile
 Order $sysallsamplefile
@@ -24,7 +27,8 @@ RemoveReplicateLines $allsamplefile
 RemoveReplicateLines $sysallsamplefile
 sed -i "s#../..#/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop#" $allsamplefile
 sed -i "s#../..#/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop#" $sysallsamplefile
-for samplefiles in `find "$rundir/" -name *.txt`
+#for samplefiles in `find "$rundir/" -name *.txt`
+for samplefiles in `find $rundir/*.txt`
 do
 	for lines in `cat $samplefiles`
 	do

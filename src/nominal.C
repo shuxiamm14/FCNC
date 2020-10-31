@@ -618,7 +618,7 @@ bool nominal::MassCollinear(bool kMMCsynchronize,                // mmc sychroni
     else tau2 = taus_p4->at(1);
     if (kMMCsynchronize) { /// redefine tau vectors if necessary - MMC sychronization
             k1.SetPtEtaPhiM(taus_p4->at(0)->Pt(), taus_p4->at(0)->Eta(), taus_p4->at(0)->Phi(), taus_n_charged_tracks->at(0) < 3 ? 800. : 1200.);  // MeV
-            k2.SetPtEtaPhiM(tau2->Pt(), tau2->Eta(), tau2->Phi(), (taus_p4->size() == 1 || taus_n_charged_tracks->at(1)) < 3 ? 800. : 1200.);  // MeV
+            k2.SetPtEtaPhiM(tau2->Pt(), tau2->Eta(), tau2->Phi(), (taus_p4->size() == 1 || taus_n_charged_tracks->at(1) < 3) ? 800. : 1200.);  // MeV
     }
 
     return MassCollinearCore(k1, k2, met_p4->Px(), met_p4->Py(), mass, xp1, xp2);
@@ -1286,9 +1286,11 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         }
   
         ljet_indice = findcjet();
-        if(debug)std::cout<<"ljet_indice->size: "<<ljet_indice->size()<<std::endl;
-        if(debug)std::cout<<"ljets_bscore: "<<ljets_bscore->size()<<std::endl;
-        if(debug)std::cout<<"ljet_indice->at(0): "<<ljet_indice->at(0)<<std::endl;
+        if(debug){
+          std::cout<<"ljet_indice->size: "<<ljet_indice->size()<<std::endl;
+          std::cout<<"ljets_bscore: "<<ljets_bscore->size()<<std::endl;
+          std::cout<<"ljet_indice->at(0): "<<ljet_indice->at(0)<<std::endl;
+        }
         if(ljet_indice->size()) fcncjetbscore = ljets_bscore->at(ljet_indice->at(0));
         else fcncjetbscore = 0;
         TLorentzVector *tau2 = 0;
@@ -1330,6 +1332,37 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           }
         }
         if(dofit && (taus_p4->size() + leps_p4->size() == 2 || dofit1l2tau)){
+          if (taus_p4->size() + leps_p4->size() >= 3) {
+            gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
+            gMinside->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
+            gMinside->mnparm(2, "pt3", 10*GeV, 10*GeV, 0., 1000*GeV, ierflg);
+            gMinside->mnparm(3, "eta3", 0, 0.1, -5, 5, ierflg);
+            gMinside->mnparm(4, "phi3", 0, 0.1, -PI, PI, ierflg);
+            arglist[0] = 5;
+          } else if (fit_collinear){
+            gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
+            gMinside->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
+            arglist[0] = 2;
+            if(leps_p4->size()) {
+              gMinside->mnparm(2, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
+              arglist[0]++;
+            }
+          } else {
+            gMinside->mnparm(0, "v1pt",  taus_p4->at(0)->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
+            gMinside->mnparm(1, "v1eta", taus_p4->at(0)->Eta(), 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
+            gMinside->mnparm(2, "v1phi", taus_p4->at(0)->Phi(), 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
+            gMinside->mnparm(3, "v2pt",  tau2->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
+            gMinside->mnparm(4, "v2eta", tau2->Eta(), 0.01, tau2->Eta()-0.25, tau2->Eta()+0.25, ierflg);
+            gMinside->mnparm(5, "v2phi", tau2->Phi(), 0.01, tau2->Phi()-0.25, tau2->Phi()+0.25, ierflg);
+            arglist[0] = 6;
+            if(leps_p4->size()) {
+              gMinside->mnparm(6, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
+              arglist[0]++;
+            }
+          }
+
+          gMinside->SetObjectFit((TObject*)&fitvec);
+          arglist[1] = 60.;
           Double_t val[7] = {0,0,0,0,0,0,0};
           Double_t err[7] = {0,0,0,0,0,0,0};
           if(!mass_collinear){
@@ -1790,9 +1823,13 @@ void nominal::defineRegions(){
     if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b2jos");
     if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b3jos");*/
   }else if(leps_p4->size()==1){
+    if(ljets_p4->size() == 0 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b_os");
+    if(ljets_p4->size() == 1 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b1j_os");
     if(ljets_p4->size() == 2 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b2j_os");
     if(ljets_p4->size() >= 3 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b3j_os");
     if(bjets_p4->size() == 1 && taus_p4->size() >= 2 && taus_q->at(0)*taus_q->at(1) < 0) belong_regions.add("reg1l2tau1bnj_os");
+    if(ljets_p4->size() == 0 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau1b_ss");
+    if(ljets_p4->size() == 1 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau1b1j_ss");
     if(ljets_p4->size() == 2 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau1b2j_ss");
     if(ljets_p4->size() >= 3 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau1b3j_ss");
     if(ljets_p4->size() == 1 && bjets_p4->size() == 2 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau2b1j_os");

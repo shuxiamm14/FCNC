@@ -1,6 +1,12 @@
+#define VERSION 4
 #include "hadhadtree.h"
+#if VERSION==2
 #include "tthmltree_v2.h"
+#elif VERSION==3
 #include "tthmltree_v3.h"
+#elif VERSION==4
+#include "tthmltree_v4.h"
+#endif
 #include "TROOT.h"
 #include "TSystem.h"
 #include "weightsys_list.h"
@@ -21,7 +27,6 @@ int main(int argc, char const *argv[])
 	bool dofake = 0;
 	bool onlyMajorNP = 0; // set to 0 for current xTFW analysis.
 	bool applynewSF = 0; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
-	int version = 8;
 	bool nominalOnly = 1;
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
@@ -104,6 +109,8 @@ int main(int argc, char const *argv[])
 		regions.push_back("reg2ltau1b3jos");
 	}else{
 		if(tthdofcnc || reduce == 1){
+			regions.push_back("reg1l1tau1b_os");
+			regions.push_back("reg1l1tau1b1j_os");
 			regions.push_back("reg1l1tau1b2j_os");
 			regions.push_back("reg1l1tau1b3j_os");
 			regions.push_back("reg1l1tau2b1j_os");
@@ -112,6 +119,8 @@ int main(int argc, char const *argv[])
 			regions.push_back("reg1l1tau2b1j_ss");
 			regions.push_back("reg1l1tau2b2j_ss");
 			regions.push_back("reg1l1tau2b3j_ss");
+			regions.push_back("reg1l1tau1b_ss");
+			regions.push_back("reg1l1tau1b1j_ss");
 			regions.push_back("reg1l1tau1b2j_ss");
 			regions.push_back("reg1l1tau1b3j_ss");
 			regions.push_back("reg1l2tau1bnj_os");
@@ -154,15 +163,16 @@ int main(int argc, char const *argv[])
 	nominal *analysis;
 	if(framework == "xTFW") analysis = new hadhadtree();
 	else if(framework == "tthML") {
-		if(version == 8){
-			analysis = new tthmltree_v3();
-			analysis->version = 8;
-		}else{
-			analysis = new tthmltree_v2();
-			analysis->version = 7;
-			if(inputconfig.Contains("ml"))
-				analysis->version = 5;
-		}
+#if VERSION==2
+		analysis = new tthmltree_v2();
+		analysis->version = 7;
+		if(inputconfig.Contains("ml"))
+		analysis->version = 5;
+#elif VERSION==3
+		analysis = new tthmltree_v3();
+#elif VERSION==4
+		analysis = new tthmltree_v4();
+#endif
 	}
 	analysis->SystematicsName = systname;
 	analysis->dumptruth = 0;
@@ -462,7 +472,7 @@ int main(int argc, char const *argv[])
 				if(analysis->nominaltree) analysis->saveweightslist(prefix + "/config/theoryweightlist/" + framework + "_" + to_string(lastdsid) + ".txt");
 			}
 			if(dsid != lastdsid) analysis->init_dsid();
-			if(framework == "tthML" && inputconfig.Contains("ml") && analysis->version == 5) ((tthmltree_v2*)analysis)->mc_norm = xsecs[dsid]*luminosity/totgenweighted[dsid];
+			//if(framework == "tthML" && inputconfig.Contains("ml") && analysis->version == 5) ((tthmltree_v2*)analysis)->mc_norm = xsecs[dsid]*luminosity/totgenweighted[dsid];
 			analysis->Loop( (TTree*)inputfile.Get(systname), inputconfig, (framework == "xTFW")? xsecs[dsid]*luminosity/totgenweighted[dsid] : 1);
 			if(framework == "xTFW") printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		}

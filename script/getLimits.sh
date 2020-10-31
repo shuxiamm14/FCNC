@@ -11,23 +11,16 @@ runfit(){
 	mkdir -p $sig/combined
 	for reg in ${regions[@]}
 	do
-		trex-fitter w config/$reg/$variable.config "Signal=$sig"
+		trex-fitter wpfl config/$reg/$variable.config "Signal=$sig"
 	done
-	trex-fitter mw combine.config "Signal=$sig"
-	trex-fitter mf combine.config "Signal=$sig"
-	trex-fitter ml combine.config "Signal=$sig"
+	trex-fitter mwfl combine.config "Signal=$sig"
 	for reg in ${regions[@]}
 	do
-		rm -rf $sig/${reg}_$variable/RooStats
-		mv ${reg}_$variable/RooStats $sig/${reg}_$variable/.
+		rm -rf $sig/${reg}_$variable/*
+		mv -f ${reg}_$variable/!(Histograms) $sig/${reg}_$variable/.
 	done
 	rm -rf $sig/combined
-	mv combined $sig/.
-	for reg in ${regions[@]}
-	do
-		trex-fitter f config/$reg/$variable.config "Signal=$sig:Job=$sig/${reg}_$variable"
-		trex-fitter l config/$reg/$variable.config "Signal=$sig:Job=$sig/${reg}_$variable"
-	done
+	mv -f combined $sig/.
 }
 
 runfitcomb(){
@@ -37,7 +30,7 @@ runfitcomb(){
 		mkdir -p $sig/${reg}_$variable
 		trex-fitter w config/$reg/$variable.config "Signal=$sig"
 		rm -rf $sig/${reg}_$variable/RooStats
-		mv ${reg}_$variable/RooStats $sig/${reg}_$variable/.
+		mv -f ${reg}_$variable/RooStats $sig/${reg}_$variable/.
 		trex-fitter f config/$reg/$variable.config "Signal=$sig:Job=$sig/${reg}_$variable"
 		trex-fitter l config/$reg/$variable.config "Signal=$sig:Job=$sig/${reg}_$variable"
 	done
