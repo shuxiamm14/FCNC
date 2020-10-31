@@ -25,8 +25,8 @@ Order $allsamplefile
 Order $sysallsamplefile
 RemoveReplicateLines $allsamplefile
 RemoveReplicateLines $sysallsamplefile
-sed -i "s#../..#/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop#" $allsamplefile
-sed -i "s#../..#/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop#" $sysallsamplefile
+#sed -i "s#../..#/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop#" $allsamplefile
+#sed -i "s#../..#/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop#" $sysallsamplefile
 #for samplefiles in `find "$rundir/" -name *.txt`
 for samplefiles in `find $rundir/*.txt`
 do

@@ -6,6 +6,7 @@
 #include "tthmltree_v3.h"
 #elif VERSION==4
 #include "tthmltree_v4.h"
+#include "tthmltree_v3.h"
 #endif
 #include "TROOT.h"
 #include "TSystem.h"
@@ -50,7 +51,9 @@ int main(int argc, char const *argv[])
 		printf("sys sample doesnt have the systematic trees\n");
 		return 0;
 	}
-	TString samplefilefullname = prefix + "/datafiles/" + framework + "/v3/run/"+ ((systname != "nominal" && framework == "tthML") ? "sys_" : "" ) + samplefile;
+	char version = char(VERSION)+'0';
+	if(samplefile.Contains("fcnc")) version--;
+	TString samplefilefullname = prefix + "/datafiles/" + framework + "/v" + version + "/run/"+ ((systname != "nominal" && framework == "tthML") ? "sys_" : "" ) + samplefile;
 	printf("reading list: %s\n",samplefilefullname.Data());
 	ifstream fn(samplefilefullname);
 	if(!fn) {
@@ -167,7 +170,9 @@ int main(int argc, char const *argv[])
 #elif VERSION==3
 		analysis = new tthmltree_v3();
 #elif VERSION==4
-		analysis = new tthmltree_v4();
+		if(inputconfig.Contains("fcnc"))
+			analysis = new tthmltree_v3();
+		else analysis = new tthmltree_v4();
 #endif
 	}
 	analysis->SystematicsName = systname;
@@ -178,8 +183,8 @@ int main(int argc, char const *argv[])
 	analysis->debug = debug;
 	analysis->plotTauFake = 1;
 	analysis->ctagFCNC = 0;
-	analysis->fit_collinear = 0;
-	analysis->mass_collinear = 1;
+	analysis->fit_collinear = 1;
+	analysis->mass_collinear = 0;
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
 	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
 	analysis->doubleCounting = 1;

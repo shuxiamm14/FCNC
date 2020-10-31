@@ -280,6 +280,8 @@ void tthmltree::constructTruth(){
   if(!m_truth_pdgId) {
     printf("tthmltree::constructTruth() : WARNING: m_truth is not saved in the n-tuple, cannot reconstruct truth\n");
     return;
+  }else if(debug){
+    printf("tthmltree::constructTruth() start\n");
   }
   //===========================save all particle information==============================
   for (int itruth = 0; itruth < m_truth_pdgId->size(); ++itruth) {

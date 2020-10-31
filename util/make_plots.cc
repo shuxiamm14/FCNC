@@ -210,6 +210,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		"reg2l1tau1bnj",
 		"reg2l1tau2bnj",
 		"reg1l2tau1bnj_os",
+		"reg1l1tau1b_ss",
+		"reg1l1tau1b_os",
+		"reg1l1tau1b1j_ss",
+		"reg1l1tau1b1j_os",
 		"reg1l1tau1b2j_ss",
 		"reg1l1tau1b2j_os",
 		"reg1l1tau1b3j_ss",
@@ -298,7 +302,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					}
 					TString samplename = (samplesys==samples[j].name ? NPname : samples[j].name);
 					//inputfile = getFile(mc_campaign + "_" + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
-					inputfile = getFile(mc_campaign + "_" + samplename + (framework == "tthML"? "_fcnc" : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
+					inputfile = getFile(mc_campaign + "_" + samplename , dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 					double norm = samples[j].norm;
 					if(origin[i] == "wjet-fake") tau_plots->read_sample( origin[i], samples[j].name + "_wjet", histmiddlename, origintitle[i], (enum EColor)colors[i], norm,inputfile);
 					else tau_plots->read_sample( origin[i], samples[j].name + "_" + origin[i], histmiddlename, origintitle[i], (enum EColor)colors[i], norm,inputfile);

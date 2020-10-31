@@ -1267,6 +1267,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           continue;
       cut_flow.fill("tau b-veto");  
   
+      chi2 = 0;
       if(!nominaltree && leps_p4->size()!=0) {
         taus_matched_mother_pdgId = taumatchmap[eventNumber];
       }
@@ -1289,7 +1290,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         if(debug){
           std::cout<<"ljet_indice->size: "<<ljet_indice->size()<<std::endl;
           std::cout<<"ljets_bscore: "<<ljets_bscore->size()<<std::endl;
-          std::cout<<"ljet_indice->at(0): "<<ljet_indice->at(0)<<std::endl;
+          if(ljet_indice->size()) std::cout<<"ljet_indice->at(0): "<<ljet_indice->at(0)<<std::endl;
         }
         if(ljet_indice->size()) fcncjetbscore = ljets_bscore->at(ljet_indice->at(0));
         else fcncjetbscore = 0;
@@ -1476,11 +1477,11 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             if(ljets_p4->size()>=3){
               t1mass = (*(ljets_p4->at(ljet_indice->at(1))) + *(ljets_p4->at(ljet_indice->at(2))) + *(bjets_p4->at(0))).M();
               wmass = (*(ljets_p4->at(ljet_indice->at(1))) + *(ljets_p4->at(ljet_indice->at(2)))).M();
-            }else{
+            }else if(ljets_p4->size()>=2){
               t1mass = (*(ljets_p4->at(ljet_indice->at(0))) + *(ljets_p4->at(ljet_indice->at(1))) + *(bjets_p4->at(0))).M();
               wmass = (*(ljets_p4->at(ljet_indice->at(0))) + *(ljets_p4->at(ljet_indice->at(1)))).M();
             }
-            t2mass = (*(ljets_p4->at(ljet_indice->at(0))) + *(taus_p4->at(0)) + *(tau2) + *neutrinos_p4->at(0) + *neutrinos_p4->at(1)).M();
+            if(ljets_p4->size()) t2mass = (*(ljets_p4->at(ljet_indice->at(0))) + *(taus_p4->at(0)) + *(tau2) + *neutrinos_p4->at(0) + *neutrinos_p4->at(1)).M();
             tautaumass = (*(taus_p4->at(0)) + *(tau2) + *neutrinos_p4->at(0) + *neutrinos_p4->at(1)).M();
           }
           x1fit = 1 - neutrinos_p4->at(0)->E() / (*(taus_p4->at(0)) + *neutrinos_p4->at(0)).E();
@@ -1635,7 +1636,9 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         }
       }
       if (writetree){
+        if(debug) printf("tthmltree::Loop() : filling tree %d, ", eventNumber);
         if(outputtree.find(region) != outputtree.end()){
+          if(debug) printf("%s->Fill()\n",outputtree[region]->GetName());
           outputtree[region]->Fill();
         }
         else{
@@ -1672,7 +1675,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           int nfaketau = 0;
           for (int i = 0; i < taus_matched_pdgId->size(); ++i){
             int tauabspdg = abs(taus_matched_pdgId->at(i));
-            if(tauabspdg != 15 || taus_matched_pdgId->at(i) * taus_q->at(i) > 0) {
+            if(tauabspdg != 15) {
               nfaketau++;
               if (tauabspdg == 13 || tauabspdg == 11) tauorigin = sample + "_lep";
               else if (tauabspdg == 5) tauorigin = sample + "_b";
