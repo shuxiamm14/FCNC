@@ -139,6 +139,8 @@ int main(int argc, char const *argv[])
 //			regions_fake.push_back("reg1l1tau2b_os");
 //			regions_fake.push_back("reg1l1tau2b_ss");
 //			regions_fake.push_back("reg2l1tau1b");
+			regions_notau.push_back("reg2l1bnj");
+			regions_notau.push_back("reg2l2bnj");
 		}
 
 	}
