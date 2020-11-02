@@ -190,6 +190,7 @@ int main(int argc, char const *argv[])
    cutnb += char(*argv[2]);
    cutnb += ")!=";
    TFile *outputfile[5];
+
    for (int i = 1; i < classnb+1; ++i)
    {
       char stri = i+'0';
@@ -199,6 +200,7 @@ int main(int argc, char const *argv[])
       outputfile[i-1] = new TFile(weightfile+"_out.root");
       if(testonly) break;
    }
+
    if(classnb == 2){
       SetAtlasStyle();
       TH1D* testeven = (TH1D*) outputfile[0]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
@@ -223,7 +225,7 @@ int main(int argc, char const *argv[])
       testodd->Draw("same");
       l1.Draw();
       TString framework = (catname.Contains("2mtau") || catname.Contains("2ltau") || catname.Contains("1mtau1ltau")) ? "xTFW" : "tthML";
-      c1.SaveAs(figdir + "/" + framework + "BDT/roc_" + catname + ".pdf");
+      c1.SaveAs(figdir + "/" + framework + "/BDT/roc_" + catname + ".pdf");
    }
    return 0;
 }

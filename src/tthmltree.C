@@ -15,8 +15,12 @@ tthmltree::tthmltree():nominal::nominal(){
 
   belong_regions.m_region_map["SR"] = {"reg1l1tau1b_os","reg1l1tau1b_ss","reg1l1tau1b1j_os","reg1l1tau1b1j_ss","reg1l1tau1b3j_ss","reg1l1tau1b2j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_os","reg1l2tau1bnj_os","reg2lSS1tau1bnj_os","reg2l1tau1bnj"};
   belong_regions.m_region_map["SRCR"] = {
+    "reg1l1tau1b2j_ss",
+    "reg1l1tau1b3j_ss",
+    "reg1l1tau2b1j_os",
     "reg1l1tau2b2j_os",
     "reg1l1tau2b3j_os",
+    "reg1l1tau2b1j_ss",
     "reg1l1tau2b2j_ss",
     "reg1l1tau2b3j_ss",
     "reg1l1tau2b2j_os_85",
@@ -48,6 +52,7 @@ tthmltree::tthmltree():nominal::nominal(){
     "reg2lSS1taunj_os_antiiso",
     "reg2lSS1taunj_os_antiisolead",
     "reg2l2bnj",
+    "reg2l1bnj",
   };
 
 }
@@ -131,8 +136,8 @@ void tthmltree::init_hist(TString outputfilename){
     fake_notau_plots = new histSaver(outputfilename + "_fake_notau");
     fake_notau_plots->set_weight(&weight);
     fake_notau_plots->debug = !!debug;
-    fake_notau_plots->add(vars.at("bpt"),&pt_b);
-    fake_notau_plots->add(vars.at("ljetpt"),&pt_ljet);
+    fake_notau_plots->add(vars.at("lep_pt_0"),&lep_pt_0);
+    fake_notau_plots->add(vars.at("nljet"),&nljet);
     for (int j = 0; j < fake_nregions_notau; ++j){
       fake_notau_plots->add_region(fake_regions_notau[j]);
     }
@@ -280,6 +285,8 @@ void tthmltree::constructTruth(){
   if(!m_truth_pdgId) {
     printf("tthmltree::constructTruth() : WARNING: m_truth is not saved in the n-tuple, cannot reconstruct truth\n");
     return;
+  }else if(debug){
+    printf("tthmltree::constructTruth() start\n");
   }
   //===========================save all particle information==============================
   for (int itruth = 0; itruth < m_truth_pdgId->size(); ++itruth) {

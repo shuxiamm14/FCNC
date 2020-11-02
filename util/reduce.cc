@@ -113,8 +113,10 @@ int main(int argc, char const *argv[])
 			regions.push_back("reg1l1tau1b1j_os");
 			regions.push_back("reg1l1tau1b2j_os");
 			regions.push_back("reg1l1tau1b3j_os");
+			regions.push_back("reg1l1tau2b1j_os");
 			regions.push_back("reg1l1tau2b2j_os");
 			regions.push_back("reg1l1tau2b3j_os");
+			regions.push_back("reg1l1tau2b1j_ss");
 			regions.push_back("reg1l1tau2b2j_ss");
 			regions.push_back("reg1l1tau2b3j_ss");
 			regions.push_back("reg1l1tau1b_ss");
@@ -130,6 +132,8 @@ int main(int argc, char const *argv[])
 			regions.push_back("reg2lSS1tau1bnj_os_antiisolead");
 			regions.push_back("reg2l1tau1bnj");
 			regions.push_back("reg2l1tau2bnj");
+			regions.push_back("reg2l1bnj");
+			regions.push_back("reg2l2bnj");
 
 			//regions.push_back("reg2lSS1tau1bnj_ss");
 			//regions.push_back("reg2lSS1tau2bnj_os");
@@ -251,7 +255,7 @@ int main(int argc, char const *argv[])
 				inputfile_nominal->GetObject(reg,nominalinputtree);
 				analysis->constructwmatchmap(nominalinputtree);
 			}
-			if(analysis->plotTauFake || reg.Contains("2lSS") || reduce <=2) analysis->Loop( (TTree*)inputfile.Get(reg), inputconfig, 1);
+			if(analysis->plotTauFake || reg.Contains("2l") || reduce <=2) analysis->Loop( (TTree*)inputfile.Get(reg), inputconfig, 1);
 			else printf("region is disabled in plotting lepton fakes, skip\n");
 		}
 		analysis->finalise_sample();
