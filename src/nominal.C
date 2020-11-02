@@ -1289,7 +1289,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         if(debug){
           std::cout<<"ljet_indice->size: "<<ljet_indice->size()<<std::endl;
           std::cout<<"ljets_bscore: "<<ljets_bscore->size()<<std::endl;
-          std::cout<<"ljet_indice->at(0): "<<ljet_indice->at(0)<<std::endl;
+          if(ljet_indice->size()) std::cout<<"ljet_indice->at(0): "<<ljet_indice->at(0)<<std::endl;
         }
         if(ljet_indice->size()) fcncjetbscore = ljets_bscore->at(ljet_indice->at(0));
         else fcncjetbscore = 0;

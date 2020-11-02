@@ -214,18 +214,6 @@ int plot(int iNP, TString method, int ipart = 0) //method = fitss / fitos / plot
 	}
 
 	if(doTrex){
-		std::string nptmp = NPname.Data();
-//		findAndReplaceAll(nptmp,"__1down","_down");
-//		findAndReplaceAll(nptmp,"__1up","_up");
-//		findAndReplaceAll(nptmp,"JET_EffectiveNP","JES");
-//		findAndReplaceAll(nptmp,"JET_CategoryReduction_","JES");
-//		findAndReplaceAll(nptmp,"JET_JER_EffectiveNP","JER");
-//		findAndReplaceAll(nptmp,"JET_EtaIntercalibration","JET_EtaInt");
-//		findAndReplaceAll(nptmp,"TAUS_TRUEHADTAU_SME_TES","TES");
-		NPname = nptmp;
-		if(NPname.Contains("PDF")) tau_plots->trexdir = "PDF_trexinputs";
-		else if(NPname.Contains("muR")) tau_plots->trexdir = "scale_trexinputs";
-		else tau_plots->trexdir = "trexinputs";
 		tau_plots->write_trexinput(histmiddlename,NPname);
 	}
 	if(doPlots){
