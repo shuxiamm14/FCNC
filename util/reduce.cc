@@ -1,4 +1,4 @@
-#define TTHMLVERSION 4
+#define TTHMLVERSION 5
 #include "hadhadtree.h"
 #if TTHMLVERSION==2
 #include "tthmltree_v2.h"
@@ -6,6 +6,9 @@
 #include "tthmltree_v3.h"
 #elif TTHMLVERSION==4
 #include "tthmltree_v4.h"
+#include "tthmltree_v3.h"
+#elif TTHMLVERSION==5
+#include "tthmltree_v5.h"
 #include "tthmltree_v3.h"
 #endif
 #include "TROOT.h"
@@ -169,15 +172,19 @@ int main(int argc, char const *argv[])
 	else if(framework == "tthML") {
 #if TTHMLVERSION==2
 		analysis = new tthmltree_v2();
-		analysis->TTHMLVERSION = 7;
+		analysis->version = 7;
 		if(inputconfig.Contains("ml"))
-		analysis->TTHMLVERSION = 5;
+		analysis->version = 5;
 #elif TTHMLVERSION==3
 		analysis = new tthmltree_v3();
 #elif TTHMLVERSION==4
 		if(inputconfig.Contains("fcnc"))
 			analysis = new tthmltree_v3();
 		else analysis = new tthmltree_v4();
+#elif TTHMLVERSION==5
+		if(inputconfig.Contains("fcnc"))
+			analysis = new tthmltree_v3();
+		else analysis = new tthmltree_v5();
 #endif
 	}
 	analysis->SystematicsName = systname;

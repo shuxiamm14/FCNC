@@ -8,12 +8,37 @@ bool tthmltree_v4::addWeightSys(){
 } //not available yet.
 
 bool tthmltree_v4::passBasicCut(){
-  if(!(
-    (RunYear == 2015 && (( lep_Pt_0/1000>21 && HLT_mu20_iloose_L1MU15 ) || ( lep_Pt_0/1000>51 && HLT_mu50 ) || ( lep_Pt_0/1000>25 && HLT_e24_lhmedium_L1EM20VH )|| (lep_Pt_0/1000>61 &&HLT_e60_lhmedium) || ( lep_Pt_0/1000>121 && HLT_e120_lhloose))) ||
-    (RunYear == 2015 && (HLT_2e12_lhloose_L12EM10VH || HLT_e17_lhloose_mu14 || HLT_mu18_mu8noL1)) ||
-    (RunYear >= 2016 && (( lep_Pt_0/1000>27 && HLT_mu26_ivarmedium ) || ( lep_Pt_0/1000>51 && HLT_mu50 ) || ( lep_Pt_0/1000>27 && HLT_e26_lhtight_nod0_ivarloose ) || ( lep_Pt_0/1000>61 && HLT_e60_lhmedium_nod0) || ( lep_Pt_0/1000>141 && HLT_e140_lhloose_nod0))) ||
-    (RunYear >= 2016 && ((lep_Pt_0/1000>18 && lep_Pt_1/1000>18 && HLT_2e17_lhvloose_nod0) || (lep_Pt_0/1000>18 && lep_Pt_1/1000>15 && HLT_e17_lhloose_nod0_mu14) || (lep_Pt_0/1000>23 && lep_Pt_1/1000>9 && HLT_mu22_mu8noL1))))
-  ) return false;
+  //https://twiki.cern.ch/twiki/bin/view/Atlas/MuonTriggerPhysicsRecommendationsRel212017#Recommended_triggers
+  bool single_mu_trig = 0;
+  if(RunYear == 2015) single_mu_trig = (lep_pt_0>21*GeV && GlobalTrigDecision_mu20_iloose_L1MU15) 
+    || (lep_pt_0>51*GeV && GlobalTrigDecision_mu50);
+  else single_mu_trig = (lep_pt_0>27*GeV && GlobalTrigDecision_mu26_ivarmedium) 
+    || (lep_pt_0>51*GeV && GlobalTrigDecision_mu50);
+  bool di_mu_trig = 0;
+  if(RunYear == 2015) di_mu_trig = GlobalTrigDecision_mu18_mu8noL1 && lep_pt_0 > 19*GeV && lep_pt_1 > 9*GeV;
+  else di_mu_trig = GlobalTrigDecision_mu22_mu8noL1 && lep_pt_0 > 23*GeV && lep_pt_1 > 9*GeV;
+
+  //https://twiki.cern.ch/twiki/bin/view/AtlasProtected/LatestRecommendationsElectronIDRun2
+  bool single_e_trig = 0;
+  if(RunYear == 2015) single_e_trig = (lep_pt_0>25*GeV && GlobalTrigDecision_e24_lhmedium_L1EM20VH)
+    || (lep_pt_0>61*GeV && GlobalTrigDecision_e60_lhmedium)
+    || (lep_pt_0>121*GeV && GlobalTrigDecision_e120_lhloose);
+  else single_e_trig = (lep_pt_0 > 27*GeV && GlobalTrigDecision_e26_lhtight_nod0_ivarloose)
+    || (lep_pt_0>61*GeV && GlobalTrigDecision_e60_lhmedium_nod0)
+    || (lep_pt_0>141*GeV && GlobalTrigDecision_e140_lhloose_nod0);
+  bool di_e_trig = 0;
+  if(RunYear == 2015) di_e_trig = (lep_pt_0 > 13*GeV && lep_pt_1 > 13*GeV && GlobalTrigDecision_2e12_lhloose_L12EM10VH);
+  else if(RunYear == 2016) di_e_trig = (lep_pt_0 > 18*GeV && lep_pt_1 > 18*GeV && GlobalTrigDecision_2e17_lhvloose_nod0);
+  //else di_e_trig = (lep_pt_0 > 25*GeV && lep_pt_1 > 25*GeV && GlobalTrigDecision_2e24_lhvloose_nod0);
+  else di_e_trig = (lep_pt_0 > 25*GeV && lep_pt_1 > 25*GeV && GlobalTrigDecision_2e17_lhvloose_nod0);
+
+  //https://twiki.cern.ch/twiki/bin/view/Atlas/LowestUnprescaled#Electron_Muon_AN1
+  bool emu_trig = 0;
+  if(RunYear == 2015) emu_trig = GlobalTrigDecision_e17_lhloose_mu14;
+  else emu_trig = GlobalTrigDecision_e17_lhloose_nod0_mu14;
+  emu_trig = emu_trig && lep_pt_0 > 18*GeV && lep_pt_0 > 15*GeV;
+  if(!single_e_trig && !single_mu_trig && !di_e_trig && !di_mu_trig && !emu_trig) return false;
+
   cut_flow.fill("pass trigger");
 
   if(nTaus_OR && (!(taus_numTrack_0 == 1 || taus_numTrack_0 == 3) || !(taus_passEleBDT_0 && taus_passMuonOLR_0)) ) return false; // assuming triggers for 2017 is same for 2016 
@@ -21,13 +46,11 @@ bool tthmltree_v4::passBasicCut(){
   if(nTaus_OR>=2 && (!(taus_numTrack_1 == 1 || taus_numTrack_1 == 3) || !(taus_passEleBDT_1 && taus_passMuonOLR_1)) ) return false; // assuming triggers for 2017 is same for 2016 
   cut_flow.fill("subtauOLR");
 
-  bool trig_match = !onelep_type && (lep_isTrigMatch_0 || lep_isTrigMatch_1 || lep_isTrigMatch_2 || lep_isTrigMatch_3 || matchDLTll01 || matchDLTll02 || matchDLTll12 || matchDLTll03 || matchDLTll13 || matchDLTll23);
+  bool trig_match = (emu_trig || di_e_trig || di_mu_trig) && ((lep_isTrigMatch_0 && lep_isTrigMatch_1) || matchDLTll01);
 
   //bool trig_match = !onelep_type && lep_isTrigMatch_0 || lep_isTrigMatch_1;
   //bool trig_match = !onelep_type && lep_isTrigMatchDLT_0 && lep_isTrigMatchDLT_1;
-  bool SLtrig_match = onelep_type &&
-    ((RunYear == 2015 && (HLT_mu20_iloose_L1MU15 || HLT_mu50 || HLT_e24_lhmedium_L1EM20VH || HLT_e60_lhmedium || HLT_e120_lhloose)) ||
-    (RunYear >= 2016 && (HLT_mu26_ivarmedium || HLT_mu50 || HLT_e26_lhtight_nod0_ivarloose || HLT_e60_lhmedium_nod0 || HLT_e140_lhloose_nod0))) && lep_isTrigMatch_0;
+  bool SLtrig_match = (single_e_trig || single_mu_trig) && lep_isTrigMatch_0;
 
   if(!trig_match && !SLtrig_match) return false;
 
