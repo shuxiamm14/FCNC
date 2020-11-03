@@ -58,7 +58,7 @@ public :
   bool fit_collinear;
   bool mass_collinear;
   //=============================configurations===============================
-
+  TString dataDir = ".";
   TString SystematicsName = "NOMINAL";
   CutFlow cut_flow;
   TMinuit* gMinside;

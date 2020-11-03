@@ -1,10 +1,10 @@
-#define VERSION 4
+#define TTHMLVERSION 4
 #include "hadhadtree.h"
-#if VERSION==2
+#if TTHMLVERSION==2
 #include "tthmltree_v2.h"
-#elif VERSION==3
+#elif TTHMLVERSION==3
 #include "tthmltree_v3.h"
-#elif VERSION==4
+#elif TTHMLVERSION==4
 #include "tthmltree_v4.h"
 #endif
 #include "TROOT.h"
@@ -28,9 +28,11 @@ int main(int argc, char const *argv[])
 	bool onlyMajorNP = 0; // set to 0 for current xTFW analysis.
 	bool applynewSF = 0; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
 	bool nominalOnly = 1;
+	TString version = "v3"; //define your n-tuple version
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	TString framework = argv[1];
+	if(framework == "tthML") version = TString("v") + char('0'+TTHMLVERSION);
 	if(reduce > 4){
 		reduce-=2;
 		applynewSF = 1;
@@ -50,7 +52,7 @@ int main(int argc, char const *argv[])
 		printf("sys sample doesnt have the systematic trees\n");
 		return 0;
 	}
-	TString samplefilefullname = prefix + "/datafiles/" + framework + "/v3/run/"+ ((systname != "nominal" && framework == "tthML") ? "sys_" : "" ) + samplefile;
+	TString samplefilefullname = prefix + "/datafiles/" + framework + "/" + version + "/run/"+ ((systname != "nominal" && framework == "tthML") ? "sys_" : "" ) + samplefile;
 	printf("reading list: %s\n",samplefilefullname.Data());
 	ifstream fn(samplefilefullname);
 	if(!fn) {
@@ -159,18 +161,19 @@ int main(int argc, char const *argv[])
 	TString inputconfig = samplefile;
 	inputconfig.Remove(inputconfig.Sizeof()-5,4); //remove ".txt"
 	gSystem->mkdir(prefix+"/data");
+	gSystem->mkdir(prefix+"/data/" + version);
 	if(!debug) gErrorIgnoreLevel=kError;
 	nominal *analysis;
 	if(framework == "xTFW") analysis = new hadhadtree();
 	else if(framework == "tthML") {
-#if VERSION==2
+#if TTHMLVERSION==2
 		analysis = new tthmltree_v2();
-		analysis->version = 7;
+		analysis->TTHMLVERSION = 7;
 		if(inputconfig.Contains("ml"))
-		analysis->version = 5;
-#elif VERSION==3
+		analysis->TTHMLVERSION = 5;
+#elif TTHMLVERSION==3
 		analysis = new tthmltree_v3();
-#elif VERSION==4
+#elif TTHMLVERSION==4
 		analysis = new tthmltree_v4();
 #endif
 	}
@@ -184,6 +187,7 @@ int main(int argc, char const *argv[])
 	analysis->ctagFCNC = 0;
 	analysis->fit_collinear = 0;
 	analysis->mass_collinear = 1;
+	analysis->dataDir = prefix+"/data/" + version;
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
 	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
 	analysis->doubleCounting = 1;
@@ -472,7 +476,7 @@ int main(int argc, char const *argv[])
 				if(analysis->nominaltree) analysis->saveweightslist(prefix + "/config/theoryweightlist/" + framework + "_" + to_string(lastdsid) + ".txt");
 			}
 			if(dsid != lastdsid) analysis->init_dsid();
-			//if(framework == "tthML" && inputconfig.Contains("ml") && analysis->version == 5) ((tthmltree_v2*)analysis)->mc_norm = xsecs[dsid]*luminosity/totgenweighted[dsid];
+			//if(framework == "tthML" && inputconfig.Contains("ml") && analysis->TTHMLVERSION == 5) ((tthmltree_v2*)analysis)->mc_norm = xsecs[dsid]*luminosity/totgenweighted[dsid];
 			analysis->Loop( (TTree*)inputfile.Get(systname), inputconfig, (framework == "xTFW")? xsecs[dsid]*luminosity/totgenweighted[dsid] : 1);
 			if(framework == "xTFW") printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		}

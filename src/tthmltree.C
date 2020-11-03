@@ -189,10 +189,10 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
   fake_nregions_notau = fake_regions_notau.size();
 
   if(writetree){
-    TString outdir=TString(PACKAGE_DIR) + "/data/tthMLreduce" + char('0' + reduce);
-    gSystem->mkdir(outdir);
-    gSystem->mkdir(outdir + "/" + SystematicsName);
-    TString outfile=(outdir + "/" + SystematicsName + "/" + sample + "_tree.root").Data();
+    TString treedir=dataDir + "/tthMLreduce" + char('0' + reduce);
+    gSystem->mkdir(treedir);
+    gSystem->mkdir(treedir + "/" + SystematicsName);
+    TString outfile=(treedir + "/" + SystematicsName + "/" + sample + "_tree.root").Data();
     printf("create outputfile: %s\n", outfile.Data());
     outputtreefile = new TFile(outfile,"update");
     for (int i = 0; i < fcnc_nregions; ++i)
