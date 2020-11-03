@@ -6,6 +6,7 @@
 #include "tthmltree_v3.h"
 #elif TTHMLVERSION==4
 #include "tthmltree_v4.h"
+#include "tthmltree_v3.h"
 #endif
 #include "TROOT.h"
 #include "TSystem.h"
@@ -174,7 +175,9 @@ int main(int argc, char const *argv[])
 #elif TTHMLVERSION==3
 		analysis = new tthmltree_v3();
 #elif TTHMLVERSION==4
-		analysis = new tthmltree_v4();
+		if(inputconfig.Contains("fcnc"))
+			analysis = new tthmltree_v3();
+		else analysis = new tthmltree_v4();
 #endif
 	}
 	analysis->SystematicsName = systname;
@@ -185,8 +188,8 @@ int main(int argc, char const *argv[])
 	analysis->debug = debug;
 	analysis->plotTauFake = 1;
 	analysis->ctagFCNC = 0;
-	analysis->fit_collinear = 0;
-	analysis->mass_collinear = 1;
+	analysis->fit_collinear = 1;
+	analysis->mass_collinear = 0;
 	analysis->dataDir = prefix+"/data/" + version;
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
 	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
