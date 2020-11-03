@@ -487,7 +487,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					map<TString,vector<observable>> *SFs = tau_plots->fit_scale_factor(&fit_regions, &varname, &scalesamples, &fakePtSlices, &histmiddlename, &postfit_regions);
 
 					TH1D* SFhist;
-					for (int i = 0; i < fakePtSlices.size(); ++i)	//3 pt bins
+					for (int i = 0; i < fakePtSlices.size()-1; ++i)	//3 pt bins
 					{
 						for (auto SF : *SFs) //parameters
 						{

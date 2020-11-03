@@ -3,12 +3,16 @@
 #include <vector>
 #include "TString.h"
 #include "histSaver.h"
+#define FITSTRATEGY 2   //1 merge SS and OS. 2 split SS and OS, single fit. 3 split SS and OS, two fits.
 const std::vector<double> fakePtSlices = {25,35,45,125};
 
 const TString SFfilename = TString(PACKAGE_DIR) + "/data/" + "scale_factors.root";
 
+#if FITSTRATEGY==1
 const std::vector<TString> SForigins = {"wjet-fake","bjet-fake","other-fake"};
-
+#else
+const std::vector<TString> SForigins = {"wjet-fake_os","wjet-fake_ss","bjet-fake","other-fake"};
+#endif
 const std::map<TString,std::vector<double>> XsecErr = {
 	{"ztautau",{0.022,-0.029}},
 	{"ttbar",{0.023768876,-0.035106281}}

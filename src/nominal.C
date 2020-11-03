@@ -846,7 +846,18 @@ observable nominal::FindNewFakeSF(TString NP, int itau, TString &name){ //origin
   TString origin;
   if(abs(taus_matched_pdgId->at(itau)) == 5) origin = "bjet-fake";
   else if(abs(taus_matched_pdgId->at(itau)) < 6) {
-    if(abs(taus_matched_mother_pdgId->at(itau)) == 24) origin = "wjet-fake";
+    if(abs(taus_matched_mother_pdgId->at(itau)) == 24) {
+      origin = "wjet-fake";
+#if FITSTRATEGY!=1
+      if(leps_id->size()){
+      	if(taus_q->at(itau) * leps_id->at(0) > 0) origin+="_os";
+      	else origin+="_ss";
+      }else{
+      	if(taus_q->at(itau) * taus_matched_pdgId->at(itau) > 0) origin+="_os";
+      	else origin+="_ss";
+      }
+#endif
+    }
     else origin = "other-fake";
   }else{
     return 1;
@@ -990,6 +1001,10 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
       printf(" %f+/-%f ", newFakeSFSys[origin][islice].nominal, newFakeSFSys[origin][islice].error);
       if(chart){
         string rowname = origin == "wjet-fake"? "$\\tau_{W}$" : (origin == "bjet-fake"? "$\\tau_{b}$" : "$\\tau_{other}$");
+#if FITSTRATEGY!=1
+        if(origin.Contains("os")) rowname+="~OS";
+        if(origin.Contains("ss")) rowname+="~SS";
+#endif
         string columnname = "$" + to_string(int(fakePtSlices[islice])) + "-" + to_string(int(fakePtSlices[islice+1])) + "$~GeV";
         if(islice == fakePtSlices.size()-2) columnname = to_string(int(fakePtSlices[islice])) + "GeV$-$";
         chart->set(rowname, columnname, newFakeSFSys[origin][islice]);
