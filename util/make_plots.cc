@@ -8,6 +8,7 @@
 #include "weightsys_list.h"
 #include "LatexChart.h"
 #include "common.h"
+#define FITSTRATEGY 2   //1 merge SS and OS. 2 split SS and OS, single fit. 3 split SS and OS, two fits.
 using namespace std;
 
 TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir, TString nominalname){
@@ -429,47 +430,51 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					prefix += "/data/";
 
 					LatexChart *chart = 0;
-
+#if FITSTRATEGY != 3
 					vector<TString> fit_regions = {
-						"reg1l1tau1b2j_ss" + nprong[i], "reg1l1tau1b3j_ss" + nprong[i],
+//						"reg1l1tau1b2j_ss" + nprong[i], "reg1l1tau1b3j_ss" + nprong[i],
 						"reg1l1tau2b2j_os" + nprong[i], "reg1l1tau2b3j_os" + nprong[i],
 						"reg1l1tau2b2j_ss" + nprong[i], "reg1l1tau2b3j_ss" + nprong[i],
 						"reg2l1tau1bnj" + nprong[i],"reg2l1tau2bnj" + nprong[i]
 					};
-					//map<TString,map<TString,vector<TString>>> scalesamples;
-					//scalesamples["other-fake"];
-					//scalesamples["wjet-fake"];
-					//scalesamples["wjet-fake"] = {
-					//	{"ss", {"reg1l1tau2b2j_ss" + nprong[i], "reg1l1tau2b3j_ss" + nprong[i], "reg1l1tau2b1j_ss" + nprong[i]}},
-					//	{"os", {"reg1l1tau2b2j_os" + nprong[i], "reg1l1tau2b3j_os" + nprong[i], "reg1l1tau2b1j_os" + nprong[i], "reg2l1tau1bnj" + nprong[i], "reg2l1tau2bnj" + nprong[i]}},
-					//};
-					//scalesamples["bjet-fake"];
-					//map<TString,map<TString,vector<TString>>> postfit_regions = scalesamples;
-					//postfit_regions["wjet-fake"]["ss"].push_back("reg1l1tau1b3j_ss");
-					//postfit_regions["wjet-fake"]["ss"].push_back("reg1l1tau1b2j_ss");
-					//postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b3j_os");
-					//postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b2j_os");
 					TFile SFfile(prefix + "scale_factors.root","update");
 					if(NPname == "NOMINAL") {
 						chart = new LatexChart("scale_factor");
 					}
-
+#else
+					vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b3j_" + fitcharge + nprong[i], "reg1l1tau2b1j_" + fitcharge + nprong[i],"reg2l1tau1b" + nprong[i],"reg2l1tau2b" + nprong[i]};
+					vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b3j_" + fitcharge + nprong[i],"reg2l1tau1b" + nprong[i],"reg2l1tau2b" + nprong[i]};
+					vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b1j_" + fitcharge + nprong[i],"reg2l1tau1b" + nprong[i],"reg2l1tau2b" + nprong[i]};
+					vector<TString> postfit_regions = fit_regions;
+					postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + nprong[i]);
+					postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + nprong[i]);
+					TFile SFfile(prefix + "scale_factors_" + fitcharge + ".root","update");
+					if(NPname == "NOMINAL") {
+						chart = new LatexChart(("scale_factor_" + fitcharge).Data());
+					}
+#endif
+#if FITSTRATEGY != 2
 					vector<TString> postfit_regions = fit_regions;
 					postfit_regions.push_back("reg1l1tau1b2j_os" + nprong[i]);
 					postfit_regions.push_back("reg1l1tau1b3j_os" + nprong[i]);
-
-//					vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b3j_" + fitcharge + nprong[i], "reg1l1tau2b1j_" + fitcharge + nprong[i],"reg2l1tau1b" + nprong[i],"reg2l1tau2b" + nprong[i]};
-//					vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b3j_" + fitcharge + nprong[i],"reg2l1tau1b" + nprong[i],"reg2l1tau2b" + nprong[i]};
-//					vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b1j_" + fitcharge + nprong[i],"reg2l1tau1b" + nprong[i],"reg2l1tau2b" + nprong[i]};
-//					vector<TString> postfit_regions = fit_regions;
-//					postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + nprong[i]);
-//					postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + nprong[i]);
-//					TFile SFfile(prefix + "scale_factors_" + fitcharge + ".root","update");
-//					if(NPname == "NOMINAL") {
-//						chart = new LatexChart(("scale_factor_" + fitcharge).Data());
-//					}
 					vector<TString> scalesamples = {"wjet-fake","other-fake","bjet-fake"};
+#else
+					map<TString,map<TString,vector<TString>>> scalesamples;
+					scalesamples["other-fake"];
+					scalesamples["wjet-fake"];
+					scalesamples["wjet-fake"] = {
+						{"ss", {"reg1l1tau2b2j_ss" + nprong[i], "reg1l1tau2b3j_ss" + nprong[i], "reg1l1tau2b1j_ss" + nprong[i]}},
+						{"os", {"reg1l1tau2b2j_os" + nprong[i], "reg1l1tau2b3j_os" + nprong[i], "reg1l1tau2b1j_os" + nprong[i], "reg2l1tau1bnj" + nprong[i], "reg2l1tau2bnj" + nprong[i]}},
+					};
+					scalesamples["bjet-fake"];
+					map<TString,map<TString,vector<TString>>> postfit_regions = scalesamples;
+					postfit_regions["wjet-fake"]["ss"].push_back("reg1l1tau1b3j_ss");
+					postfit_regions["wjet-fake"]["ss"].push_back("reg1l1tau1b2j_ss");
+					postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b3j_os");
+					postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b2j_os");
+#endif
 					TString varname = "tau_pt_0";
+
 					map<TString,vector<observable>> *SFs = tau_plots->fit_scale_factor(&fit_regions, &varname, &scalesamples, &fakePtSlices, &histmiddlename, &postfit_regions);
 
 					TH1D* SFhist;
