@@ -41,6 +41,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	int plot_option = 2;
 	bool fittodata = 0;
 	bool plotFakeLep = 0;
+	bool plot2lttbar = 0;
 	bool showFake = 1;
 	TString fitcharge = "os";
 	int campaignfrom = 0;
@@ -126,7 +127,11 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	}
 	auto vars = getVariables(framework);
 	if(framework == "tthML"){
-		if(calculate_fake_calibration){
+		if(plot2lttbar){
+			tau_plots->add(vars.at("nljet"));
+			tau_plots->add(vars.at("lep_pt_0"));
+		}
+		else if(calculate_fake_calibration){
 			if(!fittodata && !(fakeFactor.nominal == 0 && doFakeFactor)){
 				tau_plots->sensitivevariable = "BDTG_test";
 				for(auto var : vars){
@@ -220,18 +225,22 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		"reg1l1tau1b3j_os",
 		"reg1l2tau2bnj_ss",
 		"reg1l2tau2bnj_os",
+		"reg1l1tau2b1j_ss",
+		"reg1l1tau2b1j_os",
 		"reg1l1tau2b2j_ss",
 		"reg1l1tau2b2j_os",
 		"reg1l1tau2b3j_ss",
 		"reg1l1tau2b3j_os"
 	};
 	vector<TString> regions_tthML_fakelep = {
-		"reg2lSS1tau1bnj_os",
-		"reg2lSS1tau1bnj_os_antiiso",
-		"reg2lSS1tau1bnj_os_antiisolead",
-		"reg2lSS1taunj_os",
-		"reg2lSS1taunj_os_antiiso",
-		"reg2lSS1taunj_os_antiisolead",
+		"reg2l1bnj",
+		"reg2l2bnj"
+	//	"reg2lSS1tau1bnj_os",
+	//	"reg2lSS1tau1bnj_os_antiiso",
+	//	"reg2lSS1tau1bnj_os_antiisolead",
+	//	"reg2lSS1taunj_os",
+	//	"reg2lSS1taunj_os_antiiso",
+	//	"reg2lSS1taunj_os_antiisolead",
 	};
 	vector<TString> regions_tthML = plotFakeLep? regions_tthML_fakelep : regions_tthML_faketau;
 	//vector<TString> regions_calc_fake = {"reg2l1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_os","reg2l1tau1b","reg1l1tau2b_os","reg1l1tau2b_ss"};//,"reg2l2bnj","reg1l2b2j","reg2l2b"};

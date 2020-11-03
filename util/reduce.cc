@@ -132,8 +132,8 @@ int main(int argc, char const *argv[])
 			regions.push_back("reg2lSS1tau1bnj_os_antiisolead");
 			regions.push_back("reg2l1tau1bnj");
 			regions.push_back("reg2l1tau2bnj");
-			regions.push_back("reg2l1bnj");
-			regions.push_back("reg2l2bnj");
+			//regions.push_back("reg2l1bnj");
+			//regions.push_back("reg2l2bnj");
 
 			//regions.push_back("reg2lSS1tau1bnj_ss");
 			//regions.push_back("reg2lSS1tau2bnj_os");
@@ -176,7 +176,7 @@ int main(int argc, char const *argv[])
 	}
 	analysis->SystematicsName = systname;
 	analysis->dumptruth = 0;
-	analysis->doBDT = 1;
+	analysis->doBDT = 0;
 	analysis->dofit = 1;
 	analysis->reduce = reduce;
 	analysis->debug = debug;
