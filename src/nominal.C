@@ -1842,28 +1842,17 @@ void nominal::defineRegions(){
     if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b2jos");
     if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b3jos");*/
   }else if(leps_p4->size()==1){
-    if(ljets_p4->size() == 0 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b_os");
-    if(ljets_p4->size() == 1 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b1j_os");
-    if(ljets_p4->size() == 2 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b2j_os");
-    if(ljets_p4->size() >= 3 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau1b3j_os");
-    if(bjets_p4->size() == 1 && taus_p4->size() >= 2 && taus_q->at(0)*taus_q->at(1) < 0) belong_regions.add("reg1l2tau1bnj_os");
-    if(ljets_p4->size() == 0 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau1b_ss");
-    if(ljets_p4->size() == 1 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau1b1j_ss");
-    if(ljets_p4->size() == 2 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau1b2j_ss");
-    if(ljets_p4->size() >= 3 && bjets_p4->size() == 1 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau1b3j_ss");
-    if(ljets_p4->size() == 1 && bjets_p4->size() == 2 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau2b1j_os");
-    if(ljets_p4->size() == 2 && bjets_p4->size() == 2 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau2b2j_os");
-    if(ljets_p4->size() >= 3 && bjets_p4->size() == 2 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg1l1tau2b3j_os");
-    if(ljets_p4->size() == 1 && bjets_p4->size() == 2 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau2b1j_ss");
-    if(ljets_p4->size() == 2 && bjets_p4->size() == 2 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau2b2j_ss");
-    if(ljets_p4->size() >= 3 && bjets_p4->size() == 2 && taus_p4->size() == 1 && taus_q->at(0)*leps_id->at(0) < 0) belong_regions.add("reg1l1tau2b3j_ss");
-    if(bjets_p4->size() == 1 && taus_p4->size() >= 2 && taus_q->at(0)*taus_q->at(1) > 0) belong_regions.add("reg1l2tau1bnj_ss");
-    if(bjets_p4->size() == 2 && taus_p4->size() >= 2 && taus_q->at(0)*taus_q->at(1) < 0) belong_regions.add("reg1l2tau2bnj_os");
-    if(bjets_p4->size() == 2 && taus_p4->size() >= 2 && taus_q->at(0)*taus_q->at(1) > 0) belong_regions.add("reg1l2tau2bnj_ss");
-    if(bjets_p4->size() == 2 && ljets_p4->size() == 1 && taus_p4->size() == 1 && (leps_id->at(0) > 0 ? -1 : 1)*taus_q->at(0) < 0) belong_regions.add("reg1l1tau2b1j_os");
-    if(bjets_p4->size() == 2 && ljets_p4->size() == 1 && taus_p4->size() == 1 && (leps_id->at(0) > 0 ? -1 : 1)*taus_q->at(0) > 0) belong_regions.add("reg1l1tau2b1j_ss");
-    if(bjets_p4->size() == 2 && ljets_p4->size() == 0 && taus_p4->size() == 1 && (leps_id->at(0) > 0 ? -1 : 1)*taus_q->at(0) < 0) belong_regions.add("reg1l1tau2b_os");
-    if(bjets_p4->size() == 2 && ljets_p4->size() == 0 && taus_p4->size() == 1 && (leps_id->at(0) > 0 ? -1 : 1)*taus_q->at(0) > 0) belong_regions.add("reg1l1tau2b_ss");
+  	TString region_name = "reg1l";
+  	if(taus_p4->size()) region_name = region_name + char('0'+taus_p4->size()) + "tau";
+  	auto min = [](auto a, auto b) {
+  		if(a<b) return (typeof(b))a;
+  		return b;
+  	};
+  	if(bjets_p4->size()) region_name = region_name + char('0'+min(bjets_p4->size(),2)) + "b";
+  	if(taus_p4->size() ==1 && ljets_p4->size()) region_name = region_name + char('0'+min(ljets_p4->size(),3)) + "j";
+  	else if(taus_p4->size() ==2) region_name = region_name+"nj";
+  	region_name+= taus_q->at(0)*leps_id->at(0) > 0? "_os" : "_ss";
+  	belong_regions.add(region_name);
   }else if (leps_p4->size()==2){
     mll = (*leps_p4->at(0)+*leps_p4->at(1)).M();
     if(leps_iso->at(0) && leps_iso->at(1)) { //PLV + isolation
