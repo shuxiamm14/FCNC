@@ -1094,6 +1094,7 @@ void nominal::fillhist(histSaver* plots, TString region, int nprong, TString sam
   //    if(dovetobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[i],NP);
   //  }
   //}
+  if(debug) printf("nominal::fillhist\n");
   if(dobwp[bwps[1]] == 1 && taubtag) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[1],NP);
   if(dovetobwp[bwps[1]] == 1 && !taubtag) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[1],NP);
 }
@@ -1669,7 +1670,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
   
         TString    leporigin;
         TString    tauorigin;
-        if(leps_id->size()){
+        if(leps_id->size() && !plotTauFake){
           if (sample.Contains("data")) {
             leporigin = "data";
             sample = "data";
@@ -1841,7 +1842,7 @@ void nominal::defineRegions(){
     if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau2b3jss");
     if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b2jos");
     if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 2 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau2b3jos");*/
-  }else if(leps_p4->size()==1){
+  }else if(leps_p4->size()==1 && taus_p4->size()){
   	TString region_name = "reg1l";
   	if(taus_p4->size()) region_name = region_name + char('0'+taus_p4->size()) + "tau";
   	auto min = [](auto a, auto b) {

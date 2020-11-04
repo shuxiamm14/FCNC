@@ -223,7 +223,7 @@ int main(int argc, char const *argv[])
 				regions = regions_fake;
 				regions.insert(regions.end(),regions_notau.begin(),regions_notau.end());
 			}
-			analysis->dumpeventnumber = 1;
+			analysis->dumpeventnumber = 0;
 		}
 		if(doplot) {
 			if(!inputconfig.Contains("data")){

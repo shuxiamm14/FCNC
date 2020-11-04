@@ -1,11 +1,11 @@
 #rundir=$ttH_fakes_DIR/datafiles/tthML/v2
-rundir=$ttH_fakes_DIR/datafiles/tthML/v4
+rundir=$ttH_fakes_DIR/datafiles/tthML/v5
 mkdir -p $rundir/run
 rm $rundir/run/*
 allsamplefile=$rundir/run/allsamples.dat
 sysallsamplefile=$rundir/run/sys_allsamples.dat
 #inputdir=/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimttV3
-inputdir=/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimttV4
+inputdir=/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimttV5
 #for files in `ls $inputdir/*.list`
 #do
 #	if [ `grep -c "$files" $rundir/ignore.list` -ne '0' ] ; then
@@ -19,7 +19,7 @@ inputdir=/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAn
 #	cat $files | sort >> $sysallsamplefile
 #	echo >> $sysallsamplefile
 #done
-ls $inputdir/*.root | grep -v dup | tee $allsamplefile $sysallsamplefile > /dev/null
+ls $inputdir/*.root | grep -v p4135 | tee $allsamplefile $sysallsamplefile > /dev/null
 
 Order $allsamplefile
 Order $sysallsamplefile
@@ -35,8 +35,20 @@ do
 		nfilea=0
 		nfiled=0
 		nfilee=0
-		for files in `grep $lines $allsamplefile`
+		alldsidfiles=`grep $lines $allsamplefile`
+		haveFS=0
+		for files in $alldsidfiles
 		do
+			if [[ $files =~ "FS" ]] ; then
+				haveFS=1
+				break;
+			fi
+		done
+		for files in $alldsidfiles
+		do
+			if (( haveFS == 1 )) && [[ $files =~ "AF" ]] ; then
+				continue;
+			fi
 			if [[ $files =~ "mc16a" ]] ; then
 				if (( nfilea == 0 )) ; then
 					tmp=${files/_part*/.root}
