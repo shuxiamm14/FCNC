@@ -41,6 +41,14 @@ tthmltree::tthmltree():nominal::nominal(){
     "reg2lSS1tau2bnj_ss_antiisolead",
     "reg2lSS1tau1bnj_ss_antiisolead",
     "reg2lSS1tau1bnj_os_antiisolead",
+    "reg1l1tau1b_os_antiiso",
+    "reg1l1tau1b_ss_antiiso",
+    "reg1l1tau1b1j_os_antiiso",
+    "reg1l1tau1b1j_ss_antiiso",
+    "reg1l1tau1b2j_os_antiiso",
+    "reg1l1tau1b2j_ss_antiiso",
+    "reg1l1tau1b3j_os_antiiso",
+    "reg1l1tau1b3j_ss_antiiso",
     "reg2l2bnj",
     "reg2l1bnj",
     "reg2l1tau2bnj"
@@ -122,12 +130,26 @@ void tthmltree::init_hist(TString outputfilename){
           for (int i = 0; i < 4; ++i)
           {
             if(dobwp[bwps[i]]) {
-              fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i] + "_e");
-              fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i] + "_mu");
+              if(fcnc_regions[j].Contains("2l")){
+                fcnc_plots->add_region(fcnc_regions[j] + "_ee_" + nprong[k] + "_" + bwps[i]);
+                fcnc_plots->add_region(fcnc_regions[j] + "_mue_" + nprong[k] + "_" + bwps[i]);
+                fcnc_plots->add_region(fcnc_regions[j] + "_emu_" + nprong[k] + "_" + bwps[i]);
+                fcnc_plots->add_region(fcnc_regions[j] + "_mumu_" + nprong[k] + "_" + bwps[i]);
+              }else{
+                fcnc_plots->add_region(fcnc_regions[j] + "_e_" + nprong[k] + "_" + bwps[i]);
+                fcnc_plots->add_region(fcnc_regions[j] + "_mu_" + nprong[k] + "_" + bwps[i]);
+              }
             }
             if(dovetobwp[bwps[i]]){
-              fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_veto" + bwps[i] + "_e");
-              fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_veto" + bwps[i] + "_mu");
+              if(fcnc_regions[j].Contains("2l")){
+                fcnc_plots->add_region(fcnc_regions[j] + "_ee_" + nprong[k] + "_veto" + bwps[i]);
+                fcnc_plots->add_region(fcnc_regions[j] + "_mue_" + nprong[k] + "_veto" + bwps[i]);
+                fcnc_plots->add_region(fcnc_regions[j] + "_emu_" + nprong[k] + "_veto" + bwps[i]);
+                fcnc_plots->add_region(fcnc_regions[j] + "_mumu_" + nprong[k] + "_veto" + bwps[i]);
+              }else{
+                fcnc_plots->add_region(fcnc_regions[j] + "_e_" + nprong[k] + "_veto" + bwps[i]);
+                fcnc_plots->add_region(fcnc_regions[j] + "_mu_" + nprong[k] + "_veto" + bwps[i]);
+              }
             }
           }
         }

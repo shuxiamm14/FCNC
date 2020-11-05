@@ -262,8 +262,8 @@ int main(int argc, char const *argv[])
 		}
 	        analysis->fcnc_regions = regions;
         	analysis->init_sample(inputconfig,inputconfig);
-		TString inputfilename = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/" + analysis->SystematicsName + "/" + inputconfig + "_tree.root";
-		TString inputfilename_nominal = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/nominal/" + inputconfig + "_tree.root";
+		TString inputfilename = prefix + "/data/" + version + "/" + framework + "reduce" + to_string(reduce-1) + "/" + analysis->SystematicsName + "/" + inputconfig + "_tree.root";
+		TString inputfilename_nominal = prefix + "/data/" + version + "/" + framework + "reduce" + to_string(reduce-1) + "/nominal/" + inputconfig + "_tree.root";
 		printf("reading file: %s\n", inputfilename.Data());
 		TFile inputfile(inputfilename,"read");
 		TFile *inputfile_nominal = 0;

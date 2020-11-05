@@ -51,7 +51,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	int plotvar = 0;
 	bool doFakeFactor = 0;
 	bool realOnly = 0;
-	bool mergeDiletype = 1;
+	bool mergeleptype = 1;
 	if(method.Contains("nofake")){
 		showFake = 0;
 	}
@@ -91,7 +91,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString lumitag = "#it{#sqrt{s}} = 13TeV, ";
 	lumitag += campaignto == 3 ? "140 fb^{-1}" : (campaignto==2?"80 fb^{-1}":"36.1 fb^{-1}");
 	tau_plots->SetLumiAnaWorkflow(lumitag,"FCNC tqH H#rightarrow tautau","Work in progress");
-	tau_plots->debug = 0;
+	tau_plots->debug = 1;
 /*
 	tau_plots->checkread = 1;
 	tau_plots->checkread_sample = "fake";
@@ -253,15 +253,19 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString nprong[] = {"_1prong","_3prong",""};
 	vector<TString> dileptype = {"ee","emu","mue","mumu"};
 	for (int j = 0; j < nregions; ++j){
-		if(plotFakeLep){
+		if(regions[j].Contains(2l)){
 			tau_plots->add_region(regions[j]+"_ee");
 			tau_plots->add_region(regions[j]+"_emu");
 			tau_plots->add_region(regions[j]+"_mue");
 			tau_plots->add_region(regions[j]+"_mumu");
 		}else{
+			tau_plots->add_region(regions[j]+"_e");
+			tau_plots->add_region(regions[j]+"_mu");
+		}
+		if(!plotFakeLep){
 			for (int k = 0; k < 2; ++k){
 				for (int i = 1; i < 2; i+=2){
-					tau_plots->add_region(regions[j] + nprong[k] + "_vetobtagwp70");
+					tau_plots->add_region(regions[j] + "_" + nprong[k] + "_vetobtagwp70");
 				}
 			}
 		}
@@ -388,14 +392,24 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	if(!plotFakeLep){
 		if(mergeprong){
 			for (int j = 0; j < nregions; ++j){
-				tau_plots->merge_regions(regions[j] + nprong[0] + "_vetobtagwp70",regions[j] + nprong[1] + "_vetobtagwp70",regions[j]);
+				if(regions[j].Contains("2l")){
+					for(auto type : dileptype) tau_plots->merge_regions(regions[j] + "_" + type + "_" + nprong[0] + "_vetobtagwp70",regions[j] + "_" + type + nprong[1] + "_vetobtagwp70",regions[j] + "_" + type);
+				}else{
+					tau_plots->merge_regions(regions[j] + "_e_" +  nprong[0] + "_vetobtagwp70",regions[j] + "_e_" + nprong[1] + "_vetobtagwp70",regions[j] + "_e");
+					tau_plots->merge_regions(regions[j] + "_mu_" +  nprong[0] + "_vetobtagwp70",regions[j] + "_mu_" + nprong[1] + "_vetobtagwp70",regions[j] + "_mu");
+				}
 			}
 		}
-	}else if(mergeDiletype){
+	}
+	if(mergeleptype){
 		for (int j = 0; j < nregions; ++j){
-			vector<TString> mergeregions;
-			for(auto type : dileptype) mergeregions.push_back(regions[j] + "_" + type);
-			tau_plots->merge_regions(mergeregions,regions[j]);
+			if(regions[j].Contains("2l")){
+				vector<TString> mergeregions;
+				for(auto type : dileptype) mergeregions.push_back(regions[j] + "_" + type);
+				tau_plots->merge_regions(mergeregions,regions[j]);
+			}else{
+				tau_plots->merge_regions(regions[j] + "_e",regions[j] + "_mu",regions[j]);
+			}
 		}
 	}
 	if(plot_option == 2){
