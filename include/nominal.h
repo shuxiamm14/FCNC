@@ -283,6 +283,14 @@ public :
   float      drtaujmin;
   float      drtauj;
   float      MET_RefFinal_et;
+  // hadhad specific
+  float      tau0RNN;
+  float      tau1RNN;
+  float      ditau_coll_approx_m;
+  float      ditau_coll_approx_x0;
+  float      ditau_coll_approx_x1;
+  float      met_sumet;
+  float      met_sigma;
   //======================================================variables for kinematic fit========================================
   static TH2F* prob_20_40;
   static TH2F* prob_40_60;
@@ -306,13 +314,6 @@ public :
   static RooAddPdf   _pdf_;
 
   std::map<TString,std::vector<TLorentzVector*>*> fitvec;
-  // hadhad specific
-  float      tau0RNN;
-  float      tau1RNN;
-  float      ditau_coll_approx_m;
-  float      ditau_coll_approx_x0;
-  float      ditau_coll_approx_x1;
-  float      met_sumet;
 
 };
 #endif

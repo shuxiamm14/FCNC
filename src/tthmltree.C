@@ -67,6 +67,8 @@ void tthmltree::init_hist(TString outputfilename){
   
   if(reduce == 3 && doBDT){
     initMVA("reg1l2tau1bnj_os");
+    initMVA("reg1l1tau1b1j_ss");
+    initMVA("reg1l1tau1b2j_ss");
     initMVA("reg1l1tau1b2j_os");
     initMVA("reg1l1tau1b3j_os");
   }
@@ -106,6 +108,7 @@ void tthmltree::init_hist(TString outputfilename){
       fcnc_plots->add(vars.at("nljet"),&nljet);
       fcnc_plots->add(vars.at("dphitauetmiss"),&dphitauetmiss);
       fcnc_plots->add(vars.at("phicent"),&phicent);
+      fcnc_plots->add(vars.at("met_sigma"),&met_sigma);
     }
     fcnc_plots->add(vars.at("tau_pt_0"),&tau_pt_0);
     fcnc_plots->add(vars.at("tau_pt_1"),&tau_pt_1);
