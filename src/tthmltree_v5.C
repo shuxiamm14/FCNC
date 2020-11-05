@@ -55,8 +55,8 @@ bool tthmltree_v5::passBasicCut(){
   if(dilep_type && !SelectTLepid(1)) return false;
   cut_flow.fill("tight lepton");
 
-  if(onelep_type && nTaus_OR_Pt25 == 1 && !IsoLepid(0)) return false;
-  cut_flow.fill("PLV for lephad");
+  //if(onelep_type && nTaus_OR_Pt25 == 1 && !IsoLepid(0)) return false;
+  //cut_flow.fill("PLV for lephad");
 
   if(nTaus_OR && (!taus_JetRNNSigMedium_0 || taus_pt_0<25*GeV)) return false;
   cut_flow.fill("Medium,25GeV leadtau");

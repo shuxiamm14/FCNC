@@ -1672,9 +1672,9 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         }
         if(debug) printf("fill hist\n");
 
-        if(!plotTauFake){
-          region += abs(leps_id->at(0)) == 11?"_e":"_mu";
-          region += abs(leps_id->at(1)) == 11?"e":"mu";
+        if(leps_id->size()) region += "_";
+        for(auto id : *leps_id){
+          region += id == 11?"e":"mu";
       	}
         if(mcChannelNumber!=0){
           auto weightvec = weightsysmap.at(mcChannelNumber);
@@ -1817,6 +1817,7 @@ void nominal::defineRegions(){
   	if(taus_p4->size() ==1 && ljets_p4->size()) region_name = region_name + char('0'+min(ljets_p4->size(),3)) + "j";
   	else if(taus_p4->size() ==2) region_name = region_name+"nj";
   	region_name+= taus_q->at(0)*leps_id->at(0) > 0? "_os" : "_ss";
+    if(!leps_iso->at(0)) region_name+="_antiiso";
   	belong_regions.add(region_name);
   }else if (leps_p4->size()==2){
     mll = (*leps_p4->at(0)+*leps_p4->at(1)).M();

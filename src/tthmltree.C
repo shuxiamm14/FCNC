@@ -121,8 +121,14 @@ void tthmltree::init_hist(TString outputfilename){
         {
           for (int i = 0; i < 4; ++i)
           {
-            if(dobwp[bwps[i]]) fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-            if(dovetobwp[bwps[i]]) fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
+            if(dobwp[bwps[i]]) {
+              fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i] + "_e");
+              fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_" + bwps[i] + "_mu");
+            }
+            if(dovetobwp[bwps[i]]){
+              fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_veto" + bwps[i] + "_e");
+              fcnc_plots->add_region(fcnc_regions[j] + "_" + nprong[k] + "_veto" + bwps[i] + "_mu");
+            }
           }
         }
       }else{
