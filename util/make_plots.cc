@@ -253,19 +253,17 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString nprong[] = {"_1prong","_3prong",""};
 	vector<TString> dileptype = {"ee","emu","mue","mumu"};
 	for (int j = 0; j < nregions; ++j){
-		if(regions[j].Contains(2l)){
-			tau_plots->add_region(regions[j]+"_ee");
-			tau_plots->add_region(regions[j]+"_emu");
-			tau_plots->add_region(regions[j]+"_mue");
-			tau_plots->add_region(regions[j]+"_mumu");
+		if(plotFakeLep){
+			for(auto &type : dileptype) tau_plots->add_region(regions[j]+"_" + type);
 		}else{
-			tau_plots->add_region(regions[j]+"_e");
-			tau_plots->add_region(regions[j]+"_mu");
-		}
-		if(!plotFakeLep){
 			for (int k = 0; k < 2; ++k){
 				for (int i = 1; i < 2; i+=2){
-					tau_plots->add_region(regions[j] + "_" + nprong[k] + "_vetobtagwp70");
+					if(regions[j].Contains(2l)){	
+						for(auto &type : dileptype) tau_plots->add_region(regions[j] + "_" + type + "_" + nprong[k] + "_vetobtagwp70");
+					}else{
+						tau_plots->add_region(regions[j] + "_e_" + nprong[k] + "_vetobtagwp70");
+						tau_plots->add_region(regions[j] + "_mu_" + nprong[k] + "_vetobtagwp70");
+					}
 				}
 			}
 		}
