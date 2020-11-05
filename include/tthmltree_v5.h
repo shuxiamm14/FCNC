@@ -1021,16 +1021,6 @@ public :
    Char_t          GlobalTrigDecision_mu26_ivarmedium;
    Char_t          GlobalTrigDecision_mu50;
    Int_t           higgsDecayMode;
-   vector<float>   *m_truth_m;
-   vector<float>   *m_truth_pt;
-   vector<float>   *m_truth_eta;
-   vector<float>   *m_truth_phi;
-   vector<float>   *m_truth_e;
-   vector<int>     *m_truth_pdgId;
-   vector<int>     *m_truth_status;
-   vector<int>     *m_truth_barcode;
-   vector<vector<int> > *m_truth_parents;
-   vector<vector<int> > *m_truth_children;
    Float_t         met_sumet;
    Float_t         tauSFRNNMedium_TAU_SF_NOMINAL;
    Float_t         tauSFRNNLoose_TAU_SF_NOMINAL;
