@@ -5,56 +5,51 @@
 using namespace std;
 int nominal::GeV = 0;
 
-void nominal::initMVA(TString fcnc_region){
+void nominal::initMVA(TString region){
 
   doBDT = 1;
 
-  reader[fcnc_region] = new TMVA::Reader( "!Color:!Silent" );
+  auto tmpreader = new TMVA::Reader( "!Color:!Silent" );
 
-  reader[fcnc_region]->AddVariable("tau_pt_0",&tau_pt_0);
-  //reader[fcnc_region]->AddVariable("tau_pt_1",&tau_pt_1);
-  reader[fcnc_region]->AddVariable("drtautau",&drtautau);
-  reader[fcnc_region]->AddVariable("etmiss",&etmiss);
-  reader[fcnc_region]->AddVariable("ttvismass",&ttvismass);
-  reader[fcnc_region]->AddVariable("drtaujmin",&drtaujmin);
-  //reader[fcnc_region]->AddVariable("mttjmin",&mttjmin);
-  if(!fcnc_region.Contains("2mtau")&& !fcnc_region.Contains("2ltau")) {
-    reader[fcnc_region]->AddVariable("drlb",&drlb);
-    if(fcnc_region.Contains("2lSS")) reader[fcnc_region]->AddVariable("lep_pt_0",&lep_pt_0);
+  tmpreader->AddVariable("tau_pt_0",&tau_pt_0);
+  tmpreader->AddVariable("drtautau",&drtautau);
+  tmpreader->AddVariable("etmiss",&etmiss);
+  tmpreader->AddVariable("ttvismass",&ttvismass);
+  tmpreader->AddVariable("drtaujmin",&drtaujmin);
+  if(!region.Contains("2mtau")&& !region.Contains("2ltau")) {
+    tmpreader->AddVariable("drlb",&drlb);
+    tmpreader->AddVariable("drltau",&drltau);
+    tmpreader->AddVariable("drtaub",&drtaub);
+    if(region.Contains("2lSS")) tmpreader->AddVariable("lep_pt_0",&lep_pt_0);
   }
-  if(fcnc_region.Contains("2j") || fcnc_region.Contains("3j")){
-    reader[fcnc_region]->AddVariable("dphitauetmiss",&dphitauetmiss);
-    reader[fcnc_region]->AddVariable("phicent",&phicent);
-    reader[fcnc_region]->AddVariable("tautaumass",&tautaumass);
-    reader[fcnc_region]->AddVariable("t2mass",&t2mass);
-    reader[fcnc_region]->AddVariable("x1fit",&x1fit);
-    reader[fcnc_region]->AddVariable("x2fit",&x2fit);
-    reader[fcnc_region]->AddVariable("t1mass",&t1mass);
-    if(fcnc_region.Contains("1l1tau")){
-       reader[fcnc_region]->AddVariable("drtaub",&drtaub);
-       reader[fcnc_region]->AddVariable("mjjmin",&mjjmin);
+  if(region.Contains("2j") || region.Contains("3j")){
+    tmpreader->AddVariable("dphitauetmiss",&dphitauetmiss);
+    tmpreader->AddVariable("phicent",&phicent);
+    tmpreader->AddVariable("tautaumass",&tautaumass);
+    tmpreader->AddVariable("t2mass",&t2mass);
+    tmpreader->AddVariable("x1fit",&x1fit);
+    tmpreader->AddVariable("x2fit",&x2fit);
+    tmpreader->AddVariable("t1mass",&t1mass);
+    if(region.Contains("1l1tau")){
+       tmpreader->AddVariable("mjjmin",&mjjmin);
     }
-    if(!fcnc_region.Contains("reg1l1tau1b2j")){
-       reader[fcnc_region]->AddVariable("wmass",&wmass);
+    if(!region.Contains("reg1l1tau1b2j")){
+       tmpreader->AddVariable("wmass",&wmass);
     }
-    //if(fcnc_region.Contains("1l1tau1b2j")){
-    //   reader[fcnc_region]->AddVariable("allpz",&allpz);
-    //   reader[fcnc_region]->AddVariable("allmass",&allmass);
-    //}
-  }else if(fcnc_region.Contains("1l2tau1") || fcnc_region.Contains("2lSS")){
-    reader[fcnc_region]->AddVariable("t1vismass",&t1vismass);
-    reader[fcnc_region]->AddVariable("mtaujmin",&mtaujmin);
-    reader[fcnc_region]->AddVariable("drltau",&drltau);
-    reader[fcnc_region]->AddVariable("etamax",&etamax);
-    reader[fcnc_region]->AddVariable("mtw",&mtw);
-    reader[fcnc_region]->AddVariable("drlbditau",&drlbditau);
-    reader[fcnc_region]->AddVariable("tautauvispt",&tautauvispt);
-    reader[fcnc_region]->AddVariable("t2vismass",&t2vismass);
+  }else if(region.Contains("1l2tau1") || region.Contains("2lSS")){
+    tmpreader->AddVariable("t1vismass",&t1vismass);
+    tmpreader->AddVariable("mtaujmin",&mtaujmin);
+    tmpreader->AddVariable("etamax",&etamax);
+    tmpreader->AddVariable("mtw",&mtw);
+    tmpreader->AddVariable("drlbditau",&drlbditau);
+    tmpreader->AddVariable("tautauvispt",&tautauvispt);
+    tmpreader->AddVariable("t2vismass",&t2vismass);
   }
 
 
-  reader[fcnc_region]->BookMVA( "BDTG_1" , TString(PACKAGE_DIR) + "/config/weights/" + fcnc_region + "TMVAClassification_1_BDTG.weights.xml" );
-  reader[fcnc_region]->BookMVA( "BDTG_2" , TString(PACKAGE_DIR) + "/config/weights/" + fcnc_region + "TMVAClassification_2_BDTG.weights.xml" );
+  tmpreader->BookMVA( "BDTG_1" , TString(PACKAGE_DIR) + "/config/weights/" + region + "TMVAClassification_1_BDTG.weights.xml" );
+  tmpreader->BookMVA( "BDTG_2" , TString(PACKAGE_DIR) + "/config/weights/" + region + "TMVAClassification_2_BDTG.weights.xml" );
+  reader[region] = tmpreader;
 }
 
 void nominal::init(TTree *tree){
@@ -248,6 +243,7 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("mttjmin", & mttjmin);
   tree->SetBranchAddress("drtaujmin", & drtaujmin);
   tree->SetBranchAddress("etmiss",&etmiss);
+  tree->SetBranchAddress("met_sumet", &met_sumet);
   tree->SetBranchAddress("dphitauetmiss",&dphitauetmiss);
   tree->SetBranchAddress("phicent",&phicent);
   tree->SetBranchAddress("tautaumass", &tautaumass);
@@ -265,7 +261,6 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("ditau_coll_approx_m", &ditau_coll_approx_m);
   tree->SetBranchAddress("ditau_coll_approx_x0", &ditau_coll_approx_x0);
   tree->SetBranchAddress("ditau_coll_approx_x1", &ditau_coll_approx_x1);
-  tree->SetBranchAddress("met_sumet", &met_sumet);
   tree->SetBranchAddress("tau0RNN",&tau0RNN);
   tree->SetBranchAddress("tau1RNN",&tau1RNN);
 }
@@ -309,6 +304,7 @@ void nominal::BDTBranch(TTree *tree){
   tree->Branch("mttjmin", & mttjmin);
   tree->Branch("drtaujmin", & drtaujmin);
   tree->Branch("etmiss",&etmiss);
+  tree->Branch("met_sumet",&met_sumet);
   tree->Branch("dphitauetmiss",&dphitauetmiss);
   tree->Branch("phicent",&phicent);
   tree->Branch("tautaumass", &tautaumass);
@@ -324,7 +320,6 @@ void nominal::BDTBranch(TTree *tree){
   tree->Branch("ditau_coll_approx_m",  &ditau_coll_approx_m);
   tree->Branch("ditau_coll_approx_x0", &ditau_coll_approx_x0);
   tree->Branch("ditau_coll_approx_x1", &ditau_coll_approx_x1);
-  tree->Branch("met_sumet", &met_sumet);
   tree->Branch("tau0RNN",&tau0RNN);
   tree->Branch("tau1RNN",&tau1RNN);
 }
@@ -360,7 +355,6 @@ void nominal::setVecBranch(TTree *tree){
   tree->SetBranchAddress("ditau_coll_approx_m", &ditau_coll_approx_m);
   tree->SetBranchAddress("ditau_coll_approx_x0", &ditau_coll_approx_x0);
   tree->SetBranchAddress("ditau_coll_approx_x1", &ditau_coll_approx_x1);
-  tree->SetBranchAddress("met_sumet", &met_sumet);
   tree->SetBranchAddress("tau0RNN",&tau0RNN);
   tree->SetBranchAddress("tau1RNN",&tau1RNN);
 }
@@ -395,7 +389,6 @@ void nominal::vecBranch(TTree *tree){
   tree->Branch("ditau_coll_approx_m",  &ditau_coll_approx_m);
   tree->Branch("ditau_coll_approx_x0", &ditau_coll_approx_x0);
   tree->Branch("ditau_coll_approx_x1", &ditau_coll_approx_x1);
-  tree->Branch("met_sumet", &met_sumet);
   tree->Branch("tau0RNN",&tau0RNN);
   tree->Branch("tau1RNN",&tau1RNN);
 }
@@ -1350,37 +1343,6 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           }
         }
         if(dofit && (taus_p4->size() + leps_p4->size() == 2 || dofit1l2tau)){
-          if (taus_p4->size() + leps_p4->size() >= 3) {
-            gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
-            gMinside->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
-            gMinside->mnparm(2, "pt3", 10*GeV, 10*GeV, 0., 1000*GeV, ierflg);
-            gMinside->mnparm(3, "eta3", 0, 0.1, -5, 5, ierflg);
-            gMinside->mnparm(4, "phi3", 0, 0.1, -PI, PI, ierflg);
-            arglist[0] = 5;
-          } else if (fit_collinear){
-            gMinside->mnparm(0, "rpt1", 0.4, 0.01, 0., 2., ierflg);
-            gMinside->mnparm(1, "rpt2", 0.4, 0.01, 0., 2., ierflg);
-            arglist[0] = 2;
-            if(leps_p4->size()) {
-              gMinside->mnparm(2, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
-              arglist[0]++;
-            }
-          } else {
-            gMinside->mnparm(0, "v1pt",  taus_p4->at(0)->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
-            gMinside->mnparm(1, "v1eta", taus_p4->at(0)->Eta(), 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
-            gMinside->mnparm(2, "v1phi", taus_p4->at(0)->Phi(), 0.01, taus_p4->at(0)->Phi()-0.25, taus_p4->at(0)->Phi()+0.25, ierflg);
-            gMinside->mnparm(3, "v2pt",  tau2->Pt(), 1*GeV, 0., 1000*GeV, ierflg);
-            gMinside->mnparm(4, "v2eta", tau2->Eta(), 0.01, tau2->Eta()-0.25, tau2->Eta()+0.25, ierflg);
-            gMinside->mnparm(5, "v2phi", tau2->Phi(), 0.01, tau2->Phi()-0.25, tau2->Phi()+0.25, ierflg);
-            arglist[0] = 6;
-            if(leps_p4->size()) {
-              gMinside->mnparm(6, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
-              arglist[0]++;
-            }
-          }
-
-          gMinside->SetObjectFit((TObject*)&fitvec);
-          arglist[1] = 60.;
           Double_t val[7] = {0,0,0,0,0,0,0};
           Double_t err[7] = {0,0,0,0,0,0,0};
           if(!mass_collinear){
@@ -1412,13 +1374,13 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
                 arglist[0]++;
               }
             }
-  
+            int nvarfit = arglist[0];
             gMinside->SetObjectFit((TObject*)&fitvec);
             arglist[1] = 60.;
   
             if(debug) printf("start kinematic fit\n");
             gMinside->mnexcm("SCAN", arglist, 2, ierflg);
-            for (int i = 0; i < 7; ++i) gMinside->GetParameter(i, val[i], err[i]);
+            for (int i = 0; i < nvarfit; ++i) gMinside->GetParameter(i, val[i], err[i]);
   
             if (taus_p4->size() + leps_p4->size() >= 3) {
               gMinside->mnparm(0, "rpt1", val[0], 0.01, 0., 2., ierflg);
@@ -1451,7 +1413,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
   
             chi2 = fmin;
   
-            for (int i = 0; i < (taus_p4->size() + leps_p4->size() >= 3 ? 5 : (leps_p4->size()?7:6)); ++i) gMinside->GetParameter(i, val[i], err[i]);
+            for (int i = 0; i < nvarfit; ++i) gMinside->GetParameter(i, val[i], err[i]);
           }
 //=======================fit stops here========================
           neutrinos_p4->clear();
@@ -1510,6 +1472,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         drttj = ljets_p4->size() >= 1 ? (*taus_p4->at(0) + *tau2).DeltaR(*ljets_p4->at(ljet_indice->at(0))) : 0;
         dphitauetmiss = fabs(met_p4->DeltaPhi(*taus_p4->at(0) + *tau2));
         etmiss = met_p4->Pt();
+        met_sumet = met_p4->Pz();
         mtaujmin = 0;
         drttjmin = 999;
         mttjmin = 0;
@@ -1580,6 +1543,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
     if(reduce == 3){
       BDTG_test  = 0;
       BDTG_train  = 0;
+      met_sigma = etmiss/((13.1+0.50*sqrt(met_sumet/GeV))*GeV);
       if(ctagFCNC && fcncjetbscore < btagwpCut[3]) {
         continue;
       }
@@ -1708,9 +1672,9 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         }
         if(debug) printf("fill hist\n");
 
-        if(!plotTauFake){
-          region += abs(leps_id->at(0)) == 11?"_e":"_mu";
-          region += abs(leps_id->at(1)) == 11?"e":"mu";
+        if(leps_id->size()) region += "_";
+        for(auto id : *leps_id){
+          region += id == 11?"e":"mu";
       	}
         if(mcChannelNumber!=0){
           auto weightvec = weightsysmap.at(mcChannelNumber);
@@ -1853,6 +1817,7 @@ void nominal::defineRegions(){
   	if(taus_p4->size() ==1 && ljets_p4->size()) region_name = region_name + char('0'+min(ljets_p4->size(),3)) + "j";
   	else if(taus_p4->size() ==2) region_name = region_name+"nj";
   	region_name+= taus_q->at(0)*leps_id->at(0) > 0? "_os" : "_ss";
+    if(!leps_iso->at(0)) region_name+="_antiiso";
   	belong_regions.add(region_name);
   }else if (leps_p4->size()==2){
     mll = (*leps_p4->at(0)+*leps_p4->at(1)).M();
