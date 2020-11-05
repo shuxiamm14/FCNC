@@ -8,7 +8,6 @@
 #include "weightsys_list.h"
 #include "LatexChart.h"
 #include "common.h"
-#define FITSTRATEGY 2   //1 merge SS and OS. 2 split SS and OS, single fit. 3 split SS and OS, two fits.
 using namespace std;
 
 TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir, TString nominalname){
@@ -91,7 +90,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	tau_plots->doROC = 0;
 	TString lumitag = "#it{#sqrt{s}} = 13TeV, ";
 	lumitag += campaignto == 3 ? "140 fb^{-1}" : (campaignto==2?"80 fb^{-1}":"36.1 fb^{-1}");
-	tau_plots->SetLumiAnaWorkflow(lumitag,"FCNC tqH H#rightarrow tautau","Internal");
+	tau_plots->SetLumiAnaWorkflow(lumitag,"FCNC tqH H#rightarrow tautau","Work in progress");
 	tau_plots->debug = 0;
 /*
 	tau_plots->checkread = 1;
