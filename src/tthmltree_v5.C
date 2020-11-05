@@ -10,32 +10,32 @@ bool tthmltree_v5::addWeightSys(){
 bool tthmltree_v5::passBasicCut(){
   //https://twiki.cern.ch/twiki/bin/view/Atlas/MuonTriggerPhysicsRecommendationsRel212017#Recommended_triggers
   bool single_mu_trig = 0;
-  if(RunYear == 2015) single_mu_trig = (lep_pt_0>21*GeV && GlobalTrigDecision_mu20_iloose_L1MU15) 
-    || (lep_pt_0>51*GeV && GlobalTrigDecision_mu50);
-  else single_mu_trig = (lep_pt_0>27*GeV && GlobalTrigDecision_mu26_ivarmedium) 
-    || (lep_pt_0>51*GeV && GlobalTrigDecision_mu50);
+  if(RunYear == 2015) single_mu_trig = (lep_Pt_0>21*GeV && GlobalTrigDecision_mu20_iloose_L1MU15) 
+    || (lep_Pt_0>51*GeV && GlobalTrigDecision_mu50);
+  else single_mu_trig = (lep_Pt_0>27*GeV && GlobalTrigDecision_mu26_ivarmedium) 
+    || (lep_Pt_0>51*GeV && GlobalTrigDecision_mu50);
   bool di_mu_trig = 0;
-  if(RunYear == 2015) di_mu_trig = GlobalTrigDecision_mu18_mu8noL1 && lep_pt_0 > 19*GeV && lep_pt_1 > 9*GeV;
-  else di_mu_trig = GlobalTrigDecision_mu22_mu8noL1 && lep_pt_0 > 23*GeV && lep_pt_1 > 9*GeV;
+  if(RunYear == 2015) di_mu_trig = GlobalTrigDecision_mu18_mu8noL1 && lep_Pt_0 > 19*GeV && lep_Pt_1 > 9*GeV;
+  else di_mu_trig = GlobalTrigDecision_mu22_mu8noL1 && lep_Pt_0 > 23*GeV && lep_Pt_1 > 9*GeV;
 
   //https://twiki.cern.ch/twiki/bin/view/AtlasProtected/LatestRecommendationsElectronIDRun2
   bool single_e_trig = 0;
-  if(RunYear == 2015) single_e_trig = (lep_pt_0>25*GeV && GlobalTrigDecision_e24_lhmedium_L1EM20VH)
-    || (lep_pt_0>61*GeV && GlobalTrigDecision_e60_lhmedium)
-    || (lep_pt_0>121*GeV && GlobalTrigDecision_e120_lhloose);
-  else single_e_trig = (lep_pt_0 > 27*GeV && GlobalTrigDecision_e26_lhtight_nod0_ivarloose)
-    || (lep_pt_0>61*GeV && GlobalTrigDecision_e60_lhmedium_nod0)
-    || (lep_pt_0>141*GeV && GlobalTrigDecision_e140_lhloose_nod0);
+  if(RunYear == 2015) single_e_trig = (lep_Pt_0>25*GeV && GlobalTrigDecision_e24_lhmedium_L1EM20VH)
+    || (lep_Pt_0>61*GeV && GlobalTrigDecision_e60_lhmedium)
+    || (lep_Pt_0>121*GeV && GlobalTrigDecision_e120_lhloose);
+  else single_e_trig = (lep_Pt_0 > 27*GeV && GlobalTrigDecision_e26_lhtight_nod0_ivarloose)
+    || (lep_Pt_0>61*GeV && GlobalTrigDecision_e60_lhmedium_nod0)
+    || (lep_Pt_0>141*GeV && GlobalTrigDecision_e140_lhloose_nod0);
   bool di_e_trig = 0;
-  if(RunYear == 2015) di_e_trig = (lep_pt_0 > 13*GeV && lep_pt_1 > 13*GeV && GlobalTrigDecision_2e12_lhloose_L12EM10VH);
-  else if(RunYear == 2016) di_e_trig = (lep_pt_0 > 18*GeV && lep_pt_1 > 18*GeV && GlobalTrigDecision_2e17_lhvloose_nod0);
-  else di_e_trig = (lep_pt_0 > 25*GeV && lep_pt_1 > 25*GeV && GlobalTrigDecision_2e24_lhvloose_nod0);
+  if(RunYear == 2015) di_e_trig = (lep_Pt_0 > 13*GeV && lep_Pt_1 > 13*GeV && GlobalTrigDecision_2e12_lhloose_L12EM10VH);
+  else if(RunYear == 2016) di_e_trig = (lep_Pt_0 > 18*GeV && lep_Pt_1 > 18*GeV && GlobalTrigDecision_2e17_lhvloose_nod0);
+  else di_e_trig = (lep_Pt_0 > 25*GeV && lep_Pt_1 > 25*GeV && GlobalTrigDecision_2e24_lhvloose_nod0);
 
   //https://twiki.cern.ch/twiki/bin/view/Atlas/LowestUnprescaled#Electron_Muon_AN1
   bool emu_trig = 0;
   if(RunYear == 2015) emu_trig = GlobalTrigDecision_e17_lhloose_mu14;
   else emu_trig = GlobalTrigDecision_e17_lhloose_nod0_mu14;
-  emu_trig = emu_trig && lep_pt_0 > 18*GeV && lep_pt_0 > 15*GeV;
+  emu_trig = emu_trig && lep_Pt_0 > 18*GeV && lep_Pt_0 > 15*GeV;
   if(!single_e_trig && !single_mu_trig && !di_e_trig && !di_mu_trig && !emu_trig) return false;
 
   cut_flow.fill("pass trigger");
