@@ -17,10 +17,12 @@ tthmltree::tthmltree():nominal::nominal(){
   belong_regions.m_region_map["SRCR"] = {
     "reg1l1tau1b2j_ss",
     "reg1l1tau1b3j_ss",
+    "reg1l1tau2b_os",
+    "reg1l1tau2b_ss",
     "reg1l1tau2b1j_os",
+    "reg1l1tau2b1j_ss",
     "reg1l1tau2b2j_os",
     "reg1l1tau2b3j_os",
-    "reg1l1tau2b1j_ss",
     "reg1l1tau2b2j_ss",
     "reg1l1tau2b3j_ss",
     "reg1l1tau2b2j_os_85",
