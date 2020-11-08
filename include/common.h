@@ -8,6 +8,9 @@ const std::vector<double> fakePtSlices = {25,35,45,125};
 
 const TString SFfilename = TString(PACKAGE_DIR) + "/data/" + "scale_factors.root";
 
+std::vector<fcncSample> getFakeTauOrigin();
+
+std::vector<fcncSample> getFakeLepOrigin();
 #if FITSTRATEGY==1
 const std::vector<TString> SForigins = {"wjet-fake","bjet-fake","other-fake"};
 #else
@@ -30,17 +33,6 @@ const std::map<TString,std::vector<TString>> signalmap = {
 };
 
 void translateRegion(std::string &regtitle);
-
-class fcncSample
-{
-public:
-	fcncSample(TString _name, TString _title, enum EColor _color, double _norm = 1): name(_name), title(_title), color(_color), norm(_norm) {};
-	~fcncSample(){};
-	TString name;
-	TString title;
-	double norm;
-	enum EColor color;
-};
 
 std::vector<fcncSample> getBkgSamples(TString framework);
 

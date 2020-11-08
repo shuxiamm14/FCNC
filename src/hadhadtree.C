@@ -170,18 +170,12 @@ void hadhadtree::init_sample(TString sample, TString sampletitle){ // in reduce.
   if(dohist){//reduce=3
     if (sample.Contains("data"))
     {
-      fcnc_plots->init_sample("data","data","data",kBlack);
+      fcnc_plots->add_sample("data","data",kBlack);
       initdata = 1;
     }else{
       sample.Remove(0,6);
-      fcnc_plots->init_sample(sample + "_g","NOMINAL",sampletitle + "(gluon fake #tau)",(enum EColor)7);
-      fcnc_plots->init_sample(sample + "_j","NOMINAL",sampletitle + "(light-jet fake #tau)",kBlue);
-      fcnc_plots->init_sample(sample + "_b","NOMINAL",sampletitle + "(b-jets fake #tau)",kViolet);
-      fcnc_plots->init_sample(sample + "_lep","NOMINAL",sampletitle + "(lepton fake #tau)",kGreen);
-      fcnc_plots->init_sample(sample + "_real","NOMINAL",sampletitle + "(real #tau)",kRed);
-      fcnc_plots->init_sample(sample + "_c","NOMINAL",sampletitle + "(c-jets fake #tau)",kOrange);
-      fcnc_plots->init_sample(sample + "_nomatch","NOMINAL",sampletitle + "(no truth matched fake #tau)",kGray);
-      fcnc_plots->init_sample(sample + "_doublefake","NOMINAL",sampletitle + "(no truth matched fake #tau)",kGray);
+      auto origins = getFakeTauOrigin();
+      for(auto origin : origins) fcnc_plots->add_sample(sample + "_" + origin.name,sampletitle + "(" + origin.title + ")",origin.color);
     }
   }
 }

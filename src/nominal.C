@@ -1727,12 +1727,14 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             }
             if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), theNP);
             //else if(!region.Contains("tau")) fill_notau(region, sample, theNP);
-            else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0)) && region.Contains("2l")) (fcnc?fcnc_plots:fake_plots)->fill_hist(leporigin,region,theNP);
+            else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0))) {
+            	(fcnc?fcnc_plots:fake_plots)->fill_hist(leporigin,region,theNP);
+            }
           }
         }else{ //data
           if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), "NOMINAL");
           //else if(!region.Contains("tau")) fill_notau(region, sample, "NOMINAL");
-          else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0)) && region.Contains("2l")) (fcnc?fcnc_plots:fake_plots)->fill_hist("data",region,"NOMINAL");
+          else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0))) (fcnc?fcnc_plots:fake_plots)->fill_hist("data",region,"NOMINAL");
         }
       } // match dohist
       if(debug == 2) printf("finish hist\n");
