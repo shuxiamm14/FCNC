@@ -33,6 +33,33 @@ std::vector<fcncSample> getBkgSamples(TString framework){
 */	return samples;
 }
 
+std::vector<fcncSample> getFakeTauOrigin(){
+	std::vector<fcncSample> samples;
+	samples.emplace_back("g","gluon fake #tau",(enum EColor)7);
+	samples.emplace_back("j","light-jet fake #tau",kBlue);
+	samples.emplace_back("b","b-jets fake #tau",kViolet);
+	samples.emplace_back("lep","lepton fake #tau",kGreen);
+	samples.emplace_back("real","real #tau",kRed);
+	samples.emplace_back("c","c-jets fake #tau",kOrange);
+	samples.emplace_back("wjet","w-jet matched fake #tau",kGray);
+	samples.emplace_back("doublefake","double fake #tau",kGray);
+	samples.emplace_back("nomatch","no match fake #tau",kGray);
+	return samples;
+} 
+
+std::vector<fcncSample> getFakeLepOrigin(){
+	std::vector<fcncSample> samples;
+	samples.emplace_back("realLep","real lepton",(enum EColor)7);
+	samples.emplace_back("chargeFlip","lepton charge flip",kBlue);
+	samples.emplace_back("conversion","lepton flavor flip",kViolet);
+	samples.emplace_back("nonPrompt","non-prompt lepton",kGreen);
+	samples.emplace_back("otherFakeLep","fake lepton",kOrange);
+	samples.emplace_back("unknownFakeLep","fake lepton",kOrange);
+	samples.emplace_back("doubleFakeLep","double fake lepton",kGray);
+	return samples;
+} 
+
+
 std::vector<fcncSample> getSigSamples(TString framework, float BRbenchmark){
 	std::vector<fcncSample> samples;
 	std::stringstream ss;
@@ -74,9 +101,9 @@ std::map<TString,variable*> getVariables(TString framework){
 		ret["dphitauetmiss"] = new variable("dphitauetmiss","#Delta#phi(#tau#tau,P^{T}_{miss})",60,0.,3.,"",1,6);
 		ret["ttvismass"] = new variable("ttvismass","m_{#tau#tau,vis}",80,50.,130.,"GeV",scale,8);
 		ret["drtautau"] = new variable("drtautau","#DeltaR(#tau,#tau)",100,0.4,3.4,"",1,10);
-	      	ret["drttjmin"] = new variable("drttjmin","#DeltaR(#tau,light-jet,min)",80,0.2,4.2,"",1,8);
+	    ret["drttjmin"] = new variable("drttjmin","#DeltaR(#tau,light-jet,min)",80,0.2,4.2,"",1,8);
 		ret["drttj"] = new variable("drttj","#DeltaR(#tau,light-jet)",80,0.2,4.2,"",1,8);
-                ret["phicent"] = new variable("phicent","E^{T}_{miss} centrality",60,-1.5,1.5,"",1,6);
+        ret["phicent"] = new variable("phicent","E^{T}_{miss} centrality",60,-1.5,1.5,"",1,6);
 		ret["t1mass"] = new variable("t1mass","m_{t,SM}",900,100.,1000.,"GeV",scale,90);
 		ret["tautaumass"] = new variable("tautaumass","m_{#tau,#tau}",100,70.,170.,"GeV",scale,10);
 		ret["wmass"] = new variable("wmass","m_{W}",100,30.,530.,"GeV",scale,10);

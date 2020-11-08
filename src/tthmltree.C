@@ -125,43 +125,43 @@ void tthmltree::init_hist(TString outputfilename){
     fcnc_plots->add(vars.at("lep_pt_0"),&lep_pt_0);
     fcnc_plots->add(vars.at("lep_pt_1"),&lep_pt_1);
     fcnc_plots->add(vars.at("mll"),&mll);
-    for (int j = 0; j < fcnc_nregions; ++j){
-      if(plotTauFake){
-        for (int k = 0; k < 2; ++k)
-        {
-          for (int i = 0; i < 4; ++i)
-          {
-            if(dobwp[bwps[i]]) {
-              if(fcnc_regions[j].Contains("2l")){
-                fcnc_plots->add_region(fcnc_regions[j] + "_ee_" + nprong[k] + "_" + bwps[i]);
-                fcnc_plots->add_region(fcnc_regions[j] + "_mue_" + nprong[k] + "_" + bwps[i]);
-                fcnc_plots->add_region(fcnc_regions[j] + "_emu_" + nprong[k] + "_" + bwps[i]);
-                fcnc_plots->add_region(fcnc_regions[j] + "_mumu_" + nprong[k] + "_" + bwps[i]);
-              }else{
-                fcnc_plots->add_region(fcnc_regions[j] + "_e_" + nprong[k] + "_" + bwps[i]);
-                fcnc_plots->add_region(fcnc_regions[j] + "_mu_" + nprong[k] + "_" + bwps[i]);
-              }
-            }
-            if(dovetobwp[bwps[i]]){
-              if(fcnc_regions[j].Contains("2l")){
-                fcnc_plots->add_region(fcnc_regions[j] + "_ee_" + nprong[k] + "_veto" + bwps[i]);
-                fcnc_plots->add_region(fcnc_regions[j] + "_mue_" + nprong[k] + "_veto" + bwps[i]);
-                fcnc_plots->add_region(fcnc_regions[j] + "_emu_" + nprong[k] + "_veto" + bwps[i]);
-                fcnc_plots->add_region(fcnc_regions[j] + "_mumu_" + nprong[k] + "_veto" + bwps[i]);
-              }else{
-                fcnc_plots->add_region(fcnc_regions[j] + "_e_" + nprong[k] + "_veto" + bwps[i]);
-                fcnc_plots->add_region(fcnc_regions[j] + "_mu_" + nprong[k] + "_veto" + bwps[i]);
-              }
-            }
-          }
-        }
-      }else{
-        fcnc_plots->add_region(fcnc_regions[j]+"_emu");
-        fcnc_plots->add_region(fcnc_regions[j]+"_ee");
-        fcnc_plots->add_region(fcnc_regions[j]+"_mumu");
-        fcnc_plots->add_region(fcnc_regions[j]+"_mue");
-      }
-    }
+    //for (int j = 0; j < fcnc_nregions; ++j){
+    //  if(plotTauFake){
+    //    for (int k = 0; k < 2; ++k)
+    //    {
+    //      for (int i = 0; i < 4; ++i)
+    //      {
+    //        if(dobwp[bwps[i]]) {
+    //          if(fcnc_regions[j].Contains("2l")){
+    //            fcnc_plots->add_region(fcnc_regions[j] + "_ee_" + nprong[k] + "_" + bwps[i]);
+    //            fcnc_plots->add_region(fcnc_regions[j] + "_mue_" + nprong[k] + "_" + bwps[i]);
+    //            fcnc_plots->add_region(fcnc_regions[j] + "_emu_" + nprong[k] + "_" + bwps[i]);
+    //            fcnc_plots->add_region(fcnc_regions[j] + "_mumu_" + nprong[k] + "_" + bwps[i]);
+    //          }else{
+    //            fcnc_plots->add_region(fcnc_regions[j] + "_e_" + nprong[k] + "_" + bwps[i]);
+    //            fcnc_plots->add_region(fcnc_regions[j] + "_mu_" + nprong[k] + "_" + bwps[i]);
+    //          }
+    //        }
+    //        if(dovetobwp[bwps[i]]){
+    //          if(fcnc_regions[j].Contains("2l")){
+    //            fcnc_plots->add_region(fcnc_regions[j] + "_ee_" + nprong[k] + "_veto" + bwps[i]);
+    //            fcnc_plots->add_region(fcnc_regions[j] + "_mue_" + nprong[k] + "_veto" + bwps[i]);
+    //            fcnc_plots->add_region(fcnc_regions[j] + "_emu_" + nprong[k] + "_veto" + bwps[i]);
+    //            fcnc_plots->add_region(fcnc_regions[j] + "_mumu_" + nprong[k] + "_veto" + bwps[i]);
+    //          }else{
+    //            fcnc_plots->add_region(fcnc_regions[j] + "_e_" + nprong[k] + "_veto" + bwps[i]);
+    //            fcnc_plots->add_region(fcnc_regions[j] + "_mu_" + nprong[k] + "_veto" + bwps[i]);
+    //          }
+    //        }
+    //      }
+    //    }
+    //  }else{
+    //    fcnc_plots->add_region(fcnc_regions[j]+"_emu");
+    //    fcnc_plots->add_region(fcnc_regions[j]+"_ee");
+    //    fcnc_plots->add_region(fcnc_regions[j]+"_mumu");
+    //    fcnc_plots->add_region(fcnc_regions[j]+"_mue");
+    //  }
+    //}
   }
 
   fake_nregions_notau = fake_regions_notau.size();
@@ -171,9 +171,9 @@ void tthmltree::init_hist(TString outputfilename){
     fake_notau_plots->debug = !!debug;
     fake_notau_plots->add(vars.at("lep_pt_0"),&lep_pt_0);
     fake_notau_plots->add(vars.at("nljet"),&nljet);
-    for (int j = 0; j < fake_nregions_notau; ++j){
-      fake_notau_plots->add_region(fake_regions_notau[j]);
-    }
+    //for (int j = 0; j < fake_nregions_notau; ++j){
+    //  fake_notau_plots->add_region(fake_regions_notau[j]);
+    //}
   }
 
   fake_nregions = fake_regions.size();
@@ -188,21 +188,21 @@ void tthmltree::init_hist(TString outputfilename){
 //    fake_plots->add(atvars.("ljetpt"),&pt_ljet);
     fake_plots->add(vars.at("etmiss"),&etmiss);
     fake_plots->add(vars.at("mll"),&mll);
-    for (int j = 0; j < fake_nregions; ++j){
-      if(plotTauFake){
-        for (int k = 0; k < 2; ++k){
-          for (int i = 0; i < 4; i+=1){
-            if(dobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-            if(dovetobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
-          }
-        }
-      }else{
-        fake_plots->add_region(fake_regions[j]+"_emu");
-        fake_plots->add_region(fake_regions[j]+"_ee");
-        fake_plots->add_region(fake_regions[j]+"_mumu");
-        fake_plots->add_region(fake_regions[j]+"_mue");
-      }
-    }
+    //for (int j = 0; j < fake_nregions; ++j){
+    //  if(plotTauFake){
+    //    for (int k = 0; k < 2; ++k){
+    //      for (int i = 0; i < 4; i+=1){
+    //        if(dobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_" + bwps[i]);
+    //        if(dovetobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
+    //      }
+    //    }
+    //  }else{
+    //    fake_plots->add_region(fake_regions[j]+"_emu");
+    //    fake_plots->add_region(fake_regions[j]+"_ee");
+    //    fake_plots->add_region(fake_regions[j]+"_mumu");
+    //    fake_plots->add_region(fake_regions[j]+"_mue");
+    //  }
+    //}
   }
 }
 
@@ -255,56 +255,21 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
   if(dohist){
     if (sample.Contains("data"))
     {
-      if(fcnc_nregions && plotNPs.size()) fcnc_plots->init_sample("data","NOMINAL","data",kBlack);
-      if(fake_nregions) fake_plots->init_sample("data","NOMINAL","data",kBlack);
-      if(fake_nregions_notau) fake_notau_plots->init_sample("data","NOMINAL","data",kBlue);
+      if(fcnc_nregions && plotNPs.size()) fcnc_plots->add_sample("data","data",kBlack);
+      if(fake_nregions) fake_plots->add_sample("data","data",kBlack);
+      if(fake_nregions_notau) fake_notau_plots->add_sample("data","data",kBlue);
       initdata = 1;
     }else{
       if(sample.Contains("ttbar")) sample = "ttbar";
       else sample.Remove(0,6);
-      if(plotTauFake){
-        if(fcnc_nregions){
-          fcnc_plots->init_sample(sample + "_g",plotNPs[0],sampletitle + "(gluon fake #tau)",(enum EColor)7);
-          fcnc_plots->init_sample(sample + "_j",plotNPs[0],sampletitle + "(light-jet fake #tau)",kBlue);
-          fcnc_plots->init_sample(sample + "_b",plotNPs[0],sampletitle + "(b-jets fake #tau)",kViolet);
-          fcnc_plots->init_sample(sample + "_lep",plotNPs[0],sampletitle + "(lepton fake #tau)",kGreen);
-          fcnc_plots->init_sample(sample + "_real",plotNPs[0],sampletitle + "(real #tau)",kRed);
-          fcnc_plots->init_sample(sample + "_c",plotNPs[0],sampletitle + "(c-jets fake #tau)",kOrange);
-          fcnc_plots->init_sample(sample + "_wjet",plotNPs[0],sampletitle + "(w-jet matched fake #tau)",kGray);
-          fcnc_plots->init_sample(sample + "_doublefake",plotNPs[0],sampletitle + "(double fake #tau)",kGray);
-          fcnc_plots->init_sample(sample + "_nomatch",plotNPs[0],sampletitle + "(no match fake #tau)",kGray);
-        }
-        if(fake_nregions){
-          fake_plots->init_sample(sample + "_g","NOMINAL",sampletitle + "(gluon fake #tau)",(enum EColor)7);
-          fake_plots->init_sample(sample + "_j","NOMINAL",sampletitle + "(light-jet fake #tau)",kBlue);
-          fake_plots->init_sample(sample + "_b","NOMINAL",sampletitle + "(b-jets fake #tau)",kViolet);
-          fake_plots->init_sample(sample + "_lep","NOMINAL",sampletitle + "(lepton fake #tau)",kGreen);
-          fake_plots->init_sample(sample + "_real","NOMINAL",sampletitle + "(real #tau)",kRed);
-          fake_plots->init_sample(sample + "_c","NOMINAL",sampletitle + "(c-jets fake #tau)",kOrange);
-          fake_plots->init_sample(sample + "_wjet","NOMINAL",sampletitle + "(w-jet matched fake #tau)",kGray);
-          fake_plots->init_sample(sample + "_nomatch","NOMINAL",sampletitle + "(no match fake #tau)",kGray);
-        }
-      }else{
-        if(fcnc_nregions){
-          fcnc_plots->init_sample(sample + "_realLep",plotNPs[0],sampletitle + "(real lepton)",(enum EColor)7);
-          fcnc_plots->init_sample(sample + "_chargeFlip",plotNPs[0],sampletitle + "(lepton charge flip)",kBlue);
-          fcnc_plots->init_sample(sample + "_conversion",plotNPs[0],sampletitle + "(lepton flavor flip)",kViolet);
-          fcnc_plots->init_sample(sample + "_nonPrompt",plotNPs[0],sampletitle + "(non-prompt lepton)",kGreen);
-          fcnc_plots->init_sample(sample + "_otherFakeLep",plotNPs[0],sampletitle + "(fake lepton)",kOrange);
-          fcnc_plots->init_sample(sample + "_unknownFakeLep",plotNPs[0],sampletitle + "(fake lepton)",kOrange);
-          fcnc_plots->init_sample(sample + "_doubleFakeLep",plotNPs[0],sampletitle + "(double fake lepton)",kGray);
-        }
-        if(fake_nregions){
-          fake_plots->init_sample(sample + "_realLep","NOMINAL",sampletitle + "(real lepton)",(enum EColor)7);
-          fake_plots->init_sample(sample + "_chargeFlip","NOMINAL",sampletitle + "(lepton charge flip)",kBlue);
-          fake_plots->init_sample(sample + "_conversion","NOMINAL",sampletitle + "(lepton flavor flip)",kViolet);
-          fake_plots->init_sample(sample + "_nonPrompt","NOMINAL",sampletitle + "(non-prompt lepton)",kGreen);
-          fake_plots->init_sample(sample + "_otherFakeLep","NOMINAL",sampletitle + "(fake lepton)",kOrange);
-          fake_plots->init_sample(sample + "_unknownFakeLep","NOMINAL",sampletitle + "(fake lepton)",kOrange);
-          fake_plots->init_sample(sample + "_doubleFake","NOMINAL",sampletitle + "(double fake lepton)",kGray);
-        }
+      auto origins = plotTauFake? getFakeTauOrigin() : getFakeLepOrigin();
+      if(fcnc_nregions){
+        for(auto origin : origins) fcnc_plots->add_sample(sample + "_" + origin.name,sampletitle + "(" + origin.title + ")",origin.color);
       }
-      if(fake_nregions_notau) fake_notau_plots->init_sample(sample,"NOMINAL",sampletitle,kRed);
+      if(fake_nregions){
+        for(auto origin : origins) fcnc_plots->add_sample(sample + "_" + origin.name,sampletitle + "(" + origin.title + ")",origin.color);
+      }
+      if(fake_nregions_notau) fake_notau_plots->add_sample(sample,sampletitle,kRed);
     }
   }
 }
