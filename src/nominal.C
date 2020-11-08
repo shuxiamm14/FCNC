@@ -1089,7 +1089,7 @@ void nominal::fillhist(histSaver* plots, TString region, int nprong, TString sam
   //}
   if(debug) printf("nominal::fillhist\n");
   if(dobwp[bwps[1]] == 1 && taubtag) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[1],NP);
-  if(dovetobwp[bwps[1]] == 1 && !taubtag) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[1],NP);
+  if(dovetobwp[bwps[1]] == 1 && !taubtag) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[1] + (met_sigma < 2? "_lowmet" : "_highmet"),NP);
 }
 
 void nominal::readweightsysmap(int dsid, TString framework){
