@@ -1564,9 +1564,17 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             BDTG_test  = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
             BDTG_train = reader["reg1l2tau1bnj_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
           }
-          if(belong_regions.have("2j"    )) {
+          if(belong_regions.have("1j_ss"    )) {
+            BDTG_test  = reader["reg1l1tau1b1j_ss"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+            BDTG_train = reader["reg1l1tau1b1j_ss"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+          }
+          if(belong_regions.have("2j_os"    )) {
             BDTG_test  = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
             BDTG_train = reader["reg1l1tau1b2j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
+          }
+          if(belong_regions.have("2j_ss"    )) {
+            BDTG_test  = reader["reg1l1tau1b2j_ss"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));
+            BDTG_train = reader["reg1l1tau1b2j_ss"]->EvaluateMVA( TString("BDTG_")+ char('1' + !(eventNumber%2)));
           }
           if(belong_regions.have("3j"    )) {
             BDTG_test  = reader["reg1l1tau1b3j_os"]->EvaluateMVA( TString("BDTG_")+ char('1' + eventNumber%2));

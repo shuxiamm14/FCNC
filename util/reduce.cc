@@ -131,23 +131,23 @@ int main(int argc, char const *argv[])
 			regions.push_back("reg1l1tau1b2j_ss_antiiso");
 			regions.push_back("reg1l1tau1b3j_os_antiiso");
 			regions.push_back("reg1l1tau1b3j_ss_antiiso");
-			//regions.push_back("reg1l1tau2b_os");
-			//regions.push_back("reg1l1tau2b_ss");
-			//regions.push_back("reg1l1tau2b1j_os");
-			//regions.push_back("reg1l1tau2b1j_ss");
-			//regions.push_back("reg1l1tau2b2j_os");
-			//regions.push_back("reg1l1tau2b2j_ss");
-			//regions.push_back("reg1l1tau2b3j_os");
-			//regions.push_back("reg1l1tau2b3j_ss");
-			//regions.push_back("reg1l2tau1bnj_os");
-			//regions.push_back("reg1l2tau1bnj_ss");
-			//regions.push_back("reg1l2tau2bnj_os");
-			//regions.push_back("reg1l2tau2bnj_ss");
+			regions.push_back("reg2l1tau1bnj");
+			regions.push_back("reg2l1tau2bnj");
+			regions.push_back("reg1l1tau2b_os");
+			regions.push_back("reg1l1tau2b_ss");
+			regions.push_back("reg1l1tau2b1j_os");
+			regions.push_back("reg1l1tau2b1j_ss");
+			regions.push_back("reg1l1tau2b2j_os");
+			regions.push_back("reg1l1tau2b2j_ss");
+			regions.push_back("reg1l1tau2b3j_os");
+			regions.push_back("reg1l1tau2b3j_ss");
+			regions.push_back("reg1l2tau1bnj_os");
+			regions.push_back("reg1l2tau1bnj_ss");
+			regions.push_back("reg1l2tau2bnj_os");
+			regions.push_back("reg1l2tau2bnj_ss");
 			//regions.push_back("reg2lSS1tau1bnj_os");
 			//regions.push_back("reg2lSS1tau1bnj_os_antiiso");
 			//regions.push_back("reg2lSS1tau1bnj_os_antiisolead");
-			regions.push_back("reg2l1tau1bnj");
-			regions.push_back("reg2l1tau2bnj");
 			//regions.push_back("reg2l1bnj");
 			//regions.push_back("reg2l2bnj");
 
@@ -199,7 +199,7 @@ int main(int argc, char const *argv[])
 	}
 	analysis->SystematicsName = systname;
 	analysis->dumptruth = 0;
-	analysis->doBDT = 0;
+	analysis->doBDT = 1;
 	analysis->dofit = 1;
 	analysis->reduce = reduce;
 	analysis->debug = debug;

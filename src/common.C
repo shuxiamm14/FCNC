@@ -92,7 +92,8 @@ std::map<TString,variable*> getVariables(TString framework){
 	}else{
 		ret["BDTG_train"] = new variable("BDTG_train","BDT discriminant",100,-1.,1.,"",1,10);
 		ret["BDTG_test"] = new variable("BDTG_test","BDT discriminant",100,-1.,1.,"",1,10);
-		ret["chi2"] = new variable("chi2","#chi^2",100,5.,55.,"",5);
+		ret["chi2"] = new variable("chi2","#chi^{2}",100,5.,55.,"",1,5);
+		ret["met_sigma"] = new variable("met_sigma","#sigma(E^{T}_{miss})",100,0,20,"",1,10);
 		ret["tau_pt_0"] = new variable("tau_pt_0","p_{T,#tau}",100,25.,125.,"GeV",scale,10);
 		ret["tau_pt_1"] = new variable("tau_pt_1","p_{T,sub-#tau}",100,25.,125.,"GeV",scale,10);
 		ret["lep_pt_0"] = new variable("lep_pt_0","p_{T,l}",100,15.,115.,"GeV",scale,10);
@@ -117,14 +118,13 @@ std::map<TString,variable*> getVariables(TString framework){
 		ret["drtaub"] = new variable("drtaub","#DeltaR(#tau,b-jet)",60,0.,6.,"",1,5);
 		ret["etamax"] = new variable("etamax","#eta_{#tau,max}",100,0.,2.5,"",1,10);
 		ret["drltau"] = new variable("drltau","#DeltaR(l,#tau)",72,0.4,4.,"",1,8);
-		ret["drtauj"] = new variable("drtauj","#DeltaR(#tau,fcnc-j)",120,0.,6.,"",10);
+		ret["drtauj"] = new variable("drtauj","#DeltaR(#tau,fcnc-j)",120,0.,6.,"",1,10);
 		ret["drtautau"] = new variable("drtautau","#DeltaR(#tau,#tau)",92,0.4,5.,"",1,4);
 		ret["drtaujmin"] = new variable("drtaujmin","#DeltaR(#tau,light-jet,min)",60,0.4,3.4,"",1,5);
 		ret["nljet"] = new variable("nljet","N_{l-jet}",10,0.,10.,"",1);
 		ret["dphitauetmiss"] = new variable("dphitauetmiss","#Delta#phi(#tau#tau,P^{T}_{miss})",60,0.,3.,"",1,5);
 		ret["phicent"] = new variable("phicent","E^{T}_{miss} centrality",60,-1.5,1.5,"",1,5);
 		ret["mll"] = new variable("mll","m_{ll}",100,15,215,"GeV",scale,10);
-		ret["met_sigma"] = new variable("met_sigma","#sigma(E^{T}_{miss})",100,0,20,"",10);
 
     	//ret["bpt"] = new variable("bpt","p_{T,b}",10,25.,125.,"GeV",scale);
     	//ret["ljetpt"] = new variable("ljetpt","p_{T,light-jet}",10,25.,125.,"GeV",scale);
