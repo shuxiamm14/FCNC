@@ -323,7 +323,6 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	map<TString,vector<TString>> ret;
 	mergeregion(-1,ret);
 	for(auto reg : ret["all"]) tau_plots->add_region(reg);
-		
 
 	vector<TString> origin = {"b", "c", "g", "j", "lep", "wjet-fake","nomatch","doublefake", "real", "data"};
 	vector<TString> origintitle = {"b-jets fake #tau", "c-jets fake #tau", "gluon-jets fake #tau", "light-jets fake #tau", "lepton fake #tau", "#tau_{W}", "non-matched", "double fake #tau", "real #tau", "data"};
@@ -447,7 +446,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		map<TString,vector<TString>> ret;
 		mergeregion(2,ret);
 		for(auto i : ret){
-			tau_plots->merge_regions(i.second, i.first);
+			if(i.second.size()) tau_plots->merge_regions(i.second, i.first);
 		}
 	}
 	
@@ -456,7 +455,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		mergeregion(0,ret);
 		mergeregion(1,ret);
 		for(auto i : ret){
-			tau_plots->merge_regions(i.second, i.first);
+			if(i.second.size()) tau_plots->merge_regions(i.second, i.first);
 		}
 	}
 	if(plot_option == 2){
