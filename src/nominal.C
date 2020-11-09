@@ -1826,7 +1826,7 @@ void nominal::defineRegions(){
   	if(bjets_p4->size()) region_name = region_name + char('0'+min(bjets_p4->size(),2)) + "b";
   	if(taus_p4->size() ==1 && ljets_p4->size()) region_name = region_name + char('0'+min(ljets_p4->size(),3)) + "j";
   	else if(taus_p4->size() ==2) region_name = region_name+"nj";
-  	region_name+= taus_q->at(0)*leps_id->at(0) > 0? "_os" : "_ss";
+  	region_name+= taus_q->at(0)*(taus_q->size()==1?-leps_id->at(0):taus_q->at(1)) < 0? "_os" : "_ss";
         if(!leps_iso->at(0)) region_name+="_antiiso";
   	belong_regions.add(region_name);
   }else if (leps_p4->size()==2){
