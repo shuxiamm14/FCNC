@@ -1,3 +1,5 @@
+
+#include <unordered_map>
 #include "histSaver.h"
 #include "TH1D.h"
 #include <chrono>
@@ -262,23 +264,66 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	//}
 	int nregions = regions.size();
 	TString nprong[] = {"_1prong","_3prong",""};
-	vector<TString> dileptype = {"ee","emu","mue","mumu"};
-	for (int j = 0; j < nregions; ++j){
-		if(plotFakeLep){
-			for(auto &type : dileptype) tau_plots->add_region(regions[j]+ "_" + type);
-		}else{
-			for (int k = 0; k < 2; ++k){
-				for (int i = 1; i < 2; i+=2){
-					if(regions[j].Contains("2l")){	
-						for(auto &type : dileptype) tau_plots->add_region(regions[j] + "_" + type + nprong[k] + "_vetobtagwp70");
-					}else{
-						tau_plots->add_region(regions[j] + "_e" + nprong[k] + "_vetobtagwp70");
-						tau_plots->add_region(regions[j] + "_mu" + nprong[k] + "_vetobtagwp70");
+	vector<vector<TString>> merge_suffix = {
+		{"e","mu"},
+		{"ee","emu","mue","mumu"},
+		{"1prong","3prong"},
+		{"vetobtagwp70_lowmet","vetobtagwp70_highmet"}
+	};
+	vector<int> primensuffix = {2,4,2,2};
+	auto mergeregion = [&](int imerge, map<TString,vector<TString>> &ret){
+		  //[other suffix][merged suffix]
+		for (int j = 0; j < nregions; ++j){
+			vector<int> nsuffix = primensuffix;
+			int isuffix[4] = {0,0,0,0};
+			TString fillname = regions[j].Data();
+			bool condition = 1;
+			int i = 0;
+			if(framework == "tthML"){
+				if(regions[j].Contains("2l")) nsuffix[0] = 0;
+				if(!regions[j].Contains("2l")) nsuffix[1] = 0;
+			}else{
+				nsuffix[0] = nsuffix[1] = 1;
+			}
+			while(1){
+				vector<TString> tmp;
+				TString tmp1 = regions[j];
+				if(imerge >= 0){
+					for (isuffix[imerge] = 0; isuffix[imerge] < nsuffix[imerge]; isuffix[imerge]++)
+					{
+						for(int iloop = 0; iloop < merge_suffix.size(); iloop++){
+							if(nsuffix[iloop] == 0) continue;
+							fillname = fillname + "_" + merge_suffix[iloop][isuffix[iloop]];
+							if(isuffix[imerge] == 0 && iloop != imerge)  tmp1  = tmp1 + "_" + merge_suffix[iloop][isuffix[iloop]];
+						}
+						tmp.push_back(fillname);
+						fillname = regions[j].Data();
 					}
+					ret[tmp1] = tmp;
+				}else{
+					for(int iloop = 0; iloop < merge_suffix.size(); iloop++){
+						if(nsuffix[iloop] == 0) continue;
+						fillname = fillname + "_" + merge_suffix[iloop][isuffix[iloop]];
+					}
+					ret["all"].push_back(fillname);
+					fillname = regions[j].Data();
 				}
+				while(isuffix[i] + 1 == nsuffix[i] || i == imerge || nsuffix[i] == 0){
+					i++;
+				}
+				if(i>= merge_suffix.size()) break;
+				isuffix[i] ++;
+				for(int x = 0; x<i ; x++) isuffix[x] = 0;
+				i = 0;
 			}
 		}
-	}
+		if(imerge >= 0) primensuffix[imerge] = 0;
+		return ret;
+	};
+	map<TString,vector<TString>> ret;
+	mergeregion(-1,ret);
+	for(auto reg : ret["all"]) tau_plots->add_region(reg);
+		
 
 	vector<TString> origin = {"b", "c", "g", "j", "lep", "wjet-fake","nomatch","doublefake", "real", "data"};
 	vector<TString> origintitle = {"b-jets fake #tau", "c-jets fake #tau", "gluon-jets fake #tau", "light-jets fake #tau", "lepton fake #tau", "#tau_{W}", "non-matched", "double fake #tau", "real #tau", "data"};
@@ -398,27 +443,20 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		}
 
 	}
-	if(!plotFakeLep){
-		if(mergeprong){
-			for (int j = 0; j < nregions; ++j){
-				if(regions[j].Contains("2l")){
-					for(auto type : dileptype) tau_plots->merge_regions(regions[j] + "_" + type + nprong[0] + "_vetobtagwp70",regions[j] + "_" + type + nprong[1] + "_vetobtagwp70",regions[j] + "_" + type);
-				}else{
-					tau_plots->merge_regions(regions[j] + "_e" +  nprong[0] + "_vetobtagwp70",regions[j] + "_e" + nprong[1] + "_vetobtagwp70",regions[j] + "_e");
-					tau_plots->merge_regions(regions[j] + "_mu" +  nprong[0] + "_vetobtagwp70",regions[j] + "_mu" + nprong[1] + "_vetobtagwp70",regions[j] + "_mu");
-				}
-			}
+	if(mergeprong){
+		map<TString,vector<TString>> ret;
+		mergeregion(2,ret);
+		for(auto i : ret){
+			tau_plots->merge_regions(i.second, i.first);
 		}
 	}
+	
 	if(mergeleptype){
-		for (int j = 0; j < nregions; ++j){
-			if(regions[j].Contains("2l")){
-				vector<TString> mergeregions;
-				for(auto type : dileptype) mergeregions.push_back(regions[j] + "_" + type);
-				tau_plots->merge_regions(mergeregions,regions[j]);
-			}else{
-				tau_plots->merge_regions(regions[j] + "_e",regions[j] + "_mu",regions[j]);
-			}
+		map<TString,vector<TString>> ret;
+		mergeregion(0,ret);
+		mergeregion(1,ret);
+		for(auto i : ret){
+			tau_plots->merge_regions(i.second, i.first);
 		}
 	}
 	if(plot_option == 2){
@@ -468,7 +506,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 						"reg1l1tau2b2j_ss" + nprong[i], "reg1l1tau2b3j_ss" + nprong[i],
 						"reg2l1tau1bnj" + nprong[i],"reg2l1tau2bnj" + nprong[i]
 					};
-					TFile SFfile(prefix + "scale_factors.root","update");
+					TFile SFfile(prefix + "scale_factors" + nprong[i] + ".root","update");
 					if(NPname == "NOMINAL") {
 						chart = new LatexChart("scale_factor");
 					}
@@ -479,7 +517,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					vector<TString> postfit_regions = fit_regions;
 					postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + nprong[i]);
 					postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + nprong[i]);
-					TFile SFfile(prefix + "scale_factors_" + fitcharge + ".root","update");
+					TFile SFfile(prefix + "scale_factors_" + fitcharge + nprong[i] + ".root","update");
 					if(NPname == "NOMINAL") {
 						chart = new LatexChart(("scale_factor_" + fitcharge).Data());
 					}
@@ -619,9 +657,6 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		tau_plots->write_trexinput(histmiddlename,NPname);
 	}
 	if(doPlots){
-		for (int j = 0; j < nregions; ++j){
-			if(!mergeprong && !plotFakeLep) tau_plots->merge_regions(regions[j] + nprong[0],regions[j] + nprong[1],regions[j]);
-		}
 
 		//if(!calculate_fake_calibration)
 			for (auto samp : sigsamples)
