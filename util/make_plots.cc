@@ -70,6 +70,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		wfake = 0;
 		realOnly = 1;
 	}
+	if(method.Contains("QCDFF")){
+		plotFakeLep = 0;
+		doFakeFactor = 1;
+	}
 	if(method.Contains("postfit")){
 		prefit = 0;
 	}else if(method.Contains("fit")){
@@ -158,7 +162,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			}else{
 				tau_plots->add(vars["tau_pt_0"]);
 				tau_plots->add(vars["lep_pt_0"]);
-				if(doFakeFactor) tau_plots->add(vars["lep_pt_1"]);
+				//if(doFakeFactor) tau_plots->add(vars["lep_pt_1"]);
 			}
 			//tau_plots->add("p_{T,b}","bpt","GeV");
 			//tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
@@ -475,6 +479,23 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				tau_plots->templatesample("reg2lSS1tau1bnj_os_antiiso",histmiddlename,fakeFormular,"reg2lSS1tau1bnj_os","non-prompt_sub-lead","non-prompt sub-lead",(enum EColor)41,0,fakeFactor.nominal);
 			}
 		}else{
+			if(doFakeFactor && framework == "tthML") {
+				tau_plots->stackorder.push_back("FF_QCD");
+				string fakeFormular="1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 ttV -1 others -1 lep-fake -1 doublefake -1 other-fake -1 -1 bjet-fake -1 wjet-fake";
+				vector<TString> FFregions = {"reg1l1tau1b1j_ss", "reg1l1tau1b2j_ss", "reg1l1tau1b_ss", "reg1l1tau1b2j_os","reg1l1tau1b3j_os"};
+				for(auto FFreg: FFregions){
+					if(fakeFactor.nominal == 0){
+						fakeFactor=tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet",fakeFormular,NPname)/(tau_plots->calculateYield(FFreg + "_antiiso_e_vetobtagwp70_lowmet",fakeFormular,NPname));
+						printf("Calculated Electron Fake Factor: %f+/-%f in %s",fakeFactor.nominal,fakeFactor.error,FFreg.Data());
+					}
+					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD","FF(QCD)",(enum EColor)40,0,fakeFactor.nominal);
+					if(fakeFactor.nominal == 0){
+						fakeFactor=tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet",fakeFormular,NPname)/(tau_plots->calculateYield(FFreg + "_antiiso_mu_vetobtagwp70_lowmet",fakeFormular,NPname));
+						printf("Calculated Muon Fake Factor: %f+/-%f in %s",fakeFactor.nominal,fakeFactor.error,FFreg.Data());
+					}
+					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD","FF(QCD)",(enum EColor)40,0,fakeFactor.nominal);
+				}
+			}
 			if(showFake){
 				if(mergeFake){
 					tau_plots->stackorder.push_back("fake1truth");
