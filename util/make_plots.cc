@@ -12,6 +12,7 @@
 #include "common.h"
 using namespace std;
 
+map<TString,observable> fakeFactor;
 TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir, TString nominalname){
 	TFile *inputfile = new TFile(NPdir + "/" + sample + "_" + (NPdir==nominaldir? NPname : nominalname) + ".root");
 	if(inputfile->IsZombie()) {
@@ -29,7 +30,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString histmiddlename =  (dirname==NPname || NPname.Contains("fake_mismodelling"))? nominalname:NPname;
 	TString figuredir = method.Contains("test")?"." : FIGURE_DIR;
 	TString chartdir = method.Contains("test")?"." : TABLE_DIR;
-	observable fakeFactor;
+	observable fakeFactorl;
 	bool prefit = 1;
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 1;
@@ -138,7 +139,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			tau_plots->add(vars.at("lep_pt_0"));
 		}
 		else if(calculate_fake_calibration){
-			if(!fittodata && !(fakeFactor.nominal == 0 && doFakeFactor)){
+			if(!fittodata && !(fakeFactorl.nominal == 0 && doFakeFactor)){
 				tau_plots->sensitivevariable = "BDTG_test";
 				for(auto var : vars){
 					
@@ -464,11 +465,11 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				tau_plots->stackorder.push_back("non-prompt_lead");
 				tau_plots->stackorder.push_back("non-prompt_sub-lead");
 				string fakeFormular="1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 ttV -1 others";
-				if(fakeFactor.nominal == 0)
-					fakeFactor=tau_plots->calculateYield("reg2lSS1taunj_os",fakeFormular,NPname)/(tau_plots->calculateYield("reg2lSS1taunj_os_antiisolead",fakeFormular,NPname)+tau_plots->calculateYield("reg2lSS1taunj_os_antiiso",fakeFormular,NPname));
-				printf("Calculated Lepton Fake Factor: %f+/-%f",fakeFactor.nominal,fakeFactor.error);
-				tau_plots->templatesample("reg2lSS1tau1bnj_os_antiisolead",histmiddlename,fakeFormular,"reg2lSS1tau1bnj_os","non-prompt_lead","non-prompt lead",(enum EColor)40,0,fakeFactor.nominal);
-				tau_plots->templatesample("reg2lSS1tau1bnj_os_antiiso",histmiddlename,fakeFormular,"reg2lSS1tau1bnj_os","non-prompt_sub-lead","non-prompt sub-lead",(enum EColor)41,0,fakeFactor.nominal);
+				if(fakeFactorl.nominal == 0)
+					fakeFactorl=tau_plots->calculateYield("reg2lSS1taunj_os",fakeFormular,NPname)/(tau_plots->calculateYield("reg2lSS1taunj_os_antiisolead",fakeFormular,NPname)+tau_plots->calculateYield("reg2lSS1taunj_os_antiiso",fakeFormular,NPname));
+				printf("Calculated Lepton Fake Factor: %f+/-%f",fakeFactorl.nominal,fakeFactorl.error);
+				tau_plots->templatesample("reg2lSS1tau1bnj_os_antiisolead",histmiddlename,fakeFormular,"reg2lSS1tau1bnj_os","non-prompt_lead","non-prompt lead",(enum EColor)40,0,fakeFactorl.nominal);
+				tau_plots->templatesample("reg2lSS1tau1bnj_os_antiiso",histmiddlename,fakeFormular,"reg2lSS1tau1bnj_os","non-prompt_sub-lead","non-prompt sub-lead",(enum EColor)41,0,fakeFactorl.nominal);
 			}
 		}else{
 			if(showFake){
@@ -490,16 +491,16 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				string fakeFormular="1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 ttV -1 others -1 lep-fake -1 doublefake -1 other-fake -1 bjet-fake -1 wjet-fake";
 				vector<TString> FFregions = {"reg1l1tau1b1j_os", "reg1l1tau1b1j_ss", "reg1l1tau1b_ss", "reg1l1tau1b_os", "reg1l1tau1b2j_os", "reg1l1tau1b2j_ss", "reg1l1tau1b3j_os","reg1l1tau1b3j_ss"};
 				for(auto FFreg: FFregions){
-					if(fakeFactor.nominal == 0){
-						fakeFactor=tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet",fakeFormular,NPname)/(tau_plots->calculateYield(FFreg + "_antiiso_e_vetobtagwp70_lowmet",fakeFormular,NPname));
-						printf("Calculated Electron Fake Factor: %f+/-%f in %s",fakeFactor.nominal,fakeFactor.error,FFreg.Data());
+					if(fakeFactor[FFreg].nominal == 0){
+						fakeFactor[FFreg]=tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet",fakeFormular,NPname)/(tau_plots->calculateYield(FFreg + "_antiiso_e_vetobtagwp70_lowmet",fakeFormular,NPname));
+						printf("Calculated Electron Fake Factor: %f+/-%f in %s",fakeFactor[FFreg].nominal,fakeFactor[FFreg].error,FFreg.Data());
 					}
-					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD","FF(QCD)",(enum EColor)45,0,fakeFactor.nominal);
-					if(fakeFactor.nominal == 0){
-						fakeFactor=tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet",fakeFormular,NPname)/(tau_plots->calculateYield(FFreg + "_antiiso_mu_vetobtagwp70_lowmet",fakeFormular,NPname));
-						printf("Calculated Muon Fake Factor: %f+/-%f in %s",fakeFactor.nominal,fakeFactor.error,FFreg.Data());
+					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD","FF(QCD)",(enum EColor)45,0,fakeFactor[FFreg].nominal);
+					if(fakeFactor[FFreg].nominal == 0){
+						fakeFactor[FFreg]=tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet",fakeFormular,NPname)/(tau_plots->calculateYield(FFreg + "_antiiso_mu_vetobtagwp70_lowmet",fakeFormular,NPname));
+						printf("Calculated Muon Fake Factor: %f+/-%f in %s",fakeFactor[FFreg].nominal,fakeFactor[FFreg].error,FFreg.Data());
 					}
-					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD","FF(QCD)",(enum EColor)45,0,fakeFactor.nominal);
+					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD","FF(QCD)",(enum EColor)45,0,fakeFactor[FFreg].nominal);
 				}
 			}
 			if(fittodata){
