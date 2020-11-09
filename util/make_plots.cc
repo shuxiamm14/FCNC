@@ -481,7 +481,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		}else{
 			if(doFakeFactor && framework == "tthML") {
 				tau_plots->stackorder.push_back("FF_QCD");
-				string fakeFormular="1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 ttV -1 others -1 lep-fake -1 doublefake -1 other-fake -1 -1 bjet-fake -1 wjet-fake";
+				string fakeFormular="1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 ttV -1 others -1 lep-fake -1 doublefake -1 other-fake -1 bjet-fake -1 wjet-fake";
 				vector<TString> FFregions = {"reg1l1tau1b1j_ss", "reg1l1tau1b2j_ss", "reg1l1tau1b_ss", "reg1l1tau1b2j_os","reg1l1tau1b3j_os"};
 				for(auto FFreg: FFregions){
 					if(fakeFactor.nominal == 0){
