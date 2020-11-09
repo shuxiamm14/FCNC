@@ -175,7 +175,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 //					&&var.first!="tau_pt_1"
 //					&&var.first!="etmiss"
 //					&&var.first!="ttvismass"
-//					&&var.first!="lep_pt_0"
+					&&var.first!="lep_pt_0"
 //					&&var.first!="BDTG_test"
 				) continue;
 				if(varcount / perpart == ipart){
@@ -661,7 +661,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		//if(!calculate_fake_calibration)
 			for (auto samp : sigsamples)
 			{
-				//tau_plots->overlay(samp.name);
+				tau_plots->overlay(samp.name);
 			}
 		if(fittodata) tau_plots->plot_stack(histmiddlename, "plots_" + NPname, "charts_" + NPname);
 		else{
