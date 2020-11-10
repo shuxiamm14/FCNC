@@ -148,8 +148,11 @@ int main(int argc, char const *argv[])
 			//regions.push_back("reg2lSS1tau1bnj_os");
 			//regions.push_back("reg2lSS1tau1bnj_os_antiiso");
 			//regions.push_back("reg2lSS1tau1bnj_os_antiisolead");
-			//regions.push_back("reg2l1bnj");
-			//regions.push_back("reg2l2bnj");
+			regions.push_back("reg2l1bnj");
+			regions.push_back("reg2l2bnj");
+			regions.push_back("reg2lSSnj");
+			regions.push_back("reg2lSS1bnj");
+			regions.push_back("reg2lSS2bnj");
 
 			//regions.push_back("reg2lSS1tau1bnj_ss");
 			//regions.push_back("reg2lSS1tau2bnj_os");

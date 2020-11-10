@@ -17,7 +17,6 @@ TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir
 	if(inputfile->IsZombie()) {
 		deletepointer(inputfile);
 		inputfile = new TFile(nominaldir + "/" + sample + "_" + nominalname + ".root");
-		if(inputfile->IsZombie()) return 0;
 	}
 	return inputfile;
 }
@@ -253,7 +252,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	};
 	vector<TString> regions_tthML_fakelep = {
 		"reg2l1bnj",
-		"reg2l2bnj"
+		"reg2l2bnj",
+		"reg2lSSnj",
+		"reg2lSS1bnj",
+		"reg2lSS2bnj"
 	//	"reg2lSS1tau1bnj_os",
 	//	"reg2lSS1tau1bnj_os_antiiso",
 	//	"reg2lSS1tau1bnj_os_antiisolead",

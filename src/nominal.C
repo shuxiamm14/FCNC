@@ -1839,6 +1839,7 @@ void nominal::defineRegions(){
         if(bjets_p4->size() == 2 && taus_p4->size() == 0) belong_regions.add("reg2l2bnj");
         if(bjets_p4->size() == 1 && taus_p4->size() == 0) belong_regions.add("reg2l1bnj");
       }
+      if(bjets_p4->size() == 0 && taus_p4->size() == 0 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSSnj");
       if(bjets_p4->size() == 1 && taus_p4->size() == 0 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS1bnj");
       if(bjets_p4->size() == 2 && taus_p4->size() == 0 && leps_id->at(0) * leps_id->at(1) > 0 && taus_q->at(0)*leps_id->at(0) > 0) belong_regions.add("reg2lSS2bnj");
 
