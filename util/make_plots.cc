@@ -520,7 +520,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 						"reg1l1tau2b2j_ss" + nprong[i] + "vetobtagwp70_highmet", "reg1l1tau2b3j_ss" + nprong[i] + "vetobtagwp70_highmet",
 						"reg2l1tau1bnj" + nprong[i] + "vetobtagwp70_highmet","reg2l1tau2bnj" + nprong[i] + "vetobtagwp70_highmet"
 					};
-					TFile SFfile(prefix + "scale_factors" + nprong[i] + "vetobtagwp70_highmet" + ".root","update");
+					TFile SFfile(prefix + "scale_factors" + nprong[i] + ".root","update");
 					if(NPname == "NOMINAL") {
 						chart = new LatexChart("scale_factor");
 					}
@@ -531,7 +531,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					vector<TString> postfit_regions = fit_regions;
 					postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + nprong[i] + "vetobtagwp70_highmet");
 					postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + nprong[i] + "vetobtagwp70_highmet");
-					TFile SFfile(prefix + "scale_factors_" + fitcharge + nprong[i] + "vetobtagwp70_highmet" + ".root","update");
+					TFile SFfile(prefix + "scale_factors_" + fitcharge + nprong[i] + ".root","update");
 					if(NPname == "NOMINAL") {
 						chart = new LatexChart(("scale_factor_" + fitcharge).Data());
 					}
@@ -551,10 +551,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					};
 					scalesamples["bjet-fake"];
 					map<TString,map<TString,vector<TString>>> postfit_regions = scalesamples;
-					postfit_regions["wjet-fake"]["ss"].push_back("reg1l1tau1b3j_ss");
-					postfit_regions["wjet-fake"]["ss"].push_back("reg1l1tau1b2j_ss");
-					postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b3j_os");
-					postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b2j_os");
+					postfit_regions["wjet-fake"]["ss"].push_back("reg1l1tau1b3j_ss" + nprong[i] + "vetobtagwp70_highmet");
+					postfit_regions["wjet-fake"]["ss"].push_back("reg1l1tau1b2j_ss" + nprong[i] + "vetobtagwp70_highmet");
+					postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b3j_os" + nprong[i] + "vetobtagwp70_highmet");
+					postfit_regions["wjet-fake"]["os"].push_back("reg1l1tau1b2j_os" + nprong[i] + "vetobtagwp70_highmet");
 #endif
 					TString varname = "tau_pt_0";
 
