@@ -12,7 +12,8 @@
 #include "common.h"
 using namespace std;
 
-map<TString,observable> fakeFactor;
+map<TString,observable> fakeFactor_mu;
+map<TString,observable> fakeFactor_e;
 TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir, TString nominalname){
 	TFile *inputfile = new TFile(NPdir + "/" + sample + "_" + (NPdir==nominaldir? NPname : nominalname) + ".root");
 	if(inputfile->IsZombie()) {
@@ -41,6 +42,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool doPlots = 1;
 	bool scaletodata = 0;
 	bool mergeprong = 1;
+	bool mergemet = 1;
 	int plot_option = 2;
 	bool fittodata = 0;
 	bool plotFakeLep = 0;
@@ -176,12 +178,12 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			tau_plots->sensitivevariable = "BDTG_test";
 			for(auto var : vars){
 				
-				if(   var.first!="tau_pt_0"
+				if(   //var.first!="tau_pt_0"
 //					&&var.first!="tau_pt_1"
-//					&&var.first!="etmiss"
-//					&&var.first!="ttvismass"
-					&&var.first!="lep_pt_0"
-//					&&var.first!="BDTG_test"
+					var.first!="etmiss"
+					&&var.first!="ttvismass"
+//					&&var.first!="lep_pt_0"
+					&&var.first!="BDTG_test"
 				) continue;
 				if(varcount / perpart == ipart){
 					tau_plots->add(var.second);
@@ -454,7 +456,6 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			if(i.second.size()) tau_plots->merge_regions(i.second, i.first);
 		}
 	}
-	
 	if(plot_option == 2){
 		for(auto samp: samples){
 			if(signalmap.find(samp.name) == signalmap.end()) tau_plots->stackorder.push_back(samp.name);
@@ -491,16 +492,16 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				string fakeFormular="1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 ttV -1 others -1 lep-fake -1 doublefake -1 other-fake -1 bjet-fake -1 wjet-fake";
 				vector<TString> FFregions = {"reg1l1tau1b1j_os", "reg1l1tau1b1j_ss", "reg1l1tau1b_ss", "reg1l1tau1b_os", "reg1l1tau1b2j_os", "reg1l1tau1b2j_ss", "reg1l1tau1b3j_os","reg1l1tau1b3j_ss"};
 				for(auto FFreg: FFregions){
-					if(fakeFactor[FFreg].nominal == 0){
-						fakeFactor[FFreg]=tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet",fakeFormular,NPname)/(tau_plots->calculateYield(FFreg + "_antiiso_e_vetobtagwp70_lowmet",fakeFormular,NPname));
-						printf("Calculated Electron Fake Factor: %f+/-%f in %s",fakeFactor[FFreg].nominal,fakeFactor[FFreg].error,FFreg.Data());
+					if(fakeFactor_e[FFreg].nominal == 0){
+						fakeFactor_e[FFreg]=tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet",fakeFormular,NPname)/(tau_plots->calculateYield(FFreg + "_antiiso_e_vetobtagwp70_lowmet",fakeFormular,NPname));
+						printf("Calculated Electron Fake Factor: %f+/-%f in %s",fakeFactor_e[FFreg].nominal,fakeFactor_e[FFreg].error,FFreg.Data());
 					}
-					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD","FF(QCD)",(enum EColor)45,0,fakeFactor[FFreg].nominal);
-					if(fakeFactor[FFreg].nominal == 0){
-						fakeFactor[FFreg]=tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet",fakeFormular,NPname)/(tau_plots->calculateYield(FFreg + "_antiiso_mu_vetobtagwp70_lowmet",fakeFormular,NPname));
-						printf("Calculated Muon Fake Factor: %f+/-%f in %s",fakeFactor[FFreg].nominal,fakeFactor[FFreg].error,FFreg.Data());
+					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD","FF(QCD)",(enum EColor)45,0,fakeFactor_e[FFreg].nominal);
+					if(fakeFactor_mu[FFreg].nominal == 0){
+						fakeFactor_mu[FFreg]=tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet",fakeFormular,NPname)/(tau_plots->calculateYield(FFreg + "_antiiso_mu_vetobtagwp70_lowmet",fakeFormular,NPname));
+						printf("Calculated Muon Fake Factor: %f+/-%f in %s",fakeFactor_mu[FFreg].nominal,fakeFactor_mu[FFreg].error,FFreg.Data());
 					}
-					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD","FF(QCD)",(enum EColor)45,0,fakeFactor[FFreg].nominal);
+					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD","FF(QCD)",(enum EColor)45,0,fakeFactor_mu[FFreg].nominal);
 				}
 			}
 			if(fittodata){
@@ -660,6 +661,14 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			if(i.second.size()) tau_plots->merge_regions(i.second, i.first);
 		}
 	}
+	if(mergemet){
+		map<TString,vector<TString>> ret;
+		mergeregion(3,ret);
+		for(auto i : ret){
+			if(i.second.size()) tau_plots->merge_regions(i.second, i.first);
+		}
+	}
+	
 	//tau_plots->printyield("reg1l1tau1b3j_os");
 	//tau_plots->printyield("reg1l1tau1b2j_os");
 	if(doTrex){
