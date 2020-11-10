@@ -35,27 +35,27 @@ std::vector<fcncSample> getBkgSamples(TString framework){
 
 std::vector<fcncSample> getFakeTauOrigin(){
 	std::vector<fcncSample> samples;
-	samples.emplace_back("g","gluon fake #tau",(enum EColor)7);
-	samples.emplace_back("j","light-jet fake #tau",kBlue);
-	samples.emplace_back("b","b-jets fake #tau",kViolet);
-	samples.emplace_back("lep","lepton fake #tau",kGreen);
-	samples.emplace_back("real","real #tau",kRed);
-	samples.emplace_back("c","c-jets fake #tau",kOrange);
-	samples.emplace_back("wjet","w-jet matched fake #tau",kGray);
-	samples.emplace_back("doublefake","double fake #tau",kGray);
-	samples.emplace_back("nomatch","no match fake #tau",kGray);
+	samples.emplace_back("real","real #tau",kBlue);
+	samples.emplace_back("g_fake","gluon fake #tau",(enum EColor)41);
+	samples.emplace_back("j_fake","light-jet fake #tau",(enum EColor)42);
+	samples.emplace_back("b_fake","b-jets fake #tau",(enum EColor)43);
+	samples.emplace_back("lep_fake","lepton fake #tau",(enum EColor)44);
+	samples.emplace_back("c_fake","c-jets fake #tau",(enum EColor)45);
+	samples.emplace_back("w_jet_fake","w-jet matched fake #tau",(enum EColor)46);
+	samples.emplace_back("nomatch","no match fake #tau",(enum EColor)47);
+	samples.emplace_back("doublefake","double fake #tau",(enum EColor)48);
 	return samples;
 } 
 
 std::vector<fcncSample> getFakeLepOrigin(){
 	std::vector<fcncSample> samples;
-	samples.emplace_back("realLep","real lepton",(enum EColor)7);
-	samples.emplace_back("chargeFlip","lepton charge flip",kBlue);
-	samples.emplace_back("conversion","lepton flavor flip",kViolet);
-	samples.emplace_back("nonPrompt","non-prompt lepton",kGreen);
-	samples.emplace_back("otherFakeLep","fake lepton",kOrange);
-	samples.emplace_back("unknownFakeLep","fake lepton",kOrange);
-	samples.emplace_back("doubleFakeLep","double fake lepton",kGray);
+	samples.emplace_back("realLep","real lepton",kBlue);
+	samples.emplace_back("chargeFlip","lepton charge flip",(enum EColor)42);
+	samples.emplace_back("conversion","lepton flavor flip",(enum EColor)43);
+	samples.emplace_back("nonPrompt","non-prompt lepton",(enum EColor)44);
+	samples.emplace_back("otherFakeLep","fake lepton",(enum EColor)45);
+	samples.emplace_back("unknownFakeLep","fake lepton",(enum EColor)46);
+	samples.emplace_back("doubleFakeLep","double fake lepton",(enum EColor)47);
 	return samples;
 } 
 
