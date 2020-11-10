@@ -541,7 +541,13 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 						for (auto SF : *SFs) //parameters
 						{
 							if(chart) {
-								string rowname = SF.first.Contains("w_jet_fake")? "$\\tau_{W}$" : (SF.first.Contains("bjet") ? "$\\tau_{b_fake}$" : "$\\tau_{other}$");
+								string rowname;
+								if(SF.first.Contains("w_jet_fake")){
+									rowname = "$\\tau_{W}$";
+									if(SF.first.Contains("os")) rowname += "~os";
+									if(SF.first.Contains("ss")) rowname += "~ss";
+								}else
+									rowname = SF.first.Contains("bjet") ? "$\\tau_{b_fake}$" : "$\\tau_{other}$";
 								string columnname = "$" + to_string(int(fakePtSlices[i])) + "-" + to_string(int(fakePtSlices[i+1])) + "$~GeV";
 								if(i == fakePtSlices.size()-2) columnname = to_string(int(fakePtSlices[i])) + "GeV$-$";
 								chart->set(rowname,columnname,SF.second[i]);
@@ -605,10 +611,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			if(!mergeFake && framework == "xTFW") {
 				std::cout<<"starting template!"<<std::endl;
 				tau_plots->stackorder.push_back("fakeSS");
-				tau_plots->templatesample("reg2mtau1b3jss",histmiddlename,"1 data -1 smhiggs -1 w_jet_fake -1 diboson -1 ztt -1 top","reg2mtau1b3jos","fakeSS","Fake",kYellow,1,1.31597);
-				tau_plots->templatesample("reg2mtau1b2jss",histmiddlename,"1 data -1 smhiggs -1 w_jet_fake -1 diboson -1 ztt -1 top","reg2mtau1b2jos","fakeSS","Fake",kYellow,1,1.31597);
-				tau_plots->templatesample("reg2ltau1b3jss",histmiddlename,"1 data -1 smhiggs -1 w_jet_fake -1 diboson -1 ztt -1 top","reg2ltau1b3jos","fakeSS","Fake",kYellow,1,1.31597);
-				tau_plots->templatesample("reg2ltau1b2jss",histmiddlename,"1 data -1 smhiggs -1 w_jet_fake -1 diboson -1 ztt -1 top","reg2ltau1b2jos","fakeSS","Fake",kYellow,1,1.31597);				
+				tau_plots->templatesample("reg2mtau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2mtau1b3jos","fakeSS","Fake",kYellow,1,1.31597);
+				tau_plots->templatesample("reg2mtau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2mtau1b2jos","fakeSS","Fake",kYellow,1,1.31597);
+				tau_plots->templatesample("reg2ltau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2ltau1b3jos","fakeSS","Fake",kYellow,1,1.31597);
+				tau_plots->templatesample("reg2ltau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2ltau1b2jos","fakeSS","Fake",kYellow,1,1.31597);				
 
 
 

@@ -1666,13 +1666,13 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             int tauabspdg = abs(taus_matched_pdgId->at(i));
             if(tauabspdg != 15) {
               nfaketau++;
-              if (tauabspdg == 13 || tauabspdg == 11) tauorigin = sample + "_lep";
-              else if (tauabspdg == 5) tauorigin = sample + "_b";
-              else if (tauabspdg == 4) tauorigin = sample + "_c";
-              else if (tauabspdg <= 3 && tauabspdg >=1) tauorigin = sample + "_j";
-              else if (tauabspdg == 21) tauorigin = sample + "_g";
+              if (tauabspdg == 13 || tauabspdg == 11) tauorigin = sample + "_lep_fake";
+              else if (tauabspdg == 5) tauorigin = sample + "_b_fake";
+              else if (tauabspdg == 4) tauorigin = sample + "_c_fake";
+              else if (tauabspdg <= 3 && tauabspdg >=1) tauorigin = sample + "_j_fake";
+              else if (tauabspdg == 21) tauorigin = sample + "_g_fake";
               else tauorigin = sample + "_nomatch";
-              if((tauabspdg == 4 || (tauabspdg <= 3 && tauabspdg >=1)) && abs(taus_matched_mother_pdgId->at(i)) == 24) tauorigin = sample + "_wjet";
+              if((tauabspdg == 4 || (tauabspdg <= 3 && tauabspdg >=1)) && abs(taus_matched_mother_pdgId->at(i)) == 24) tauorigin = sample + "_w_jet_fake";
             }
           }
           if(nfaketau == 0) tauorigin = sample + "_real";
