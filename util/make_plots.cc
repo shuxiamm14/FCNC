@@ -515,39 +515,39 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					LatexChart *chart = 0;
 #if FITSTRATEGY != 3
 					vector<TString> fit_regions = {
-//						"reg1l1tau1b2j_ss" + nprong[i], "reg1l1tau1b3j_ss" + nprong[i],
-						"reg1l1tau2b2j_os" + nprong[i], "reg1l1tau2b3j_os" + nprong[i],
-						"reg1l1tau2b2j_ss" + nprong[i], "reg1l1tau2b3j_ss" + nprong[i],
-						"reg2l1tau1bnj" + nprong[i],"reg2l1tau2bnj" + nprong[i]
+//						"reg1l1tau1b2j_ss" + nprong[i] + "vetobtagwp70_highmet", "reg1l1tau1b3j_ss" + nprong[i] + "vetobtagwp70_highmet",
+						"reg1l1tau2b2j_os" + nprong[i] + "vetobtagwp70_highmet", "reg1l1tau2b3j_os" + nprong[i] + "vetobtagwp70_highmet",
+						"reg1l1tau2b2j_ss" + nprong[i] + "vetobtagwp70_highmet", "reg1l1tau2b3j_ss" + nprong[i] + "vetobtagwp70_highmet",
+						"reg2l1tau1bnj" + nprong[i] + "vetobtagwp70_highmet","reg2l1tau2bnj" + nprong[i] + "vetobtagwp70_highmet"
 					};
-					TFile SFfile(prefix + "scale_factors" + nprong[i] + ".root","update");
+					TFile SFfile(prefix + "scale_factors" + nprong[i] + "vetobtagwp70_highmet" + ".root","update");
 					if(NPname == "NOMINAL") {
 						chart = new LatexChart("scale_factor");
 					}
 #else
-					vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b3j_" + fitcharge + nprong[i], "reg1l1tau2b1j_" + fitcharge + nprong[i],"reg2l1tau1b" + nprong[i],"reg2l1tau2b" + nprong[i]};
-					vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b3j_" + fitcharge + nprong[i],"reg2l1tau1b" + nprong[i],"reg2l1tau2b" + nprong[i]};
-					vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i], "reg1l1tau2b1j_" + fitcharge + nprong[i],"reg2l1tau1b" + nprong[i],"reg2l1tau2b" + nprong[i]};
+					vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i] + "vetobtagwp70_highmet", "reg1l1tau2b3j_" + fitcharge + nprong[i] + "vetobtagwp70_highmet", "reg1l1tau2b1j_" + fitcharge + nprong[i] + "vetobtagwp70_highmet","reg2l1tau1b" + nprong[i] + "vetobtagwp70_highmet","reg2l1tau2b" + nprong[i] + "vetobtagwp70_highmet"};
+					vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i] + "vetobtagwp70_highmet", "reg1l1tau2b3j_" + fitcharge + nprong[i] + "vetobtagwp70_highmet","reg2l1tau1b" + nprong[i] + "vetobtagwp70_highmet","reg2l1tau2b" + nprong[i] + "vetobtagwp70_highmet"};
+					vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + nprong[i] + "vetobtagwp70_highmet", "reg1l1tau2b1j_" + fitcharge + nprong[i] + "vetobtagwp70_highmet","reg2l1tau1b" + nprong[i] + "vetobtagwp70_highmet","reg2l1tau2b" + nprong[i] + "vetobtagwp70_highmet"};
 					vector<TString> postfit_regions = fit_regions;
-					postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + nprong[i]);
-					postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + nprong[i]);
-					TFile SFfile(prefix + "scale_factors_" + fitcharge + nprong[i] + ".root","update");
+					postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + nprong[i] + "vetobtagwp70_highmet");
+					postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + nprong[i] + "vetobtagwp70_highmet");
+					TFile SFfile(prefix + "scale_factors_" + fitcharge + nprong[i] + "vetobtagwp70_highmet" + ".root","update");
 					if(NPname == "NOMINAL") {
 						chart = new LatexChart(("scale_factor_" + fitcharge).Data());
 					}
 #endif
 #if FITSTRATEGY != 2
 					vector<TString> postfit_regions = fit_regions;
-					postfit_regions.push_back("reg1l1tau1b2j_os" + nprong[i]);
-					postfit_regions.push_back("reg1l1tau1b3j_os" + nprong[i]);
+					postfit_regions.push_back("reg1l1tau1b2j_os" + nprong[i] + "vetobtagwp70_highmet");
+					postfit_regions.push_back("reg1l1tau1b3j_os" + nprong[i] + "vetobtagwp70_highmet");
 					vector<TString> scalesamples = {"wjet-fake","other-fake","bjet-fake"};
 #else
 					map<TString,map<TString,vector<TString>>> scalesamples;
 					scalesamples["other-fake"];
 					scalesamples["wjet-fake"];
 					scalesamples["wjet-fake"] = {
-						{"ss", {"reg1l1tau2b2j_ss" + nprong[i], "reg1l1tau2b3j_ss" + nprong[i], "reg1l1tau2b1j_ss" + nprong[i]}},
-						{"os", {"reg1l1tau2b2j_os" + nprong[i], "reg1l1tau2b3j_os" + nprong[i], "reg1l1tau2b1j_os" + nprong[i], "reg2l1tau1bnj" + nprong[i], "reg2l1tau2bnj" + nprong[i]}},
+						{"ss", {"reg1l1tau2b2j_ss" + nprong[i] + "vetobtagwp70_highmet", "reg1l1tau2b3j_ss" + nprong[i] + "vetobtagwp70_highmet", "reg1l1tau2b1j_ss" + nprong[i] + "vetobtagwp70_highmet"}},
+						{"os", {"reg1l1tau2b2j_os" + nprong[i] + "vetobtagwp70_highmet", "reg1l1tau2b3j_os" + nprong[i] + "vetobtagwp70_highmet", "reg1l1tau2b1j_os" + nprong[i] + "vetobtagwp70_highmet", "reg2l1tau1bnj" + nprong[i] + "vetobtagwp70_highmet", "reg2l1tau2bnj" + nprong[i] + "vetobtagwp70_highmet"}},
 					};
 					scalesamples["bjet-fake"];
 					map<TString,map<TString,vector<TString>>> postfit_regions = scalesamples;
@@ -597,10 +597,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					if(mergeprong) { if(i != 2) continue; }
 					else { if(i == 2) continue; }
 					vector<double> BDTslice = {-1,-0.4,0.1,0.3,0.5,0.65,0.75,0.85,1};
-					vector<observable> mismodel2j = tau_plots->scale_to_data("reg1l1tau1b2j_ss" + nprong[i],"1 wjet-fake","BDTG_test",BDTslice);
-					vector<observable> mismodel3j = tau_plots->scale_to_data("reg1l1tau1b3j_ss" + nprong[i],"1 wjet-fake","BDTG_test",BDTslice);
-					tau_plots->scale_sample("reg1l1tau1b2j_os" + nprong[i],"1 wjet-fake","BDTG_test",mismodel2j,BDTslice);
-					tau_plots->scale_sample("reg1l1tau1b3j_os" + nprong[i],"1 wjet-fake","BDTG_test",mismodel3j,BDTslice);
+					vector<observable> mismodel2j = tau_plots->scale_to_data("reg1l1tau1b2j_ss" + nprong[i] + "vetobtagwp70_highmet","1 wjet-fake","BDTG_test",BDTslice);
+					vector<observable> mismodel3j = tau_plots->scale_to_data("reg1l1tau1b3j_ss" + nprong[i] + "vetobtagwp70_highmet","1 wjet-fake","BDTG_test",BDTslice);
+					tau_plots->scale_sample("reg1l1tau1b2j_os" + nprong[i] + "vetobtagwp70_highmet","1 wjet-fake","BDTG_test",mismodel2j,BDTslice);
+					tau_plots->scale_sample("reg1l1tau1b3j_os" + nprong[i] + "vetobtagwp70_highmet","1 wjet-fake","BDTG_test",mismodel3j,BDTslice);
 				}
 			}
 
@@ -609,19 +609,19 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					if(mergeprong) { if(i != 2) continue; }
 					else { if(i == 2) continue; }
 					if(calculate_fake_calibration){
-						tau_plots->scale_to_data("reg1l1tau2b1j_os" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau2b1j_ss" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau2b_os" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau2b_ss" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b1j_os" + nprong[i] + "vetobtagwp70_highmet","1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b1j_ss" + nprong[i] + "vetobtagwp70_highmet","1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b_os" + nprong[i] + "vetobtagwp70_highmet","1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b_ss" + nprong[i] + "vetobtagwp70_highmet","1 fake","tau_pt_0",fakePtSlices);
 					}else{
-						tau_plots->scale_to_data("reg1l1tau2b2j_os" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau2b3j_os" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau2b2j_ss" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau2b3j_ss" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau1b2j_os" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau1b3j_os" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau1b2j_ss" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
-						tau_plots->scale_to_data("reg1l1tau1b3j_ss" + nprong[i],"1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b2j_os" + nprong[i] + "vetobtagwp70_highmet","1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b3j_os" + nprong[i] + "vetobtagwp70_highmet","1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b2j_ss" + nprong[i] + "vetobtagwp70_highmet","1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau2b3j_ss" + nprong[i] + "vetobtagwp70_highmet","1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau1b2j_os" + nprong[i] + "vetobtagwp70_highmet","1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau1b3j_os" + nprong[i] + "vetobtagwp70_highmet","1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau1b2j_ss" + nprong[i] + "vetobtagwp70_highmet","1 fake","tau_pt_0",fakePtSlices);
+						tau_plots->scale_to_data("reg1l1tau1b3j_ss" + nprong[i] + "vetobtagwp70_highmet","1 fake","tau_pt_0",fakePtSlices);
 					}
 				}
 			}
