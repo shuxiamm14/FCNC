@@ -125,43 +125,6 @@ void tthmltree::init_hist(TString outputfilename){
     fcnc_plots->add(vars.at("lep_pt_0"),&lep_pt_0);
     fcnc_plots->add(vars.at("lep_pt_1"),&lep_pt_1);
     fcnc_plots->add(vars.at("mll"),&mll);
-    //for (int j = 0; j < fcnc_nregions; ++j){
-    //  if(plotTauFake){
-    //    for (int k = 0; k < 2; ++k)
-    //    {
-    //      for (int i = 0; i < 4; ++i)
-    //      {
-    //        if(dobwp[bwps[i]]) {
-    //          if(fcnc_regions[j].Contains("2l")){
-    //            fcnc_plots->add_region(fcnc_regions[j] + "_ee_" + nprong[k] + "_" + bwps[i]);
-    //            fcnc_plots->add_region(fcnc_regions[j] + "_mue_" + nprong[k] + "_" + bwps[i]);
-    //            fcnc_plots->add_region(fcnc_regions[j] + "_emu_" + nprong[k] + "_" + bwps[i]);
-    //            fcnc_plots->add_region(fcnc_regions[j] + "_mumu_" + nprong[k] + "_" + bwps[i]);
-    //          }else{
-    //            fcnc_plots->add_region(fcnc_regions[j] + "_e_" + nprong[k] + "_" + bwps[i]);
-    //            fcnc_plots->add_region(fcnc_regions[j] + "_mu_" + nprong[k] + "_" + bwps[i]);
-    //          }
-    //        }
-    //        if(dovetobwp[bwps[i]]){
-    //          if(fcnc_regions[j].Contains("2l")){
-    //            fcnc_plots->add_region(fcnc_regions[j] + "_ee_" + nprong[k] + "_veto" + bwps[i]);
-    //            fcnc_plots->add_region(fcnc_regions[j] + "_mue_" + nprong[k] + "_veto" + bwps[i]);
-    //            fcnc_plots->add_region(fcnc_regions[j] + "_emu_" + nprong[k] + "_veto" + bwps[i]);
-    //            fcnc_plots->add_region(fcnc_regions[j] + "_mumu_" + nprong[k] + "_veto" + bwps[i]);
-    //          }else{
-    //            fcnc_plots->add_region(fcnc_regions[j] + "_e_" + nprong[k] + "_veto" + bwps[i]);
-    //            fcnc_plots->add_region(fcnc_regions[j] + "_mu_" + nprong[k] + "_veto" + bwps[i]);
-    //          }
-    //        }
-    //      }
-    //    }
-    //  }else{
-    //    fcnc_plots->add_region(fcnc_regions[j]+"_emu");
-    //    fcnc_plots->add_region(fcnc_regions[j]+"_ee");
-    //    fcnc_plots->add_region(fcnc_regions[j]+"_mumu");
-    //    fcnc_plots->add_region(fcnc_regions[j]+"_mue");
-    //  }
-    //}
   }
 
   fake_nregions_notau = fake_regions_notau.size();
@@ -171,9 +134,6 @@ void tthmltree::init_hist(TString outputfilename){
     fake_notau_plots->debug = !!debug;
     fake_notau_plots->add(vars.at("lep_pt_0"),&lep_pt_0);
     fake_notau_plots->add(vars.at("nljet"),&nljet);
-    //for (int j = 0; j < fake_nregions_notau; ++j){
-    //  fake_notau_plots->add_region(fake_regions_notau[j]);
-    //}
   }
 
   fake_nregions = fake_regions.size();
@@ -188,21 +148,6 @@ void tthmltree::init_hist(TString outputfilename){
 //    fake_plots->add(atvars.("ljetpt"),&pt_ljet);
     fake_plots->add(vars.at("etmiss"),&etmiss);
     fake_plots->add(vars.at("mll"),&mll);
-    //for (int j = 0; j < fake_nregions; ++j){
-    //  if(plotTauFake){
-    //    for (int k = 0; k < 2; ++k){
-    //      for (int i = 0; i < 4; i+=1){
-    //        if(dobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_" + bwps[i]);
-    //        if(dovetobwp[bwps[i]]) fake_plots->add_region(fake_regions[j] + "_" + nprong[k] + "_veto" + bwps[i]);
-    //      }
-    //    }
-    //  }else{
-    //    fake_plots->add_region(fake_regions[j]+"_emu");
-    //    fake_plots->add_region(fake_regions[j]+"_ee");
-    //    fake_plots->add_region(fake_regions[j]+"_mumu");
-    //    fake_plots->add_region(fake_regions[j]+"_mue");
-    //  }
-    //}
   }
 }
 
@@ -265,6 +210,15 @@ void tthmltree::init_sample(TString sample, TString sampletitle){
       auto origins = plotTauFake? getFakeTauOrigin() : getFakeLepOrigin();
       if(fcnc_nregions){
         for(auto origin : origins) fcnc_plots->add_sample(sample + "_" + origin.name,sampletitle + "(" + origin.title + ")",origin.color);
+        if(plotTauFake){
+          for(auto region: fcnc_regions){
+            if(!region.Contains("tau")) {
+              for(auto origin : getFakeLepOrigin())
+                fcnc_plots->add_sample(sample + "_" + origin.name,sampletitle + "(" + origin.title + ")",origin.color);
+              break;
+            }
+          }
+        }
       }
       if(fake_nregions){
         for(auto origin : origins) fcnc_plots->add_sample(sample + "_" + origin.name,sampletitle + "(" + origin.title + ")",origin.color);
