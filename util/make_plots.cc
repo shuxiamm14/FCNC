@@ -32,6 +32,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString figuredir = method.Contains("test")?"." : FIGURE_DIR;
 	TString chartdir = method.Contains("test")?"." : TABLE_DIR;
 	observable fakeFactorl;
+	int debug = 1;
 	bool prefit = 1;
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 1;
@@ -507,6 +508,11 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				}
 			}
 			if(fittodata){
+				map<TString,vector<TString>> ret;
+				mergeregion(0,ret);
+				mergeregion(1,ret);
+				for(auto i : ret){
+					if(i.second.size()>1) tau_plots->merge_regions(i.second, i.first);
 				for(int i = 0; i < 3; i++){
 					if(mergeprong) { if(i != 2) continue; }
 					else { if(i == 2) continue; }
@@ -663,7 +669,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			}
 		}
 	}
-	if(mergeleptype){
+	if(mergeleptype && !fittodata){
 		map<TString,vector<TString>> ret;
 		mergeregion(0,ret);
 		mergeregion(1,ret);
