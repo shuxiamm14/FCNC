@@ -53,6 +53,8 @@ tthmltree::tthmltree():nominal::nominal(){
     "reg1l1tau1b3j_ss_antiiso",
     "reg2l2bnj",
     "reg2l1bnj",
+    "reg2lSS2bnj",
+    "reg2lSS1bnj",
     "reg2l1tau2bnj"
   };
   belong_regions.m_region_map["FakeCR"] = {

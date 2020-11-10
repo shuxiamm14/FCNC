@@ -17,6 +17,7 @@ TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir
 	if(inputfile->IsZombie()) {
 		deletepointer(inputfile);
 		inputfile = new TFile(nominaldir + "/" + sample + "_" + nominalname + ".root");
+		if(inputfile->IsZombie()) return 0;
 	}
 	return inputfile;
 }
@@ -360,8 +361,6 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 						for(auto signalsamp : signalmap.at(samples[j].name)){
 							inputfile = getFile(mc_campaign + "_" + signalsamp, dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 							double norm = samples[j].norm;
-							//if(origin.at(i).name == "w_jet_fake") tau_plots->read_sample( origin.at(i).name, signalsamp + "_w_jet", histmiddlename, origin.at(i).title, (enum EColor)colors[i], norm,inputfile);
-							//else
 							tau_plots->read_sample( origin.at(i).name, signalsamp + "_" + origin.at(i).name, histmiddlename, origin.at(i).title, (enum EColor)colors[i], norm,inputfile);
 							deletepointer(inputfile);
 						}
@@ -370,8 +369,6 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					//inputfile = getFile(mc_campaign + "_" + samplename + (framework == "tthML"? (calculate_fake_calibration ? "_fake" : "_fcnc") : ""), dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 					inputfile = getFile(mc_campaign + "_" + samplename , dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 					double norm = samples[j].norm;
-					if(origin.at(i).name == "w_jet_fake") tau_plots->read_sample( origin.at(i).name, samples[j].name + "_w_jet_fake", histmiddlename, origin.at(i).title, (enum EColor)colors[i], norm,inputfile);
-					else tau_plots->read_sample( origin.at(i).name, samples[j].name + "_" + origin.at(i).name, histmiddlename, origin.at(i).title, (enum EColor)colors[i], norm,inputfile);
 					deletepointer(inputfile);
 				}
 			}
@@ -387,8 +384,6 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					for(auto signalsamp : signalmap.at(samples[j].name)){
 						inputfile = getFile(mc_campaign + "_" + signalsamp, dirname, NPname, (framework == "tthML"? "nominal" : "NOMINAL"), nominalname);
 						for (int i = 0; i < origin.size(); i++) {
-							//if(origin.at(i).name == "w_jet_fake") tau_plots->read_sample( samples[j].name, signalsamp + "_w_jet", histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
-							//else 
 							tau_plots->read_sample( samples[j].name, signalsamp + "_" + origin.at(i).name, histmiddlename, samples[j].title, samples[j].color, samples[j].norm, inputfile);
 						}
 						deletepointer(inputfile);
