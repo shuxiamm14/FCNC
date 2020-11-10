@@ -8,6 +8,8 @@
 #include "weightsys_list.h"
 #include "LatexChart.h"
 #include "common.h"
+
+#define TESTFIT 1
 using namespace std;
 
 map<TString,observable> fakeFactor_mu;
@@ -263,7 +265,33 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	//	"reg2lSS1taunj_os_antiiso",
 	//	"reg2lSS1taunj_os_antiisolead",
 	};
-	vector<TString> regions_tthML = plotFakeLep? regions_tthML_fakelep : regions_tthML_faketau;
+	vector<TString> regions_tthML_fit = {
+		"reg1l1tau2b1j_os",
+		"reg1l1tau2b1j_ss",
+		"reg1l1tau2b2j_os",
+		"reg1l1tau2b2j_ss",
+		"reg1l1tau2b3j_os",
+		"reg1l1tau2b3j_ss",
+		"reg2l1tau1bnj",
+		"reg2l1tau2bnj",
+#if TESTFIT==1
+		"reg1l1tau2b_os",
+		"reg1l1tau2b_ss",
+		"reg1l2tau1bnj_os",
+		"reg1l2tau1bnj_ss",
+		"reg1l2tau2bnj_os",
+		"reg1l2tau2bnj_ss",
+		"reg1l1tau1b_os",
+		"reg1l1tau1b_ss",
+		"reg1l1tau1b1j_os",
+		"reg1l1tau1b1j_ss",
+		"reg1l1tau1b2j_os",
+		"reg1l1tau1b2j_ss",
+		"reg1l1tau1b3j_os",
+		"reg1l1tau1b3j_ss",
+#endif
+	};
+	vector<TString> regions_tthML = plotFakeLep? regions_tthML_fakelep : (fittodata?regions_tthML_fit:regions_tthML_faketau);
 	//vector<TString> regions_calc_fake = {"reg2l1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_os","reg2l1tau1b","reg1l1tau2b_os","reg1l1tau2b_ss"};//,"reg2l2bnj","reg1l2b2j","reg2l2b"};
 	vector<TString> regions = framework == "xTFW" ? regions_xTFW : regions_tthML;
 	//if(calculate_fake_calibration) {
@@ -278,7 +306,9 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		{"1prong","3prong"},
 		{"vetobtagwp70_lowmet","vetobtagwp70_highmet"}
 	};
-	vector<int> primensuffix = {2,4,2,2};
+	if(fittodata) merge_suffix[3].erase(merge_suffix[3].begin());
+	vector<int> primensuffix;
+	for(auto x: merge_suffix) primensuffix.push_back(x.size());
 	auto mergeregion = [&](int imerge, map<TString,vector<TString>> &ret){
 		  //[other suffix][merged suffix]
 		for (int j = 0; j < nregions; ++j){
@@ -427,7 +457,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		map<TString,vector<TString>> ret;
 		mergeregion(2,ret);
 		for(auto i : ret){
-			if(i.second.size()) tau_plots->merge_regions(i.second, i.first);
+			if(i.second.size()>1) tau_plots->merge_regions(i.second, i.first);
 		}
 	}
 	if(plot_option == 2){
@@ -483,7 +513,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 
 					TString prefix = PACKAGE_DIR;
 					prefix += "/data/";
-					TString suffix = nprong[i] + "vetobtagwp70_highmet";
+					TString suffix = nprong[i] + "_vetobtagwp70_highmet";
 					LatexChart *chart = 0;
 #if FITSTRATEGY != 3
 					vector<TString> fit_regions = {
@@ -518,8 +548,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					scalesamples["other_fake"];
 					scalesamples["w_jet_fake"];
 					scalesamples["w_jet_fake"] = {
-						{"ss", {"reg1l1tau2b2j_ss" + suffix, "reg1l1tau2b3j_ss" + suffix, "reg1l1tau2b1j_ss" + suffix}},
-						{"os", {"reg1l1tau2b2j_os" + suffix, "reg1l1tau2b3j_os" + suffix, "reg1l1tau2b1j_os" + suffix, "reg2l1tau1bnj" + suffix, "reg2l1tau2bnj" + suffix}},
+						{"ss", {"reg1l1tau2b2j_ss" + suffix, "reg1l1tau2b3j_ss" + suffix}},
+						{"os", {"reg1l1tau2b2j_os" + suffix, "reg1l1tau2b3j_os" + suffix, "reg2l1tau1bnj" + suffix, "reg2l1tau2bnj" + suffix}},
 					};
 					scalesamples["b_fake"];
 					map<TString,map<TString,vector<TString>>> postfit_regions = scalesamples;
@@ -574,7 +604,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				for(int i = 0; i < 3; i++){
 					if(mergeprong) { if(i != 2) continue; }
 					else { if(i == 2) continue; }
-					TString suffix = nprong[i] + "vetobtagwp70_highmet";
+					TString suffix = nprong[i] + "_vetobtagwp70_highmet";
 					vector<double> BDTslice = {-1,-0.4,0.1,0.3,0.5,0.65,0.75,0.85,1};
 					vector<observable> mismodel2j = tau_plots->scale_to_data("reg1l1tau1b2j_ss" + suffix,"1 w_jet_fake","BDTG_test",BDTslice);
 					vector<observable> mismodel3j = tau_plots->scale_to_data("reg1l1tau1b3j_ss" + suffix,"1 w_jet_fake","BDTG_test",BDTslice);
@@ -587,7 +617,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				for(int i = 0; i < 3; i++){
 					if(mergeprong) { if(i != 2) continue; }
 					else { if(i == 2) continue; }
-					TString suffix = nprong[i] + "vetobtagwp70_highmet";
+					TString suffix = nprong[i] + "_vetobtagwp70_highmet";
 					if(calculate_fake_calibration){
 						tau_plots->scale_to_data("reg1l1tau2b1j_os" + suffix,"1 fake","tau_pt_0",fakePtSlices);
 						tau_plots->scale_to_data("reg1l1tau2b1j_ss" + suffix,"1 fake","tau_pt_0",fakePtSlices);
@@ -638,14 +668,14 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		mergeregion(0,ret);
 		mergeregion(1,ret);
 		for(auto i : ret){
-			if(i.second.size()) tau_plots->merge_regions(i.second, i.first);
+			if(i.second.size()>1) tau_plots->merge_regions(i.second, i.first);
 		}
 	}
 	if(mergemet){
 		map<TString,vector<TString>> ret;
 		mergeregion(3,ret);
 		for(auto i : ret){
-			if(i.second.size()) tau_plots->merge_regions(i.second, i.first);
+			if(i.second.size()>1) tau_plots->merge_regions(i.second, i.first);
 		}
 	}
 	
