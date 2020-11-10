@@ -176,12 +176,12 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			tau_plots->sensitivevariable = "BDTG_test";
 			for(auto var : vars){
 				
-				if(   //var.first!="tau_pt_0"
+				if(   var.first!="tau_pt_0"
 //					&&var.first!="tau_pt_1"
-					var.first!="etmiss"
-					&&var.first!="ttvismass"
+					&&var.first!="etmiss"
+//					&&var.first!="ttvismass"
 //					&&var.first!="lep_pt_0"
-					&&var.first!="BDTG_test"
+//					&&var.first!="BDTG_test"
 				) continue;
 				if(varcount / perpart == ipart){
 					tau_plots->add(var.second);
