@@ -77,6 +77,11 @@ std::vector<fcncSample> getSigSamples(TString framework, float BRbenchmark){
 	//samples.emplace_back("fcnc_uh_ml","#bar{t}t#rightarrowbWuH,H#rightarrowVV"+tmp,kRed,signorm);
 	return samples;
 }
+TString translateRegion(TString &reg){
+	std::string regtitle = reg.Data();
+	translateRegion(regtitle);
+	return regtitle.c_str();
+}
 void translateRegion(std::string &regtitle){
 	findAndReplaceAll(regtitle,"reg1l1tau1b3j_","TTH~$\\tlhad$~");
 	findAndReplaceAll(regtitle,"reg1l1tau1b2j_os","STH~$\\tlhad$~os");
