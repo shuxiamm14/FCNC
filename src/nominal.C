@@ -1642,7 +1642,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
   
         TString    leporigin;
         TString    tauorigin;
-        if(!region.Contains("tau") || !plotTauFake){
+        if(!region.Contains("tau") || !plotTauFake || region.Contains("1l1tau1b")){
           if (sample.Contains("data")) {
             leporigin = "data";
             sample = "data";
@@ -1655,8 +1655,10 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             }
             if(nfakelep == 0) leporigin = sample + "_realLep";
             else if(nfakelep >= 2) leporigin = sample + "_doubleFakeLep";
+            if(region.Contains("1l1tau1b") && nfakelep>=1) continue; 
           }
         }
+	
         if (sample.Contains("data")) {
           tauorigin = "data";
           sample = "data";

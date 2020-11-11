@@ -112,7 +112,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	vector<fcncSample> samples = getBkgSamples(framework);
 	int colors[] = {kViolet, kOrange, 7, kBlue, kGreen, kGray, kRed, kMagenta, kSpring, kTeal, kAzure};
 	vector<fcncSample> sigsamples = getSigSamples(framework, BRbenchmark);
-	vector<TString> mergedOrigins = {"c","g","j","nomatch"};
+	vector<TString> mergedOrigins = {"c_fake","g_fake","j_fake","nomatch"};
 	//if(!calculate_fake_calibration){
 		samples.insert(samples.begin(),sigsamples.begin(),sigsamples.end());
 	//}
@@ -179,12 +179,12 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			tau_plots->sensitivevariable = "BDTG_test";
 			for(auto var : vars){
 				
-				if(   var.first!="tau_pt_0"
+				if(  // var.first!="tau_pt_0"
 //					&&var.first!="tau_pt_1"
-					&&var.first!="etmiss"
-//					&&var.first!="ttvismass"
-//					&&var.first!="lep_pt_0"
-//					&&var.first!="BDTG_test"
+//					&&var.first!="etmiss"
+					var.first!="ttvismass"
+					&&var.first!="lep_pt_0"
+					&&var.first!="BDTG_test"
 				) continue;
 				if(varcount / perpart == ipart){
 					tau_plots->add(var.second);
@@ -438,7 +438,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 							}else 
 								for (int i = 1; i < origin.size() - 1; i++){
 									if(mergeOrigin && find(mergedOrigins.begin(),mergedOrigins.end(),origin.at(i).name) != mergedOrigins.end())
-										tau_plots->read_sample( "other_fake", samplename + "_" + origin.at(i).name, histmiddlename, origin.at(i).title, (enum EColor)(i+40), norm, inputfile);
+										tau_plots->read_sample( "other_fake", samplename + "_" + origin.at(i).name, histmiddlename, "Other Fake #tau", (enum EColor)(i+40), norm, inputfile);
 									else
 										tau_plots->read_sample( origin.at(i).name, samplename + "_" + origin.at(i).name, histmiddlename, origin.at(i).title, (enum EColor)(i+40), norm, inputfile);
 								}
@@ -492,7 +492,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			}
 			if(doFakeFactor && framework == "tthML") {
 				tau_plots->stackorder.push_back("FF_QCD");
-				string fakeFormular="1 data -1 smhiggs -1 w_jet_fake -1 diboson -1 zll -1 ztautau -1 ttbar -1 ttV -1 others -1 lep -1 doublefake -1 other_fake -1 b_fake -1 w_jet_fake";
+				string fakeFormular="1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 ttV -1 others -1 lep_fake -1 other_fake -1 b_fake -1 w_jet_fake";
 				vector<TString> FFregions = {"reg1l1tau1b1j_os", "reg1l1tau1b1j_ss", "reg1l1tau1b_ss", "reg1l1tau1b_os", "reg1l1tau1b2j_os", "reg1l1tau1b2j_ss", "reg1l1tau1b3j_os","reg1l1tau1b3j_ss"};
 				for(auto FFreg: FFregions){
 					if(fakeFactor_e[FFreg].nominal == 0){
@@ -513,6 +513,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				mergeregion(1,ret);
 				for(auto i : ret){
 					if(i.second.size()>1) tau_plots->merge_regions(i.second, i.first);
+				}
 				for(int i = 0; i < 3; i++){
 					if(mergeprong) { if(i != 2) continue; }
 					else { if(i == 2) continue; }
