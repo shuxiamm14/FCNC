@@ -34,6 +34,8 @@ const std::map<TString,std::vector<TString>> signalmap = {
 
 void translateRegion(std::string &regtitle);
 
+TString translateRegion(TString &regtitle);
+
 std::vector<fcncSample> getBkgSamples(TString framework);
 
 std::vector<fcncSample> getSigSamples(TString framework, float BRbenchmark);
