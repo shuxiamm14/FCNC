@@ -52,7 +52,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString fitcharge = "os";
 	int campaignfrom = 0;
 	int campaignto = 3;
-	int perpart = 3;
+	int perpart = 2;
 	int varcount = 0;
 	int plotvar = 0;
 	bool doFakeFactor = 0;
@@ -180,10 +180,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			tau_plots->sensitivevariable = "BDTG_test";
 			for(auto var : vars){
 				
-				if(  // var.first!="tau_pt_0"
-//					&&var.first!="tau_pt_1"
-//					&&var.first!="etmiss"
-					var.first!="ttvismass"
+				if(   var.first!="tau_pt_0"
+					&&var.first!="tau_pt_1"
+					&&var.first!="etmiss"
+					&&var.first!="ttvismass"
 					&&var.first!="lep_pt_0"
 					&&var.first!="BDTG_test"
 				) continue;
@@ -506,15 +506,15 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 						FFchart->set(translateRegion(FFreg).Data(),"Electron",fakeFactor_e[FFreg]);
 						printf("Calculated Electron Fake Factor: %f+/-%f in %s",fakeFactor_e[FFreg].nominal,fakeFactor_e[FFreg].error,FFreg.Data());
 					}
-					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD_e","#muFF(QCD)",(enum EColor)45,0,fakeFactor_e[FFreg]);
+					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD_e","#muFF(QCD)",(enum EColor)45,0,fakeFactor_e[FFreg].nominal);
 					if(ipart == 0){
 						fakeFactor_mu[FFreg]=tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet",fakeFormular,NPname);
 						fakeFactor_mu[FFreg].error = rms(fakeFactor_mu[FFreg].error,tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet","1 tuH",NPname).nominal);
 						fakeFactor_mu[FFreg]=fakeFactor_mu[FFreg]/(tau_plots->calculateYield(FFreg + "_antiiso_mu_vetobtagwp70_lowmet",fakeFormular,NPname));
-						FFchart->set(translateRegion(FFreg).Data(),"Muon",fakeFactor_e[FFreg]);
+						FFchart->set(translateRegion(FFreg).Data(),"Muon",fakeFactor_mu[FFreg]);
 						printf("Calculated Muon Fake Factor: %f+/-%f in %s",fakeFactor_mu[FFreg].nominal,fakeFactor_mu[FFreg].error,FFreg.Data());
 					}
-					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD_mu","eFF(QCD)",(enum EColor)45,0,fakeFactor_mu[FFreg]);
+					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD_mu","eFF(QCD)",(enum EColor)45,0,fakeFactor_mu[FFreg].nominal);
 				}
 				if(ipart==0) {
 					gSystem->mkdir((chartdir + "/FF/").Data());
