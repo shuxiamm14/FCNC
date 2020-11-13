@@ -6,7 +6,7 @@
 #define FITSTRATEGY 2   //1 merge SS and OS. 2 split SS and OS, single fit. 3 split SS and OS, two fits.
 const std::vector<double> fakePtSlices = {25,35,45,125};
 
-const TString SFfilename = TString(PACKAGE_DIR) + "/data/" + "scale_factors.root";
+const TString SFfilename = TString(PACKAGE_DIR) + "/data/" + "scale_factors";
 
 std::vector<fcncSample> getFakeTauOrigin();
 

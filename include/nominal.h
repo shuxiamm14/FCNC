@@ -57,6 +57,7 @@ public :
   bool tightTau;
   bool fit_collinear;
   bool mass_collinear;
+  bool mergeProngFF;
   //=============================configurations===============================
   TString dataDir = ".";
   TString SystematicsName = "NOMINAL";
@@ -104,8 +105,8 @@ public :
 
   static int GeV;
   std::vector<TString> plotNPs;
-  std::map<TString,std::map<TString,std::vector<observable>>> newFakeSF;
-  std::map<TString,std::vector<observable>> newFakeSFSys;
+  std::map<TString,std::map<TString,std::vector<observable>>> newFakeSF[2];
+  std::map<TString,std::vector<observable>> newFakeSFSys[2];
   Int_t ierflg;
   int ifill = 0;
 
