@@ -242,8 +242,6 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	//	"reg2lSS1taunj_os_antiisolead",
 	};
 	vector<TString> regions_tthML_fit = {
-		"reg1l1tau2b1j_os",
-		"reg1l1tau2b1j_ss",
 		"reg1l1tau2b2j_os",
 		"reg1l1tau2b2j_ss",
 		"reg1l1tau2b3j_os",
@@ -251,6 +249,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		"reg2l1tau1bnj",
 		"reg2l1tau2bnj",
 #if TESTFIT==1
+		"reg1l1tau2b1j_os",
+		"reg1l1tau2b1j_ss",
 		"reg1l1tau2b_os",
 		"reg1l1tau2b_ss",
 		"reg1l2tau1bnj_os",
