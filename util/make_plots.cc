@@ -9,7 +9,7 @@
 #include "LatexChart.h"
 #include "common.h"
 
-#define TESTFIT 1
+#define TESTFIT 0
 using namespace std;
 
 map<TString,observable> fakeFactor_mu;
@@ -42,7 +42,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool plotnj = 0;
 	bool doPlots = 1;
 	bool scaletodata = 0;
-	bool mergeprong = 1;
+	bool mergeprong = 0;
 	bool mergemet = 1;
 	int plot_option = 2;
 	bool fittodata = 0;
@@ -52,7 +52,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString fitcharge = "os";
 	int campaignfrom = 0;
 	int campaignto = 3;
-	int perpart = 2;
+	int perpart = 1;
 	int varcount = 0;
 	int plotvar = 0;
 	bool doFakeFactor = 0;
@@ -141,35 +141,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			tau_plots->add(vars.at("nljet"));
 			tau_plots->add(vars.at("lep_pt_0"));
 		}
-		else if(calculate_fake_calibration){
-			if(!fittodata && !(fakeFactorl.nominal == 0 && doFakeFactor)){
-				tau_plots->sensitivevariable = "BDTG_test";
-				for(auto var : vars){
-					
-//					if(   var.first!="tau_pt_0"
-//						&&var.first!="tau_pt_1"
-//						&&var.first!="etmiss"
-//						&&var.first!="ttvismass"
-//						&&var.first!="lep_pt_0"
-//						&&var.first!="BDTG_test"
-//					) continue;
-					if(varcount / perpart == ipart){
-						tau_plots->add(var.second);
-						plotvar++;
-					}else if(varcount / perpart == ipart+1) break;
-					varcount++;
-				}
-				//tau_plots->add(vars["taulmass"]);
-				//tau_plots->add(vars["bpt"]);
-				//tau_plots->add(vars["etmiss"]);
-				//tau_plots->add(vars["ljetpt"]);
-			}else{
-				tau_plots->add(vars["tau_pt_0"]);
-				tau_plots->add(vars["lep_pt_0"]);
-				//if(doFakeFactor) tau_plots->add(vars["lep_pt_1"]);
-			}
-			//tau_plots->add("p_{T,b_fake}","bpt","GeV");
-			//tau_plots->add("p_{T,light-jet}","ljetpt","GeV");
+		else if(fittodata){
+			tau_plots->add(vars["tau_pt_0"]);
+		}else if(doFakeFactor){
+			tau_plots->add(vars["lep_pt_0"]);
 		}
 		else if(plotnj){
 			tau_plots->add(vars["njet"]);
@@ -197,7 +172,6 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	}else{
 		tau_plots->sensitivevariable = "BDTG_test";
 		for(auto var : vars){
-		//	if(var.first!="tautauvispt"&&var.first!="t2vismass"&&var.first!="drttj" && var.first!="tau_pt_0"&&var.first!="tau_pt_1"&&var.first!="etmiss" &&var.first!="ttvismass" &&var.first!="BDTG_test"&&var.first!="dphitauetmiss"&&var.first!="BDTG_train"&&var.first!="x1fit"&&var.first!="x2fit"&&var.first!="phicent") continue;
 			tau_plots->add(var.second);
 		}
 	}
@@ -367,7 +341,6 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 
 	if(!plotFakeLep){
 		if(mergeprong) tau_plots->muteregion("prong");
-		if(!mergeprong) tau_plots->muteregion("35");
 	}
 
 	TFile *datafile[3] = {0,0,0};
@@ -509,7 +482,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 						FFchart->set(translateRegion(FFreg).Data(),"Muon",fakeFactor_mu[FFreg]);
 						printf("Calculated Muon Fake Factor: %f+/-%f in %s",fakeFactor_mu[FFreg].nominal,fakeFactor_mu[FFreg].error,FFreg.Data());
 					}
-					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD_mu","eFF(QCD)",(enum EColor)45,0,fakeFactor_mu[FFreg].nominal);
+					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD_mu","eFF(QCD)",(enum EColor)46,0,fakeFactor_mu[FFreg].nominal);
 				}
 				if(ipart==0) {
 					gSystem->mkdir((chartdir + "/FF/").Data());
