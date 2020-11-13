@@ -77,6 +77,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		mergeOrigin = 1;
 		plotFakeLep = 0;
 		doFakeFactor = 1;
+		prefit = 0;
 	}
 	if(method.Contains("postfit")){
 		prefit = 0;
@@ -499,13 +500,17 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				vector<TString> FFregions = {"reg1l1tau1b1j_os", "reg1l1tau1b1j_ss", "reg1l1tau1b_ss", "reg1l1tau1b_os", "reg1l1tau1b2j_os", "reg1l1tau1b2j_ss", "reg1l1tau1b3j_os","reg1l1tau1b3j_ss"};
 				for(auto FFreg: FFregions){
 					if(ipart == 0){
-						fakeFactor_e[FFreg]=tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet",fakeFormular,NPname)/(tau_plots->calculateYield(FFreg + "_antiiso_e_vetobtagwp70_lowmet",fakeFormular,NPname));
+						fakeFactor_e[FFreg]=tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet",fakeFormular,NPname);
+						fakeFactor_e[FFreg].error = rms(fakeFactor_e[FFreg].error,tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet","1 tuH",NPname).nominal);
+						fakeFactor_e[FFreg]=fakeFactor_e[FFreg]/(tau_plots->calculateYield(FFreg + "_antiiso_e_vetobtagwp70_lowmet",fakeFormular,NPname));
 						FFchart->set(translateRegion(FFreg).Data(),"Electron",fakeFactor_e[FFreg]);
 						printf("Calculated Electron Fake Factor: %f+/-%f in %s",fakeFactor_e[FFreg].nominal,fakeFactor_e[FFreg].error,FFreg.Data());
 					}
 					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD_e","#muFF(QCD)",(enum EColor)45,0,fakeFactor_e[FFreg]);
 					if(ipart == 0){
-						fakeFactor_mu[FFreg]=tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet",fakeFormular,NPname)/(tau_plots->calculateYield(FFreg + "_antiiso_mu_vetobtagwp70_lowmet",fakeFormular,NPname));
+						fakeFactor_mu[FFreg]=tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet",fakeFormular,NPname);
+						fakeFactor_mu[FFreg].error = rms(fakeFactor_mu[FFreg].error,tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet","1 tuH",NPname).nominal);
+						fakeFactor_mu[FFreg]=fakeFactor_mu[FFreg]/(tau_plots->calculateYield(FFreg + "_antiiso_mu_vetobtagwp70_lowmet",fakeFormular,NPname));
 						FFchart->set(translateRegion(FFreg).Data(),"Muon",fakeFactor_e[FFreg]);
 						printf("Calculated Muon Fake Factor: %f+/-%f in %s",fakeFactor_mu[FFreg].nominal,fakeFactor_mu[FFreg].error,FFreg.Data());
 					}
@@ -541,7 +546,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					};
 					TFile SFfile(prefix + "scale_factors" + nprong[i] + ".root","update");
 					if(NPname == "NOMINAL") {
-						chart = new LatexChart("scale_factor");
+						chart = new LatexChart(("scale_factor" + nprong[i]).Data());
 					}
 #else
 					vector<TString> fit_regions = {"reg1l1tau2b2j_" + fitcharge + suffix, "reg1l1tau2b3j_" + fitcharge + suffix, "reg1l1tau2b1j_" + fitcharge + suffix,"reg2l1tau1b" + suffix,"reg2l1tau2b" + suffix};
@@ -552,7 +557,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + suffix);
 					TFile SFfile(prefix + "scale_factors_" + fitcharge + nprong[i] + ".root","update");
 					if(NPname == "NOMINAL") {
-						chart = new LatexChart(("scale_factor_" + fitcharge).Data());
+						chart = new LatexChart(("scale_factor_" + fitcharge + nprong[i]).Data());
 					}
 #endif
 #if FITSTRATEGY != 2

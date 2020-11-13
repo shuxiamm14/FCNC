@@ -832,7 +832,7 @@ observable nominal::FindNewFakeSF(TString NP){ //origin=-1,0,1,2,3,4 for real/le
 
 observable nominal::FindNewFakeSF(TString NP, int itau, TString &name){ //origin=-1,0,1,2,3,4 for real/lep,b,c,g,j,wjet
   double taupt = itau == 0? tau_pt_0 : tau_pt_1;
-  if(!newFakeSF.size()) {
+  if(!newFakeSF[0].size()) {
     printf("nominal::FindNewFakeSF() Error : newFakeSF is Empty, please call nominal::ConfigNewFakeSF() first\n");
     exit(0);
   }
@@ -864,11 +864,11 @@ observable nominal::FindNewFakeSF(TString NP, int itau, TString &name){ //origin
       break;
     }
   }
-
-  observable result = doubleCounting? newFakeSFSys[origin][slice] : newFakeSF[NP][origin][slice];
-  string ss = "fakeSFNP_ptbin" + to_string(slice) + "_" + origin.Data();
+  int prongbin = (mergeProngFF || taus_n_charged_tracks->at(itau)==1)? 0:1;
+  observable result = doubleCounting? newFakeSFSys[prongbin][origin][slice] : newFakeSF[prongbin][NP][origin][slice];
+  string ss = string("fakeSFNP_") + (mergeProngFF?"":(prongbin? "3prong_":"1prong_")) + "ptbin" + to_string(slice) + "_" + origin.Data();
   name = ss.c_str();
-  if(!newFakeSF[NP].size()) printf("nominal::FindNewFakeSF : NP %s not found\n", NP.Data());
+  if(!newFakeSF[prongbin][NP].size()) printf("nominal::FindNewFakeSF : NP %s not found\n", NP.Data());
   if(debug) printf("%s = %f +/- %f\n", name.Data(), result.nominal, result.error);
   return result;
 }
@@ -909,106 +909,110 @@ bool nominal::addTheorySys(){
 
 void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
   printf("nominal::ConfigNewFakeSF() : Starting\n");
-  newFakeSF.clear();
-  newFakeSFSys.clear();
-  TFile *sfFile =  TFile::Open(SFfilename);
-  printf("nominal::ConfigNewFakeSF() : Done reading\n");
-  TH1D *SFhist = 0;
-  for (auto origin : SForigins)
-  {
-    for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
+  TString nprongstrs[2] = {"_1prong","_3prong"};
+  for (int iprong = 0; iprong < 2; iprong++ ){
+  	TFile *sfFile =  TFile::Open(SFfilename + (mergeProngFF?"":nprongstrs[iprong]) + ".root");
+  	printf("nominal::ConfigNewFakeSF() : Done reading\n");
+  	newFakeSF[iprong].clear();
+  	newFakeSFSys[iprong].clear();
+  	TH1D *SFhist = 0;
+    for (auto origin : SForigins)
     {
-      string histname = ( "sf_" + string(origin.Data()) + "_pt" + to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) );
-      printf("nominal::ConfigNewFakeSF() : Read histogram %s\n", histname.c_str());
-      //SFhist = (TH1D*)(sfFile.Get(histname.c_str())->Clone((histname+"_buffer").c_str()));
-      sfFile->GetObject(histname.c_str(),SFhist);
-      SFhist->SetDirectory(0);  //It crashes without this line!
-      if(!SFhist) printf("histogram not found in SF file: %s\n", histname.c_str());
-      TAxis *xaxis = SFhist->GetXaxis();
-      double newFakeSFnominal;
-      double err2 = 0;
-      for (int ibin = 1; ibin <= SFhist->GetNbinsX(); ++ibin)
+      for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
       {
-        if(!strncmp(xaxis->GetBinLabel(ibin),"NOMINAL",100)){
-          newFakeSFnominal = SFhist->GetBinContent(ibin);
-          err2 += pow(SFhist->GetBinError(ibin),2);
-          break;
+        string histname = ( "sf_" + string(origin.Data()) + "_pt" + to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) );
+        printf("nominal::ConfigNewFakeSF() : Read histogram %s\n", histname.c_str());
+        //SFhist = (TH1D*)(sfFile.Get(histname.c_str())->Clone((histname+"_buffer").c_str()));
+        sfFile->GetObject(histname.c_str(),SFhist);
+        SFhist->SetDirectory(0);  //It crashes without this line!
+        if(!SFhist) printf("histogram not found in SF file: %s\n", histname.c_str());
+        TAxis *xaxis = SFhist->GetXaxis();
+        double newFakeSFnominal;
+        double err2 = 0;
+        for (int ibin = 1; ibin <= SFhist->GetNbinsX(); ++ibin)
+        {
+          if(!strncmp(xaxis->GetBinLabel(ibin),"NOMINAL",100)){
+            newFakeSFnominal = SFhist->GetBinContent(ibin);
+            err2 += pow(SFhist->GetBinError(ibin),2);
+            break;
+          }
         }
-      }
-      for (int ibin = 1; ibin <= SFhist->GetNbinsX(); ++ibin)
-      {
-        TString NPname = xaxis->GetBinLabel(ibin);
-        double content = SFhist->GetBinContent(ibin);
-        double err = SFhist->GetBinError(ibin);
-        if(!content || NPname.Contains("Punch")) continue;
-        if(NPname != "NOMINAL" && !NPname.Contains("fake") && !NPname.Contains("down")){
-          err2 += pow(content - newFakeSFnominal, 2);
+        for (int ibin = 1; ibin <= SFhist->GetNbinsX(); ++ibin)
+        {
+          TString NPname = xaxis->GetBinLabel(ibin);
+          double content = SFhist->GetBinContent(ibin);
+          double err = SFhist->GetBinError(ibin);
+          if(!content || NPname.Contains("Punch")) continue;
+          if(NPname != "NOMINAL" && !NPname.Contains("fake") && !NPname.Contains("down")){
+            err2 += pow(content - newFakeSFnominal, 2);
+          }
+          if((find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) && SystematicsName!=NPname && NPname!="NOMINAL") {
+            continue;
+          }
+          if(!newFakeSF[iprong][NPname].size()) {
+            for (int i = 0; i < fakePtSlices.size()-1; ++i)
+            {
+              for (auto theorigin:SForigins)
+              {
+                newFakeSF[iprong][NPname][theorigin].emplace_back(0);
+              }
+            }
+          }
+          newFakeSF[iprong][NPname][origin][islice] = observable(content,err);
         }
-        if((find(plotNPs.begin(),plotNPs.end(),NPname) == plotNPs.end()) && SystematicsName!=NPname && NPname!="NOMINAL") {
-          continue;
-        }
-        if(!newFakeSF[NPname].size()) {
+        if(!newFakeSFSys[iprong].size()) {
           for (int i = 0; i < fakePtSlices.size()-1; ++i)
           {
             for (auto theorigin:SForigins)
             {
-              newFakeSF[NPname][theorigin].emplace_back(0);
+              newFakeSFSys[iprong][theorigin].emplace_back(0);
             }
           }
         }
-        newFakeSF[NPname][origin][islice] = observable(content,err);
+        newFakeSFSys[iprong][origin][islice] = observable(newFakeSFnominal,sqrt(err2));
+        deletepointer(SFhist);
       }
-      if(!newFakeSFSys.size()) {
-        for (int i = 0; i < fakePtSlices.size()-1; ++i)
-        {
-          for (auto theorigin:SForigins)
-          {
-            newFakeSFSys[theorigin].emplace_back(0);
-          }
-        }
-      }
-      newFakeSFSys[origin][islice] = observable(newFakeSFnominal,sqrt(err2));
-      deletepointer(SFhist);
     }
-  }
   
-  LatexChart *chart = 0;
-  printf("saved SF for NP:");
-  for(auto iter : newFakeSF){
-    printf(" %s", iter.first.Data());
-  }
-  printf("\nnew SFs: \n");
-  string chartname = "scale_factors";
-  if(access( chartname.c_str(), F_OK ) == -1) chart = new LatexChart(chartname);
-  printf("Slices: ");
-  for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
-  {
-    printf(" %s ", ( to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) ).c_str());
-  }
-  printf("\n");
-  for (auto origin : SForigins)
-  {
-    printf("%s", origin.Data());
+    LatexChart *chart = 0;
+    printf("saved SF for NP:");
+    for(auto iter : newFakeSF[iprong]){
+      printf(" %s", iter.first.Data());
+    }
+    printf("\nnew SFs: \n");
+    string chartname = string("scale_factors") + (mergeProngFF?"":nprongstrs[iprong].Data());
+    if(access( chartname.c_str(), F_OK ) == -1) chart = new LatexChart(chartname);
+    printf("Slices: ");
     for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
     {
-      printf(" %f+/-%f ", newFakeSFSys[origin][islice].nominal, newFakeSFSys[origin][islice].error);
-      if(chart){
-        string rowname = origin == "wjet-fake"? "$\\tau_{W}$" : (origin == "bjet-fake"? "$\\tau_{b}$" : "$\\tau_{other}$");
-#if FITSTRATEGY!=1
-        if(origin.Contains("os")) rowname+="~OS";
-        if(origin.Contains("ss")) rowname+="~SS";
-#endif
-        string columnname = "$" + to_string(int(fakePtSlices[islice])) + "-" + to_string(int(fakePtSlices[islice+1])) + "$~GeV";
-        if(islice == fakePtSlices.size()-2) columnname = to_string(int(fakePtSlices[islice])) + "GeV$-$";
-        chart->set(rowname, columnname, newFakeSFSys[origin][islice]);
-      }
+      printf(" %s ", ( to_string(int(fakePtSlices[islice])) + to_string(int(fakePtSlices[islice+1])) ).c_str());
     }
     printf("\n");
-  }
-  if(chart) {
-    chart->caption = "The results of the fit in CR regions.";
-    chart->print(chart->label);
-    deletepointer(chart);
+    for (auto origin : SForigins)
+    {
+      printf("%s", origin.Data());
+      for (int islice = 0; islice < fakePtSlices.size()-1; ++islice)
+      {
+        printf(" %f+/-%f ", newFakeSFSys[iprong][origin][islice].nominal, newFakeSFSys[iprong][origin][islice].error);
+        if(chart){
+          string rowname = origin == "wjet-fake"? "$\\tau_{W}$" : (origin == "bjet-fake"? "$\\tau_{b}$" : "$\\tau_{other}$");
+#if FITSTRATEGY!=1
+          if(origin.Contains("os")) rowname+="~OS";
+          if(origin.Contains("ss")) rowname+="~SS";
+#endif
+          string columnname = "$" + to_string(int(fakePtSlices[islice])) + "-" + to_string(int(fakePtSlices[islice+1])) + "$~GeV";
+          if(islice == fakePtSlices.size()-2) columnname = to_string(int(fakePtSlices[islice])) + "GeV$-$";
+          chart->set(rowname, columnname, newFakeSFSys[iprong][origin][islice]);
+        }
+      }
+      printf("\n");
+    }
+    if(chart) {
+      chart->caption = "The results of the fit in CR regions.";
+      chart->print(chart->label + (mergeProngFF?"":nprongstrs[iprong].Data()));
+      deletepointer(chart);
+    }
+    if(mergeProngFF) break;
   }
   applyNewFakeSF = 1;
   printf("nominal::ConfigNewFakeSF() : End\n");

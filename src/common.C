@@ -85,9 +85,9 @@ TString translateRegion(TString &reg){
 void translateRegion(std::string &regtitle){
 	findAndReplaceAll(regtitle,"reg1l1tau1b3j_","TTH~$\\tlhad$~");
 	findAndReplaceAll(regtitle,"reg1l1tau1b2j_os","STH~$\\tlhad$~os");
-	findAndReplaceAll(regtitle,"reg1l1tau1b_ss","l$\\tauhad$jos");
-	findAndReplaceAll(regtitle,"reg1l1tau1b1j_ss","l$\\tauhad$j~os");
-	findAndReplaceAll(regtitle,"reg1l1tau1b2j_ss","l$\\tauhad$2j~os");
+	findAndReplaceAll(regtitle,"reg1l1tau1b_ss","l$\\tauhad$~ss");
+	findAndReplaceAll(regtitle,"reg1l1tau1b1j_ss","l$\\tauhad$j~ss");
+	findAndReplaceAll(regtitle,"reg1l1tau1b2j_ss","l$\\tauhad$2j~ss");
 	findAndReplaceAll(regtitle,"reg1l1tau2b3j_","TTH~$\\tlhad$~2b~");
 	findAndReplaceAll(regtitle,"reg1l1tau2b2j_","STH~$\\tlhad$~2b~");
 	findAndReplaceAll(regtitle,"reg1l2tau1bnj_","$l\\thadhad$~");
