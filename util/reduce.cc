@@ -209,6 +209,14 @@ int main(int argc, char const *argv[])
 	analysis->plotTauFake = 1;
 	analysis->ctagFCNC = 0;
 	analysis->mergeProngFF = 0;
+	if(applynewSF) {
+		analysis->plotProng = 0;
+		analysis->plotLeptype = 1;
+	}
+	else {
+		analysis->plotProng = 1;
+		analysis->plotLeptype = 0;
+	}
 	analysis->fit_collinear = 1;
 	analysis->mass_collinear = 0;
 	analysis->dataDir = prefix+"/data/" + version;

@@ -1083,7 +1083,7 @@ vector<int> nominal::findwpair(int cjet){
   return output;
 }
 
-void nominal::fillhist(histSaver* plots, TString region, int nprong, TString sample, int taubtag, TString NP){
+void nominal::fillhist(histSaver* plots, TString region, TString sample, TString NP){
   //for (int i = 0; i < 4; ++i){
   //  if(taubtag>btagwpCut[i]) {
   //    if(dobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[i],NP);
@@ -1091,9 +1091,11 @@ void nominal::fillhist(histSaver* plots, TString region, int nprong, TString sam
   //    if(dovetobwp[bwps[i]] == 1) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[i],NP);
   //  }
   //}
+  TString prongname = "";
+  if(plotProng) prongname = prongname + "_" + char('0'+ taus_n_charged_tracks->at(0))+"prong";
   if(debug) printf("nominal::fillhist\n");
-  if(dobwp[bwps[1]] == 1 && taubtag) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_" + bwps[1],NP);
-  if(dovetobwp[bwps[1]] == 1 && !taubtag) plots->fill_hist(sample,region+"_"+char('0'+nprong)+"prong_veto" + bwps[1] + (etmiss < 20*GeV? "_lowmet" : "_highmet"),NP);
+  if(dobwp[bwps[1]] == 1 && taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_" + bwps[1],NP);
+  if(dovetobwp[bwps[1]] == 1 && !taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_veto" + bwps[1] + (etmiss < 20*GeV? "_lowmet" : "_highmet"),NP);
 }
 
 void nominal::readweightsysmap(int dsid, TString framework){
@@ -1685,10 +1687,11 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           else if(nfaketau >= 2) tauorigin = sample + "_doublefake";
         }
         if(debug) printf("fill hist\n");
-
-        if(leps_id->size()) region += "_";
-        for(auto id : *leps_id){
-          region += id == 11?"e":"mu";
+        if(plotLeptype){
+          if(leps_id->size()) region += "_";
+          for(auto id : *leps_id){
+            region += id == 11?"e":"mu";
+      	  }
       	}
         if(mcChannelNumber!=0){
           auto weightvec = weightsysmap.at(mcChannelNumber);
@@ -1731,14 +1734,14 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
               else if(index !=0)
                 weight *= weights->at(index);
             }
-            if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), theNP);
+            if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, theNP);
             //else if(!region.Contains("tau")) fill_notau(region, sample, theNP);
             else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0))) {
             	(fcnc?fcnc_plots:fake_plots)->fill_hist(leporigin,region,theNP);
             }
           }
         }else{ //data
-          if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, taus_n_charged_tracks->at(0), tauorigin, taus_b_tagged->at(0), "NOMINAL");
+          if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, "NOMINAL");
           //else if(!region.Contains("tau")) fill_notau(region, sample, "NOMINAL");
           else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0))) (fcnc?fcnc_plots:fake_plots)->fill_hist("data",region,"NOMINAL");
         }

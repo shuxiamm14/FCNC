@@ -282,9 +282,16 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		{"1prong","3prong"},
 		{"vetobtagwp70_lowmet","vetobtagwp70_highmet"}
 	};
-	if(fittodata) merge_suffix[3].erase(merge_suffix[3].begin());
+	if(fittodata) {
+		merge_suffix[3].erase(merge_suffix[3].begin());
+	}
 	vector<int> primensuffix;
 	for(auto x: merge_suffix) primensuffix.push_back(x.size());
+	if(doFakeFactor) primensuffix[2] = 0;
+	if(fittodata){
+		primensuffix[0] = 0;
+		primensuffix[1] = 0;
+	}
 	auto mergeregion = [&](int imerge, map<TString,vector<TString>> &ret){
 		  //[other suffix][merged suffix]
 		for (int j = 0; j < nregions; ++j){

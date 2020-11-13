@@ -58,6 +58,8 @@ public :
   bool fit_collinear;
   bool mass_collinear;
   bool mergeProngFF;
+  bool plotProng;
+  bool plotLeptype;
   //=============================configurations===============================
   TString dataDir = ".";
   TString SystematicsName = "NOMINAL";
@@ -171,7 +173,7 @@ public :
                               const float metetx, const float metety,            // met
                               float &mass, float &xp1, float &xp2);
   bool MassCollinear(bool kMMCsynchronize, float &mass, float &xp1, float &xp2);
-  void fillhist(histSaver *plots, TString region, int nprong, TString sample, int taubtag, TString NP);
+  void fillhist(histSaver *plots, TString region, TString sample, TString NP);
   void fill_notau(TString region, TString sample, TString NP);
   bool SelectTLepid(int id);
   void calcfakesf(std::vector<int> origin);
