@@ -16,9 +16,33 @@ int main(int argc, char const *argv[])
 	outputdir += framework.Data();
 	gSystem->mkdir(outputdir.c_str());
 	vector<TString> region_tthML = {
-		"reg1l1tau1b2j_os","reg1l1tau1b2j_ss","reg1l1tau1b3j_os","reg1l1tau1b3j_ss","reg1l2tau1bnj_os","reg1l2tau1bnj_ss",
-		"reg1l1tau2b2j_os","reg1l1tau2b2j_ss","reg1l1tau2b3j_os","reg1l1tau2b3j_ss","reg1l2tau2bnj_os","reg1l2tau2bnj_ss","all"
-		"reg2l1tau1bnj", "reg2l1tau2bnj", "reg2lSS1tau1bnj_os", "reg2lSS1tau1bnj_os_antiiso", "reg2lSS1tau1bnj_os_antiisolead"
+		"all",
+//		"reg1l1tau1b_os",
+		"reg1l1tau1b_ss",
+		"reg1l1tau1b_ss_antiiso",
+//		"reg1l1tau1b1j_os",
+		"reg1l1tau1b1j_ss",
+		"reg1l1tau1b2j_os",
+		"reg1l1tau1b2j_ss",
+		"reg1l1tau1b3j_os",
+		"reg1l1tau1b1j_ss_antiiso",
+		"reg1l1tau1b2j_os_antiiso",
+		"reg1l1tau1b2j_ss_antiiso",
+		"reg1l1tau1b3j_os_antiiso",
+//		"reg1l1tau1b3j_ss",
+		"reg1l2tau1bnj_os",
+		"reg1l2tau1bnj_ss",
+		"reg1l1tau2b2j_os",
+		"reg1l1tau2b2j_ss",
+		"reg1l1tau2b3j_os",
+		"reg1l1tau2b3j_ss",
+//		"reg1l2tau2bnj_os",
+//		"reg1l2tau2bnj_ss",
+		"reg2l1tau1bnj",
+		"reg2l1tau2bnj",
+//		"reg2lSS1tau1bnj_os",
+//		"reg2lSS1tau1bnj_os_antiiso",
+//		"reg2lSS1tau1bnj_os_antiisolead"
 	};
 	vector<TString> region_xTFW = {
 		"all","reg2mtau1b2j_os","reg2mtau1b2j_ss",
