@@ -482,7 +482,16 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				tau_plots->stackorder.push_back("FF_QCD_mu");
 				tau_plots->stackorder.push_back("FF_QCD_e");
 				string fakeFormular="1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 ttV -1 others -1 lep_fake -1 other_fake -1 b_fake -1 w_jet_fake";
-				vector<TString> FFregions = {"reg1l1tau1b1j_os", "reg1l1tau1b1j_ss", "reg1l1tau1b_ss", "reg1l1tau1b_os", "reg1l1tau1b2j_os", "reg1l1tau1b2j_ss", "reg1l1tau1b3j_os","reg1l1tau1b3j_ss"};
+				vector<TString> FFregions = {
+					//"reg1l1tau1b1j_os",
+					"reg1l1tau1b1j_ss",
+					"reg1l1tau1b_ss",
+					//"reg1l1tau1b_os",
+					"reg1l1tau1b2j_os",
+					"reg1l1tau1b2j_ss",
+					"reg1l1tau1b3j_os",
+					//"reg1l1tau1b3j_ss"
+				};
 				for(auto FFreg: FFregions){
 					if(ipart == 0){
 						fakeFactor_e[FFreg]=tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet",fakeFormular,NPname);
@@ -490,14 +499,14 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 						fakeFactor_e[FFreg]=fakeFactor_e[FFreg]/(tau_plots->calculateYield(FFreg + "_antiiso_e_vetobtagwp70_lowmet",fakeFormular,NPname));
 						FFchart->set(translateRegion(FFreg).Data(),"Electron",fakeFactor_e[FFreg]);
 					}
-					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD_e","#muFF(QCD)",(enum EColor)45,0,fakeFactor_e[FFreg].nominal);
+					//tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD_e","#muFF(QCD)",(enum EColor)45,0,fakeFactor_e[FFreg].nominal);
 					if(ipart == 0){
 						fakeFactor_mu[FFreg]=tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet",fakeFormular,NPname);
 						fakeFactor_mu[FFreg].error = rms(fakeFactor_mu[FFreg].error,tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet","1 tuH",NPname).nominal);
 						fakeFactor_mu[FFreg]=fakeFactor_mu[FFreg]/(tau_plots->calculateYield(FFreg + "_antiiso_mu_vetobtagwp70_lowmet",fakeFormular,NPname));
 						FFchart->set(translateRegion(FFreg).Data(),"Muon",fakeFactor_mu[FFreg]);
 					}
-					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD_mu","eFF(QCD)",(enum EColor)46,0,fakeFactor_mu[FFreg].nominal);
+					//tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD_mu","eFF(QCD)",(enum EColor)46,0,fakeFactor_mu[FFreg].nominal);
 				}
 				if(ipart==0) {
 					gSystem->mkdir((chartdir + "/FF/").Data());
@@ -508,13 +517,19 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 						}
 						return ret;
 					};
-					auto tmp = getvec(fakeFactor_e);
-					FFchart->set("Combined","Electron",measure(tmp));
-					tmp = getvec(fakeFactor_mu);
-					FFchart->set("Combined","Muon",measure(tmp));
+					auto combFF_e = getvec(fakeFactor_e);
+					auto combFF_mu = getvec(fakeFactor_mu);
+					fakeFactor_e["combine"] = measure(combFF_e);
+					fakeFactor_mu["combine"] = measure(combFF_mu);
+					FFchart->set("Combined","Electron",fakeFactor_e["combine"]);
+					FFchart->set("Combined","Muon",fakeFactor_mu["combine"]);
 
 					FFchart->print((chartdir + "/FF/fakeFactor").Data());
 					deletepointer(FFchart);
+				}
+				for(auto FFreg: FFregions){
+                                        tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD_e","#muFF(QCD)",(enum EColor)45,0,fakeFactor_e["combine"].nominal);
+					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD_mu","eFF(QCD)",(enum EColor)46,0,fakeFactor_mu["combine"].nominal);
 				}
 			}
 			if(fittodata){

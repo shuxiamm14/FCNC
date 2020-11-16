@@ -183,6 +183,12 @@ observable measure(std::vector<observable> &data){
 		minChi2 += pow(ret.nominal-x.nominal,2)/pow(x.error,2);
 	}
 	b*=2;
-	ret.error = (b + sqrt(pow(b,2)-4*a*(c+minChi2)))/2/a;
+	ret.error = sqrt(pow(b,2)-4*a*(c-minChi2))/2/a;  //stat uncertainty calculated through likelihood method
+
+	double scdmmt = 0;
+	for(auto x : data){
+		scdmmt += pow(ret.nominal-x.nominal,2)/pow(x.error,2);  //second moment calculation
+	}
+	ret.error = ret.errordown = rms(sqrt(scdmmt/a),ret.error); //stat + systematics
 	return ret;
 }
