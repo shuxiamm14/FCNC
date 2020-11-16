@@ -15,13 +15,14 @@ void nominal::initMVA(TString region){
   tmpreader->AddVariable("drtautau",&drtautau);
   tmpreader->AddVariable("etmiss",&etmiss);
   tmpreader->AddVariable("ttvismass",&ttvismass);
-  tmpreader->AddVariable("drtaujmin",&drtaujmin);
+  if(region.Contains("j")) tmpreader->AddVariable("drtaujmin",&drtaujmin);
   if(!region.Contains("2mtau")&& !region.Contains("2ltau")) {
     tmpreader->AddVariable("drlb",&drlb);
     tmpreader->AddVariable("drltau",&drltau);
     tmpreader->AddVariable("drtaub",&drtaub);
     if(region.Contains("2lSS")) tmpreader->AddVariable("lep_pt_0",&lep_pt_0);
-  }
+  }else
+      tmpreader->AddVariable("drtautau",&drtautau);
   if(region.Contains("2j") || region.Contains("3j")){
     tmpreader->AddVariable("dphitauetmiss",&dphitauetmiss);
     tmpreader->AddVariable("phicent",&phicent);
@@ -36,6 +37,7 @@ void nominal::initMVA(TString region){
     if(!region.Contains("reg1l1tau1b2j")){
        tmpreader->AddVariable("wmass",&wmass);
     }
+    if(region.Contains("1l1tau1b2j_os") || region.Contains("1l1tau1b3j_os"))  tmpreader->AddVariable("chi2",&chi2);
   }else if(region.Contains("1l2tau1") || region.Contains("2lSS")){
     tmpreader->AddVariable("t1vismass",&t1vismass);
     tmpreader->AddVariable("mtaujmin",&mtaujmin);
@@ -837,10 +839,10 @@ observable nominal::FindNewFakeSF(TString NP, int itau, TString &name){ //origin
     exit(0);
   }
   TString origin;
-  if(abs(taus_matched_pdgId->at(itau)) == 5) origin = "bjet-fake";
+  if(abs(taus_matched_pdgId->at(itau)) == 5) origin = "b_fake";
   else if(abs(taus_matched_pdgId->at(itau)) < 6) {
     if(abs(taus_matched_mother_pdgId->at(itau)) == 24) {
-      origin = "wjet-fake";
+      origin = "w_jet_fake";
 #if FITSTRATEGY!=1
       if(leps_id->size()){
       	if(taus_q->at(itau) * leps_id->at(0) > 0) origin+="_os";
@@ -851,7 +853,7 @@ observable nominal::FindNewFakeSF(TString NP, int itau, TString &name){ //origin
       }
 #endif
     }
-    else origin = "other-fake";
+    else origin = "other_fake";
   }else{
     return 1;
   }
@@ -865,7 +867,14 @@ observable nominal::FindNewFakeSF(TString NP, int itau, TString &name){ //origin
     }
   }
   int prongbin = (mergeProngFF || taus_n_charged_tracks->at(itau)==1)? 0:1;
-  observable result = doubleCounting? newFakeSFSys[prongbin][origin][slice] : newFakeSF[prongbin][NP][origin][slice];
+  if(debug){
+    printf("saved origin:\n");
+    for(auto x : newFakeSFSys[prongbin]){
+      printf("%s\n",x.first.Data());
+    }
+    printf("get origin: %s\n", origin.Data());
+  }
+  observable result = doubleCounting? newFakeSFSys[prongbin].at(origin).at(slice) : newFakeSF[prongbin].at(NP).at(origin).at(slice);
   string ss = string("fakeSFNP_") + (mergeProngFF?"":(prongbin? "3prong_":"1prong_")) + "ptbin" + to_string(slice) + "_" + origin.Data();
   name = ss.c_str();
   if(!newFakeSF[prongbin][NP].size()) printf("nominal::FindNewFakeSF : NP %s not found\n", NP.Data());
@@ -1550,10 +1559,10 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       BDTG_test  = 0;
       BDTG_train  = 0;
       met_sigma = etmiss/((13.1+0.50*sqrt(met_sumet/GeV))*GeV);
-      if(ctagFCNC && fcncjetbscore < btagwpCut[3]) {
-        continue;
+      if(ctagFCNC) {
+        if(fcncjetbscore < btagwpCut[3]) continue;
+        cut_flow.fill("Loose btag FCNC jet");
       }
-      cut_flow.fill("Loose btag FCNC jet");
       if(doBDT){
         if(debug) printf("eval BDTG\n");
         if(belong_regions.have("2mtau")||belong_regions.have("2ltau")){

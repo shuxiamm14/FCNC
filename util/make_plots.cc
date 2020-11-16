@@ -145,7 +145,12 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		else if(fittodata){
 			tau_plots->add(vars["tau_pt_0"]);
 		}else if(doFakeFactor){
-			tau_plots->add(vars["lep_pt_0"]);
+			tau_plots->sensitivevariable = "BDTG_test";
+			//tau_plots->add(vars["lep_pt_0"]);
+			//tau_plots->add(vars["BDTG_test"]);
+			//tau_plots->add(vars["tautaumass"]);
+			tau_plots->add(vars["ttvismass"]);
+			//tau_plots->add(vars["t2mass"]);
 		}
 		else if(plotnj){
 			tau_plots->add(vars["njet"]);
@@ -156,11 +161,11 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			for(auto var : vars){
 				
 				if(   var.first!="tau_pt_0"
-					&&var.first!="tau_pt_1"
-					&&var.first!="etmiss"
-					&&var.first!="ttvismass"
-					&&var.first!="lep_pt_0"
-					&&var.first!="BDTG_test"
+//					&&var.first!="tau_pt_1"
+//					&&var.first!="etmiss"
+//					&&var.first!="ttvismass"
+//					&&var.first!="lep_pt_0"
+//					&&var.first!="BDTG_test"
 				) continue;
 				if(varcount / perpart == ipart){
 					tau_plots->add(var.second);
@@ -197,36 +202,36 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		"reg2mtau2b3jos",
 	};
 	vector<TString> regions_tthML_faketau = {
-		"reg1l1tau2b_os",
-		"reg1l1tau2b_ss",
-		"reg1l1tau2b1j_os",
-		"reg1l1tau2b1j_ss",
-		"reg1l1tau2b2j_os",
-		"reg1l1tau2b2j_ss",
-		"reg1l1tau2b3j_os",
-		"reg1l1tau2b3j_ss",
+//		"reg1l1tau2b_os",
+//		"reg1l1tau2b_ss",
+//		"reg1l1tau2b1j_os",
+//		"reg1l1tau2b1j_ss",
+//		"reg1l1tau2b2j_os",
+//		"reg1l1tau2b2j_ss",
+//		"reg1l1tau2b3j_os",
+//		"reg1l1tau2b3j_ss",
 		"reg1l2tau1bnj_os",
 		"reg1l2tau1bnj_ss",
 		"reg1l2tau2bnj_os",
 		"reg1l2tau2bnj_ss",
-		"reg1l1tau1b_os",
+//		"reg1l1tau1b_os",
 		"reg1l1tau1b_ss",
-		"reg1l1tau1b1j_os",
+//		"reg1l1tau1b1j_os",
 		"reg1l1tau1b1j_ss",
 		"reg1l1tau1b2j_os",
 		"reg1l1tau1b2j_ss",
 		"reg1l1tau1b3j_os",
-		"reg1l1tau1b3j_ss",
-		"reg1l1tau1b_os_antiiso",
+//		"reg1l1tau1b3j_ss",
+//		"reg1l1tau1b_os_antiiso",
 		"reg1l1tau1b_ss_antiiso",
-		"reg1l1tau1b1j_os_antiiso",
+//		"reg1l1tau1b1j_os_antiiso",
 		"reg1l1tau1b1j_ss_antiiso",
 		"reg1l1tau1b2j_os_antiiso",
 		"reg1l1tau1b2j_ss_antiiso",
 		"reg1l1tau1b3j_os_antiiso",
-		"reg1l1tau1b3j_ss_antiiso",
-		"reg2l1tau1bnj",
-		"reg2l1tau2bnj",
+//		"reg1l1tau1b3j_ss_antiiso",
+//		"reg2l1tau1bnj",
+//		"reg2l1tau2bnj",
 	};
 	vector<TString> regions_tthML_fakelep = {
 		"reg2l1bnj",
@@ -267,7 +272,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		"reg1l1tau1b3j_ss",
 #endif
 	};
-	vector<TString> regions_tthML = plotFakeLep? regions_tthML_fakelep : (fittodata?regions_tthML_fit:regions_tthML_faketau);
+	vector<TString> regions_tthML = plotFakeLep? regions_tthML_fakelep : (!doFakeFactor?regions_tthML_fit:regions_tthML_faketau);
 	//vector<TString> regions_calc_fake = {"reg2l1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_os","reg2l1tau1b","reg1l1tau2b_os","reg1l1tau2b_ss"};//,"reg2l2bnj","reg1l2b2j","reg2l2b"};
 	vector<TString> regions = framework == "xTFW" ? regions_xTFW : regions_tthML;
 	//if(calculate_fake_calibration) {
@@ -288,7 +293,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	vector<int> primensuffix;
 	for(auto x: merge_suffix) primensuffix.push_back(x.size());
 	if(doFakeFactor) primensuffix[2] = 0;
-	if(fittodata){
+	else{
 		primensuffix[0] = 0;
 		primensuffix[1] = 0;
 	}
@@ -484,7 +489,6 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 						fakeFactor_e[FFreg].error = rms(fakeFactor_e[FFreg].error,tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet","1 tuH",NPname).nominal);
 						fakeFactor_e[FFreg]=fakeFactor_e[FFreg]/(tau_plots->calculateYield(FFreg + "_antiiso_e_vetobtagwp70_lowmet",fakeFormular,NPname));
 						FFchart->set(translateRegion(FFreg).Data(),"Electron",fakeFactor_e[FFreg]);
-						printf("Calculated Electron Fake Factor: %f+/-%f in %s",fakeFactor_e[FFreg].nominal,fakeFactor_e[FFreg].error,FFreg.Data());
 					}
 					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD_e","#muFF(QCD)",(enum EColor)45,0,fakeFactor_e[FFreg].nominal);
 					if(ipart == 0){
@@ -492,7 +496,6 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 						fakeFactor_mu[FFreg].error = rms(fakeFactor_mu[FFreg].error,tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet","1 tuH",NPname).nominal);
 						fakeFactor_mu[FFreg]=fakeFactor_mu[FFreg]/(tau_plots->calculateYield(FFreg + "_antiiso_mu_vetobtagwp70_lowmet",fakeFormular,NPname));
 						FFchart->set(translateRegion(FFreg).Data(),"Muon",fakeFactor_mu[FFreg]);
-						printf("Calculated Muon Fake Factor: %f+/-%f in %s",fakeFactor_mu[FFreg].nominal,fakeFactor_mu[FFreg].error,FFreg.Data());
 					}
 					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD_mu","eFF(QCD)",(enum EColor)46,0,fakeFactor_mu[FFreg].nominal);
 				}
@@ -576,7 +579,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 									if(SF.first.Contains("os")) rowname += "~os";
 									if(SF.first.Contains("ss")) rowname += "~ss";
 								}else
-									rowname = SF.first.Contains("bjet") ? "$\\tau_{b_fake}$" : "$\\tau_{other}$";
+									rowname = SF.first.Contains("b_fake") ? "$\\tau_{b_fake}$" : "$\\tau_{other}$";
 								string columnname = "$" + to_string(int(fakePtSlices[i])) + "-" + to_string(int(fakePtSlices[i+1])) + "$~GeV";
 								if(i == fakePtSlices.size()-2) columnname = to_string(int(fakePtSlices[i])) + "GeV$-$";
 								chart->set(rowname,columnname,SF.second[i]);

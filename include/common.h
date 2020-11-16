@@ -12,9 +12,9 @@ std::vector<fcncSample> getFakeTauOrigin();
 
 std::vector<fcncSample> getFakeLepOrigin();
 #if FITSTRATEGY==1
-const std::vector<TString> SForigins = {"wjet-fake","bjet-fake","other-fake"};
+const std::vector<TString> SForigins = {"w_jet_fake","b_fake","other_fake"};
 #else
-const std::vector<TString> SForigins = {"wjet-fake_os","wjet-fake_ss","bjet-fake","other-fake"};
+const std::vector<TString> SForigins = {"w_jet_fake_os","w_jet_fake_ss","b_fake","other_fake"};
 #endif
 const std::map<TString,std::vector<double>> XsecErr = {
 	{"ztautau",{0.022,-0.029}},
