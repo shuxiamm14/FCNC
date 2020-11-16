@@ -528,7 +528,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					deletepointer(FFchart);
 				}
 				for(auto FFreg: FFregions){
-					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD_e","#muFF(QCD)",(enum EColor)49,0,fakeFactor_e["combine"].nominal);
+					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD_e","#muFF(QCD)",(enum EColor)51,0,fakeFactor_e["combine"].nominal);
 					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD_mu","eFF(QCD)",(enum EColor)50,0,fakeFactor_mu["combine"].nominal);
 				}
 			}
