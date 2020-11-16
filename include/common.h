@@ -41,3 +41,5 @@ std::vector<fcncSample> getBkgSamples(TString framework);
 std::vector<fcncSample> getSigSamples(TString framework, float BRbenchmark);
 
 std::map<TString,variable*> getVariables(TString framework);
+
+observable measure(std::vector<observable> &data);

@@ -501,6 +501,18 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				}
 				if(ipart==0) {
 					gSystem->mkdir((chartdir + "/FF/").Data());
+					auto getvec = [&](auto map){
+						std::vector<observable> ret;
+						for(auto x : map){
+							ret.push_back(x.second);
+						}
+						return ret;
+					};
+					auto tmp = getvec(fakeFactor_e);
+					FFchart->set("Combined","Electron",measure(tmp));
+					tmp = getvec(fakeFactor_mu);
+					FFchart->set("Combined","Muon",measure(tmp));
+
 					FFchart->print((chartdir + "/FF/fakeFactor").Data());
 					deletepointer(FFchart);
 				}

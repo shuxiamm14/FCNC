@@ -166,3 +166,23 @@ std::map<TString,variable*> getVariables(TString framework){
 	}
 	return ret;
 }
+
+observable measure(std::vector<observable> &data){
+	double a = 0, b = 0, c = 0;
+	double tmpsigma2 = 0;
+	observable ret;
+	for(auto x : data){
+		tmpsigma2 = pow(x.error,2);
+		a+=1/tmpsigma2;
+		b+=x.nominal/tmpsigma2;
+		c+=pow(x.nominal,2)/tmpsigma2;
+	}
+	ret.nominal = b/a;
+	double minChi2 = 1;
+	for(auto x : data){
+		minChi2 += pow(ret.nominal-x.nominal,2)/pow(x.error,2);
+	}
+	b*=2;
+	ret.error = (b + sqrt(pow(b,2)-4*a*(c+minChi2)))/2/a;
+	return ret;
+}
