@@ -43,7 +43,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool doPlots = 1;
 	bool scaletodata = 0;
 	bool mergeprong = 0;
-	bool mergemet = 1;
+	bool mergemet = 0;
 	int plot_option = 2;
 	bool fittodata = 0;
 	bool plotFakeLep = 0;
@@ -355,7 +355,12 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	if(!plotFakeLep){
 		if(mergeprong) tau_plots->muteregion("prong");
 	}
-
+	tau_plots->muteregion("_e_");
+	tau_plots->muteregion("_mu_");
+	tau_plots->muteregion("_ee_");
+	tau_plots->muteregion("_mumu_");
+	tau_plots->muteregion("_emu_");
+	tau_plots->muteregion("_mue_");
 	TFile *datafile[3] = {0,0,0};
 	TFile *datafile_fake[3] = {0,0,0};
 	TString datafilesname[3] = {"data1516","data17","data18"};
