@@ -146,11 +146,22 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			tau_plots->add(vars["tau_pt_0"]);
 		}else if(doFakeFactor){
 			tau_plots->sensitivevariable = "BDTG_test";
-			//tau_plots->add(vars["lep_pt_0"]);
-			//tau_plots->add(vars["BDTG_test"]);
-			//tau_plots->add(vars["tautaumass"]);
-			tau_plots->add(vars["ttvismass"]);
-			//tau_plots->add(vars["t2mass"]);
+			for(auto var : vars){
+				
+//				if(   var.first!="tau_pt_0"
+//					&&var.first!="tau_pt_1"
+//					&&var.first!="etmiss"
+//					&&var.first!="ttvismass"
+//					&&var.first!="lep_pt_0"
+//					&&var.first!="BDTG_test"
+//				) continue;
+				if(varcount / perpart == ipart){
+					tau_plots->add(var.second);
+					plotvar++;
+				}else if(varcount / perpart == ipart+1) break;
+				varcount++;
+			}
+			if(plotvar == 0) { printf("No variable to plot\n"); return 0; }
 		}
 		else if(plotnj){
 			tau_plots->add(vars["njet"]);
@@ -215,7 +226,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		"reg1l2tau2bnj_os",
 		"reg1l2tau2bnj_ss",
 //		"reg1l1tau1b_os",
-		"reg1l1tau1b_ss",
+//		"reg1l1tau1b_ss",
 //		"reg1l1tau1b1j_os",
 		"reg1l1tau1b1j_ss",
 		"reg1l1tau1b2j_os",
@@ -223,7 +234,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		"reg1l1tau1b3j_os",
 //		"reg1l1tau1b3j_ss",
 //		"reg1l1tau1b_os_antiiso",
-		"reg1l1tau1b_ss_antiiso",
+//		"reg1l1tau1b_ss_antiiso",
 //		"reg1l1tau1b1j_os_antiiso",
 		"reg1l1tau1b1j_ss_antiiso",
 		"reg1l1tau1b2j_os_antiiso",
@@ -361,6 +372,15 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	tau_plots->muteregion("_mumu_");
 	tau_plots->muteregion("_emu_");
 	tau_plots->muteregion("_mue_");
+	bool dopt = 0;
+	for( auto &var : tau_plots->v) if(var->name == "lep_pt_0"){
+		dopt = 1;
+		break;
+	}
+	if(!dopt) {
+		tau_plots->muteregion("lowmet");
+		tau_plots->muteregion("antiiso");
+	}
 	TFile *datafile[3] = {0,0,0};
 	TFile *datafile_fake[3] = {0,0,0};
 	TString datafilesname[3] = {"data1516","data17","data18"};
@@ -714,6 +734,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		for(auto i : ret){
 			if(i.second.size()>1) tau_plots->merge_regions(i.second, i.first);
 		}
+	}else{
+		tau_plots->merge_regions("reg1l2tau1bnj_os_vetobtagwp70_highmet","reg1l2tau1bnj_os_vetobtagwp70_lowmet", "reg1l2tau1bnj_os");
 	}
 	
 	//tau_plots->printyield("reg1l1tau1b3j_os");
