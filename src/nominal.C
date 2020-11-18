@@ -12,7 +12,6 @@ void nominal::initMVA(TString region){
   auto tmpreader = new TMVA::Reader( "!Color:!Silent" );
 
   tmpreader->AddVariable("tau_pt_0",&tau_pt_0);
-  tmpreader->AddVariable("drtautau",&drtautau);
   tmpreader->AddVariable("etmiss",&etmiss);
   tmpreader->AddVariable("ttvismass",&ttvismass);
   if(region.Contains("j")) tmpreader->AddVariable("drtaujmin",&drtaujmin);
@@ -20,14 +19,14 @@ void nominal::initMVA(TString region){
     tmpreader->AddVariable("drlb",&drlb);
     tmpreader->AddVariable("drltau",&drltau);
     tmpreader->AddVariable("drtaub",&drtaub);
-    if(region.Contains("2lSS")) tmpreader->AddVariable("lep_pt_0",&lep_pt_0);
+    if(region.Contains("2tau")) tmpreader->AddVariable("drtautau",&drtautau);
+    tmpreader->AddVariable("lep_pt_0",&lep_pt_0);
   }else
-      tmpreader->AddVariable("drtautau",&drtautau);
+    tmpreader->AddVariable("drtautau",&drtautau);
   if(region.Contains("2j") || region.Contains("3j")){
     tmpreader->AddVariable("dphitauetmiss",&dphitauetmiss);
     tmpreader->AddVariable("phicent",&phicent);
     tmpreader->AddVariable("tautaumass",&tautaumass);
-    tmpreader->AddVariable("t2mass",&t2mass);
     tmpreader->AddVariable("x1fit",&x1fit);
     tmpreader->AddVariable("x2fit",&x2fit);
     tmpreader->AddVariable("t1mass",&t1mass);
@@ -37,7 +36,7 @@ void nominal::initMVA(TString region){
     if(!region.Contains("reg1l1tau1b2j")){
        tmpreader->AddVariable("wmass",&wmass);
     }
-    if(region.Contains("1l1tau1b2j_os") || region.Contains("1l1tau1b3j_os"))  tmpreader->AddVariable("chi2",&chi2);
+    if(region.Contains("1l1tau1b3j_os"))  tmpreader->AddVariable("chi2",&chi2);
   }else if(region.Contains("1l2tau1") || region.Contains("2lSS")){
     tmpreader->AddVariable("t1vismass",&t1vismass);
     tmpreader->AddVariable("mtaujmin",&mtaujmin);

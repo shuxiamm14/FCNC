@@ -32,7 +32,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString figuredir = method.Contains("test")?"." : FIGURE_DIR;
 	TString chartdir = method.Contains("test")?"." : TABLE_DIR;
 	observable fakeFactorl;
-	int debug = 1;
+	int debug = 0;
 	bool prefit = 1;
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 1;
@@ -101,7 +101,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString lumitag = "#it{#sqrt{s}} = 13TeV, ";
 	lumitag += campaignto == 3 ? "140 fb^{-1}" : (campaignto==2?"80 fb^{-1}":"36.1 fb^{-1}");
 	tau_plots->SetLumiAnaWorkflow(lumitag,"FCNC tqH H#rightarrow tautau","Work in progress");
-	tau_plots->debug = 0;
+	tau_plots->debug = debug;
 /*
 	tau_plots->checkread = 1;
 	tau_plots->checkread_sample = "fake";
@@ -169,7 +169,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			tau_plots->muteregion("3j");
 			tau_plots->muteregion("2j");
 		}else{
-			tau_plots->sensitivevariable = "BDTG_test";
+			tau_plots->sensitivevariable = "tau_pt_0";
 			for(auto var : vars){
 				
 				if(   var.first!="tau_pt_0"
@@ -223,7 +223,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 //		"reg1l1tau2b3j_os",
 //		"reg1l1tau2b3j_ss",
 		"reg1l2tau1bnj_os",
-		"reg1l2tau1bnj_ss",
+//		"reg1l2tau1bnj_ss",
 //		"reg1l2tau2bnj_os",
 //		"reg1l2tau2bnj_ss",
 //		"reg1l1tau1b_os",
@@ -284,7 +284,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		"reg1l1tau1b3j_ss",
 #endif
 	};
-	vector<TString> regions_tthML = plotFakeLep? regions_tthML_fakelep : (!doFakeFactor?regions_tthML_fit:regions_tthML_faketau);
+	vector<TString> regions_tthML = plotFakeLep? regions_tthML_fakelep : (fittodata?regions_tthML_fit:regions_tthML_faketau);
+	if(!plotFakeLep && !fittodata && !doFakeFactor) regions_tthML.insert(regions_tthML.end(),regions_tthML_fit.begin(),regions_tthML_fit.end());
 	//vector<TString> regions_calc_fake = {"reg2l1tau2b","reg1l1tau2b1j_ss","reg1l1tau2b1j_os","reg2l1tau1b","reg1l1tau2b_os","reg1l1tau2b_ss"};//,"reg2l2bnj","reg1l2b2j","reg2l2b"};
 	vector<TString> regions = framework == "xTFW" ? regions_xTFW : regions_tthML;
 	//if(calculate_fake_calibration) {
@@ -299,7 +300,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		{"1prong","3prong"},
 		{"vetobtagwp70_lowmet","vetobtagwp70_highmet"}
 	};
-	if(fittodata) {
+	if(!doFakeFactor) {
 		merge_suffix[3].erase(merge_suffix[3].begin());
 	}
 	vector<int> primensuffix;
@@ -559,12 +560,12 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				}
 			}
 			if(fittodata){
-				map<TString,vector<TString>> ret;
-				mergeregion(0,ret);
-				mergeregion(1,ret);
-				for(auto i : ret){
-					if(i.second.size()>1) tau_plots->merge_regions(i.second, i.first);
-				}
+			//	map<TString,vector<TString>> ret;
+			//	mergeregion(0,ret);
+			//	mergeregion(1,ret);
+			//	for(auto i : ret){
+			//		if(i.second.size()>1) tau_plots->merge_regions(i.second, i.first);
+			//	}
 				for(int i = 0; i < 3; i++){
 					if(mergeprong) { if(i != 2) continue; }
 					else { if(i == 2) continue; }
@@ -721,6 +722,13 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			}
 		}
 	}
+	if(!mergeprong){
+		map<TString,vector<TString>> ret;
+		mergeregion(2,ret);
+		for(auto i : ret){
+			if(i.second.size()>1) tau_plots->merge_regions(i.second, i.first);
+		}
+	}
 	if(mergeleptype && !fittodata){
 		map<TString,vector<TString>> ret;
 		mergeregion(0,ret);
@@ -764,13 +772,16 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			{
 				tau_plots->overlay(samp.name);
 			}
-		if(fittodata) tau_plots->plot_stack(histmiddlename, "plots_" + NPname, "charts_" + NPname);
+		if(figuredir == "") figuredir = ".";
+		if(chartdir == "") chartdir = ".";
+		TString savename = framework;
+		gSystem->mkdir(figuredir + "/" + savename);
+		gSystem->mkdir(chartdir + "/" + savename);
+		if(fittodata) {
+			gSystem->mkdir(chartdir + "/" + savename + "/originFit");
+			tau_plots->plot_stack(histmiddlename, figuredir + "/" + savename + "/originFit", "charts_Fit");
+		}
 		else{
-			if(figuredir == "") figuredir = ".";
-			if(chartdir == "") chartdir = ".";
-			TString savename = framework;
-			gSystem->mkdir(figuredir + "/" + savename);
-			gSystem->mkdir(chartdir + "/" + savename);
 			savename += showFake? "/showFake" : "/raw";
 			gSystem->mkdir(figuredir + "/" + savename);
 			gSystem->mkdir(chartdir + "/" + savename);

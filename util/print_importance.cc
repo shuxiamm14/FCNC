@@ -66,6 +66,7 @@ int main(int argc, char const *argv[])
 	gSystem->mkdir(output_dir.c_str());
 	for(int i = 1; i< argc; i++){
 		LatexChart* tmpchart = new LatexChart("importance");
+		tmpchart->maxcolumn = 6;
 		fillChart(tmpchart,argv[i],framework,output_dir);
 		charts.push_back(tmpchart);
 	}

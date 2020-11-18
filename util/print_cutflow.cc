@@ -31,7 +31,7 @@ int main(int argc, char const *argv[])
 		"reg1l1tau1b3j_os_antiiso",
 //		"reg1l1tau1b3j_ss",
 		"reg1l2tau1bnj_os",
-		"reg1l2tau1bnj_ss",
+//		"reg1l2tau1bnj_ss",
 		"reg1l1tau2b2j_os",
 		"reg1l1tau2b2j_ss",
 		"reg1l1tau2b3j_os",

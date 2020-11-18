@@ -54,10 +54,11 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
       dataloader->AddVariable("drlb",'F');
       dataloader->AddVariable("drltau",'F');
       dataloader->AddVariable("drtaub",'F');
-      if(region.Contains("2lSS")) dataloader->AddVariable("lep_pt_0",'F');
-   }
-   else
+      if(region.Contains("2tau")) dataloader->AddVariable("drtautau",'F');
+      dataloader->AddVariable("lep_pt_0",'F');
+   }else{
       dataloader->AddVariable("drtautau",'F');
+   }
    if(region.Contains("2j") || region.Contains("3j")){
       dataloader->AddVariable("dphitauetmiss",'F');
       dataloader->AddVariable("phicent",'F');
@@ -71,7 +72,7 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
       if(!region.Contains("1l1tau1b2j")){
          dataloader->AddVariable("wmass",'F');
       }
-      if(region.Contains("1l1tau1b2j_os") || region.Contains("1l1tau1b3j_os"))  dataloader->AddVariable("chi2",'F');
+      if(region.Contains("1l1tau1b3j_os"))  dataloader->AddVariable("chi2",'F');
    }else if(region.Contains("1l2tau1") || region.Contains("2lSS")){
       dataloader->AddVariable("t1vismass",'F');
       dataloader->AddVariable("mtaujmin",'F');

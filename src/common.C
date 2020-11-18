@@ -131,8 +131,8 @@ std::map<TString,variable*> getVariables(TString framework){
 		ret["met_sigma"] = new variable("met_sigma","#sigma(E^{T}_{miss})",100,0,5,"",1,5);
 		ret["tau_pt_0"] = new variable("tau_pt_0","p_{T,#tau}",100,25.,125.,"GeV",scale,10);
 		ret["tau_pt_1"] = new variable("tau_pt_1","p_{T,sub-#tau}",100,25.,125.,"GeV",scale,10);
-		ret["lep_pt_0"] = new variable("lep_pt_0","p_{T,l}",100,25.,115.,"GeV",scale,10);
-		ret["lep_pt_1"] = new variable("lep_pt_1","p_{T,sub-l}",100,25.,115.,"GeV",scale,10);
+		ret["lep_pt_0"] = new variable("lep_pt_0","p_{T,l}",100,25.,125.,"GeV",scale,10);
+		ret["lep_pt_1"] = new variable("lep_pt_1","p_{T,sub-l}",100,15.,115.,"GeV",scale,10);
 		ret["t1mass"] = new variable("t1mass","m_{t,SM}",100,100.,300.,"GeV",scale,10);
 		ret["mtw"] = new variable("mtw","m^{T}_{W}",100,0.,200.,"GeV",scale,10);
 		ret["tautaumass"] = new variable("tautaumass","m_{#tau,#tau}",100,50.,250.,"GeV",scale,5);
