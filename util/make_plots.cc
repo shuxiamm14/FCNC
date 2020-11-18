@@ -454,7 +454,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 										tau_plots->read_sample( origin.at(i).name, samplename + "_" + origin.at(i).name, histmiddlename, origin.at(i).title, (enum EColor)(i+40), norm, inputfile);
 								}
 						}else{
-							for (int i = 0; i < origin.size()-2; i++){
+							for (int i = 1; i < origin.size(); i++){
 								tau_plots->read_sample( samples[j].name, samplename + "_" + origin.at(i).name, histmiddlename, samples[j].title, samples[j].color, norm, inputfile);
 							}
 						}
@@ -631,7 +631,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 									if(SF.first.Contains("os")) rowname += "~os";
 									if(SF.first.Contains("ss")) rowname += "~ss";
 								}else
-									rowname = SF.first.Contains("b_fake") ? "$\\tau_{b_fake}$" : "$\\tau_{other}$";
+									rowname = SF.first.Contains("b_fake") ? "$\\tau_{b~fake}$" : "$\\tau_{other}$";
 								string columnname = "$" + to_string(int(fakePtSlices[i])) + "-" + to_string(int(fakePtSlices[i+1])) + "$~GeV";
 								if(i == fakePtSlices.size()-2) columnname = to_string(int(fakePtSlices[i])) + "GeV$-$";
 								chart->set(rowname,columnname,SF.second[i]);
