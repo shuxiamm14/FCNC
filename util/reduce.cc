@@ -263,7 +263,8 @@ int main(int argc, char const *argv[])
 							//for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
 							for(auto v: commonNPlist) analysis->plotNPs.push_back(v);
                                                         if(applynewSF) for(auto v: xsecNPlist) analysis->plotNPs.push_back(v);
-							for(auto v: fakeNPlist) if(v.Contains("fakeSFNP")) analysis->plotNPs.push_back(v);
+							for(auto v: (framework == "tthML"?tthMLfakeNPlist:xTFWfakeNPlist))
+								if(v.Contains("fakeSFNP")) analysis->plotNPs.push_back(v);
 						}
 					}
 				}
@@ -272,7 +273,7 @@ int main(int argc, char const *argv[])
 			for(auto NPs: analysis->plotNPs) printf("Plotting NPs: %s\n",NPs.Data());
 			if(applynewSF) analysis->ConfigNewFakeSF();
 			analysis->fcnc_regions = regions;
-                        analysis->init_hist(inputconfig);
+			analysis->init_hist(inputconfig);
 		}
 	        analysis->fcnc_regions = regions;
         	analysis->init_sample(inputconfig,inputconfig);

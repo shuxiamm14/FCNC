@@ -1,6 +1,6 @@
 #include <iostream>
 
-std::vector<TString> fakeNPlist = {
+std::vector<TString> tthMLfakeNPlist = {
 	//"fakeSF_tthML",
 	//"fakeSF_origin",
 	//"fakeSFNP_tthML_ptbin0_prongbin0",
@@ -16,14 +16,38 @@ std::vector<TString> fakeNPlist = {
 	//"fakeSFNP_origin_4",
 	//"fakeSFNP_origin_5",
 	//"fakeSFNP_origin_6",
-	//"fakeSFNP_origin_7"
-	"fakeSFNP_ptbin0", //fitting stats. uncertainty, 6 parameters for OS regions in total, reduce_run 56 to apply
-	"fakeSFNP_ptbin1",
-	"fakeSFNP_ptbin2",
-	"fakeSFNP_ptbin0_wjet",
-	"fakeSFNP_ptbin1_wjet",
-	"fakeSFNP_ptbin2_wjet",
-	"fake_mismodelling" //mis-modelling in SS region, the data-MC difference is added to OS w-jet faking uncertainty, make_plots (2nd time) to apply.
+	//"fakeSFNP_origin_7",
+  	//fitting stats. uncertainty, 24 parameters, reduce_run 5 to apply
+	"fakeSFNP_1prong_ptbin0_b_fake", 
+	"fakeSFNP_1prong_ptbin0_w_jet_fake_os",
+	"fakeSFNP_1prong_ptbin0_w_jet_fake_ss",
+	"fakeSFNP_1prong_ptbin0_other_fake",
+	"fakeSFNP_3prong_ptbin0_b_fake",
+	"fakeSFNP_3prong_ptbin0_w_jet_fake_os",
+	"fakeSFNP_3prong_ptbin0_w_jet_fake_ss",
+	"fakeSFNP_3prong_ptbin0_other_fake",
+	"fakeSFNP_1prong_ptbin1_b_fake", 
+	"fakeSFNP_1prong_ptbin1_w_jet_fake_os",
+	"fakeSFNP_1prong_ptbin1_w_jet_fake_ss",
+	"fakeSFNP_1prong_ptbin1_other_fake",
+	"fakeSFNP_3prong_ptbin1_b_fake",
+	"fakeSFNP_3prong_ptbin1_w_jet_fake_os",
+	"fakeSFNP_3prong_ptbin1_w_jet_fake_ss",
+	"fakeSFNP_3prong_ptbin1_other_fake",
+	"fakeSFNP_1prong_ptbin2_b_fake", 
+	"fakeSFNP_1prong_ptbin2_w_jet_fake_os",
+	"fakeSFNP_1prong_ptbin2_w_jet_fake_ss",
+	"fakeSFNP_1prong_ptbin2_other_fake",
+	"fakeSFNP_3prong_ptbin2_b_fake",
+	"fakeSFNP_3prong_ptbin2_w_jet_fake_os",
+	"fakeSFNP_3prong_ptbin2_w_jet_fake_ss",
+	"fakeSFNP_3prong_ptbin2_other_fake",
+	"ABCD_electron",
+	"ABCD_muon"
+	//"fake_mismodelling" //mis-modelling in SS region, the data-MC difference is added to OS w-jet faking uncertainty, make_plots (2nd time) to apply.
+};
+
+std::vector<TString> xTFWfakeNPlist{
 };
 
 std::vector<TString> commonNPlist = { //common NP for both tthML and xTFW
@@ -519,7 +543,8 @@ TString findNPname(TString &dirname, int iNP = 0, TString framework = "tthML"){
 	int npidx = iNP;
 	std::vector<TString> *specNPlist = framework == "xTFW"?&xTFWNPlist:&tthMLNPlist;
 	std::vector<TString> *treeNPlist = framework == "xTFW"?&xTFWtreeNPlist:&tthMLtreeNPlist;
-	std::vector<std::vector<TString>*> nlist = {&commonNPlist,specNPlist,treeNPlist,&fakeNPlist,&xsecNPlist,&theoryNPlist,&sampleNPlist};
+	std::vector<TString> *fakeNPlist = framework == "xTFW"?&xTFWfakeNPlist:&tthMLfakeNPlist;
+	std::vector<std::vector<TString>*> nlist = {&commonNPlist,specNPlist,treeNPlist,fakeNPlist,&xsecNPlist,&theoryNPlist,&sampleNPlist};
 	//except fakeNP, rerun from reduce 3 to update NPs.
 	int totalNP = 0;
 	for (int i = 0; i < nlist.size(); ++i)
@@ -543,7 +568,8 @@ void printNPindex(TString framework = "tthML"){
 
 	std::vector<TString> *specNPlist = framework == "xTFW"?&xTFWNPlist:&tthMLNPlist;
 	std::vector<TString> *treeNPlist = framework == "xTFW"?&xTFWtreeNPlist:&tthMLtreeNPlist;
-	std::vector<std::vector<TString>*> nlist = {&commonNPlist,specNPlist,treeNPlist,&fakeNPlist,&xsecNPlist,&theoryNPlist,&sampleNPlist};
+	std::vector<TString> *fakeNPlist = framework == "xTFW"?&xTFWfakeNPlist:&tthMLfakeNPlist;
+	std::vector<std::vector<TString>*> nlist = {&commonNPlist,specNPlist,treeNPlist,fakeNPlist,&xsecNPlist,&theoryNPlist,&sampleNPlist};
 
 	//17 + 44 + 108 + 34 + 83 + 3
 	int iNP = 0;

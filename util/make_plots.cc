@@ -505,7 +505,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			}
 			if(doFakeFactor && framework == "tthML") {
 				LatexChart *FFchart;
-				if(ipart==0) FFchart = new LatexChart("FF");
+				if(ipart==0) if(iNP == 0) FFchart = new LatexChart("FF");
 				tau_plots->stackorder.push_back("FF_QCD_mu");
 				tau_plots->stackorder.push_back("FF_QCD_e");
 				string fakeFormular="1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 ttV -1 others -1 lep_fake -1 other_fake -1 b_fake -1 w_jet_fake";
@@ -524,19 +524,19 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 						fakeFactor_e[FFreg]=tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet",fakeFormular,NPname);
 						fakeFactor_e[FFreg].error = rms(fakeFactor_e[FFreg].error,tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet","1 tuH",NPname).nominal);
 						fakeFactor_e[FFreg]=fakeFactor_e[FFreg]/(tau_plots->calculateYield(FFreg + "_antiiso_e_vetobtagwp70_lowmet",fakeFormular,NPname));
-						FFchart->set(translateRegion(FFreg).Data(),"Electron",fakeFactor_e[FFreg]);
+						if(FFchart) FFchart->set(translateRegion(FFreg).Data(),"Electron",fakeFactor_e[FFreg]);
 					}
 					//tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD_e","#muFF(QCD)",(enum EColor)45,0,fakeFactor_e[FFreg].nominal);
 					if(ipart == 0){
 						fakeFactor_mu[FFreg]=tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet",fakeFormular,NPname);
 						fakeFactor_mu[FFreg].error = rms(fakeFactor_mu[FFreg].error,tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet","1 tuH",NPname).nominal);
 						fakeFactor_mu[FFreg]=fakeFactor_mu[FFreg]/(tau_plots->calculateYield(FFreg + "_antiiso_mu_vetobtagwp70_lowmet",fakeFormular,NPname));
-						FFchart->set(translateRegion(FFreg).Data(),"Muon",fakeFactor_mu[FFreg]);
+						if(FFchart) FFchart->set(translateRegion(FFreg).Data(),"Muon",fakeFactor_mu[FFreg]);
 					}
 					//tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD_mu","eFF(QCD)",(enum EColor)46,0,fakeFactor_mu[FFreg].nominal);
 				}
 				if(ipart==0) {
-					gSystem->mkdir((chartdir + "/FF/").Data());
+					if(iNP == 0) gSystem->mkdir((chartdir + "/FF/").Data());
 					auto getvec = [&](auto map){
 						std::vector<observable> ret;
 						for(auto x : map){
@@ -548,11 +548,12 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					auto combFF_mu = getvec(fakeFactor_mu);
 					fakeFactor_e["combine"] = measure(combFF_e);
 					fakeFactor_mu["combine"] = measure(combFF_mu);
-					FFchart->set("Combined","Electron",fakeFactor_e["combine"]);
-					FFchart->set("Combined","Muon",fakeFactor_mu["combine"]);
-
-					FFchart->print((chartdir + "/FF/fakeFactor").Data());
-					deletepointer(FFchart);
+					if(FFchart) {
+						FFchart->set("Combined","Electron",fakeFactor_e["combine"]);
+						FFchart->set("Combined","Muon",fakeFactor_mu["combine"]);
+						FFchart->print((chartdir + "/FF/fakeFactor").Data());
+						deletepointer(FFchart);
+					}
 				}
 				for(auto FFreg: FFregions){
 					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD_e","eFF(QCD)",(enum EColor)51,0,fakeFactor_e["combine"].nominal);
@@ -582,7 +583,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 						"reg2l1tau1bnj" + suffix,"reg2l1tau2bnj" + suffix
 					};
 					TFile SFfile(prefix + "scale_factors" + nprong[i] + ".root","update");
-					if(NPname == "NOMINAL") {
+					if(iNP == 0) {
 						chart = new LatexChart(("scale_factor" + nprong[i]).Data());
 					}
 #else
@@ -593,7 +594,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					postfit_regions.push_back("reg1l1tau1b2j_" + fitcharge + suffix);
 					postfit_regions.push_back("reg1l1tau1b3j_" + fitcharge + suffix);
 					TFile SFfile(prefix + "scale_factors_" + fitcharge + nprong[i] + ".root","update");
-					if(NPname == "NOMINAL") {
+					if(iNP == 0) {
 						chart = new LatexChart(("scale_factor_" + fitcharge + nprong[i]).Data());
 					}
 #endif

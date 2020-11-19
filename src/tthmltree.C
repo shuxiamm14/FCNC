@@ -90,44 +90,47 @@ void tthmltree::init_hist(TString outputfilename){
     fcnc_plots = new histSaver(outputfilename);
     fcnc_plots->set_weight(&weight);
     fcnc_plots->debug = !!debug;
-    if(reduce >= 2) {
-      fcnc_plots->add(vars.at("chi2"),&chi2);
-      if(reduce == 3 && doBDT) {
-        fcnc_plots->add(vars.at("BDTG_test"),&BDTG_test);
-        fcnc_plots->add(vars.at("BDTG_train"),&BDTG_train);
+    if(reduce == 3 && doBDT && (plotNPs.size()>1 || !nominaltree) && !outputfilename.Contains("data")) fcnc_plots->add(vars.at("BDTG_test"),&BDTG_test);
+    else{
+      if(reduce >= 2) {
+        if(reduce == 3 && doBDT) {
+          fcnc_plots->add(vars.at("BDTG_test"),&BDTG_test);
+          fcnc_plots->add(vars.at("BDTG_train"),&BDTG_train);
+        }
+        fcnc_plots->add(vars.at("chi2"),&chi2);
+        fcnc_plots->add(vars.at("t1mass"),&t1mass);
+        fcnc_plots->add(vars.at("mtw"),&mtw);
+        fcnc_plots->add(vars.at("tautaumass"),&tautaumass);
+        fcnc_plots->add(vars.at("wmass"),&wmass);
+        fcnc_plots->add(vars.at("t2mass"),&t2mass);
+        fcnc_plots->add(vars.at("ttvismass"),&ttvismass);
+        fcnc_plots->add(vars.at("tautauvispt"),&tautauvispt);
+        fcnc_plots->add(vars.at("t2vismass"),&t2vismass);
+        fcnc_plots->add(vars.at("t1vismass"),&t1vismass);
+        fcnc_plots->add(vars.at("mtaujmin"),&mtaujmin);
+        fcnc_plots->add(vars.at("mjjmin"),&mjjmin);
+        fcnc_plots->add(vars.at("etmiss"),&etmiss);
+        fcnc_plots->add(vars.at("x1fit"),&x1fit);
+        fcnc_plots->add(vars.at("x2fit"),&x2fit);
+        fcnc_plots->add(vars.at("drlbditau"),&drlbditau);
+        fcnc_plots->add(vars.at("drlb"),&drlb);
+        fcnc_plots->add(vars.at("drtaub"),&drtaub);
+        fcnc_plots->add(vars.at("etamax"),&etamax);
+        fcnc_plots->add(vars.at("drltau"),&drltau);
+        fcnc_plots->add(vars.at("drtauj"),&drtauj);
+        fcnc_plots->add(vars.at("drtautau"),&drtautau);
+        fcnc_plots->add(vars.at("drtaujmin"),&drtaujmin);
+        fcnc_plots->add(vars.at("nljet"),&nljet);
+        fcnc_plots->add(vars.at("dphitauetmiss"),&dphitauetmiss);
+        fcnc_plots->add(vars.at("phicent"),&phicent);
+        fcnc_plots->add(vars.at("met_sigma"),&met_sigma);
       }
-      fcnc_plots->add(vars.at("t1mass"),&t1mass);
-      fcnc_plots->add(vars.at("mtw"),&mtw);
-      fcnc_plots->add(vars.at("tautaumass"),&tautaumass);
-      fcnc_plots->add(vars.at("wmass"),&wmass);
-      fcnc_plots->add(vars.at("t2mass"),&t2mass);
-      fcnc_plots->add(vars.at("ttvismass"),&ttvismass);
-      fcnc_plots->add(vars.at("tautauvispt"),&tautauvispt);
-      fcnc_plots->add(vars.at("t2vismass"),&t2vismass);
-      fcnc_plots->add(vars.at("t1vismass"),&t1vismass);
-      fcnc_plots->add(vars.at("mtaujmin"),&mtaujmin);
-      fcnc_plots->add(vars.at("mjjmin"),&mjjmin);
-      fcnc_plots->add(vars.at("etmiss"),&etmiss);
-      fcnc_plots->add(vars.at("x1fit"),&x1fit);
-      fcnc_plots->add(vars.at("x2fit"),&x2fit);
-      fcnc_plots->add(vars.at("drlbditau"),&drlbditau);
-      fcnc_plots->add(vars.at("drlb"),&drlb);
-      fcnc_plots->add(vars.at("drtaub"),&drtaub);
-      fcnc_plots->add(vars.at("etamax"),&etamax);
-      fcnc_plots->add(vars.at("drltau"),&drltau);
-      fcnc_plots->add(vars.at("drtauj"),&drtauj);
-      fcnc_plots->add(vars.at("drtautau"),&drtautau);
-      fcnc_plots->add(vars.at("drtaujmin"),&drtaujmin);
-      fcnc_plots->add(vars.at("nljet"),&nljet);
-      fcnc_plots->add(vars.at("dphitauetmiss"),&dphitauetmiss);
-      fcnc_plots->add(vars.at("phicent"),&phicent);
-      fcnc_plots->add(vars.at("met_sigma"),&met_sigma);
+      fcnc_plots->add(vars.at("tau_pt_0"),&tau_pt_0);
+      fcnc_plots->add(vars.at("tau_pt_1"),&tau_pt_1);
+      fcnc_plots->add(vars.at("lep_pt_0"),&lep_pt_0);
+      fcnc_plots->add(vars.at("lep_pt_1"),&lep_pt_1);
+      fcnc_plots->add(vars.at("mll"),&mll);
     }
-    fcnc_plots->add(vars.at("tau_pt_0"),&tau_pt_0);
-    fcnc_plots->add(vars.at("tau_pt_1"),&tau_pt_1);
-    fcnc_plots->add(vars.at("lep_pt_0"),&lep_pt_0);
-    fcnc_plots->add(vars.at("lep_pt_1"),&lep_pt_1);
-    fcnc_plots->add(vars.at("mll"),&mll);
   }
 
   fake_nregions_notau = fake_regions_notau.size();
