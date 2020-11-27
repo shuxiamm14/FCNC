@@ -92,9 +92,9 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	if(method.Contains("lep")){
 		plotFakeLep = 1;
 	}
-	if(fittodata == 1 && NPname.Contains("Xsec")) {
-		histmiddlename = nominalname;
-	}
+	//if(fittodata == 1 && NPname.Contains("Xsec")) {
+	//	histmiddlename = nominalname;
+	//}
 	if(framework == "xTFW") calculate_fake_calibration = 0;
 	histSaver *tau_plots = new histSaver("dummy");
 	tau_plots->doROC = 0;
@@ -121,21 +121,21 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	if(NPname.Contains("ttbarsys")){
 		samplesys = "ttbar";
 	}
-	if(NPname.Contains("Xsec")){
-		bool applied = 0;
-		for(auto &samp : samples){
-			if(NPname.Contains(samp.name)){
-				if(NPname.Contains("_up")) samp.norm *= 1+XsecErr.at(samp.name)[0];
-				else samp.norm *= 1+XsecErr.at(samp.name)[1];
-				applied = 1;
-				break;
-			}
-		}
-		if(applied == 0) {
-			printf("Error: Xsec uncertainty %s is not applied\n", NPname.Data());
-			exit(0);
-		}
-	}
+	//if(NPname.Contains("Xsec")){
+	//	bool applied = 0;
+	//	for(auto &samp : samples){
+	//		if(NPname.Contains(samp.name)){
+	//			if(NPname.Contains("_up")) samp.norm *= 1+XsecErr.at(samp.name)[0];
+	//			else samp.norm *= 1+XsecErr.at(samp.name)[1];
+	//			applied = 1;
+	//			break;
+	//		}
+	//	}
+	//	if(applied == 0) {
+	//		printf("Error: Xsec uncertainty %s is not applied\n", NPname.Data());
+	//		exit(0);
+	//	}
+	//}
 	auto vars = getVariables(framework);
 	if(framework == "tthML"){
 		if(plot2lttbar){

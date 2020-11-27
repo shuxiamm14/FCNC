@@ -51,7 +51,6 @@ std::vector<TString> xTFWfakeNPlist{
 };
 
 std::vector<TString> commonNPlist = { //common NP for both tthML and xTFW
-	"NOMINAL",
 	"PRW_up",
 	"PRW_down",
 	"jvt_up",
@@ -541,16 +540,21 @@ std::vector<TString> xTFWmajorNPlist = {};
 TString findNPname(TString &dirname, int iNP = 0, TString framework = "tthML"){
 
 	int npidx = iNP;
+	if(iNP == 0) {
+		dirname = framework == "tthML"? "nominal" : "NOMINAL";
+		return "NOMINAL";
+	}else
+		npidx--;
 	std::vector<TString> *specNPlist = framework == "xTFW"?&xTFWNPlist:&tthMLNPlist;
 	std::vector<TString> *treeNPlist = framework == "xTFW"?&xTFWtreeNPlist:&tthMLtreeNPlist;
 	std::vector<TString> *fakeNPlist = framework == "xTFW"?&xTFWfakeNPlist:&tthMLfakeNPlist;
-	std::vector<std::vector<TString>*> nlist = {&commonNPlist,specNPlist,treeNPlist,fakeNPlist,&xsecNPlist,&theoryNPlist,&sampleNPlist};
+	std::vector<std::vector<TString>*> nlist = {fakeNPlist,&commonNPlist,specNPlist,treeNPlist,&theoryNPlist,&sampleNPlist};
 	//except fakeNP, rerun from reduce 3 to update NPs.
 	int totalNP = 0;
 	for (int i = 0; i < nlist.size(); ++i)
 	{
 		if(npidx < nlist[i]->size()) {
-			if(i == 2) dirname = nlist[i]->at(npidx);
+			if(i == 3) dirname = nlist[i]->at(npidx);
 			else dirname = framework == "tthML"? "nominal" : "NOMINAL";
 			return nlist[i]->at(npidx);
 		}
@@ -569,10 +573,10 @@ void printNPindex(TString framework = "tthML"){
 	std::vector<TString> *specNPlist = framework == "xTFW"?&xTFWNPlist:&tthMLNPlist;
 	std::vector<TString> *treeNPlist = framework == "xTFW"?&xTFWtreeNPlist:&tthMLtreeNPlist;
 	std::vector<TString> *fakeNPlist = framework == "xTFW"?&xTFWfakeNPlist:&tthMLfakeNPlist;
-	std::vector<std::vector<TString>*> nlist = {&commonNPlist,specNPlist,treeNPlist,fakeNPlist,&xsecNPlist,&theoryNPlist,&sampleNPlist};
+	std::vector<std::vector<TString>*> nlist = {fakeNPlist,&commonNPlist,specNPlist,treeNPlist,&theoryNPlist,&sampleNPlist};
 
 	//17 + 44 + 108 + 34 + 83 + 3
-	int iNP = 0;
+	int iNP = 1;
 	std::ofstream file;
 	file.open("NPlist.txt");
 	for (auto ilist : nlist)

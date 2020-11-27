@@ -3,6 +3,11 @@ regiontitle=("TTH #it{#tau_{lep}#tau_{had}}" "STH #it{#tau_{lep}#tau_{had}}" "#i
 variable="BDTG_test"
 variabletitle="BDT Discriminant"
 log="FALSE"
+
+cp $ttH_fakes_DIR/config/trexfitter/tthML/myFit.config .
+cp $ttH_fakes_DIR/config/trexfitter/tthML/combine.config .
+cat $ttH_fakes_DIR/config/trexfitter/tthML/fake_sys.config >> myFit.config
+#cat $ttH_fakes_DIR/config/trexfitter/tthML/Instrumental_sys.config >> myFit.config
 if [[ $variable =~ 'BDTG' ]] ; then
 	bin="Binning: -1,-0.4,0.1,0.3,0.5,0.65,0.75,0.85,1"
 	log="TRUE"
