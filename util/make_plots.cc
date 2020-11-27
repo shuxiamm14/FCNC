@@ -322,7 +322,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				if(regions[j].Contains("2l")) nsuffix[0] = 0;
 				if(!regions[j].Contains("2l")) nsuffix[1] = 0;
 			}else{
-				nsuffix[0] = nsuffix[1] = 1;
+				nsuffix[0] = nsuffix[1] = 0;
 			}
 			while(1){
 				vector<TString> tmp;
