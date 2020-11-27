@@ -16,6 +16,7 @@
 #include "TVector3.h"
 #include "observable.h"
 #include "cutflow.h"
+#include <TH2D.h>
 // Header file for the classes stored in the TTree if any.
 
 #ifndef NO_TMINUIT
@@ -205,6 +206,11 @@ public :
   virtual bool passRegionCut(){return 1;}
   virtual void prepare(){ printf("WARNING: virtual function prepare is used in nominal.h\n"); }
   TString classifyLepFakes(int ilep);
+  //hadhad FF
+  float _read_ff_lnm(float taupt, float taueta, int tauntracks);
+  float _read_ff_nm(float taupt, float taueta, int tauntracks);
+  float _read_ff_single_fake(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id);
+
   //======================================================general necessary variables========================================
   ULong64_t  eventNumber;
   UInt_t        runNumber;
@@ -242,6 +248,9 @@ public :
   std::map<ULong64_t,std::vector<int>*> taumatchmap;// cannot use eventnumber as a vector index
   std::vector<float>           *bjets_score;
   std::vector<float>           *ljets_bscore;
+  // test htautau method
+  std::vector<int>           *tausid;// functionality same as the taus_id, just for FF method
+
   //======================================================flat variables for BDT========================================
   float      mll;
   float      drttjmin;
@@ -286,14 +295,14 @@ public :
   float      drtaujmin;
   float      drtauj;
   float      MET_RefFinal_et;
-  // hadhad specific
-  float      tau0RNN;
-  float      tau1RNN;
-  float      ditau_coll_approx_m;
-  float      ditau_coll_approx_x0;
-  float      ditau_coll_approx_x1;
-  float      met_sumet;
-  float      met_sigma;
+  // varibles for x1/x2 check
+  float      tauvis0E;
+  float      tauvis1E;
+  float      tau0E;
+  float      tau1E;
+  float      neu0E;
+  float      neu1E;
+ 
   //======================================================variables for kinematic fit========================================
   static TH2F* prob_20_40;
   static TH2F* prob_40_60;
@@ -317,6 +326,105 @@ public :
   static RooAddPdf   _pdf_;
 
   std::map<TString,std::vector<TLorentzVector*>*> fitvec;
+  // hadhad specific
+  float      tau0RNN;
+  float      tau1RNN;
+  float      ditau_coll_approx_m;
+  float      ditau_coll_approx_x0;
+  float      ditau_coll_approx_x1;
+  float      met_sumet;
+  float      met_sigma;
+  int        njetNumber;
+  float      leadingJetPt;
+  float      subleadingJetPt;
+  float      fake_weight;
+  float      fake_weight_a;
+  float      fake_weight_b;
+  float      fake_weight_c;
+  float      fake_weight_d;
+  float      fake_weight_e;
+  float      fake_weight_f;
+  float      fake_weight_g;
+  Float_t  ditau_dr_;
+  Float_t  ditau_dphi_;
+  Float_t  ditau_deta_;
+  Double_t ditau_higgspt_;
+  Float_t  ditau_met_centrality_;
+  Float_t  ditau_rapidity;
+  Float_t  ditau_jet_2_delta_rapidity;
+  Float_t  ditau_jet_1_delta_rapidity;
+  Float_t  ditau_jet_0_delta_rapidity;
+  Float_t  ditau_jet_2_deta;
+  Float_t  ditau_jet_1_deta;
+  Float_t  ditau_jet_0_deta;
+  int      tau1ntracks;
+  int      tau0ntracks;
+  float    ditau_mmc_mlm_M;
 
+  float read_para(float mmc);
+
+  static TH1F create1D(std::string root_name,std::string tree_name)
+  { 
+    std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/hhfake/";
+    full_name.append(root_name);
+    TFile *File_ = TFile::Open(full_name.c_str());
+    TH1F *hist1d = 0;
+    File_->GetObject(tree_name.c_str(),hist1d);
+    hist1d->SetDirectory(0);  //It crashes without this line!
+    return *hist1d;
+  }
+
+  static TH2D create2D(std::string root_name,std::string tree_name)
+  { 
+    std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/hhfake/";
+    full_name.append(root_name);
+    TFile *File_ = TFile::Open(full_name.c_str());
+    TH2D *hist2d = 0;
+    File_->GetObject(tree_name.c_str(),hist2d);
+    hist2d->SetDirectory(0);  //It crashes without this line!
+    return *hist2d;
+  }
+
+  static TH1F param;
+
+  float read_sys_fakefactors(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id, float mmc,int syst);
+  float read_ss(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id);
+
+  static TH1F ss_1p_lead_lnm;
+  static TH1F ss_3p_lead_lnm;
+  static TH2D ss_1p_nm;
+  static TH2D ss_3p_nm;
+  static TH1F ss_1p_sublead_lnm;
+  static TH1F ss_3p_sublead_lnm;
+  float read_ss_lnm_lead(float taupt, float taueta, int tauntracks);
+  float read_ss_nm(float taupt, float taueta, int tauntracks);
+  float read_ss_lnm_sublead(float taupt, float taueta, int tauntracks);
+
+
+  static TH2D hd_1p_lnm_lead;
+  static TH2D hd_3p_lnm_lead;
+  static TH2D hd_1p_nm_lead;
+  static TH2D hd_3p_nm_lead;
+  static TH2D hd_1p_nm_sublead;
+  static TH2D hd_3p_nm_sublead;
+  static TH2D hd_1p_lnm_sublead;
+  static TH2D hd_3p_lnm_sublead;
+  float read_hd_lnm_sublead(float taupt, float taueta, int tauntracks);
+  float read_hd_nm_sublead(float taupt, float taueta, int tauntracks);
+  float read_hd_nm_lead(float taupt, float taueta, int tauntracks);
+  float read_hd_lnm_lead(float taupt, float taueta, int tauntracks);
+  float read_hd(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id);
+
+
+  static TH2D fake_1p_lnm;
+  static TH2D fake_3p_lnm;
+  static TH2D fake_1p_nm;
+  static TH2D fake_3p_nm;
+  float read_fake_nm(float taupt, float taueta, int tauntracks, int syst);
+  float read_fake_lnm(float taupt, float taueta, int tauntracks, int syst);
+  float read_fake(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id, int syst);
+
+  std::vector<float> fake_factor_sys_vec;
+  
 };
 #endif

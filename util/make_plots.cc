@@ -42,7 +42,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool plotnj = 0;
 	bool doPlots = 1;
 	bool scaletodata = 0;
-	bool mergeprong = 0;
+	bool mergeprong = 1;
 	bool mergemet = 0;
 	int plot_option = 2;
 	bool fittodata = 0;
@@ -56,7 +56,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	int varcount = 0;
 	int plotvar = 0;
 	bool doFakeFactor = 0;
-	bool realOnly = 0;
+	bool realOnly = 1;
 	bool mergeleptype = 1;
 	if(method.Contains("nofake")){
 		showFake = 0;
@@ -187,16 +187,28 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			}
 			if(plotvar == 0) { printf("No variable to plot\n"); return 0; }
 		}
-	}else{
+	}else{//xtfw
 		tau_plots->sensitivevariable = "BDTG_test";
-		for(auto var : vars){
-			tau_plots->add(var.second);
-		}
+		if(method.Contains("trex")){
+            for(auto var : vars){
+                if(var.first=="BDTG_test"){
+                    tau_plots->add(var.second);
+                }
+            }
+        }else{
+            for(auto var : vars){
+		        if(var.first=="tau_pt_0"||var.first=="tau_pt_1")tau_plots->add(var.second);
+		    }
+        }
 	}
+
+
+
+
 	gErrorIgnoreLevel = kWarning;
 	tau_plots->blinding = 1;
 	vector<TString> regions_xTFW = {
-		//"reg1mtau1ltau1b2jss",
+		/*//"reg1mtau1ltau1b2jss",
 		"reg2ltau1b2jss",
 		//"reg1mtau1ltau1b3jss",
 		"reg2ltau1b3jss",
@@ -211,7 +223,43 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		"reg2mtau2b2jss",
 		"reg2mtau2b2jos",
 		"reg2mtau2b3jss",
-		"reg2mtau2b3jos",
+		"reg2mtau2b3jos",*/
+		"reg2mtau1b2jss",
+        "reg2mtau1b2jos",
+        "reg2mtau1b3jos",
+        "reg2mtau1b3jss",
+        "reg1mtau1ltau1b2jos",
+        "reg1ltau1mtau1b2jos",
+        "reg1mtau1ltau1b3jos",
+        "reg1ltau1mtau1b3jos",
+        "reg1ltau1ntau1b2jos",
+        "reg1ltau1ntau1b3jos",
+        "reg1ntau1ltau1b2jos",
+        "reg1ntau1ltau1b3jos",
+        "reg2ltau1b2jos",
+        "reg2ltau1b3jos",
+        "reg1mtau1ltau1b2jss",
+        "reg1ltau1mtau1b2jss",
+        "reg1mtau1ltau1b3jss",
+        "reg1ltau1mtau1b3jss",
+        "reg1ltau1ntau1b2jss",
+        "reg1ltau1ntau1b3jss",
+        "reg1ntau1ltau1b2jss",
+        "reg1ntau1ltau1b3jss",
+        "reg2ltau1b2jss",
+        "reg2ltau1b3jss",
+        //"reg2mtau1b5jos",
+        //"reg2mtau1b5jss",
+        //"reg1mtau1ltau1b5jos",
+        //"reg1ltau1mtau1b5jos",
+        //"reg1mtau1ltau1b5jos",
+        //"reg1ltau1mtau1b5jos",
+        //"reg1ltau1ntau1b5jos",
+        //"reg1ltau1ntau1b5jos",
+        //"reg1ntau1ltau1b5jos",
+        //"reg1ntau1ltau1b5jos",
+        //"reg2ltau1b5jos",
+        //"reg2ltau1b5jos"
 	};
 	vector<TString> regions_tthML_faketau = {
 //		"reg1l1tau2b_os",
@@ -322,7 +370,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				if(regions[j].Contains("2l")) nsuffix[0] = 0;
 				if(!regions[j].Contains("2l")) nsuffix[1] = 0;
 			}else{
-				nsuffix[0] = nsuffix[1] = 1;
+				nsuffix[0] = nsuffix[1] = 0;
 			}
 			while(1){
 				vector<TString> tmp;
@@ -362,7 +410,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	map<TString,vector<TString>> ret;
 	mergeregion(-1,ret);
 	for(auto reg : ret["all"]) tau_plots->add_region(reg);
-
+     tau_plots->show();
 	auto origin = plotFakeLep?getFakeLepOrigin() : getFakeTauOrigin();
 
 	if(!plotFakeLep){
@@ -473,7 +521,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		for(auto i : ret){
 			if(i.second.size()>1) tau_plots->merge_regions(i.second, i.first);
 		}
-	}
+	} tau_plots->show();
 	if(plot_option == 2){
 		for(auto samp: samples){
 			if(signalmap.find(samp.name) == signalmap.end()) tau_plots->stackorder.push_back(samp.name);
@@ -695,14 +743,31 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					}
 				}
 			}
-			if(!mergeFake && framework == "xTFW") {
+			if(/*!mergeFake &&*/ framework == "xTFW") {
 				std::cout<<"starting template!"<<std::endl;
-				tau_plots->stackorder.push_back("fakeSS");
-				tau_plots->templatesample("reg2mtau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2mtau1b3jos","fakeSS","Fake",kYellow,1,1.31597);
-				tau_plots->templatesample("reg2mtau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2mtau1b2jos","fakeSS","Fake",kYellow,1,1.31597);
-				tau_plots->templatesample("reg2ltau1b3jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2ltau1b3jos","fakeSS","Fake",kYellow,1,1.31597);
-				tau_plots->templatesample("reg2ltau1b2jss",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ztt -1 top","reg2ltau1b2jos","fakeSS","Fake",kYellow,1,1.31597);				
+				tau_plots->stackorder.push_back("Fake");
+                std::vector<TString> tmp_regions_={"data","smhiggs","wjet","diboson","ztautau","top","other"};
+				if(showFake){
+                    if(mergeprong==1){
+                        tau_plots->FakeFactorMethod("reg2mtau1b2jos","reg1mtau1ltau1b2jos","reg1ltau1mtau1b2jos","reg1ltau1ntau1b2jos","reg1ntau1ltau1b2jos","reg2ltau1b2jos",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
+                        tau_plots->FakeFactorMethod("reg2mtau1b3jos","reg1mtau1ltau1b3jos","reg1ltau1mtau1b3jos","reg1ltau1ntau1b3jos","reg1ntau1ltau1b3jos","reg2ltau1b3jos",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
+                        tau_plots->FakeFactorMethod("reg2mtau1b3jss","reg1mtau1ltau1b3jss","reg1ltau1mtau1b3jss","reg1ltau1ntau1b3jss","reg1ntau1ltau1b3jss","reg2ltau1b3jss",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
+                        tau_plots->FakeFactorMethod("reg2mtau1b2jss","reg1mtau1ltau1b2jss","reg1ltau1mtau1b2jss","reg1ltau1ntau1b2jss","reg1ntau1ltau1b2jss","reg2ltau1b2jss",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
+                        //tau_plots->FakeFactorMethod("reg2mtau1b5jos","reg1mtau1ltau1b5jos","reg1ltau1mtau1b5jos","reg1ltau1ntau1b5jos","reg1ntau1ltau1b5jos","reg2ltau1b5jos",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
+                    }else{
+	                    tau_plots->FakeFactorMethod("reg2mtau1b2jos_3prong_vetobtagwp70","reg1mtau1ltau1b2jos_3prong_vetobtagwp70","reg1ltau1mtau1b2jos_3prong_vetobtagwp70","reg1ltau1ntau1b2jos_3prong_vetobtagwp70","reg1ntau1ltau1b2jos_3prong_vetobtagwp70","reg2ltau1b2jos_3prong_vetobtagwp70",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
+                        tau_plots->FakeFactorMethod("reg2mtau1b3jos_3prong_vetobtagwp70","reg1mtau1ltau1b3jos_3prong_vetobtagwp70","reg1ltau1mtau1b3jos_3prong_vetobtagwp70","reg1ltau1ntau1b3jos_3prong_vetobtagwp70","reg1ntau1ltau1b3jos_3prong_vetobtagwp70","reg2ltau1b3jos_3prong_vetobtagwp70",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
+                        tau_plots->FakeFactorMethod("reg2mtau1b3jss_3prong_vetobtagwp70","reg1mtau1ltau1b3jss_3prong_vetobtagwp70","reg1ltau1mtau1b3jss_3prong_vetobtagwp70","reg1ltau1ntau1b3jss_3prong_vetobtagwp70","reg1ntau1ltau1b3jss_3prong_vetobtagwp70","reg2ltau1b3jss_3prong_vetobtagwp70",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
+                        tau_plots->FakeFactorMethod("reg2mtau1b2jss_3prong_vetobtagwp70","reg1mtau1ltau1b2jss_3prong_vetobtagwp70","reg1ltau1mtau1b2jss_3prong_vetobtagwp70","reg1ltau1ntau1b2jss_3prong_vetobtagwp70","reg1ntau1ltau1b2jss_3prong_vetobtagwp70","reg2ltau1b2jss_3prong_vetobtagwp70",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
+                        tau_plots->FakeFactorMethod("reg2mtau1b5jos_3prong_vetobtagwp70","reg1mtau1ltau1b5jos_3prong_vetobtagwp70","reg1ltau1mtau1b5jos_3prong_vetobtagwp70","reg1ltau1ntau1b5jos_3prong_vetobtagwp70","reg1ntau1ltau1b5jos_3prong_vetobtagwp70","reg2ltau1b5jos_3prong_vetobtagwp70",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
 
+                        tau_plots->FakeFactorMethod("reg2mtau1b2jos_1prong_vetobtagwp70","reg1mtau1ltau1b2jos_1prong_vetobtagwp70","reg1ltau1mtau1b2jos_1prong_vetobtagwp70","reg1ltau1ntau1b2jos_1prong_vetobtagwp70","reg1ntau1ltau1b2jos_1prong_vetobtagwp70","reg2ltau1b2jos_1prong_vetobtagwp70",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
+                        tau_plots->FakeFactorMethod("reg2mtau1b3jos_1prong_vetobtagwp70","reg1mtau1ltau1b3jos_1prong_vetobtagwp70","reg1ltau1mtau1b3jos_1prong_vetobtagwp70","reg1ltau1ntau1b3jos_1prong_vetobtagwp70","reg1ntau1ltau1b3jos_1prong_vetobtagwp70","reg2ltau1b3jos_1prong_vetobtagwp70",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
+                        tau_plots->FakeFactorMethod("reg2mtau1b3jss_1prong_vetobtagwp70","reg1mtau1ltau1b3jss_1prong_vetobtagwp70","reg1ltau1mtau1b3jss_1prong_vetobtagwp70","reg1ltau1ntau1b3jss_1prong_vetobtagwp70","reg1ntau1ltau1b3jss_1prong_vetobtagwp70","reg2ltau1b3jss_1prong_vetobtagwp70",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
+                        tau_plots->FakeFactorMethod("reg2mtau1b2jss_1prong_vetobtagwp70","reg1mtau1ltau1b2jss_1prong_vetobtagwp70","reg1ltau1mtau1b2jss_1prong_vetobtagwp70","reg1ltau1ntau1b2jss_1prong_vetobtagwp70","reg1ntau1ltau1b2jss_1prong_vetobtagwp70","reg2ltau1b2jss_1prong_vetobtagwp70",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
+                        tau_plots->FakeFactorMethod("reg2mtau1b5jos_1prong_vetobtagwp70","reg1mtau1ltau1b5jos_1prong_vetobtagwp70","reg1ltau1mtau1b5jos_1prong_vetobtagwp70","reg1ltau1ntau1b5jos_1prong_vetobtagwp70","reg1ntau1ltau1b5jos_1prong_vetobtagwp70","reg2ltau1b5jos_1prong_vetobtagwp70",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
+                    }
+                }
 
 
 //tau_plots->templatesample("reg2mtau2b3jss","1 data -1 smhiggs -1 w_jet_fake -1 diboson -1 zll -1 ztautau -1 top -1 fake","reg2mtau2b3jos","fakeSS","Fake",kYellow,1);
@@ -748,7 +813,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		tau_plots->merge_regions("reg1l2tau1bnj_os_vetobtagwp70_highmet","reg1l2tau1bnj_os_vetobtagwp70_lowmet", "reg1l2tau1bnj_os");
 		tau_plots->muteregion("reg1l2tau1bnj_os_vetobtagwp70_highmet");
 	}
-	
+	tau_plots->show();
 	//tau_plots->printyield("reg1l1tau1b3j_os");
 	//tau_plots->printyield("reg1l1tau1b2j_os");
 	if(doTrex){
