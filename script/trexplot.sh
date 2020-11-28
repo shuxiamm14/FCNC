@@ -34,24 +34,15 @@ runfitcomb(){
 	sig=$1
 	for reg in ${regions[@]}
 	do
-		if [[ $reg =~ "combined" ]] ; then
-			continue;
-		fi
 		mkdir -p $sig/${reg}_$variable
-		trex-fitter w config/combined/$variable.config "Signal=$sig:Regions=$reg" 
-		rm -rf $sig/${reg}_$variable/RooStats
-		mv combined_$variable/RooStats $sig/${reg}_$variable/.
-		trex-fitter f config/combined/$variable.config "Signal=$sig:Job=$sig/${reg}_$variable:Regions=$reg"
-		trex-fitter l config/combined/$variable.config "Signal=$sig:Job=$sig/${reg}_$variable:Regions=$reg"
+		rm $sig/${reg}_$variable/Histograms
+		ln -s $PWD/combined_$variable/Histograms $sig/${reg}_$variable/Histograms
+		if [[ $reg =~ "combined" ]] ; then
+			trex-fitter wfdplr config/combined/$variable.config "Signal=$sig:Job=$sig/${reg}_$variable"
+		else
+			trex-fitter wfl config/combined/$variable.config "Signal=$sig:Regions=$reg:Job=$sig/${reg}_$variable" 
+		fi
 	done
-	mkdir -p $sig/combined_$variable
-	trex-fitter d config/combined/$variable.config "Signal=$sig" 
-	trex-fitter w config/combined/$variable.config "Signal=$sig" 
-	rm -rf $sig/combined_$variable/RooStats $sig/combined_$variable/Plots
-	mv combined_$variable/RooStats $sig/combined_$variable/.
-	mv combined_$variable/Plots $sig/combined_$variable/.
-	trex-fitter f config/combined/$variable.config "Signal=$sig:Job=$sig/combined_$variable"
-	trex-fitter l config/combined/$variable.config "Signal=$sig:Job=$sig/combined_$variable"
 }
 
 if (( $# >= 1 )) ; then
