@@ -1,6 +1,6 @@
 variable=BDTG_test
 signals=("tcH" "tuH" "fcnc_ch" "fcnc_uh" "fcnc_prod_ch" "fcnc_prod_uh")
-regions=("reg1l1tau1b2j_os" "reg1l1tau1b3j_os" "reg1l2tau1bnj_os")
+regions=("reg1l1tau1b1j_ss" "reg1l1tau1b2j_ss" "reg1l1tau1b3j_os" "reg1l1tau1b2j_os" "reg1l2tau1bnj_os" "combined")
 usecombJO=1
 runfit(){
 	sig=$1

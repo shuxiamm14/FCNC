@@ -1,7 +1,7 @@
 variable=BDTG_test
 signals=("tcH" "tuH" "fcnc_ch" "fcnc_uh" "fcnc_prod_ch" "fcnc_prod_uh")
-regions=("reg1l1tau1b2j_os" "reg1l1tau1b3j_os" "reg1l2tau1bnj_os")
-usecombJO=1
+regions=("reg1l1tau1b1j_ss" "reg1l1tau1b2j_ss" "reg1l1tau1b3j_os" "reg1l1tau1b2j_os" "reg1l2tau1bnj_os" "combined")
+usecombJO=0
 runfit(){
 	sig=$1
 	for reg in ${regions[@]}
@@ -32,15 +32,26 @@ runfit(){
 
 runfitcomb(){
 	sig=$1
-	for reg in ${regions[@]} "combined"
+	for reg in ${regions[@]}
 	do
+		if [[ $reg =~ "combined" ]] ; then
+			continue;
+		fi
 		mkdir -p $sig/${reg}_$variable
-		trex-fitter w config/$reg/$variable.config "Signal=$sig"
+		trex-fitter w config/combined/$variable.config "Signal=$sig:Regions=$reg" 
 		rm -rf $sig/${reg}_$variable/RooStats
-		mv ${reg}_$variable/RooStats $sig/${reg}_$variable/.
-		trex-fitter f config/$reg/$variable.config "Signal=$sig:Job=$sig/${reg}_$variable"
-		trex-fitter l config/$reg/$variable.config "Signal=$sig:Job=$sig/${reg}_$variable"
+		mv combined_$variable/RooStats $sig/${reg}_$variable/.
+		trex-fitter f config/combined/$variable.config "Signal=$sig:Job=$sig/${reg}_$variable:Regions=$reg"
+		trex-fitter l config/combined/$variable.config "Signal=$sig:Job=$sig/${reg}_$variable:Regions=$reg"
 	done
+	mkdir -p $sig/combined_$variable
+	trex-fitter d config/combined/$variable.config "Signal=$sig" 
+	trex-fitter w config/combined/$variable.config "Signal=$sig" 
+	rm -rf $sig/combined_$variable/RooStats $sig/combined_$variable/Plots
+	mv combined_$variable/RooStats $sig/combined_$variable/.
+	mv combined_$variable/Plots $sig/combined_$variable/.
+	trex-fitter f config/combined/$variable.config "Signal=$sig:Job=$sig/combined_$variable"
+	trex-fitter l config/combined/$variable.config "Signal=$sig:Job=$sig/combined_$variable"
 }
 
 if (( $# >= 1 )) ; then
@@ -51,10 +62,7 @@ if (( $# >= 1 )) ; then
 		done
 		runfit $1
 	else
-		for reg in ${regions[@]} "combined"
-		do
-			trex-fitter h config/$reg/$variable.config
-		done
+		trex-fitter h config/combined/$variable.config
 		runfitcomb $1
 	fi
 else
@@ -68,11 +76,7 @@ else
 			runfit $sig
 		done
 	else
-
-		for reg in ${regions[@]} "combined"
-		do
-			trex-fitter h config/$reg/$variable.config
-		done
+		trex-fitter h config/combined/$variable.config
 		for sig in "${signals[@]}"
 		do
 			runfitcomb $sig
