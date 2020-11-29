@@ -125,7 +125,7 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots->add(vars["dphitauetmiss"],&dphitauetmiss);
   fcnc_plots->add(vars["ttvismass"],&ttvismass);
   fcnc_plots->add(vars["drtautau"],&drtautau);
-  //fcnc_plots->add(vars["drttjmin"],&drttjmin);
+  fcnc_plots->add(vars["drtaujmin"],&drtaujmin);
   fcnc_plots->add(vars["phicent"],&phicent);
   fcnc_plots->add(vars["t1mass"],&t1mass);
   fcnc_plots->add(vars["tautaumass"],&tautaumass);
@@ -147,10 +147,10 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots->add(vars["ditau_jet_1_deta"],&ditau_jet_1_deta);//
   fcnc_plots->add(vars["ditau_jet_0_deta"],&ditau_jet_0_deta);//
   fcnc_plots->add(vars["ditau_jet_2_delta_rapidity"],&ditau_jet_2_delta_rapidity); //
-  fcnc_plots->add(vars["ditau_jet_1_delta_rapidity"],&ditau_jet_1_delta_rapidity);//
-  fcnc_plots->add(vars["ditau_jet_0_delta_rapidity"],&ditau_jet_0_delta_rapidity);//
-  fcnc_plots->add(vars["ditau_rapidity"],&ditau_rapidity);//
-  fcnc_plots->add(vars["ditau_met_centrality"],&ditau_met_centrality_);
+  //fcnc_plots->add(vars["ditau_jet_1_delta_rapidity"],&ditau_jet_1_delta_rapidity);//
+  //fcnc_plots->add(vars["ditau_jet_0_delta_rapidity"],&ditau_jet_0_delta_rapidity);//
+  //fcnc_plots->add(vars["ditau_rapidity"],&ditau_rapidity);//
+  //fcnc_plots->add(vars["ditau_met_centrality"],&ditau_met_centrality_);
   fcnc_plots->add(vars["ditau_higgspt"],&ditau_higgspt_);
   fcnc_plots->add(vars["ditau_deta"],&ditau_deta_);
   fcnc_plots->add(vars["ditau_dphi"],&ditau_dphi_);
@@ -158,10 +158,10 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots->add(vars["tau_0_rnn_score"],&tau0RNN);
   fcnc_plots->add(vars["tau_1_rnn_score"],&tau1RNN);
   fcnc_plots->add(vars["ditau_coll_approx_m"],&ditau_coll_approx_m);
-  //fcnc_plots->add(vars["allmass"],&allmass);
-  //fcnc_plots->add(vars["allpz"],&allpz);
-  //fcnc_plots->add(vars["etamax"],&etamax);
-  //fcnc_plots->add(vars["drtauj"],&drtauj);
+  ////fcnc_plots->add(vars["allmass"],&allmass);
+  ////fcnc_plots->add(vars["allpz"],&allpz);
+  ////fcnc_plots->add(vars["etamax"],&etamax);
+  ////fcnc_plots->add(vars["drtauj"],&drtauj);
   for (int j = 0; j < fcnc_regions.size(); ++j)
   {
     for (int k = 0; k < 2; ++k)

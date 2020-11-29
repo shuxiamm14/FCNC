@@ -112,6 +112,7 @@ std::map<TString,variable*> getVariables(TString framework){
 		ret["drtautau"] = new variable("drtautau","#DeltaR(#tau,#tau)",100,0.4,3.4,"",1,10);
 	    //ret["drttjmin"] = new variable("drttjmin","#DeltaR(#tau,light-jet,min)",80,0.2,4.2,"",1,8);
 		//ret["drttj"] = new variable("drttj","#DeltaR(#tau,light-jet)",80,0.2,4.2,"",1,8);
+		ret["drtaujmin"] = new variable("drtaujmin","#DeltaR(#tau,light-jet,min)",60,0.4,3.4,"",1,5);
         ret["phicent"] = new variable("phicent","E^{T}_{miss} centrality",60,-1.5,1.5,"",1,6);
 		ret["t1mass"] = new variable("t1mass","m_{t,SM}",900,100.,1000.,"GeV",scale,90);
 		ret["tautaumass"] = new variable("tautaumass","m_{#tau,#tau}",100,70.,170.,"GeV",scale,10);
@@ -148,6 +149,7 @@ std::map<TString,variable*> getVariables(TString framework){
 		ret["tau_0_rnn_score"] = new variable("tau_0_rnn_score","#tau_{0} RNN score",50, 0., 1.,"",scale,1);
 		ret["tau_1_rnn_score"] = new variable("tau_1_rnn_score","#tau_{1} RNN score",50, 0., 1.,"",scale,1);
         ret["ditau_coll_approx_m"]=new variable("ditau_coll_approx_m","ditau_coll_approx_m",20, 0, 200,"GeV",scale,1);
+		
 	}else{
 		ret["BDTG_train"] = new variable("BDTG_train","BDT discriminant",100,-1.,1.,"",1,10);
 		ret["BDTG_test"] = new variable("BDTG_test","BDT discriminant",100,-1.,1.,"",1,10);
