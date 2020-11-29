@@ -45,8 +45,7 @@ int main(int argc, char const *argv[])
 //		"reg2lSS1tau1bnj_os_antiisolead"
 	};
 	vector<TString> region_xTFW = {
-		"all","reg2mtau1b2j_os","reg2mtau1b2j_ss",
-		"reg2mtau2b2j_os","reg2mtau2b2j_ss"
+		"all","reg2mtau1b2jss","reg2mtau1b2jos","reg2mtau1b3jos","reg2mtau1b3jss"
 	};
 	vector<TString> datayear = {"1516","17","18"};
 	vector<TString> region;
