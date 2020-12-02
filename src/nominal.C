@@ -1810,12 +1810,12 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
        //   if(ditau_coll_approx_x1<=0.1||ditau_coll_approx_x1>=1.4) continue; 
        //   cut_flow.fill("x0x1 cut");
           
-          /*if(ttvismass < 50*GeV) continue;
+          if(ttvismass < 50*GeV) continue;
           cut_flow.fill("$m_{\\tau\\tau,vis}>50$");
           if(ttvismass > 130*GeV) continue;
-          cut_flow.fill("$m_{\\tau\\tau,vis}<130$");*/
-          if(ttvismass >50*GeV && ttvismass<130*GeV) continue;
-          cut_flow.fill("$m_{\\tau\\tau,vis}$ sideband");
+          cut_flow.fill("$m_{\\tau\\tau,vis}<130$");
+          /*if(ttvismass >50*GeV && ttvismass<130*GeV) continue;
+          cut_flow.fill("$m_{\\tau\\tau,vis}$ sideband");*/
           if(drtautau > 3.4) continue;
           cut_flow.fill("$\\Delta R(\\tau,\\tau)<3.4$");
           if (belong_regions.have("1l2tau"))
