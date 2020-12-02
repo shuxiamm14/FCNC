@@ -81,13 +81,22 @@ hadhadtree::hadhadtree() : nominal::nominal(){
     "reg1ntau1ltau1b3jss",
     "reg2ltau1b2jss",
     "reg2ltau1b3jss",
-    "reg2mtau1b5jos",
-    "reg2mtau1b5jss",
-    "reg1mtau1ltau1b5jos",
-    "reg1ltau1mtau1b5jos",
-    "reg1ltau1ntau1b5jos",
-    "reg1ntau1ltau1b5jos",
-    "reg2ltau1b5jos"
+    // new
+    "reg1lnmtau1mtau1b2jss",
+    "reg1lnmtau1mtau1b2jos",
+    "reg1lnmtau1mtau1b3jss",
+    "reg1lnmtau1mtau1b3jos",
+    "reg1mtau1lnmtau1b2jss",
+    "reg1mtau1lnmtau1b2jos",
+    "reg1mtau1lnmtau1b3jss",
+    "reg1mtau1lnmtau1b3jos",
+    //"reg2mtau1b5jos",
+    //"reg2mtau1b5jss",
+    //"reg1mtau1ltau1b5jos",
+    //"reg1ltau1mtau1b5jos",
+    //"reg1ltau1ntau1b5jos",
+    //"reg1ntau1ltau1b5jos",
+    //"reg2ltau1b5jos",
   };
 }
 
@@ -137,31 +146,8 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots->add(vars["x1fit"],&x1fit);
   fcnc_plots->add(vars["x2fit"],&x2fit);
   fcnc_plots->add(vars["chi2"],&chi2);
-  fcnc_plots->add(vars["tauvis0E"],&tauvis0E);
-  fcnc_plots->add(vars["tauvis1E"],&tauvis1E);
-  fcnc_plots->add(vars["tau0E"],&tau0E);
-  fcnc_plots->add(vars["tau1E"],&tau1E);
-  fcnc_plots->add(vars["neu0E"],&neu0E);
-  fcnc_plots->add(vars["neu1E"],&neu1E);
-  fcnc_plots->add(vars["ditau_jet_2_deta"],&ditau_jet_2_deta); //
-  fcnc_plots->add(vars["ditau_jet_1_deta"],&ditau_jet_1_deta);//
-  fcnc_plots->add(vars["ditau_jet_0_deta"],&ditau_jet_0_deta);//
-  fcnc_plots->add(vars["ditau_jet_2_delta_rapidity"],&ditau_jet_2_delta_rapidity); //
-  //fcnc_plots->add(vars["ditau_jet_1_delta_rapidity"],&ditau_jet_1_delta_rapidity);//
-  //fcnc_plots->add(vars["ditau_jet_0_delta_rapidity"],&ditau_jet_0_delta_rapidity);//
-  //fcnc_plots->add(vars["ditau_rapidity"],&ditau_rapidity);//
-  //fcnc_plots->add(vars["ditau_met_centrality"],&ditau_met_centrality_);
-  fcnc_plots->add(vars["ditau_higgspt"],&ditau_higgspt_);
-  fcnc_plots->add(vars["ditau_deta"],&ditau_deta_);
-  fcnc_plots->add(vars["ditau_dphi"],&ditau_dphi_);
-  fcnc_plots->add(vars["ditau_dr"],&ditau_dr_);
-  fcnc_plots->add(vars["tau_0_rnn_score"],&tau0RNN);
-  fcnc_plots->add(vars["tau_1_rnn_score"],&tau1RNN);
-  fcnc_plots->add(vars["ditau_coll_approx_m"],&ditau_coll_approx_m);
-  ////fcnc_plots->add(vars["allmass"],&allmass);
-  ////fcnc_plots->add(vars["allpz"],&allpz);
-  ////fcnc_plots->add(vars["etamax"],&etamax);
-  ////fcnc_plots->add(vars["drtauj"],&drtauj);
+  fcnc_plots->add(vars["leading_index_bin"],&leading_index_bin); //
+  fcnc_plots->add(vars["subleading_index_bin"],&subleading_index_bin); 
   for (int j = 0; j < fcnc_regions.size(); ++j)
   {
     for (int k = 0; k < 2; ++k)

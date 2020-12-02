@@ -119,6 +119,15 @@ int main(int argc, char const *argv[])
         regions.push_back("reg1ntau1ltau1b3jss");
         regions.push_back("reg2ltau1b2jss");
         regions.push_back("reg2ltau1b3jss");
+		// new
+		regions.push_back("reg1lnmtau1mtau1b2jss");
+        regions.push_back("reg1lnmtau1mtau1b2jos");
+        regions.push_back("reg1lnmtau1mtau1b3jss");
+        regions.push_back("reg1lnmtau1mtau1b3jos");
+        regions.push_back("reg1mtau1lnmtau1b2jss");
+        regions.push_back("reg1mtau1lnmtau1b2jos");
+        regions.push_back("reg1mtau1lnmtau1b3jss");
+        regions.push_back("reg1mtau1lnmtau1b3jos");
         //regions.push_back("reg2mtau1b5jos");
         //regions.push_back("reg2mtau1b5jss");
         //regions.push_back("reg1mtau1ltau1b5jos");

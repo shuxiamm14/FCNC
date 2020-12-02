@@ -123,33 +123,9 @@ std::map<TString,variable*> getVariables(TString framework){
 		ret["t1vismass"] = new variable("t1vismass","m_{t,SM,vis}",100,50.,250.,"GeV",scale,10);
 		ret["x1fit"] = new variable("x1fit","E_{vis-#tau,1}/E_{#tau,1}",80,0.2,1.,"",1,8);
 		ret["x2fit"] = new variable("x2fit","E_{vis-#tau,2}/E_{#tau,2}",80,0.2,1.,"",1,8);
-		ret["chi2"] = new variable("chi2","#chi^2",60,-13.,17.,"",1,6);
-		//ret["allmass"] = new variable("allmass","m_{all}",500,0.,1000.,"GeV",scale,50);
-		//ret["allpz"] = new variable("allpz","P_{z,all}",500,0.,1000.,"GeV",scale,50);
-		ret["tauvis0E"] = new variable("tauvis0E","#tau vis0-E",100,40,140,"GeV",scale,10); // taus_p4->at(0)->E();
-        ret["tauvis1E"] = new variable("tauvis1E","#tau vis1-E",100,20,120,"GeV",scale,10); // tau2->E()
-        ret["tau0E"] = new variable("tau0E","#tau0-E",100,40,140,"GeV",scale,10); // (*(taus_p4->at(0)) + *neutrinos_p4->at(0)).E()
-        ret["tau1E"] = new variable("tau1E","#tau1-E",100,20,120,"GeV",scale,10); // (*(tau2) + *neutrinos_p4->at(1)).E()
-        ret["neu0E"] = new variable("neu0E","#neu0-E",100,40,140,"GeV",scale,10); // neutrinos_p4->at(0)->E()
-        ret["neu1E"] = new variable("neu1E","#neu1-E",100,20,120,"GeV",scale,10); // neutrinos_p4->at(1)->E()
-        //ret["x0"] = new variable("x0","ditau_coll_approx_x0",20,0.,2.,"",scale,1);
-		//ret["x1"] = new variable("x1","ditau_coll_approx_x1",20,0.,2.,"",scale,1);
-		ret["ditau_jet_2_deta"] = new variable("ditau_jet_2_deta","|#eta(ll) - #eta(j_{2})|",20,0.,10.,"",scale,1);
-		ret["ditau_jet_1_deta"] = new variable("ditau_jet_1_deta","|#eta(ll) - #eta(j_{1})|",20,0.,10.,"",scale,1);
-		ret["ditau_jet_0_deta"] = new variable("ditau_jet_0_deta","|#eta(ll) - #eta(j_{0})|",20,0.,10.,"",scale,1);
-		ret["ditau_jet_2_delta_rapidity"] = new variable("ditau_jet_2_delta_rapidity","|Y(ll) - Y(j_{2})|",20,0.,10.,"",scale,1);
-		ret["ditau_jet_1_delta_rapidity"] = new variable("ditau_jet_1_delta_rapidity","|Y(ll) - Y(j_{1})|",20,0.,10.,"",scale,1);
-		ret["ditau_jet_0_delta_rapidity"] = new variable("ditau_jet_0_delta_rapidity","|Y(ll) - Y(j_{0})|",20,0.,10.,"",scale,1);
-		ret["ditau_rapidity"] = new variable("ditau_rapidity","ditau_rapidity",50, -2.5, 2.5,"",scale,1);
-		ret["ditau_met_centrality"] = new variable("ditau_met_centrality","ditau_met_centrality",20, 0, 2,"",scale,1);
-		ret["ditau_higgspt"] = new variable("ditau_higgspt","p_{T}(H)",39, 0, 390,"GeV",scale,1);
-		ret["ditau_deta"] = new variable("ditau_deta","#Delta#eta(#tau, #tau)",20, 0, 2,"",scale,1);
-		ret["ditau_dphi"] = new variable("ditau_dphi","#Delta#phi(#tau, #tau)",32, -3.2, 3.2,"",scale,1);
-		ret["ditau_dr"] = new variable("ditau_dr","#DeltaR(#tau, #tau)",34, 0, 3.4,"",scale,1);
-		ret["tau_0_rnn_score"] = new variable("tau_0_rnn_score","#tau_{0} RNN score",50, 0., 1.,"",scale,1);
-		ret["tau_1_rnn_score"] = new variable("tau_1_rnn_score","#tau_{1} RNN score",50, 0., 1.,"",scale,1);
-        ret["ditau_coll_approx_m"]=new variable("ditau_coll_approx_m","ditau_coll_approx_m",20, 0, 200,"GeV",scale,1);
-		
+		ret["chi2"] = new variable("chi2","#chi^2",40,-3.,17.,"",1,4);
+		ret["leading_index_bin"]=new variable("leading_index_bin","leading_index_bin",12, 0, 12,"",1,1);
+		ret["subleading_index_bin"]=new variable("subleading_index_bin","subleading_index_bin",12, 0, 12,"",1,1);
 	}else{
 		ret["BDTG_train"] = new variable("BDTG_train","BDT discriminant",100,-1.,1.,"",1,10);
 		ret["BDTG_test"] = new variable("BDTG_test","BDT discriminant",100,-1.,1.,"",1,10);

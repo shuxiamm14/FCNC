@@ -360,8 +360,32 @@ public :
   int      tau1ntracks;
   int      tau0ntracks;
   float    ditau_mmc_mlm_M;
+  
+  // calculate FF_SS
+  int subleading_index_bin;
+  int leading_index_bin;
+
+  // apply FF_SS
+  int subleading_bin;
+  int leading_bin;
 
   float read_para(float mmc);
+
+  float read_ss_fake_nm(int index_bin);
+  float read_ss_fake_lnm(int index_bin);
+  static TH1D FF_SS_1;//nm
+  static TH1D FF_SS_2;//lnm
+
+  static TH1D create1D_(std::string root_name,std::string tree_name)
+  { 
+    std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/FCNC/final_project/FCNCProject/FCNCAnalysis/"+root_name;
+    TFile *File_ = TFile::Open(full_name.c_str());
+    TH1D *hist1d = 0;
+    File_->GetObject(tree_name.c_str(),hist1d);
+    if(hist1d)std::cout<<"full_name: "<<full_name<<std::endl;
+    hist1d->SetDirectory(0);  //It crashes without this line!
+    return *hist1d;
+  }
 
   static TH1F create1D(std::string root_name,std::string tree_name)
   { 

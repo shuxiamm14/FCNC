@@ -197,7 +197,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
             }
         }else{
             for(auto var : vars){
-		        /*if(var.first=="tau_pt_0"||var.first=="tau_pt_1")*/tau_plots->add(var.second);
+		        if(var.first!="leading_index_bin" && var.first!="subleading_index_bin") tau_plots->add(var.second);
 		    }
         }
 	}
