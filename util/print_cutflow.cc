@@ -125,7 +125,7 @@ int main(int argc, char const *argv[])
 				}
 			}
 			for(auto cut : bkgyield){
-				chart->set(cut.first.Data(), "total background", cut.second);
+				if(cut.first!="") chart->set(cut.first.Data(), "total background", cut.second);
 			}
 		}
 		LatexChart* sum = 0;
