@@ -156,9 +156,15 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 //					&&var.first!="etmiss"
 //					&&var.first!="ttvismass"
 //					&&var.first!="lep_pt_0"
-					var.first!="BDTG_test"
+					var.first!="chi2"
+					//&&var.first!="BDTG_test"
+					&&var.first!="drlb"
+					&&var.first!="x1fit"
+					&&var.first!="x2fit"
+					&&var.first!="ttvismass"
 				) continue;
 				if(varcount / perpart == ipart){
+					printf("registered variable: %s\n",var.first.Data());
 					tau_plots->add(var.second);
 					plotvar++;
 				}else if(varcount / perpart == ipart+1) break;
