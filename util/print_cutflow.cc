@@ -77,6 +77,7 @@ int main(int argc, char const *argv[])
 			TString label = "cutflow_"+region[ireg] + "_" + mc_campaigns[icamp];
 			LatexChart* chart = new LatexChart(label.Data());
 			charts.push_back(chart);
+			map<TString,observable> bkgyield;
 			for(auto sample : samples){
 
 				TFile *inputfile = 0;
@@ -101,7 +102,7 @@ int main(int argc, char const *argv[])
 					}else{
 						inputfile = new TFile(filename + sample.name + ".root");
 					}
-                                        if(!inputfile->Get(region[ireg])) {
+					if(!inputfile->Get(region[ireg])) {
 						printf("histogram %s not found in file %s\n",region[ireg].Data(),inputfile->GetName());
 						continue;
 					}
@@ -117,9 +118,13 @@ int main(int argc, char const *argv[])
 				for (int ibin = 1; ibin <= cutflow_hist->GetNbinsX(); ++ibin)
 				{
 					TString cut_name = xaxis->GetBinLabel(ibin);
+					bkgyield[cut_name] += observable(cutflow_hist->GetBinContent(ibin), cutflow_hist->GetBinError(ibin));
 					if(cut_name == "") break;
 					if(cutflow_hist->GetBinContent(ibin)) chart->set(cut_name.Data(), sample.title.Data(), cutflow_hist->GetBinContent(ibin), cutflow_hist->GetBinError(ibin));
 				}
+			}
+			for(auto cut : bkgyield){
+				chart->set(cut.first.Data(), "total background", cut.second);
 			}
 		}
 		LatexChart* sum = 0;
