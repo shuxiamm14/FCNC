@@ -8,29 +8,12 @@ std::vector<fcncSample> getBkgSamples(TString framework){
 	samples.emplace_back("smhiggs","SM Higgs",kViolet);
 	samples.emplace_back("wjet","W+jets",kOrange);
 	samples.emplace_back("diboson","Diboson",(enum EColor)7);
-//<<<<<<< HEAD
-	samples.emplace_back("zll","Z#rightarrowll",kBlue);
-	samples.emplace_back("ztautau","Z#rightarrow#tau#tau",kGreen);
-	if(framework=="tthML"){
-		//samples.push_back(fcncSample("top","Top rare",kWhite));
-		samples.emplace_back("others","Rare",kMagenta);
-		samples.emplace_back("ttbar","t#bar{t}",kYellow);
-		samples.emplace_back("ttV","t#bar{t}V",(enum EColor)((kAzure)+1));
-	}else{
-		samples.emplace_back("top","Top production",kRed);
-	}
-	//samples.push_back(fcncSample("othertop","Top rare",kWhite));
-	//samples.push_back(fcncSample("others","Rare",kTeal));
-	//samples.push_back(fcncSample("ttbar","t#bar{t}",kYellow));
-	//samples.push_back(fcncSample("ttV","t#bar{t}V",kAzure));
-/*=======
 	samples.emplace_back("zll","Z#rightarrowll",kBlue);
 	samples.emplace_back("ztautau","Z#rightarrow#tau#tau",kGreen);
 	samples.emplace_back("others","Rare",kMagenta);
 	samples.emplace_back("ttbar","t#bar{t}",kYellow);
 	samples.emplace_back("ttV","t#bar{t}V",(enum EColor)((kAzure)+1));
->>>>>>> upstream/master
-*/	return samples;
+	return samples;
 }
 
 std::vector<fcncSample> getFakeTauOrigin(){
