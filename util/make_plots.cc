@@ -18,7 +18,9 @@ TFile *getFile(TString sample, TString NPdir, TString NPname, TString nominaldir
 	TFile *inputfile = new TFile(NPdir + "/" + sample + "_" + (NPdir==nominaldir? NPname : nominalname) + ".root");
 	if(inputfile->IsZombie()) {
 		deletepointer(inputfile);
-		inputfile = new TFile(nominaldir + "/" + sample + "_" + nominalname + ".root");
+		TString filename = nominaldir + "/" + sample + "_" + nominalname + ".root";
+		printf("read from instread: %s\n",filename.Data());
+		inputfile = new TFile(filename);
 	}
 	return inputfile;
 }
@@ -28,7 +30,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString dirname;
 	TString NPname = findNPname(dirname,iNP,framework);
 	TString nominalname = "NOMINAL";
-	TString histmiddlename =  (dirname==NPname || NPname.Contains("fake_mismodelling"))? nominalname:NPname;
+	TString histmiddlename =  (dirname==NPname || NPname.Contains("ABCD"))? nominalname:NPname;
 	TString figuredir = method.Contains("test")?"." : FIGURE_DIR;
 	TString chartdir = method.Contains("test")?"." : TABLE_DIR;
 	observable fakeFactorl;
@@ -40,7 +42,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool mergeOrigin = 0;
 	bool doTrex = 1;
 	bool plotnj = 0;
-	bool doPlots = 1;
+	bool doPlots = 0;
 	bool scaletodata = 0;
 	bool mergeprong = 0;
 	bool mergemet = 0;
@@ -148,14 +150,14 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			tau_plots->sensitivevariable = "BDTG_test";
 			for(auto var : vars){
 				
-//				if(   //var.first!="tau_pt_0"
+				if(   //var.first!="tau_pt_0"
 //					&&var.first!="tau_pt_1"
 //					var.first!="drlbditau"
 //					&&var.first!="etmiss"
 //					&&var.first!="ttvismass"
 //					&&var.first!="lep_pt_0"
-//					&&var.first!="BDTG_test"
-//				) continue;
+					var.first!="BDTG_test"
+				) continue;
 				if(varcount / perpart == ipart){
 					tau_plots->add(var.second);
 					plotvar++;
@@ -485,7 +487,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				tau_plots->stackorder.push_back("non-prompt_sub-lead");
 				string fakeFormular="1 data -1 smhiggs -1 wjet -1 diboson -1 zll -1 ztautau -1 ttbar -1 ttV -1 others";
 				if(fakeFactorl.nominal == 0)
-					fakeFactorl=tau_plots->calculateYield("reg2lSS1taunj_os",fakeFormular,NPname)/(tau_plots->calculateYield("reg2lSS1taunj_os_antiisolead",fakeFormular,NPname)+tau_plots->calculateYield("reg2lSS1taunj_os_antiiso",fakeFormular,NPname));
+					fakeFactorl=tau_plots->calculateYield("reg2lSS1taunj_os",fakeFormular,histmiddlename)/(tau_plots->calculateYield("reg2lSS1taunj_os_antiisolead",fakeFormular,histmiddlename)+tau_plots->calculateYield("reg2lSS1taunj_os_antiiso",fakeFormular,histmiddlename));
 				printf("Calculated Lepton Fake Factor: %f+/-%f",fakeFactorl.nominal,fakeFactorl.error);
 				tau_plots->templatesample("reg2lSS1tau1bnj_os_antiisolead",histmiddlename,fakeFormular,"reg2lSS1tau1bnj_os","non-prompt_lead","non-prompt lead",(enum EColor)40,0,fakeFactorl.nominal);
 				tau_plots->templatesample("reg2lSS1tau1bnj_os_antiiso",histmiddlename,fakeFormular,"reg2lSS1tau1bnj_os","non-prompt_sub-lead","non-prompt sub-lead",(enum EColor)41,0,fakeFactorl.nominal);
@@ -504,7 +506,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					if(mergeOrigin) tau_plots->stackorder.push_back("other_fake");
 			}
 			if(doFakeFactor && framework == "tthML") {
-				LatexChart *FFchart;
+				LatexChart *FFchart = 0;
 				if(ipart==0) if(iNP == 0) FFchart = new LatexChart("FF");
 				tau_plots->stackorder.push_back("FF_QCD_mu");
 				tau_plots->stackorder.push_back("FF_QCD_e");
@@ -521,16 +523,16 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				};
 				for(auto FFreg: FFregions){
 					if(ipart == 0){
-						fakeFactor_e[FFreg]=tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet",fakeFormular,NPname);
-						fakeFactor_e[FFreg].error = rms(fakeFactor_e[FFreg].error,tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet","1 tuH",NPname).nominal);
-						fakeFactor_e[FFreg]=fakeFactor_e[FFreg]/(tau_plots->calculateYield(FFreg + "_antiiso_e_vetobtagwp70_lowmet",fakeFormular,NPname));
+						fakeFactor_e[FFreg]=tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet",fakeFormular,histmiddlename);
+						fakeFactor_e[FFreg].error = rms(fakeFactor_e[FFreg].error,tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet","1 tuH",histmiddlename).nominal);
+						fakeFactor_e[FFreg]=fakeFactor_e[FFreg]/(tau_plots->calculateYield(FFreg + "_antiiso_e_vetobtagwp70_lowmet",fakeFormular,histmiddlename));
 						if(FFchart) FFchart->set(translateRegion(FFreg).Data(),"Electron",fakeFactor_e[FFreg]);
 					}
 					//tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD_e","#muFF(QCD)",(enum EColor)45,0,fakeFactor_e[FFreg].nominal);
 					if(ipart == 0){
-						fakeFactor_mu[FFreg]=tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet",fakeFormular,NPname);
-						fakeFactor_mu[FFreg].error = rms(fakeFactor_mu[FFreg].error,tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet","1 tuH",NPname).nominal);
-						fakeFactor_mu[FFreg]=fakeFactor_mu[FFreg]/(tau_plots->calculateYield(FFreg + "_antiiso_mu_vetobtagwp70_lowmet",fakeFormular,NPname));
+						fakeFactor_mu[FFreg]=tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet",fakeFormular,histmiddlename);
+						fakeFactor_mu[FFreg].error = rms(fakeFactor_mu[FFreg].error,tau_plots->calculateYield(FFreg + "_mu_vetobtagwp70_lowmet","1 tuH",histmiddlename).nominal);
+						fakeFactor_mu[FFreg]=fakeFactor_mu[FFreg]/(tau_plots->calculateYield(FFreg + "_antiiso_mu_vetobtagwp70_lowmet",fakeFormular,histmiddlename));
 						if(FFchart) FFchart->set(translateRegion(FFreg).Data(),"Muon",fakeFactor_mu[FFreg]);
 					}
 					//tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD_mu","eFF(QCD)",(enum EColor)46,0,fakeFactor_mu[FFreg].nominal);

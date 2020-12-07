@@ -1715,7 +1715,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
                 if(leps_id->size()) thefakeSF= FindNewFakeSF("NOMINAL", 0,SFname);
                 else thefakeSF= FindNewFakeSF("NOMINAL", 0,SFname);
                 weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);
-                if(taus_p4->size() >= 2) {
+                if(taus_q->size() >= 2) {
                   if(leps_id->size()) thefakeSF= FindNewFakeSF("NOMINAL", 1,SFname);
                   else thefakeSF = FindNewFakeSF("NOMINAL", 1, SFname);
                   weight *= thefakeSF.nominal + thefakeSF.error*(theNP==SFname);

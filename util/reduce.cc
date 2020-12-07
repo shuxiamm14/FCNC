@@ -31,7 +31,7 @@ int main(int argc, char const *argv[])
 	bool dofake = 0;
 	bool onlyMajorNP = 0; // set to 0 for current xTFW analysis.
 	bool applynewSF = 0; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
-	bool nominalOnly = 1;
+	bool nominalOnly = 0;
 	TString version = "v3"; //define your n-tuple version
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
@@ -250,6 +250,7 @@ int main(int argc, char const *argv[])
 			analysis->dumpeventnumber = 0;
 		}
 		if(doplot) {
+			analysis->plotNPs.push_back("NOMINAL");
 			if(!inputconfig.Contains("data")){
 				if(analysis->nominaltree == 1 && !nominalOnly){
 					//for(auto v: fakeNPlist) analysis->plotNPs.push_back(v);
@@ -258,18 +259,18 @@ int main(int argc, char const *argv[])
 							if(framework == "tthML") for(auto v: tthMLmajorNPlist) analysis->plotNPs.push_back(v);
 							else for(auto v: xTFWmajorNPlist) analysis->plotNPs.push_back(v);
 						}else{
-							if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
-							else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
+							//if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
+							//else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
 							//for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
-							for(auto v: commonNPlist) analysis->plotNPs.push_back(v);
-                                                        if(applynewSF) for(auto v: xsecNPlist) analysis->plotNPs.push_back(v);
-							for(auto v: (framework == "tthML"?tthMLfakeNPlist:xTFWfakeNPlist))
-								if(v.Contains("fakeSFNP")) analysis->plotNPs.push_back(v);
+							//for(auto v: commonNPlist) analysis->plotNPs.push_back(v);
+                                                        //for(auto v: xsecNPlist) analysis->plotNPs.push_back(v);
+							if(applynewSF)
+								for(auto v: (framework == "tthML"?tthMLfakeNPlist:xTFWfakeNPlist))
+									if(v.Contains("fakeSFNP")) analysis->plotNPs.push_back(v);
 						}
 					}
 				}
-				else analysis->plotNPs.push_back("NOMINAL");
-			}else analysis->plotNPs.push_back("NOMINAL");
+			}
 			for(auto NPs: analysis->plotNPs) printf("Plotting NPs: %s\n",NPs.Data());
 			if(applynewSF) analysis->ConfigNewFakeSF();
 			analysis->fcnc_regions = regions;

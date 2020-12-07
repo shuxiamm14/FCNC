@@ -41,9 +41,7 @@ std::vector<TString> tthMLfakeNPlist = {
 	"fakeSFNP_3prong_ptbin2_b_fake",
 	"fakeSFNP_3prong_ptbin2_w_jet_fake_os",
 	"fakeSFNP_3prong_ptbin2_w_jet_fake_ss",
-	"fakeSFNP_3prong_ptbin2_other_fake",
-	"ABCD_electron",
-	"ABCD_muon"
+	"fakeSFNP_3prong_ptbin2_other_fake"
 	//"fake_mismodelling" //mis-modelling in SS region, the data-MC difference is added to OS w-jet faking uncertainty, make_plots (2nd time) to apply.
 };
 
