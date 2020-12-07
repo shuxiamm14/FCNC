@@ -104,13 +104,13 @@ std::map<TString,variable*> getVariables(TString framework){
 		ret["t1vismass"] = new variable("t1vismass","m_{t,SM,vis}",100,50.,250.,"GeV",scale,10);
 		ret["x1fit"] = new variable("x1fit","E_{vis-#tau,1}/E_{#tau,1}",70,0.3,1.,"",1,7);
 		ret["x2fit"] = new variable("x2fit","E_{vis-#tau,2}/E_{#tau,2}",70,0.3,1.,"",1,7);
-		ret["chi2"] = new variable("chi2","#chi^2",60,-13.,17.,"",1,6);
+		ret["chi2"] = new variable("chi2","#chi^{2}",100,0.,20.,"",1,10);
 		ret["allmass"] = new variable("allmass","m_{all}",500,0.,1000.,"GeV",scale,50);
 		ret["allpz"] = new variable("allpz","P_{z,all}",500,0.,1000.,"GeV",scale,50);
 	}else{
 		ret["BDTG_train"] = new variable("BDTG_train","BDT discriminant",100,-1.,1.,"",1,10);
 		ret["BDTG_test"] = new variable("BDTG_test","BDT discriminant",100,-1.,1.,"",1,10);
-		ret["chi2"] = new variable("chi2","#chi^{2}",100,0.,55.,"",1,5);
+		ret["chi2"] = new variable("chi2","#chi^{2}",120,0.,60.,"",1,5);
 		ret["met_sigma"] = new variable("met_sigma","#sigma(E^{T}_{miss})",100,0,5,"",1,5);
 		ret["tau_pt_0"] = new variable("tau_pt_0","p_{T,#tau}",100,25.,125.,"GeV",scale,10);
 		ret["tau_pt_1"] = new variable("tau_pt_1","p_{T,sub-#tau}",100,25.,125.,"GeV",scale,10);
