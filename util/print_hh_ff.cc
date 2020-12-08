@@ -18,14 +18,14 @@ void setFF(LatexChart *chart, TH1D* ff_, string row, string column, int row_,int
   observable fakefactor;
   if(_1p){
     fakefactor.nominal =ff_->GetBinContent(row_==1?column_:column_+3);
-    fakefactor.error   =ff_->GetBinError(row_==1?column_:column_+3);
+    fakefactor.error  =ff_->GetBinError(row_==1?column_:column_+3);
     //std::cout<<"nominal: "<<fakefactor.nominal<<",error: "<<fakefactor.error<<std::endl;
-    chart->set(row,column,fakefactor);
+    chart->set(row,column,fakefactor.nominal,fakefactor.error,fakefactor.error);
   }else{//3p
     fakefactor.nominal =ff_->GetBinContent(row_==1?column_+6:column_+9);
     fakefactor.error   =ff_->GetBinError(row_==1?column_+6:column_+9);
     //std::cout<<"nominal: "<<fakefactor.nominal<<",error: "<<fakefactor.error<<std::endl;
-    chart->set(row,column,fakefactor);
+    chart->set(row,column,fakefactor.nominal,fakefactor.error,fakefactor.error);
   }
 }
 
@@ -36,10 +36,10 @@ LatexChart*  chart[9];
 TFile*   histFile =0; 
 TH1D*    FF[4]; // ss_nm ss_lnm sb_nm sb_lnm
 
-TString  readthefile=TString(PACKAGE_DIR)+"/ff_ss/";
+TString  readthefile=TString(PACKAGE_DIR)+"/ff_sys/";
 
-string column_name[4]={"","P_{T}\\in (30,40)","P_{T}\\in (40,60)","P_{T}\\in (60,500)"}; 
-string row_name[3]={"","\\lvert \\eta \\rvert \\leq 1.37","\\lvert \\eta \\rvert \\geq 1.52"}; 
+string column_name[4]={"","$30-40$ GeV","$40-60$ GeV","$60$ GeV-"}; 
+string row_name[3]={"","$\\lvert \\eta \\rvert \\leq 1.37$","$\\lvert \\eta \\rvert \\geq 1.52$"}; 
 
 // need to consistent
 std::vector<TString> ff_name={"","FF_ss_nm.root ","FF_sideband_nm.root","FF_ss_lnm.root ","FF_sideband_lnm.root"};
