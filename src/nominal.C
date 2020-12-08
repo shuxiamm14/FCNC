@@ -2441,12 +2441,8 @@ if((tausid->at(0)==1) && (tausid->at(1)==1) && ( (bjets_p4->size() == 1 && ljets
   }else if(leps_p4->size()==1 && taus_p4->size()){
   	TString region_name = "reg1l";
   	if(taus_p4->size()) region_name = region_name + char('0'+taus_p4->size()) + "tau";
-  	auto min = [](auto a, auto b) {
-  		if(a<b) return (typeof(b))a;
-  		return b;
-  	};
-  	if(bjets_p4->size()) region_name = region_name + char('0'+min(bjets_p4->size(),2)) + "b";
-  	if(taus_p4->size() ==1 && ljets_p4->size()) region_name = region_name + char('0'+min(ljets_p4->size(),3)) + "j";
+  	if(bjets_p4->size()) region_name = region_name + char('0'-max(-bjets_p4->size(),-2)) + "b";
+  	if(taus_p4->size() ==1 && ljets_p4->size()) region_name = region_name + char('0'-max(-ljets_p4->size(),-3)) + "j";
   	else if(taus_p4->size() ==2) region_name = region_name+"nj";
   	region_name+= taus_q->at(0)*(taus_q->size()==1?-leps_id->at(0):taus_q->at(1)) < 0? "_os" : "_ss";
         if(!leps_iso->at(0) && taus_p4->size()==1) region_name+="_antiiso";
