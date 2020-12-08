@@ -223,6 +223,7 @@ int main(int argc, char const *argv[])
       testodd->Draw("same");
       l1.Draw();
       TString framework = (catname.Contains("2mtau") || catname.Contains("2ltau") || catname.Contains("1mtau1ltau")) ? "xTFW" : "tthML";
+      gSystem->Exec(("mkdir -p "+figdir + "/" + framework + "/BDT/").Data()) ;
       c1.SaveAs(figdir + "/" + framework + "/BDT/roc_" + catname + ".pdf");
    }
    return 0;
