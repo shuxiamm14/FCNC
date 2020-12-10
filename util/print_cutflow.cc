@@ -79,11 +79,12 @@ int main(int argc, char const *argv[])
 			charts.push_back(chart);
 			map<TString,observable> bkgyield;
 			for(auto sample : samples){
-
+				bool isSignal = 0;
 				TFile *inputfile = 0;
 				TH1D *cutflow_hist = 0;
 				TString filename = "cutflow_" + mc_campaigns[icamp] + "_";
 				if(signalmap.find(sample.name) != signalmap.end()){
+					isSignal = 1;
 					for(auto subsamp : signalmap.at(sample.name)){
 						inputfile = new TFile(filename + subsamp + ".root");
 						TH1D *cutflowhist = (TH1D*)(inputfile->Get(region[ireg]));
@@ -120,6 +121,7 @@ int main(int argc, char const *argv[])
 					TString cut_name = xaxis->GetBinLabel(ibin);
 					if(cut_name == "") break;
 					if(cut_name == "PLV for lephad") continue;
+					if(sample.name != "data" && !isSignal) bkgyield[cut_name] += observable(cutflow_hist->GetBinContent(ibin), cutflow_hist->GetBinError(ibin));
 					if(sample.name != "data") bkgyield[cut_name] += observable(cutflow_hist->GetBinContent(ibin), cutflow_hist->GetBinError(ibin));
 					if(cutflow_hist->GetBinContent(ibin)) chart->set(cut_name.Data(), sample.title.Data(), cutflow_hist->GetBinContent(ibin), cutflow_hist->GetBinError(ibin));
 				}
