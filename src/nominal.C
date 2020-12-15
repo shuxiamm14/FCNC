@@ -336,6 +336,7 @@ void nominal::initMVA(TString region){
        tmpreader->AddVariable("wmass",&wmass);
     }
     if(region.Contains("1l1tau1b3j_os"))  tmpreader->AddVariable("chi2",&chi2);
+    if(region.Contains("2mtau1b3j"))  dataloader->AddVariable("t2mass",&t2mass);
   }else if(region.Contains("1l2tau1") || region.Contains("2lSS")){
     tmpreader->AddVariable("t1vismass",&t1vismass);
     tmpreader->AddVariable("mtaujmin",&mtaujmin);
