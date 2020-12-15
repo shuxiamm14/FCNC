@@ -253,11 +253,12 @@ bool hadhadtree::passRegionCut(){
 
   drtautau = taus_p4->at(0)->DeltaR(*(taus_p4->at(1)));
 
+  /*
   for(auto bjets: *bjets_p4){
     if(bjets->Pt() < 30 || abs(bjets->Eta()) > 2.5) return false;
   }
   cut_flow.fill("bjet pt>30 eta<2.5");
-
+*/
   //if(!isData && samplename.Contains("fcnc") && !(abs(taus_matched_pdgId->at(0)) == 15 && abs(taus_matched_pdgId->at(1)) == 15)) return false;
   //cut_flow.fill("Only real tau");
   return true;
@@ -275,6 +276,7 @@ void hadhadtree::prepare(){
     ditau_coll_approx_x0=ditau_coll_approx_x0_;
     ditau_coll_approx_x1=ditau_coll_approx_x1_;
     met_sumet=met_sumet_;
+    /*
     leadingJetPt=jet_0_p4->Pt();
     subleadingJetPt=jet_1_p4->Pt();
     ditau_dr_=ditau_dr;
@@ -288,7 +290,7 @@ void hadhadtree::prepare(){
     ditau_jet_0_delta_rapidity=fabs(ditau_p4->Rapidity() - jet_0_p4->Rapidity());
     ditau_jet_2_deta=fabs(ditau_p4->Eta() - jet_2_p4->Eta());
     ditau_jet_1_deta=fabs(ditau_p4->Eta() - jet_1_p4->Eta());
-    ditau_jet_0_deta=fabs(ditau_p4->Eta() - jet_0_p4->Eta());
+    ditau_jet_0_deta=fabs(ditau_p4->Eta() - jet_0_p4->Eta());*/
     tau1ntracks=tau_1_n_charged_tracks;//!!
     tau0ntracks=tau_0_n_charged_tracks;//!! 
     ditau_mmc_mlm_M=ditau_mmc_mlm_m;
@@ -329,13 +331,14 @@ bool hadhadtree::passBasicCut(){
   cut_flow.fill("ntrack = 1,3");
 
   if(!tau_0_ele_bdt_medium_retuned || !tau_1_ele_bdt_medium_retuned) return false;
+  //if(!tau_0_ele_bdt_loose_retuned || !tau_1_ele_bdt_loose_retuned) return false;
   cut_flow.fill("ele veto");
 
   if(jet_2_p4->Pt() < 1e-5) return false;
   cut_flow.fill("jet num>=3");
 
-  //if(tau_0_jet_rnn_score_trans <=0.01||tau_1_jet_rnn_score_trans <=0.01) return false;
-  //cut_flow.fill("tau rnn score>=0.01");
+  if(tau_0_jet_rnn_score_trans <0.01||tau_1_jet_rnn_score_trans <0.01) return false;
+  cut_flow.fill("tau rnn score>=0.01");
 
   return true;
 }
@@ -359,7 +362,9 @@ void hadhadtree::calcGeneralWeight(){
     tau_0_NOMINAL_TauEffSF_reco*
     tau_1_NOMINAL_TauEffSF_reco*
     tau_0_NOMINAL_TauEffSF_selection*
-    tau_1_NOMINAL_TauEffSF_selection;
+    tau_1_NOMINAL_TauEffSF_selection*
+    tau_0_NOMINAL_TauEffSF_LooseEleBDT_electron*
+    tau_1_NOMINAL_TauEffSF_LooseEleBDT_electron;
   float tauIDSF=1;
   if(tau_0_jet_rnn_medium==1)      tauIDSF*=tau_0_NOMINAL_TauEffSF_JetRNNmedium;  // m
   else if(tau_0_jet_rnn_loose==1)  tauIDSF*=tau_0_NOMINAL_TauEffSF_JetRNNloose;  // nm

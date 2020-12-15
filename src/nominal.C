@@ -14,8 +14,8 @@ float nominal::read_para(float mmc){
     return param.GetBinContent(bin);
 }
 
-TH1D nominal::FF_SS_1=create1D_("FF_sideband_nm.root","outhist1p");
-TH1D nominal::FF_SS_2=create1D_("FF_sideband_lnm.root","outhist1p"); 
+TH1D nominal::FF_SS_1=create1D_("FF_ss_nm.root","outhist1p");
+TH1D nominal::FF_SS_2=create1D_("FF_ss_lnm.root","outhist1p"); 
 
 float nominal::read_ss_fake_nm(int index_bin){
   return FF_SS_1.GetBinContent(index_bin);
@@ -177,8 +177,8 @@ float nominal::read_hd(float tau1pt, float tau2pt, float tau1eta, float tau2eta,
 
 TH2D nominal::fake_1p_lnm=create2D("FFs_lephad_W_lnm_g40.root","FF_WCR_Presel_All_Comb_SLT_1prong");
 TH2D nominal::fake_3p_lnm=create2D("FFs_lephad_W_lnm_g40.root","FF_WCR_Presel_All_Comb_SLT_3prong");
-TH2D nominal::fake_1p_nm =create2D("FFs_lephad_W_nm_g40.root","FF_WCR_Presel_All_Comb_SLT_1prong");
-TH2D nominal::fake_3p_nm =create2D("FFs_lephad_W_nm_g40.root","FF_WCR_Presel_All_Comb_SLT_3prong");
+TH2D nominal::fake_1p_nm =create2D("FFs_hadhad_muOnly.root","FF_WCR_Presel_All_Comb_SLTandTLT_1prong");
+TH2D nominal::fake_3p_nm =create2D("FFs_hadhad_muOnly.root","FF_WCR_Presel_All_Comb_SLTandTLT_3prong");
 
 float nominal::read_fake_lnm(float taupt, float taueta, int tauntracks, int syst){
     if(tauntracks == 1){//FFs_lephad_W_lnm_g40.root FF_WCR_Presel_All_Comb_SLT_1prong
@@ -1723,27 +1723,8 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
     if(reduce == 2) {
       if(leps_p4->size()==0){
         njetNumber=ljets_p4->size()+bjets_p4->size(); 
-        /*std::cout<<"tau0pt: "<<taus_p4->at(0)->Pt()<<",tau1pt: "<<taus_p4->at(1)->Pt()<<", tau0eta: "<<taus_p4->at(0)->Eta()<<", tau1eta: "<<taus_p4->at(1)->Eta()<<",tau0ntracks:  "<<tau0ntracks<<",tau1ntracks:"<<tau1ntracks<<",tau0id:"<<tausid->at(0)<<",tau1id:"<<tausid->at(1)<<std::endl;
-        float xxxx=_read_ff_single_fake(taus_p4->at(0)->Pt(),taus_p4->at(1)->Pt(),abs(taus_p4->at(0)->Eta()),abs(taus_p4->at(1)->Eta()),tau0ntracks,tau1ntracks,tausid->at(0),tausid->at(1)); 
-        std::cout<<"xxx:"<<xxxx<<std::endl;
-        fake_weight=xxxx;
-        */
         fake_weight=read_sys_fakefactors(taus_p4->at(0)->Pt(),taus_p4->at(1)->Pt(),abs(taus_p4->at(0)->Eta()),abs(taus_p4->at(1)->Eta()),tau0ntracks,tau1ntracks,tausid->at(0),tausid->at(1),ditau_mmc_mlm_M,0);
-        //std::cout<<"fake_weight:"<<fake_weight<<std::endl;
-        fake_weight_a=read_sys_fakefactors(taus_p4->at(0)->Pt(),taus_p4->at(1)->Pt(),abs(taus_p4->at(0)->Eta()),abs(taus_p4->at(1)->Eta()),tau0ntracks,tau1ntracks,tausid->at(0),tausid->at(1),ditau_mmc_mlm_M,1);
-        //std::cout<<"fake_weight_a:"<<fake_weight_a<<std::endl;
-        fake_weight_b=read_sys_fakefactors(taus_p4->at(0)->Pt(),taus_p4->at(1)->Pt(),abs(taus_p4->at(0)->Eta()),abs(taus_p4->at(1)->Eta()),tau0ntracks,tau1ntracks,tausid->at(0),tausid->at(1),ditau_mmc_mlm_M,2);
-        //std::cout<<"fake_weight_b:"<<fake_weight_b<<std::endl;
-        fake_weight_c=read_sys_fakefactors(taus_p4->at(0)->Pt(),taus_p4->at(1)->Pt(),abs(taus_p4->at(0)->Eta()),abs(taus_p4->at(1)->Eta()),tau0ntracks,tau1ntracks,tausid->at(0),tausid->at(1),ditau_mmc_mlm_M,3);
-        //std::cout<<"fake_weight_c:"<<fake_weight_c<<std::endl;
-        fake_weight_d=read_sys_fakefactors(taus_p4->at(0)->Pt(),taus_p4->at(1)->Pt(),abs(taus_p4->at(0)->Eta()),abs(taus_p4->at(1)->Eta()),tau0ntracks,tau1ntracks,tausid->at(0),tausid->at(1),ditau_mmc_mlm_M,4);
-        //std::cout<<"fake_weight_d:"<<fake_weight_d<<std::endl;
-        fake_weight_e=read_sys_fakefactors(taus_p4->at(0)->Pt(),taus_p4->at(1)->Pt(),abs(taus_p4->at(0)->Eta()),abs(taus_p4->at(1)->Eta()),tau0ntracks,tau1ntracks,tausid->at(0),tausid->at(1),ditau_mmc_mlm_M,5);
-        //std::cout<<"fake_weight_e:"<<fake_weight_e<<std::endl;
-        fake_weight_f=read_sys_fakefactors(taus_p4->at(0)->Pt(),taus_p4->at(1)->Pt(),abs(taus_p4->at(0)->Eta()),abs(taus_p4->at(1)->Eta()),tau0ntracks,tau1ntracks,tausid->at(0),tausid->at(1),ditau_mmc_mlm_M,6);
-        //std::cout<<"fake_weight_f:"<<fake_weight_f<<std::endl;
-        fake_weight_g=read_sys_fakefactors(taus_p4->at(0)->Pt(),taus_p4->at(1)->Pt(),abs(taus_p4->at(0)->Eta()),abs(taus_p4->at(1)->Eta()),tau0ntracks,tau1ntracks,tausid->at(0),tausid->at(1),ditau_mmc_mlm_M,7);
-        //std::cout<<"fake_weight_g:"<<fake_weight_g<<std::endl;
+        
       }
       cut_flow.fill("this region");
       if(!passRegionCut()) continue;
@@ -1806,9 +1787,9 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         ttvismass = (*taus_p4->at(0) + *tau2).M();
         drtautau = taus_p4->at(0)->DeltaR(*tau2);
         if(belong_regions.have("2ltau")||belong_regions.have("2mtau")||belong_regions.have("1l1mtau")||belong_regions.have("1lnmtau1mtau")||belong_regions.have("1mtau1lnmtau")||belong_regions.have("2ttau")||belong_regions.have("1mtau1ltau")||belong_regions.have("1ltau1mtau")||belong_regions.have("1ltau1ntau")||belong_regions.have("1ntau1ltau")){
-       //   if(ditau_coll_approx_x0<=0.1||ditau_coll_approx_x0>=1.4) continue;
-       //   if(ditau_coll_approx_x1<=0.1||ditau_coll_approx_x1>=1.4) continue; 
-       //   cut_flow.fill("x0x1 cut");
+          //if(ditau_coll_approx_x0<=0.1||ditau_coll_approx_x0>=1.7) continue;
+          //if(ditau_coll_approx_x1<=0.1||ditau_coll_approx_x1>=1.7) continue; 
+          //cut_flow.fill("x0x1 cut");
           
           if(ttvismass < 50*GeV) continue;
           cut_flow.fill("$m_{\\tau\\tau,vis}>50$");
@@ -1948,6 +1929,9 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           }
           x1fit = 1 - neutrinos_p4->at(0)->E() / (*(taus_p4->at(0)) + *neutrinos_p4->at(0)).E();
           x2fit = 1 - neutrinos_p4->at(1)->E() / (*(tau2) + *neutrinos_p4->at(1)).E();
+          if(tautaumass>150*GeV)  continue;
+          if(tautaumass<100*GeV)  continue;
+          cut_flow.fill("100GeV<$m_{\\tau\\tau}<150GeV$");
         }
         if(leps_p4->size()==0){
           tauvis0E=taus_p4->at(0)->E();
@@ -2259,11 +2243,11 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
 
               if(leps_id->size()==0){ //hadhad
                 if(index==0){//NIOMINAL
-                  //weight=fake_weight==0.?weights->at(0):abs(fake_weight)*weights->at(0);
-                  weight=weights->at(0); //open this line for measure ff
+                  weight=fake_weight==0.?weights->at(0):abs(fake_weight)*weights->at(0);
+                  //weight=weights->at(0); //open this line for measure ff
                 }else{ // not nominal,  NOMINAL*(i-th)*fakefactor 
-                  //weight=fake_weight==0.?weights->at(0)*weights->at(index):abs(fake_weight)*weights->at(0)*weights->at(index);
-                  weight=weights->at(0); // //open this line for measure ff
+                  weight=fake_weight==0.?weights->at(0)*weights->at(index):abs(fake_weight)*weights->at(0)*weights->at(index);
+                  //weight=weights->at(0); // //open this line for measure ff
                 }
               }
             }
@@ -2271,12 +2255,12 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             // ff_ss
             //std::cout<<"region: "<<region<<std::endl;
             //std::cout<<"leading_bin: "<<leading_bin<<", subleading_bin:"<<subleading_bin<<std::endl;
-            if(region.Contains("1mtau1ltau")) weight=weights->at(0)*read_ss_fake_nm(subleading_bin); //  leading medium          subleading not-medium
+            /*if(region.Contains("1mtau1ltau")) weight=weights->at(0)*read_ss_fake_nm(subleading_bin); //  leading medium          subleading not-medium
             if(region.Contains("1ltau1mtau")) weight=weights->at(0)*read_ss_fake_nm(leading_bin);    //  subleading medium       leading not-medium
             if(region.Contains("1ltau1ntau")) weight=weights->at(0)* 1/2*read_ss_fake_lnm(leading_bin)*read_ss_fake_nm(subleading_bin); // leading loose-not-medium        subleading not loose
             if(region.Contains("1ntau1ltau")) weight=weights->at(0)*1/2*read_ss_fake_lnm(leading_bin)*read_ss_fake_nm(subleading_bin); // leading not loose               subleading loose-not-medium    
             if(region.Contains("2ltau")) weight=weights->at(0)*1/2*(read_ss_fake_nm(leading_bin)*read_ss_fake_lnm(subleading_bin)+read_ss_fake_lnm(leading_bin)*read_ss_fake_nm(subleading_bin)); // leading subleading loose-not-medium
-            //std::cout<<"weight before ff_ss: "<<weights->at(0)<<", weight after ff_ss: "<<weight<<std::endl;
+            *///std::cout<<"weight before ff_ss: "<<weights->at(0)<<", weight after ff_ss: "<<weight<<std::endl;
             //if(!nominaltree) weight=fake_weight==0.?weights->at(0):abs(fake_weight)*weights->at(0);// tree NP
             if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, theNP);
             //else if(!region.Contains("tau")) fill_notau(region, sample, theNP);
@@ -2286,15 +2270,16 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           }
         }else{ //data
             // ff_ss
-            //weight=fake_weight==0.?weights->at(0):abs(fake_weight)*weights->at(0);;//aim to data
+            weight=fake_weight==0.?weights->at(0):abs(fake_weight)*weights->at(0);;//aim to data
             //std::cout<<"region: "<<region<<std::endl;
             //std::cout<<"leading_bin: "<<leading_bin<<", subleading_bin:"<<subleading_bin<<std::endl;
-            if(region.Contains("1mtau1ltau")) weight=weights->at(0)*read_ss_fake_nm(subleading_bin); //  leading medium          subleading not-medium
+            
+            /*if(region.Contains("1mtau1ltau")) weight=weights->at(0)*read_ss_fake_nm(subleading_bin); //  leading medium          subleading not-medium
             if(region.Contains("1ltau1mtau")) weight=weights->at(0)*read_ss_fake_nm(leading_bin);    //  subleading medium       leading not-medium
             if(region.Contains("1ltau1ntau")) weight=weights->at(0)* 1/2*read_ss_fake_lnm(leading_bin)*read_ss_fake_nm(subleading_bin); // leading loose-not-medium        subleading not loose
             if(region.Contains("1ntau1ltau")) weight=weights->at(0)*1/2*read_ss_fake_lnm(leading_bin)*read_ss_fake_nm(subleading_bin); // leading not loose               subleading loose-not-medium    
             if(region.Contains("2ltau")) weight=weights->at(0)*1/2*(read_ss_fake_nm(leading_bin)*read_ss_fake_lnm(subleading_bin)+read_ss_fake_lnm(leading_bin)*read_ss_fake_nm(subleading_bin)); // leading subleading loose-not-medium
-            //std::cout<<"weight before ff_ss: "<<weights->at(0)<<", weight after ff_ss: "<<weight<<std::endl;
+            *///std::cout<<"weight before ff_ss: "<<weights->at(0)<<", weight after ff_ss: "<<weight<<std::endl;
           if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, "NOMINAL");
           //else if(!region.Contains("tau")) fill_notau(region, sample, "NOMINAL");
           else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0))) (fcnc?fcnc_plots:fake_plots)->fill_hist("data",region,"NOMINAL");

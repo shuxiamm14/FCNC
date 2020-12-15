@@ -338,6 +338,7 @@ public :
   float      leadingJetPt;
   float      subleadingJetPt;
   float      fake_weight;
+  // need to delete
   float      fake_weight_a;
   float      fake_weight_b;
   float      fake_weight_c;
@@ -345,21 +346,21 @@ public :
   float      fake_weight_e;
   float      fake_weight_f;
   float      fake_weight_g;
-  Float_t  ditau_dr_;
-  Float_t  ditau_dphi_;
-  Float_t  ditau_deta_;
-  Double_t ditau_higgspt_;
-  Float_t  ditau_met_centrality_;
-  Float_t  ditau_rapidity;
-  Float_t  ditau_jet_2_delta_rapidity;
-  Float_t  ditau_jet_1_delta_rapidity;
-  Float_t  ditau_jet_0_delta_rapidity;
-  Float_t  ditau_jet_2_deta;
-  Float_t  ditau_jet_1_deta;
-  Float_t  ditau_jet_0_deta;
-  int      tau1ntracks;
-  int      tau0ntracks;
-  float    ditau_mmc_mlm_M;
+   Float_t  ditau_dr_;
+   Float_t  ditau_dphi_;
+   Float_t  ditau_deta_;
+   Double_t ditau_higgspt_;
+   Float_t  ditau_met_centrality_;
+   Float_t  ditau_rapidity;
+   Float_t  ditau_jet_2_delta_rapidity;
+   Float_t  ditau_jet_1_delta_rapidity;
+   Float_t  ditau_jet_0_delta_rapidity;
+   Float_t  ditau_jet_2_deta;
+   Float_t  ditau_jet_1_deta;
+   Float_t  ditau_jet_0_deta;
+   int      tau1ntracks;
+   int      tau0ntracks;
+   float    ditau_mmc_mlm_M;
   
   // calculate FF_SS
   int subleading_index_bin;
@@ -376,9 +377,11 @@ public :
   static TH1D FF_SS_1;//nm
   static TH1D FF_SS_2;//lnm
 
+
+ // write a function to retreve the ff root file once to store them in a array,delete
   static TH1D create1D_(std::string root_name,std::string tree_name)
   { 
-    std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/FCNC/final_project/FCNCProject/FCNCAnalysis/ff_sys/"+root_name;
+    std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/final/FCNCProject/FCNCAnalysis/ff_sys/"+root_name;
     TFile *File_ = TFile::Open(full_name.c_str());
     TH1D *hist1d = 0;
     File_->GetObject(tree_name.c_str(),hist1d);
@@ -386,7 +389,7 @@ public :
     hist1d->SetDirectory(0);  //It crashes without this line!
     return *hist1d;
   }
-
+ // useless,delete
   static TH1F create1D(std::string root_name,std::string tree_name)
   { 
     std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/hhfake/";
