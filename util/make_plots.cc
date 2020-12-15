@@ -256,6 +256,15 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
         "reg1ntau1ltau1b3jss",
         "reg2ltau1b2jss",
         "reg2ltau1b3jss",
+		//new
+		"reg1lnmtau1mtau1b2jss",
+        "reg1lnmtau1mtau1b2jos",
+        "reg1lnmtau1mtau1b3jss",
+        "reg1lnmtau1mtau1b3jos",
+        "reg1mtau1lnmtau1b2jss",
+        "reg1mtau1lnmtau1b2jos",
+        "reg1mtau1lnmtau1b3jss",
+        "reg1mtau1lnmtau1b3jos",
         //"reg2mtau1b5jos",
         //"reg2mtau1b5jss",
         //"reg1mtau1ltau1b5jos",
@@ -757,12 +766,16 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
                 std::vector<TString> tmp_regions_={"data","smhiggs","wjet","diboson","ztautau","top","other"};
 				if(showFake){
                     if(mergeprong==1){
-                        tau_plots->FakeFactorMethod("reg2mtau1b2jos","reg1mtau1ltau1b2jos","reg1ltau1mtau1b2jos","reg1ltau1ntau1b2jos","reg1ntau1ltau1b2jos","reg2ltau1b2jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
+                        /*tau_plots->FakeFactorMethod("reg2mtau1b2jos","reg1mtau1ltau1b2jos","reg1ltau1mtau1b2jos","reg1ltau1ntau1b2jos","reg1ntau1ltau1b2jos","reg2ltau1b2jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
                         tau_plots->FakeFactorMethod("reg2mtau1b3jos","reg1mtau1ltau1b3jos","reg1ltau1mtau1b3jos","reg1ltau1ntau1b3jos","reg1ntau1ltau1b3jos","reg2ltau1b3jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
                         tau_plots->FakeFactorMethod("reg2mtau1b3jss","reg1mtau1ltau1b3jss","reg1ltau1mtau1b3jss","reg1ltau1ntau1b3jss","reg1ntau1ltau1b3jss","reg2ltau1b3jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
                         tau_plots->FakeFactorMethod("reg2mtau1b2jss","reg1mtau1ltau1b2jss","reg1ltau1mtau1b2jss","reg1ltau1ntau1b2jss","reg1ntau1ltau1b2jss","reg2ltau1b2jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
-                        //tau_plots->FakeFactorMethod("reg2mtau1b5jos","reg1mtau1ltau1b5jos","reg1ltau1mtau1b5jos","reg1ltau1ntau1b5jos","reg1ntau1ltau1b5jos","reg2ltau1b5jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
-                    }else{
+                        *///tau_plots->FakeFactorMethod("reg2mtau1b5jos","reg1mtau1ltau1b5jos","reg1ltau1mtau1b5jos","reg1ltau1ntau1b5jos","reg1ntau1ltau1b5jos","reg2ltau1b5jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
+                        tau_plots->FakeFactorMethod("reg2mtau1b2jos","reg1mtau1lnmtau1b2jos","reg1lnmtau1mtau1b2jos","reg2ltau1b2jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
+                        tau_plots->FakeFactorMethod("reg2mtau1b3jos","reg1mtau1lnmtau1b3jos","reg1lnmtau1mtau1b3jos","reg2ltau1b3jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
+                        tau_plots->FakeFactorMethod("reg2mtau1b3jss","reg1mtau1lnmtau1b3jss","reg1lnmtau1mtau1b3jss","reg2ltau1b3jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
+                        tau_plots->FakeFactorMethod("reg2mtau1b2jss","reg1mtau1lnmtau1b2jss","reg1lnmtau1mtau1b2jss","reg2ltau1b2jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42); 
+					}else{
 	                    tau_plots->FakeFactorMethod("reg2mtau1b2jos_3prong_vetobtagwp70","reg1mtau1ltau1b2jos_3prong_vetobtagwp70","reg1ltau1mtau1b2jos_3prong_vetobtagwp70","reg1ltau1ntau1b2jos_3prong_vetobtagwp70","reg1ntau1ltau1b2jos_3prong_vetobtagwp70","reg2ltau1b2jos_3prong_vetobtagwp70",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
                         tau_plots->FakeFactorMethod("reg2mtau1b3jos_3prong_vetobtagwp70","reg1mtau1ltau1b3jos_3prong_vetobtagwp70","reg1ltau1mtau1b3jos_3prong_vetobtagwp70","reg1ltau1ntau1b3jos_3prong_vetobtagwp70","reg1ntau1ltau1b3jos_3prong_vetobtagwp70","reg2ltau1b3jos_3prong_vetobtagwp70",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
                         tau_plots->FakeFactorMethod("reg2mtau1b3jss_3prong_vetobtagwp70","reg1mtau1ltau1b3jss_3prong_vetobtagwp70","reg1ltau1mtau1b3jss_3prong_vetobtagwp70","reg1ltau1ntau1b3jss_3prong_vetobtagwp70","reg1ntau1ltau1b3jss_3prong_vetobtagwp70","reg2ltau1b3jss_3prong_vetobtagwp70",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);

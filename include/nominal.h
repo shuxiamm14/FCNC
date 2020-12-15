@@ -452,6 +452,10 @@ public :
   float read_fake(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id, int syst);
 
   std::vector<float> fake_factor_sys_vec;
+
+  // new fake factor
+  float newfakeweight=0;
+
   
 };
 #endif

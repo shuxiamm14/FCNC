@@ -1726,6 +1726,11 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         njetNumber=ljets_p4->size()+bjets_p4->size(); 
         fake_weight=read_sys_fakefactors(taus_p4->at(0)->Pt(),taus_p4->at(1)->Pt(),abs(taus_p4->at(0)->Eta()),abs(taus_p4->at(1)->Eta()),tau0ntracks,tau1ntracks,tausid->at(0),tausid->at(1),ditau_mmc_mlm_M,0);
         
+        if(belong_regions.have("1lnmtau1mtau")) newfakeweight=read_fake_lnm(taus_p4->at(0)->Pt(), abs(taus_p4->at(0)->Eta()), tau0ntracks,0); //  leading medium          subleading loose-not-medium
+        if(belong_regions.have("1mtau1lnmtau")) newfakeweight=read_fake_lnm(taus_p4->at(1)->Pt(), abs(taus_p4->at(0)->Eta()), tau1ntracks,0);    //  subleading medium       leading loose-not-medium
+        if(belong_regions.have("2ltau"))        newfakeweight=read_fake_lnm(taus_p4->at(0)->Pt(), abs(taus_p4->at(0)->Eta()), tau0ntracks,0)*read_fake_lnm(taus_p4->at(1)->Pt(), abs(taus_p4->at(0)->Eta()), tau1ntracks,0); // leading subleading loose-not-medium
+        std::cout<<"newff:"<<newfakeweight<<std::endl;
+
       }
       cut_flow.fill("this region");
       if(!passRegionCut()) continue;
@@ -2246,10 +2251,12 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
 
               if(leps_id->size()==0){ //hadhad
                 if(index==0){//NIOMINAL
-                  weight=fake_weight==0.?weights->at(0):abs(fake_weight)*weights->at(0);
+                  //weight=fake_weight==0.?weights->at(0):abs(fake_weight)*weights->at(0);
+                  weight=newfakeweight==0?weights->at(0):abs(newfakeweight)*weights->at(0);
                   //weight=weights->at(0); //open this line for measure ff
                 }else{ // not nominal,  NOMINAL*(i-th)*fakefactor 
-                  weight=fake_weight==0.?weights->at(0)*weights->at(index):abs(fake_weight)*weights->at(0)*weights->at(index);
+                  //weight=fake_weight==0.?weights->at(0)*weights->at(index):abs(fake_weight)*weights->at(0)*weights->at(index);
+                   weight=newfakeweight==0?weights->at(0)*weights->at(index):abs(newfakeweight)*weights->at(0)*weights->at(index);
                   //weight=weights->at(0); // //open this line for measure ff
                 }
               }
@@ -2273,7 +2280,8 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           }
         }else{ //data
             // ff_ss
-            weight=fake_weight==0.?weights->at(0):abs(fake_weight)*weights->at(0);;//aim to data
+            //weight=fake_weight==0.?weights->at(0):abs(fake_weight)*weights->at(0);;//aim to data
+            weight=newfakeweight==0?weights->at(0):abs(newfakeweight)*weights->at(0);
             //std::cout<<"region: "<<region<<std::endl;
             //std::cout<<"leading_bin: "<<leading_bin<<", subleading_bin:"<<subleading_bin<<std::endl;
             
