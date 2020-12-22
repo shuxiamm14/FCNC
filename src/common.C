@@ -86,7 +86,7 @@ std::map<TString,variable*> getVariables(TString framework){
 	if(framework == "xTFW"){
 		ret["BDTG_train"] = new variable("BDTG_train","BDT discriminant",100,-1.,1.,"",1,10);
 		ret["BDTG_test"] = new variable("BDTG_test","BDT discriminant",100,-1.,1.,"",1,10);
-		ret["tau_pt_0"] = new variable("tau_pt_0","p_{T,lead-#tau}",100,40.,140.,"GeV",scale,10);
+		ret["tau_pt_0"] = new variable("tau_pt_0","p_{T,lead-#tau}",90,40.,130.,"GeV",scale,10);
 		ret["tau_pt_1"] = new variable("tau_pt_1","p_{T,sublead-#tau}",100,30.,80.,"GeV",scale,10);
 		ret["etmiss"] = new variable("etmiss","E^{T}_{miss}",100,15.,115.,"GeV",scale,10);
 		ret["dphitauetmiss"] = new variable("dphitauetmiss","#Delta#phi(#tau#tau,P^{T}_{miss})",60,0.,3.,"",1,6);

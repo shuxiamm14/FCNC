@@ -2287,20 +2287,20 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
                 if(index==0){//NIOMINAL
                   //weight=fake_weight==0.?weights->at(0):abs(fake_weight)*weights->at(0);
                   //weight=newfakeweight==0?weights->at(0):abs(newfakeweight)*weights->at(0);//lnm
-                  weight=weights->at(0); //open this line for measure ff
-                  //weight=nmOnlyfakeweight==0?weights->at(0):abs(nmOnlyfakeweight)*weights->at(0);
+                  //weight=weights->at(0); //open this line for measure ff
+                  weight=nmOnlyfakeweight==0?weights->at(0):abs(nmOnlyfakeweight)*weights->at(0);
                 }else{ // not nominal,  NOMINAL*(i-th)*fakefactor 
                   //weight=fake_weight==0.?weights->at(0)*weights->at(index):abs(fake_weight)*weights->at(0)*weights->at(index);
                   //weight=newfakeweight==0?weights->at(0)*weights->at(index):abs(newfakeweight)*weights->at(0)*weights->at(index);//lnm
-                  weight=weights->at(0); // //open this line for measure ff
-                  //weight=nmOnlyfakeweight==0?weights->at(0)*weights->at(index):abs(nmOnlyfakeweight)*weights->at(0)*weights->at(index);
+                  //weight=weights->at(0); // //open this line for measure ff
+                  weight=nmOnlyfakeweight==0?weights->at(0)*weights->at(index):abs(nmOnlyfakeweight)*weights->at(0)*weights->at(index);
                   
                 }
               }
             }
            
 
-            if(region.Contains("1mtau1ltau1b")) weight=weights->at(0)*read_ss_fake_nm(subleading_bin); 
+            //if(region.Contains("1mtau1ltau1b")) weight=weights->at(0)*read_ss_fake_nm(subleading_bin); 
             // ff_ss
             //std::cout<<"region: "<<region<<std::endl;
             //std::cout<<",leading_bin: "<<leading_bin<<", subleading_bin:"<<subleading_bin<<"read_ss_fake_nm(subleading_bin):"<<read_ss_fake_nm(subleading_bin)<<std::endl;
@@ -2311,7 +2311,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             if(region.Contains("2ltau")) weight=weights->at(0)*1/2*(read_ss_fake_nm(leading_bin)*read_ss_fake_lnm(subleading_bin)+read_ss_fake_lnm(leading_bin)*read_ss_fake_nm(subleading_bin)); // leading subleading loose-not-medium
             *///std::cout<<"weight before ff_ss: "<<weights->at(0)<<", weight after ff_ss: "<<weight<<std::endl;
             //if(!nominaltree) weight=fake_weight==0.?weights->at(0):abs(fake_weight)*weights->at(0);// tree NP
-            std::cout<<"weight before ff_ss: "<<weights->at(0)<<", weight after ff_ss: "<<weight<<std::endl;
+            //std::cout<<"weight before ff_ss: "<<weights->at(0)<<", weight after ff_ss: "<<weight<<std::endl;
             if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, theNP);
             //else if(!region.Contains("tau")) fill_notau(region, sample, theNP);
             else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0))) {
@@ -2322,11 +2322,11 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             // ff_ss
             //weight=fake_weight==0.?weights->at(0):abs(fake_weight)*weights->at(0);;//aim to data
             //weight=newfakeweight==0?weights->at(0):abs(newfakeweight)*weights->at(0);// lnm
-            weight=weights->at(0);
-            //weight=nmOnlyfakeweight==0?weights->at(0):abs(nmOnlyfakeweight)*weights->at(0);
+            //weight=weights->at(0);
+            weight=nmOnlyfakeweight==0?weights->at(0):abs(nmOnlyfakeweight)*weights->at(0);
             //std::cout<<"region: "<<region<<std::endl;
             //std::cout<<"leading_bin: "<<leading_bin<<", subleading_bin:"<<subleading_bin<<std::endl;
-            if(region.Contains("1mtau1ltau1b")) weight=weights->at(0)*read_ss_fake_nm(subleading_bin); 
+            //if(region.Contains("1mtau1ltau1b")) weight=weights->at(0)*read_ss_fake_nm(subleading_bin); 
             //std::cout<<"weight:"<<weight<<",leading_bin: "<<leading_bin<<", subleading_bin:"<<subleading_bin<<"read_ss_fake_nm(subleading_bin):"<<read_ss_fake_nm(subleading_bin)<<std::endl;
             //if(region.Contains("1mtau1ltau")) weight=weights->at(0)*read_ss_fake_nm(subleading_bin); //  leading medium          subleading not-medium
             /*if(region.Contains("1ltau1mtau")) weight=weights->at(0)*read_ss_fake_nm(leading_bin);    //  subleading medium       leading not-medium

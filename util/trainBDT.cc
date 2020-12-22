@@ -90,11 +90,19 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
 
    TChain* datatreess = 0;
    TChain* mctreess =0;
-   bool useSS = framework == "xTFW" || region.Contains("reg1l2tau1bnj");
+   //bool useSS = framework == "xTFW" || region.Contains("reg1l2tau1bnj");
+   bool useSS =region.Contains("reg1l2tau1bnj");
+   bool uselowtauID= framework == "xTFW";
 
    if(useSS){
       TString regionss = region;
       regionss.ReplaceAll("os","ss");
+      datatreess = new TChain(regionss);
+      mctreess = new TChain(regionss);
+   }
+   if(uselowtauID){
+      TString regionss = region;
+      regionss.ReplaceAll("2mtau","1mtau1ltau");
       datatreess = new TChain(regionss);
       mctreess = new TChain(regionss);
    }
@@ -129,7 +137,8 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
    TCut mycuts = "abs(taus_matched_pdgId[0]) == 15 && abs(taus_matched_pdgId[1]) == 15 && weights[0] >0";
 
    //double norm = region == "reg2mtau1b2jos"? 4097.810002/2816.409586 : 4331.872451/3191.282355;
-   double norm = region == "reg2mtau1b2jos"? 1.09 : 1.57;
+   //double norm = region == "reg2mtau1b2jos"? 1.09 : 1.57;
+   double norm =0.3;
 
    if(framework == "tthML") mycuts = region.Contains("2tau") ? "abs(taus_matched_pdgId[0]) == 15 && abs(taus_matched_pdgId[1]) == 15 && weights[0] >0" : "abs(taus_matched_pdgId[0]) == 15 && weights[0] >0";
    TCut mycutb = "weights[0]>0";
