@@ -38,7 +38,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool prefit = 1;
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 1;
-	bool mergeFake = 0;// template: mergeFake=0,showfake=0
+	bool mergeFake = 1;// template: mergeFake=0,showfake=0       hadhad realonly=1,mergeFake=0
 	bool mergeOrigin = 0;
 	bool doTrex = 1;
 	bool plotnj = 0;
@@ -58,7 +58,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	int varcount = 0;
 	int plotvar = 0;
 	bool doFakeFactor = 0;
-	bool realOnly = 1;
+	bool realOnly = 0;
 	bool mergeleptype = 1;
 	if(method.Contains("nofake")){
 		showFake = 0;
@@ -205,7 +205,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
             }
         }else{
             for(auto var : vars){
-		        if(var.first!="leading_index_bin" && var.first!="subleading_index_bin") tau_plots->add(var.second);
+		        if(var.first!="leading_index_bin" /*&& var.first!="subleading_index_bin" */&&  var.first!="fit_index_bin") tau_plots->add(var.second);
+				//if(var.first!="leading_index_bin" &&  var.first!="fit_index_bin") tau_plots->add(var.second);
 		    }
         }
 	}
@@ -510,9 +511,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 						if(showFake){
 							if (mergeFake) {
 								for (int i = 1; i < origin.size() - 1; i++) {
-									tau_plots->read_sample( "fake1truth", samplename + origin.at(i).name, histmiddlename, "Fake MC, 1 truth #tau", kMagenta, norm, inputfile);
+									//std::cout<<"===="<<std::endl;
+									tau_plots->read_sample( "fake1truth", samplename + "_"+origin.at(i).name, histmiddlename, "Fake MC, 1 truth #tau", kMagenta, norm, inputfile);//kMagenta
 								}
-								tau_plots->read_sample( "fake0truth", samplename + "_doublefake", histmiddlename, "fake, 0 truth #tau", kTeal, norm,inputfile);
+								//tau_plots->read_sample( "fake0truth", samplename + "_doublefake", histmiddlename, "fake, 0 truth #tau", kTeal, norm,inputfile);
 							}else 
 								for (int i = 1; i < origin.size() - (framework=="xTFW"); i++){  //no double fake for hadhad channel
 									if(mergeOrigin && find(mergedOrigins.begin(),mergedOrigins.end(),origin.at(i).name) != mergedOrigins.end())
@@ -559,7 +561,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			if(showFake){
 				if(mergeFake){
 					tau_plots->stackorder.push_back("fake1truth");
-					tau_plots->stackorder.push_back("fake0truth");
+					//tau_plots->stackorder.push_back("fake0truth");
 				}
 				else
 					for (int i = 1; i < origin.size(); i++) {
@@ -761,9 +763,24 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				}
 			}
 			if(/*!mergeFake &&*/ framework == "xTFW") {
+				if(!true){
+					std::vector<TString> region_numerator={"reg2mtau1b2jss","reg2mtau1b3jss"};std::vector<TString> region_denominator={"reg1mtau1ltau1b2jss","reg1mtau1ltau1b3jss"};
+					std::vector<observable> result_=tau_plots->derive_ff("1 data -1 smhiggs -1 wjet -1 diboson -1 ttbar -1 ztautau -1 others -1 ttV -1 fake1truth",region_numerator,region_denominator,"subleading_index_bin");
+					TFile *outputfile=new TFile((std::string(PACKAGE_DIR)+"/FF_ss_nm.root").c_str(),"recreate");
+                    outputfile->cd();
+					TH1D *ff_hist=new TH1D("ff_hist","ff_hist",12,0,12);
+					for(int i=0;i<12;i++){
+						ff_hist->SetBinContent(i+1,result_[i].nominal);
+                        ff_hist->SetBinError(i+1,result_[i].error);
+					}
+                    ff_hist->Write();
+                    outputfile->Close();
+					return 1;
+				}
 				std::cout<<"starting template!"<<std::endl;
 				tau_plots->stackorder.push_back("Fake");
-                std::vector<TString> tmp_regions_={"data","smhiggs","wjet","diboson","ztautau","top","other"};
+                std::vector<TString> tmp_regions_={"data","smhiggs","wjet","diboson","ztautau","ttbar","ttV","others"};
+				if(!realOnly) tmp_regions_.push_back("fake1truth");
 				if(showFake){
                     if(mergeprong==1){
                         /*tau_plots->FakeFactorMethod("reg2mtau1b2jos","reg1mtau1ltau1b2jos","reg1ltau1mtau1b2jos","reg1ltau1ntau1b2jos","reg1ntau1ltau1b2jos","reg2ltau1b2jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
@@ -771,10 +788,18 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
                         tau_plots->FakeFactorMethod("reg2mtau1b3jss","reg1mtau1ltau1b3jss","reg1ltau1mtau1b3jss","reg1ltau1ntau1b3jss","reg1ntau1ltau1b3jss","reg2ltau1b3jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
                         tau_plots->FakeFactorMethod("reg2mtau1b2jss","reg1mtau1ltau1b2jss","reg1ltau1mtau1b2jss","reg1ltau1ntau1b2jss","reg1ntau1ltau1b2jss","reg2ltau1b2jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
                         *///tau_plots->FakeFactorMethod("reg2mtau1b5jos","reg1mtau1ltau1b5jos","reg1ltau1mtau1b5jos","reg1ltau1ntau1b5jos","reg1ntau1ltau1b5jos","reg2ltau1b5jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
-                        tau_plots->FakeFactorMethod("reg2mtau1b2jos","reg1mtau1lnmtau1b2jos","reg1lnmtau1mtau1b2jos","reg2ltau1b2jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
-                        tau_plots->FakeFactorMethod("reg2mtau1b3jos","reg1mtau1lnmtau1b3jos","reg1lnmtau1mtau1b3jos","reg2ltau1b3jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
-                        tau_plots->FakeFactorMethod("reg2mtau1b3jss","reg1mtau1lnmtau1b3jss","reg1lnmtau1mtau1b3jss","reg2ltau1b3jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
-                        tau_plots->FakeFactorMethod("reg2mtau1b2jss","reg1mtau1lnmtau1b2jss","reg1lnmtau1mtau1b2jss","reg2ltau1b2jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42); 
+                        //tau_plots->FakeFactorMethod("reg2mtau1b2jos","reg1mtau1lnmtau1b2jos","reg1lnmtau1mtau1b2jos","reg2ltau1b2jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
+                        //tau_plots->FakeFactorMethod("reg2mtau1b3jos","reg1mtau1lnmtau1b3jos","reg1lnmtau1mtau1b3jos","reg2ltau1b3jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
+                        //tau_plots->FakeFactorMethod("reg2mtau1b3jss","reg1mtau1lnmtau1b3jss","reg1lnmtau1mtau1b3jss","reg2ltau1b3jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
+                        //tau_plots->FakeFactorMethod("reg2mtau1b2jss","reg1mtau1lnmtau1b2jss","reg1lnmtau1mtau1b2jss","reg2ltau1b2jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42); 
+					    tau_plots->FakeFactorMethod("reg2mtau1b2jos","reg1mtau1ltau1b2jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
+                        tau_plots->FakeFactorMethod("reg2mtau1b3jos","reg1mtau1ltau1b3jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
+                        tau_plots->FakeFactorMethod("reg2mtau1b3jss","reg1mtau1ltau1b2jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
+                        tau_plots->FakeFactorMethod("reg2mtau1b2jss","reg1mtau1ltau1b3jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
+						//tau_plots->templatesample("reg1mtau1ltau1b3jss_vetobtagwp70",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ttbar -1 ztautau -1 others -1 ttV","reg2mtau1b3jss_vetobtagwp70","Fake","Fake",(enum EColor)42,false,1.0);
+                        //tau_plots->templatesample("reg1mtau1ltau1b2jss_vetobtagwp70",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ttbar -1 ztautau -1 others -1 ttV","reg2mtau1b2jss_vetobtagwp70","Fake","Fake",(enum EColor)42,false,1.0);
+                        //tau_plots->templatesample("reg1mtau1ltau1b3jos_vetobtagwp70",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ttbar -1 ztautau -1 others -1 ttV","reg2mtau1b3jos_vetobtagwp70","Fake","Fake",(enum EColor)42,false,1.0);
+                        //tau_plots->templatesample("reg1mtau1ltau1b2jos_vetobtagwp70",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ttbar -1 ztautau -1 others -1 ttV","reg2mtau1b2jos_vetobtagwp70","Fake","Fake",(enum EColor)42,false,1.0);
 					}else{
 	                    tau_plots->FakeFactorMethod("reg2mtau1b2jos_3prong_vetobtagwp70","reg1mtau1ltau1b2jos_3prong_vetobtagwp70","reg1ltau1mtau1b2jos_3prong_vetobtagwp70","reg1ltau1ntau1b2jos_3prong_vetobtagwp70","reg1ntau1ltau1b2jos_3prong_vetobtagwp70","reg2ltau1b2jos_3prong_vetobtagwp70",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
                         tau_plots->FakeFactorMethod("reg2mtau1b3jos_3prong_vetobtagwp70","reg1mtau1ltau1b3jos_3prong_vetobtagwp70","reg1ltau1mtau1b3jos_3prong_vetobtagwp70","reg1ltau1ntau1b3jos_3prong_vetobtagwp70","reg1ntau1ltau1b3jos_3prong_vetobtagwp70","reg2ltau1b3jos_3prong_vetobtagwp70",histmiddlename,"Fake","Fake",tmp_regions_,kYellow);
@@ -857,7 +882,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		//if(!calculate_fake_calibration)
 			for (auto samp : sigsamples)
 			{
-				tau_plots->overlay(samp.name);
+				//tau_plots->overlay(samp.name);
 			}
 		if(figuredir == "") figuredir = ".";
 		if(chartdir == "") chartdir = ".";

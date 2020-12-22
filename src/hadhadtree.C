@@ -148,6 +148,7 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots->add(vars["chi2"],&chi2);
   fcnc_plots->add(vars["leading_index_bin"],&leading_index_bin); //
   fcnc_plots->add(vars["subleading_index_bin"],&subleading_index_bin); 
+  fcnc_plots->add(vars["fit_index_bin"],&fit_index_bin); 
   for (int j = 0; j < fcnc_regions.size(); ++j)
   {
     for (int k = 0; k < 2; ++k)

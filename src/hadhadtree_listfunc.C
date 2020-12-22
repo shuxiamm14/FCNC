@@ -74,11 +74,23 @@ void hadhadtree::definetaus(){
   taus_id->push_back(tau0id);
   taus_b_tagged->push_back(tau_0_b_tagged);
   taus_decay_mode->push_back(tau_0_decay_mode);
-  if(!isData ) taus_matched_mother_pdgId->push_back(tau_0_matched_mother_pdgId);
-  if(!isData ) taus_matched_mother_status->push_back(tau_0_matched_mother_status);
-  if(!isData ) taus_matched_p4->push_back(tau_0_matched_p4);
-  if(!isData ) taus_matched_pdgId->push_back(tau_0_matched_pdgId);
-  if(!isData ) taus_matched_vis_p4->push_back(tau_0_matched_vis_p4);
+  if(!isData ) {
+    taus_matched_mother_pdgId->push_back(tau_0_matched_mother_pdgId);
+    taus_matched_mother_status->push_back(tau_0_matched_mother_status);
+    taus_matched_p4->push_back(tau_0_matched_p4);
+    taus_matched_vis_p4->push_back(tau_0_matched_vis_p4);
+
+    if( fabs(tau_0_matched_pdgId)==15&&tau_0_matched_classifierParticleType==10){
+      taus_matched_pdgId->push_back(tau_0_matched_pdgId);
+    }else if(fabs(tau_0_matched_pdgId)==15&&tau_0_matched_classifierParticleType!=10){
+      taus_matched_pdgId->push_back(tau_0_matched_pdgId/fabs(tau_0_matched_pdgId));
+    }else{
+      taus_matched_pdgId->push_back(tau_0_matched_pdgId);
+    }
+  }
+  //if(!isData ) taus_matched_pdgId->push_back((tau_0_matched_pdgId==15&&tau_0_matched_classifierParticleType==10)?tau_0_matched_pdgId:1);
+  //if(!isData ) taus_matched_pdgId->push_back(tau_0_matched_pdgId);
+  
   taus_n_charged_tracks->push_back(tau_0_n_charged_tracks);
   taus_p4->push_back(tau_0_p4);
   taus_q->push_back(tau_0_q);
@@ -86,11 +98,24 @@ void hadhadtree::definetaus(){
   taus_id->push_back(tau1id);
   taus_b_tagged->push_back(tau_1_b_tagged);
   taus_decay_mode->push_back(tau_1_decay_mode);
-  if(!isData ) taus_matched_mother_pdgId->push_back(tau_1_matched_mother_pdgId);
-  if(!isData ) taus_matched_mother_status->push_back(tau_1_matched_mother_status);
-  if(!isData ) taus_matched_p4->push_back(tau_1_matched_p4);
-  if(!isData ) taus_matched_pdgId->push_back(tau_1_matched_pdgId);
-  if(!isData ) taus_matched_vis_p4->push_back(tau_1_matched_vis_p4);
+  if(!isData ) {
+    taus_matched_mother_pdgId->push_back(tau_1_matched_mother_pdgId);
+    taus_matched_mother_status->push_back(tau_1_matched_mother_status);
+    taus_matched_p4->push_back(tau_1_matched_p4);
+    taus_matched_vis_p4->push_back(tau_1_matched_vis_p4);
+    
+    if( fabs(tau_1_matched_pdgId)==15&&tau_1_matched_classifierParticleType==10){
+      taus_matched_pdgId->push_back(tau_1_matched_pdgId);
+    }else if(fabs(tau_1_matched_pdgId)==15&&tau_1_matched_classifierParticleType!=10){
+      taus_matched_pdgId->push_back(tau_1_matched_pdgId/fabs(tau_1_matched_pdgId));
+    }else{
+      taus_matched_pdgId->push_back(tau_1_matched_pdgId);
+    }
+    
+  }
+  //if(!isData ) taus_matched_pdgId->push_back(tau_1_matched_classifierParticleType==10?tau_1_matched_pdgId:1);
+  //if(!isData ) taus_matched_pdgId->push_back(tau_1_matched_pdgId);
+  
   taus_n_charged_tracks->push_back(tau_1_n_charged_tracks);
   taus_p4->push_back(tau_1_p4);
   taus_q->push_back(tau_1_q);

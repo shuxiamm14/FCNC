@@ -16,6 +16,7 @@ int main(int argc, char const *argv[])
 
     TString  readthefile=TString(PACKAGE_DIR)+"/run/reduce3/NOMINAL/";
     auto bkgsample = getBkgSamples("xTFW");
+    auto origin = getFakeTauOrigin();
     std::vector<TString> compaign={"mc16a","mc16d","mc16e"};
     TString suffix="_NOMINAL.root"; 
 
@@ -26,7 +27,7 @@ int main(int argc, char const *argv[])
     std::vector<std::string> total_1p_numerator_sample_name;
     std::vector<std::string> total_1p_denominator_sample_name;
     std::vector<TString> data_sample_name={"data17_NOMINAL.root","data18_NOMINAL.root","data1516_NOMINAL.root"};
-
+/*
     std::vector<std::string> total_1p_numerator_sample_name_nm={"NOMINAL_reg2mtau1b2jos_1prong_vetobtagwp70_highmet_leading_index_bin",
     "NOMINAL_reg2mtau1b2jos_1prong_vetobtagwp70_highmet_subleading_index_bin","NOMINAL_reg2mtau1b3jos_1prong_vetobtagwp70_highmet_leading_index_bin",
     "NOMINAL_reg2mtau1b3jos_1prong_vetobtagwp70_highmet_subleading_index_bin","NOMINAL_reg2mtau1b2jos_3prong_vetobtagwp70_highmet_leading_index_bin",
@@ -44,7 +45,28 @@ int main(int argc, char const *argv[])
      "NOMINAL_reg1lnmtau1mtau1b3jos_3prong_vetobtagwp70_highmet_leading_index_bin","NOMINAL_reg1mtau1lnmtau1b2jos_1prong_vetobtagwp70_highmet_subleading_index_bin",
      "NOMINAL_reg1lnmtau1mtau1b2jos_1prong_vetobtagwp70_highmet_leading_index_bin","NOMINAL_reg1mtau1lnmtau1b2jos_3prong_vetobtagwp70_highmet_subleading_index_bin",
      "NOMINAL_reg1lnmtau1mtau1b2jos_3prong_vetobtagwp70_highmet_leading_index_bin"};
+*/
 
+      std::vector<std::string> total_1p_numerator_sample_name_nm={
+     "NOMINAL_reg2mtau1b2jos_1prong_vetobtagwp70_highmet_subleading_index_bin",
+     "NOMINAL_reg2mtau1b3jos_1prong_vetobtagwp70_highmet_subleading_index_bin",
+     "NOMINAL_reg2mtau1b2jos_3prong_vetobtagwp70_highmet_subleading_index_bin",
+     "NOMINAL_reg2mtau1b3jos_3prong_vetobtagwp70_highmet_subleading_index_bin"};
+
+    
+      std::vector<std::string> total_1p_denominator_sample_name_nm={
+      "NOMINAL_reg1mtau1ltau1b3jos_1prong_vetobtagwp70_highmet_subleading_index_bin",
+      "NOMINAL_reg1mtau1ltau1b3jos_3prong_vetobtagwp70_highmet_subleading_index_bin",
+      "NOMINAL_reg1mtau1ltau1b2jos_1prong_vetobtagwp70_highmet_subleading_index_bin",
+      "NOMINAL_reg1mtau1ltau1b2jos_3prong_vetobtagwp70_highmet_subleading_index_bin"};
+
+
+       std::vector<std::string> total_1p_denominator_sample_name_lnm={
+        "NOMINAL_reg1mtau1lnmtau1b3jos_1prong_vetobtagwp70_highmet_subleading_index_bin",
+        "NOMINAL_reg1mtau1lnmtau1b3jos_3prong_vetobtagwp70_highmet_subleading_index_bin",
+        "NOMINAL_reg1mtau1lnmtau1b2jos_1prong_vetobtagwp70_highmet_subleading_index_bin",
+        "NOMINAL_reg1mtau1lnmtau1b2jos_3prong_vetobtagwp70_highmet_subleading_index_bin",
+       };
 
     // nm=1 or lnm=2
     int category_(*argv[1]-'0');
@@ -102,28 +124,30 @@ int main(int argc, char const *argv[])
         std::cout<<"open file: "<<histFileName<<std::endl;
         histFile=TFile::Open(histFileName.Data(),"READ");
 
-        // numerator
-        for(int j=0;j<total_1p_numerator_sample_name.size();j++){
-          TH1D* htmp;
-          std::cout<<"name:"<<(bkgsample.at(i)).name+"_real_"+total_1p_numerator_sample_name.at(j)<<std::endl;
-          htmp=(TH1D*)histFile->Get(((bkgsample.at(i)).name+"_real_"+total_1p_numerator_sample_name.at(j)).Data());
-          if(htmp) htmp = (TH1D*)htmp->Clone("tmp");
-          else continue;
-          if(total_1p_numerator==0)total_1p_numerator=htmp;
-          else total_1p_numerator->Add(htmp,-1);
-          if(icamp==0) total_1p_numerator->SetDirectory(0);
+       for(int jorigin=0;jorigin<origin.size();jorigin++){
+          if(origin.at(jorigin).name=="w_jet_fake"||origin.at(jorigin).name=="nomatch"||origin.at(jorigin).name=="doublefake") continue;
+          for(int j=0;j<total_1p_numerator_sample_name.size();j++){
+            TH1D* htmp;
+            std::cout<<"name:"<<(bkgsample.at(i)).name+origin.at(jorigin).name+total_1p_numerator_sample_name.at(j)<<std::endl;
+            htmp=(TH1D*)histFile->Get(((bkgsample.at(i)).name+"_"+origin.at(jorigin).name+"_"+total_1p_numerator_sample_name.at(j)).Data());
+            if(htmp) htmp = (TH1D*)htmp->Clone("tmp");
+            else continue;
+            if(total_1p_numerator==0)total_1p_numerator=htmp;
+            else total_1p_numerator->Add(htmp,-1);
+            if(icamp==0) total_1p_numerator->SetDirectory(0);
+          }
+          // denominator
+          for(int j=0;j<total_1p_denominator_sample_name.size();j++){
+            TH1D* htmp;
+            std::cout<<"name:"<<(bkgsample.at(i)).name+origin.at(jorigin).name+total_1p_denominator_sample_name.at(j)<<std::endl;
+            htmp=(TH1D*)histFile->Get(((bkgsample.at(i)).name+"_"+origin.at(jorigin).name+"_"+total_1p_denominator_sample_name.at(j)).Data());
+            if(htmp) htmp = (TH1D*)htmp->Clone("tmp");
+            else continue;
+            if(total_1p_denominator==0)total_1p_denominator=htmp;
+            else total_1p_denominator->Add(htmp,-1);
+            if(icamp==0) total_1p_denominator->SetDirectory(0);
+          }
         }
-        // denominator
-        for(int j=0;j<total_1p_denominator_sample_name.size();j++){
-          TH1D* htmp;
-          std::cout<<"name:"<<(bkgsample.at(i)).name+"_real_"+total_1p_denominator_sample_name.at(j)<<std::endl;
-          htmp=(TH1D*)histFile->Get(((bkgsample.at(i)).name+"_real_"+total_1p_denominator_sample_name.at(j)).Data());
-          if(htmp) htmp = (TH1D*)htmp->Clone("tmp");
-          else continue;
-          if(total_1p_denominator==0)total_1p_denominator=htmp;
-          else total_1p_denominator->Add(htmp,-1);
-          if(icamp==0) total_1p_denominator->SetDirectory(0);
-        }  
         histFile->Close();
       }// end of compaign
     }

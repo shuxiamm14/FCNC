@@ -370,6 +370,8 @@ public :
   int subleading_bin;
   int leading_bin;
 
+  int fit_index_bin;
+
   float read_para(float mmc);
 
   float read_ss_fake_nm(int index_bin);
@@ -455,6 +457,9 @@ public :
 
   // new fake factor
   float newfakeweight=0;
+
+  // only use nm ff
+  float nmOnlyfakeweight=0;
 
   
 };

@@ -114,6 +114,7 @@ std::map<TString,variable*> getVariables(TString framework){
 		//ret["chi2"] = new variable("chi2","#chi^{2}",100,0.,20.,"",1,5);
 		ret["leading_index_bin"]=new variable("leading_index_bin","leading_index_bin",12, 0, 12,"",1,1);
 		ret["subleading_index_bin"]=new variable("subleading_index_bin","subleading_index_bin",12, 0, 12,"",1,1);
+		ret["fit_index_bin"]=new variable("fit_index_bin","fit_index_bin",144, 0, 144,"",1,1);
 	}else{
 		ret["BDTG_train"] = new variable("BDTG_train","BDT discriminant",100,-1.,1.,"",1,10);
 		ret["BDTG_test"] = new variable("BDTG_test","BDT discriminant",100,-1.,1.,"",1,10);
