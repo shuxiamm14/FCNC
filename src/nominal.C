@@ -14,7 +14,8 @@ float nominal::read_para(float mmc){
     return param.GetBinContent(bin);
 }
 
-TH1D nominal::FF_SS_1=create1D_("FF_ss_nm.root","outhist1p");
+//TH1D nominal::FF_SS_1=create1D_("FF_ss_nm.root","outhist1p");
+TH1D nominal::FF_SS_1=create1D_("FF_sideband_nm.root","outhist1p");
 TH1D nominal::FF_SS_2=create1D_("FF_ss_lnm.root","outhist1p"); 
 
 float nominal::read_ss_fake_nm(int index_bin){
@@ -1815,8 +1816,6 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           cut_flow.fill("$m_{\\tau\\tau,vis}>60$");
           if(ttvismass > 120*GeV) continue;
           cut_flow.fill("$m_{\\tau\\tau,vis}<120$");
-          /*if(ttvismass >60*GeV && ttvismass<120*GeV) continue;
-          cut_flow.fill("$m_{\\tau\\tau,vis}$ sideband");*/
           if(drtautau > 3.4) continue;
           cut_flow.fill("$\\Delta R(\\tau,\\tau)<3.4$");
           if (belong_regions.have("1l2tau"))
@@ -1949,13 +1948,13 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           }
           x1fit = 1 - neutrinos_p4->at(0)->E() / (*(taus_p4->at(0)) + *neutrinos_p4->at(0)).E();
           x2fit = 1 - neutrinos_p4->at(1)->E() / (*(tau2) + *neutrinos_p4->at(1)).E();
-          if(tautaumass>150*GeV)  continue;
-          if(tautaumass<100*GeV)  continue;
-          cut_flow.fill("100GeV<$m_{\\tau\\tau}<150GeV$");
-          if(t2mass<140*GeV) continue;
-          cut_flow.fill("$m_{t,FCNC}>$140GeV");
+  if(tautaumass>150*GeV)  continue;
+  if(tautaumass<100*GeV)  continue;
+  cut_flow.fill("100GeV<$m_{\\tau\\tau}<150GeV$");
+  if(t2mass<140*GeV) continue;
+  cut_flow.fill("$m_{t,FCNC}>$140GeV");
           if(!true){
-            if( (tautaumass<150*GeV &&tautaumass>100*GeV)||(t2mass>=140*GeV)||(ttvismass >60*GeV && ttvismass<120*GeV)) continue; 
+            if( (tautaumass<150*GeV &&tautaumass>100*GeV)&&(t2mass>=140*GeV)&&(ttvismass >60*GeV && ttvismass<120*GeV)) continue; 
             cut_flow.fill("side_band");
           }
         }

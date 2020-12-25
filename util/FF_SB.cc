@@ -118,6 +118,7 @@ int main(int argc, char const *argv[])
 
     // bkg need to be subtracted
     for(int i=0;i<bkgsample.size();i++){
+      if(bkgsample.at(i).name=="zll") continue;
       for (int icamp = 0; icamp < 3;icamp++)
       {
         TString histFileName=readthefile+compaign[icamp]+"_"+(bkgsample.at(i)).name+suffix;
@@ -128,7 +129,7 @@ int main(int argc, char const *argv[])
           if(origin.at(jorigin).name=="w_jet_fake"||origin.at(jorigin).name=="nomatch"||origin.at(jorigin).name=="doublefake") continue;
           for(int j=0;j<total_1p_numerator_sample_name.size();j++){
             TH1D* htmp;
-            std::cout<<"name:"<<(bkgsample.at(i)).name+origin.at(jorigin).name+total_1p_numerator_sample_name.at(j)<<std::endl;
+            std::cout<<"name:"<<(bkgsample.at(i)).name+"_"+origin.at(jorigin).name+"_"+total_1p_numerator_sample_name.at(j)<<std::endl;
             htmp=(TH1D*)histFile->Get(((bkgsample.at(i)).name+"_"+origin.at(jorigin).name+"_"+total_1p_numerator_sample_name.at(j)).Data());
             if(htmp) htmp = (TH1D*)htmp->Clone("tmp");
             else continue;
