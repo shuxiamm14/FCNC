@@ -21,8 +21,10 @@ void nominal::initMVA(TString region){
     tmpreader->AddVariable("drtaub",&drtaub);
     if(region.Contains("2tau")) tmpreader->AddVariable("drtautau",&drtautau);
     tmpreader->AddVariable("lep_pt_0",&lep_pt_0);
-  }else
+  }else{
     tmpreader->AddVariable("drtautau",&drtautau);
+    tmpreader->AddVariable("t2mass",&t2mass);
+  }
   if(region.Contains("2j") || region.Contains("3j")){
     tmpreader->AddVariable("dphitauetmiss",&dphitauetmiss);
     tmpreader->AddVariable("phicent",&phicent);
@@ -37,7 +39,6 @@ void nominal::initMVA(TString region){
        tmpreader->AddVariable("wmass",&wmass);
     }
     if(region.Contains("1l1tau1b3j_os"))  tmpreader->AddVariable("chi2",&chi2);
-    if(region.Contains("2mtau1b3j"))  tmpreader->AddVariable("t2mass",&t2mass);
   }else if(region.Contains("1l2tau1") || region.Contains("2lSS")){
     tmpreader->AddVariable("t1vismass",&t1vismass);
     tmpreader->AddVariable("mtaujmin",&mtaujmin);
