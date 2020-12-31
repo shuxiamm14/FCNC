@@ -102,13 +102,13 @@ depthwatcher = 3
 nobj = 0
 for x in watchers:
 	nobj+=x
-nwatcies = nobj
+nwatchers = nobj
 nobj+=pool
 
-startpool = nwatcies
+startpool = nwatchers
 endpool = nobj
 startwatcher = 0
-endwatcher = nwatcies
+endwatcher = nwatchers
 
 #startpool = 0
 #endpool = pool

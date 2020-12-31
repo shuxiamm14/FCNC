@@ -16,9 +16,33 @@ int main(int argc, char const *argv[])
 	outputdir += framework.Data();
 	gSystem->mkdir(outputdir.c_str());
 	vector<TString> region_tthML = {
-		"reg1l1tau1b2j_os","reg1l1tau1b2j_ss","reg1l1tau1b3j_os","reg1l1tau1b3j_ss","reg1l2tau1bnj_os","reg1l2tau1bnj_ss",
-		"reg1l1tau2b2j_os","reg1l1tau2b2j_ss","reg1l1tau2b3j_os","reg1l1tau2b3j_ss","reg1l2tau2bnj_os","reg1l2tau2bnj_ss","all"
-		"reg2l1tau1bnj", "reg2l1tau2bnj", "reg2lSS1tau1bnj_os", "reg2lSS1tau1bnj_os_antiiso", "reg2lSS1tau1bnj_os_antiisolead"
+		"all",
+//		"reg1l1tau1b_os",
+		"reg1l1tau1b_ss",
+		"reg1l1tau1b_ss_antiiso",
+//		"reg1l1tau1b1j_os",
+		"reg1l1tau1b1j_ss",
+		"reg1l1tau1b2j_os",
+		"reg1l1tau1b2j_ss",
+		"reg1l1tau1b3j_os",
+		"reg1l1tau1b1j_ss_antiiso",
+		"reg1l1tau1b2j_os_antiiso",
+		"reg1l1tau1b2j_ss_antiiso",
+		"reg1l1tau1b3j_os_antiiso",
+//		"reg1l1tau1b3j_ss",
+		"reg1l2tau1bnj_os",
+//		"reg1l2tau1bnj_ss",
+		"reg1l1tau2b2j_os",
+		"reg1l1tau2b2j_ss",
+		"reg1l1tau2b3j_os",
+		"reg1l1tau2b3j_ss",
+//		"reg1l2tau2bnj_os",
+//		"reg1l2tau2bnj_ss",
+		"reg2l1tau1bnj",
+		"reg2l1tau2bnj",
+//		"reg2lSS1tau1bnj_os",
+//		"reg2lSS1tau1bnj_os_antiiso",
+//		"reg2lSS1tau1bnj_os_antiisolead"
 	};
 	vector<TString> region_xTFW = {
 		"all","reg2mtau1b2j_os","reg2mtau1b2j_ss",
@@ -53,12 +77,14 @@ int main(int argc, char const *argv[])
 			TString label = "cutflow_"+region[ireg] + "_" + mc_campaigns[icamp];
 			LatexChart* chart = new LatexChart(label.Data());
 			charts.push_back(chart);
+			map<TString,observable> bkgyield;
 			for(auto sample : samples){
-
+				bool isSignal = 0;
 				TFile *inputfile = 0;
 				TH1D *cutflow_hist = 0;
 				TString filename = "cutflow_" + mc_campaigns[icamp] + "_";
 				if(signalmap.find(sample.name) != signalmap.end()){
+					isSignal = 1;
 					for(auto subsamp : signalmap.at(sample.name)){
 						inputfile = new TFile(filename + subsamp + ".root");
 						TH1D *cutflowhist = (TH1D*)(inputfile->Get(region[ireg]));
@@ -77,7 +103,7 @@ int main(int argc, char const *argv[])
 					}else{
 						inputfile = new TFile(filename + sample.name + ".root");
 					}
-                                        if(!inputfile->Get(region[ireg])) {
+					if(!inputfile->Get(region[ireg])) {
 						printf("histogram %s not found in file %s\n",region[ireg].Data(),inputfile->GetName());
 						continue;
 					}
@@ -94,8 +120,13 @@ int main(int argc, char const *argv[])
 				{
 					TString cut_name = xaxis->GetBinLabel(ibin);
 					if(cut_name == "") break;
+					if(sample.name != "data" && !isSignal) bkgyield[cut_name] += observable(cutflow_hist->GetBinContent(ibin), cutflow_hist->GetBinError(ibin));
+					if(cut_name == "PLV for lephad") continue;
 					if(cutflow_hist->GetBinContent(ibin)) chart->set(cut_name.Data(), sample.title.Data(), cutflow_hist->GetBinContent(ibin), cutflow_hist->GetBinError(ibin));
 				}
+			}
+			for(auto cut : bkgyield){
+				if(cut.first!="") chart->set(cut.first.Data(), "total background", cut.second);
 			}
 		}
 		LatexChart* sum = 0;

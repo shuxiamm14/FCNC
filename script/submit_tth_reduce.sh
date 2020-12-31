@@ -57,7 +57,12 @@ rm -f sublocal.sh
 #done
 
 if [[ $2 =~ "sub" ]] ; then
-	for lines in `ls $ttH_fakes_DIR/datafiles/tthML/v3/run/{mc*,data*}  | xargs -n 1 basename`
+	if [ -n "$4" ] ; then
+		files=$ttH_fakes_DIR/datafiles/tthML/v5/run/$4
+	else
+		$ttH_fakes_DIR/datafiles/tthML/v5/run/{mc*,data*}
+	fi
+	for lines in `ls $files | xargs -n 1 basename`
 	do
 		if [[ $systname != "nominal" ]] && ( [[ $lines =~ "wjet" ]] || [[ $lines =~ "zll" ]] || [[ $lines =~ "ztautau" ]] ) ; then
 			continue
@@ -72,9 +77,6 @@ if [[ $2 =~ "sub" ]] ; then
 		fi
 		name=${lines/.txt}
 		touch $name.out
-		if [ -n "$4" ] && [[ $4 != $lines ]] ; then
-			continue
-		fi
 		rm -f $name.out
 		rm -f ${name}_evt.txt
 		for i in `echo $1| sed -e 's/\(.\)/\1\n/g'`

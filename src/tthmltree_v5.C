@@ -1,42 +1,41 @@
-#include "tthmltree_v4.h"
+#include "tthmltree_v5.h"
 
-void tthmltree_v4::dumpTruth(int ipart) {
+void tthmltree_v5::dumpTruth(int ipart) {
 }
 
-bool tthmltree_v4::addWeightSys(){
+bool tthmltree_v5::addWeightSys(){
   return 1;
 } //not available yet.
 
-bool tthmltree_v4::passBasicCut(){
+bool tthmltree_v5::passBasicCut(){
   //https://twiki.cern.ch/twiki/bin/view/Atlas/MuonTriggerPhysicsRecommendationsRel212017#Recommended_triggers
   bool single_mu_trig = 0;
-  if(RunYear == 2015) single_mu_trig = (lep_pt_0>21*GeV && GlobalTrigDecision_mu20_iloose_L1MU15) 
-    || (lep_pt_0>51*GeV && GlobalTrigDecision_mu50);
-  else single_mu_trig = (lep_pt_0>27*GeV && GlobalTrigDecision_mu26_ivarmedium) 
-    || (lep_pt_0>51*GeV && GlobalTrigDecision_mu50);
+  if(RunYear == 2015) single_mu_trig = (lep_Pt_0>21*GeV && GlobalTrigDecision_mu20_iloose_L1MU15) 
+    || (lep_Pt_0>51*GeV && GlobalTrigDecision_mu50);
+  else single_mu_trig = (lep_Pt_0>27*GeV && GlobalTrigDecision_mu26_ivarmedium) 
+    || (lep_Pt_0>51*GeV && GlobalTrigDecision_mu50);
   bool di_mu_trig = 0;
-  if(RunYear == 2015) di_mu_trig = GlobalTrigDecision_mu18_mu8noL1 && lep_pt_0 > 19*GeV && lep_pt_1 > 9*GeV;
-  else di_mu_trig = GlobalTrigDecision_mu22_mu8noL1 && lep_pt_0 > 23*GeV && lep_pt_1 > 9*GeV;
+  if(RunYear == 2015) di_mu_trig = GlobalTrigDecision_mu18_mu8noL1 && lep_Pt_0 > 19*GeV && lep_Pt_1 > 9*GeV;
+  else di_mu_trig = GlobalTrigDecision_mu22_mu8noL1 && lep_Pt_0 > 23*GeV && lep_Pt_1 > 9*GeV;
 
   //https://twiki.cern.ch/twiki/bin/view/AtlasProtected/LatestRecommendationsElectronIDRun2
   bool single_e_trig = 0;
-  if(RunYear == 2015) single_e_trig = (lep_pt_0>25*GeV && GlobalTrigDecision_e24_lhmedium_L1EM20VH)
-    || (lep_pt_0>61*GeV && GlobalTrigDecision_e60_lhmedium)
-    || (lep_pt_0>121*GeV && GlobalTrigDecision_e120_lhloose);
-  else single_e_trig = (lep_pt_0 > 27*GeV && GlobalTrigDecision_e26_lhtight_nod0_ivarloose)
-    || (lep_pt_0>61*GeV && GlobalTrigDecision_e60_lhmedium_nod0)
-    || (lep_pt_0>141*GeV && GlobalTrigDecision_e140_lhloose_nod0);
+  if(RunYear == 2015) single_e_trig = (lep_Pt_0>25*GeV && GlobalTrigDecision_e24_lhmedium_L1EM20VH)
+    || (lep_Pt_0>61*GeV && GlobalTrigDecision_e60_lhmedium)
+    || (lep_Pt_0>121*GeV && GlobalTrigDecision_e120_lhloose);
+  else single_e_trig = (lep_Pt_0 > 27*GeV && GlobalTrigDecision_e26_lhtight_nod0_ivarloose)
+    || (lep_Pt_0>61*GeV && GlobalTrigDecision_e60_lhmedium_nod0)
+    || (lep_Pt_0>141*GeV && GlobalTrigDecision_e140_lhloose_nod0);
   bool di_e_trig = 0;
-  if(RunYear == 2015) di_e_trig = (lep_pt_0 > 13*GeV && lep_pt_1 > 13*GeV && GlobalTrigDecision_2e12_lhloose_L12EM10VH);
-  else if(RunYear == 2016) di_e_trig = (lep_pt_0 > 18*GeV && lep_pt_1 > 18*GeV && GlobalTrigDecision_2e17_lhvloose_nod0);
-  //else di_e_trig = (lep_pt_0 > 25*GeV && lep_pt_1 > 25*GeV && GlobalTrigDecision_2e24_lhvloose_nod0);
-  else di_e_trig = (lep_pt_0 > 25*GeV && lep_pt_1 > 25*GeV && GlobalTrigDecision_2e17_lhvloose_nod0);
+  if(RunYear == 2015) di_e_trig = (lep_Pt_0 > 13*GeV && lep_Pt_1 > 13*GeV && GlobalTrigDecision_2e12_lhloose_L12EM10VH);
+  else if(RunYear == 2016) di_e_trig = (lep_Pt_0 > 18*GeV && lep_Pt_1 > 18*GeV && GlobalTrigDecision_2e17_lhvloose_nod0);
+  else di_e_trig = (lep_Pt_0 > 25*GeV && lep_Pt_1 > 25*GeV && GlobalTrigDecision_2e24_lhvloose_nod0);
 
   //https://twiki.cern.ch/twiki/bin/view/Atlas/LowestUnprescaled#Electron_Muon_AN1
   bool emu_trig = 0;
   if(RunYear == 2015) emu_trig = GlobalTrigDecision_e17_lhloose_mu14;
   else emu_trig = GlobalTrigDecision_e17_lhloose_nod0_mu14;
-  emu_trig = emu_trig && lep_pt_0 > 18*GeV && lep_pt_0 > 15*GeV;
+  emu_trig = emu_trig && lep_Pt_0 > 18*GeV && lep_Pt_0 > 15*GeV;
   if(!single_e_trig && !single_mu_trig && !di_e_trig && !di_mu_trig && !emu_trig) return false;
 
   cut_flow.fill("pass trigger");
@@ -46,22 +45,18 @@ bool tthmltree_v4::passBasicCut(){
   if(nTaus_OR>=2 && (!(taus_numTrack_1 == 1 || taus_numTrack_1 == 3) || !(taus_passEleBDT_1 && taus_passMuonOLR_1)) ) return false; // assuming triggers for 2017 is same for 2016 
   cut_flow.fill("subtauOLR");
 
-  bool trig_match = (emu_trig || di_e_trig || di_mu_trig) && ((lep_isTrigMatch_0 && lep_isTrigMatch_1) || matchDLTll01);
-
-  //bool trig_match = !onelep_type && lep_isTrigMatch_0 || lep_isTrigMatch_1;
-  //bool trig_match = !onelep_type && lep_isTrigMatchDLT_0 && lep_isTrigMatchDLT_1;
-  bool SLtrig_match = (single_e_trig || single_mu_trig) && lep_isTrigMatch_0;
-
-  if(!trig_match && !SLtrig_match) return false;
-
+  //bool trig_match = (emu_trig || di_e_trig || di_mu_trig) && ((lep_isTrigMatch_0 && lep_isTrigMatch_1) || matchDLTll01);
+  //bool SLtrig_match = (single_e_trig || single_mu_trig) && lep_isTrigMatch_0;
+  //if(!trig_match && !SLtrig_match) return false;
+  if(!custTrigMatch_TightElMediumMuID_FCLooseIso_SLTorDLT) return false;
   cut_flow.fill("trigger match");
 
   if(!SelectTLepid(0)) return false;
   if(dilep_type && !SelectTLepid(1)) return false;
   cut_flow.fill("tight lepton");
 
-  if(onelep_type && nTaus_OR_Pt25 == 1 && !IsoLepid(0)) return false;
-  cut_flow.fill("PLV for lephad");
+  //if(onelep_type && nTaus_OR_Pt25 == 1 && !IsoLepid(0)) return false;
+  //cut_flow.fill("PLV for lephad");
 
   if(nTaus_OR && (!taus_JetRNNSigMedium_0 || taus_pt_0<25*GeV)) return false;
   cut_flow.fill("Medium,25GeV leadtau");
@@ -81,7 +76,7 @@ bool tthmltree_v4::passBasicCut(){
   return true;
 }
 
-void tthmltree_v4::defineObjects(){
+void tthmltree_v5::defineObjects(){
   MET_RefFinal_et = met_met;
   taus_p4->clear();
   taus_b_tagged->clear();
@@ -152,7 +147,7 @@ void tthmltree_v4::defineObjects(){
   met_p4->SetXYZM(met_met*cos(met_phi), met_met*sin(met_phi), met_sumet, 0);
 }
 
-void tthmltree_v4::calcGeneralWeight(){
+void tthmltree_v5::calcGeneralWeight(){
   generalweight = mcChannelNumber > 0 ? mc_norm*weight_mc*weight_pileup*bTagSF_weight_DL1r_70*jvtSF_customOR: 1.0;
   if(!lep_SF_CombinedTight_1) lep_SF_CombinedTight_1=1;
   if( mcChannelNumber > 0) generalweight*=lep_SF_CombinedTight_0*lep_SF_CombinedTight_1*custTrigSF_TightElMediumMuID_FCLooseIso_SLTorDLT;
@@ -162,8 +157,8 @@ void tthmltree_v4::calcGeneralWeight(){
   }
 }
 
-void tthmltree_v4::defineLepTruth(){
-  if(debug) printf("tthmltree_v4::defineLepTruth(): for %lu leptons\n",leps_p4->size());
+void tthmltree_v5::defineLepTruth(){
+  if(debug) printf("tthmltree_v5::defineLepTruth(): for %lu leptons\n",leps_p4->size());
 
   leps_matched_pdgId->clear();
   leps_truth_type->clear();
@@ -190,10 +185,10 @@ void tthmltree_v4::defineLepTruth(){
     leps_first_EgMother_truth_origin->push_back(lep_firstEgMotherTruthOrigin_1);
     leps_first_EgMother_truth_type->push_back(lep_firstEgMotherTruthType_1);
   }
-  if(debug) printf("tthmltree_v4::defineLepTruth(): done\n");
+  if(debug) printf("tthmltree_v5::defineLepTruth(): done\n");
 }
 
-void tthmltree_v4::defineTauTruth(){
+void tthmltree_v5::defineTauTruth(){
 
   taus_matched_mother_pdgId->clear();
   taus_matched_pdgId->clear();
@@ -223,7 +218,7 @@ void tthmltree_v4::defineTauTruth(){
 }
 
 
-bool tthmltree_v4::SelectTLepid(int id) {
+bool tthmltree_v5::SelectTLepid(int id) {
   bool pass(false);
   //lep_ambiguityType_0==0 for electron
   if (id == 0) {
@@ -240,7 +235,7 @@ bool tthmltree_v4::SelectTLepid(int id) {
   return pass;
 }
 
-bool tthmltree_v4::IsoLepid(int id) {
+bool tthmltree_v5::IsoLepid(int id) {
   if (id == 0) {
     return lep_plvWP_Tight_0;
   } else if (id == 1) {
@@ -255,7 +250,7 @@ bool tthmltree_v4::IsoLepid(int id) {
 
 }
 
-void tthmltree_v4::initRaw(TTree *tree)
+void tthmltree_v5::initRaw(TTree *tree)
 {
    mc_genWeights = 0;
    jets_pt = 0;
@@ -301,20 +296,12 @@ void tthmltree_v4::initRaw(TTree *tree)
    tree->SetBranchAddress("triggers", &triggers, &b_triggers);
    tree->SetBranchAddress("loose", &loose, &b_loose);
    tree->SetBranchAddress("HLT_mu26_ivarmedium", &HLT_mu26_ivarmedium, &b_HLT_mu26_ivarmedium);
-   tree->SetBranchAddress("HLT_mu22_mu8noL1", &HLT_mu22_mu8noL1, &b_HLT_mu22_mu8noL1);
-   tree->SetBranchAddress("HLT_e60_lhmedium_nod0", &HLT_e60_lhmedium_nod0, &b_HLT_e60_lhmedium_nod0);
-   tree->SetBranchAddress("HLT_mu18_mu8noL1", &HLT_mu18_mu8noL1, &b_HLT_mu18_mu8noL1);
-   tree->SetBranchAddress("HLT_e26_lhtight_nod0_ivarloose", &HLT_e26_lhtight_nod0_ivarloose, &b_HLT_e26_lhtight_nod0_ivarloose);
-   tree->SetBranchAddress("HLT_mu20_iloose_L1MU15", &HLT_mu20_iloose_L1MU15, &b_HLT_mu20_iloose_L1MU15);
-   tree->SetBranchAddress("HLT_e24_lhmedium_L1EM20VH", &HLT_e24_lhmedium_L1EM20VH, &b_HLT_e24_lhmedium_L1EM20VH);
-   tree->SetBranchAddress("HLT_2e12_lhloose_L12EM10VH", &HLT_2e12_lhloose_L12EM10VH, &b_HLT_2e12_lhloose_L12EM10VH);
-   tree->SetBranchAddress("HLT_e120_lhloose", &HLT_e120_lhloose, &b_HLT_e120_lhloose);
    tree->SetBranchAddress("HLT_e140_lhloose_nod0", &HLT_e140_lhloose_nod0, &b_HLT_e140_lhloose_nod0);
    tree->SetBranchAddress("HLT_mu50", &HLT_mu50, &b_HLT_mu50);
    tree->SetBranchAddress("HLT_e17_lhloose_nod0_mu14", &HLT_e17_lhloose_nod0_mu14, &b_HLT_e17_lhloose_nod0_mu14);
-   tree->SetBranchAddress("HLT_e60_lhmedium", &HLT_e60_lhmedium, &b_HLT_e60_lhmedium);
-   tree->SetBranchAddress("HLT_2e17_lhvloose_nod0", &HLT_2e17_lhvloose_nod0, &b_HLT_2e17_lhvloose_nod0);
-   tree->SetBranchAddress("HLT_e17_lhloose_mu14", &HLT_e17_lhloose_mu14, &b_HLT_e17_lhloose_mu14);
+   tree->SetBranchAddress("HLT_e26_lhtight_nod0_ivarloose", &HLT_e26_lhtight_nod0_ivarloose, &b_HLT_e26_lhtight_nod0_ivarloose);
+   tree->SetBranchAddress("HLT_e60_lhmedium_nod0", &HLT_e60_lhmedium_nod0, &b_HLT_e60_lhmedium_nod0);
+   tree->SetBranchAddress("HLT_mu22_mu8noL1", &HLT_mu22_mu8noL1, &b_HLT_mu22_mu8noL1);
    tree->SetBranchAddress("onelep_type", &onelep_type, &b_onelep_type);
    tree->SetBranchAddress("dilep_type", &dilep_type, &b_dilep_type);
    tree->SetBranchAddress("trilep_type", &trilep_type, &b_trilep_type);
@@ -485,6 +472,9 @@ void tthmltree_v4::initRaw(TTree *tree)
    tree->SetBranchAddress("lep_DFCommonProdTrueZ_0", &lep_DFCommonProdTrueZ_0, &b_lep_DFCommonProdTrueZ_0);
    tree->SetBranchAddress("lep_chargeIDBDTLoose_0", &lep_chargeIDBDTLoose_0, &b_lep_chargeIDBDTLoose_0);
    tree->SetBranchAddress("lep_chargeIDBDTResult_0", &lep_chargeIDBDTResult_0, &b_lep_chargeIDBDTResult_0);
+   tree->SetBranchAddress("lep_chargeIDBDTResult_recalc_rel207_loose_0", &lep_chargeIDBDTResult_recalc_rel207_loose_0, &b_lep_chargeIDBDTResult_recalc_rel207_loose_0);
+   tree->SetBranchAddress("lep_chargeIDBDTResult_recalc_rel207_medium_0", &lep_chargeIDBDTResult_recalc_rel207_medium_0, &b_lep_chargeIDBDTResult_recalc_rel207_medium_0);
+   tree->SetBranchAddress("lep_chargeIDBDTResult_recalc_rel207_tight_0", &lep_chargeIDBDTResult_recalc_rel207_tight_0, &b_lep_chargeIDBDTResult_recalc_rel207_tight_0);
    tree->SetBranchAddress("lep_promptLeptonInput_sv1_jf_ntrkv_0", &lep_promptLeptonInput_sv1_jf_ntrkv_0, &b_lep_promptLeptonInput_sv1_jf_ntrkv_0);
    tree->SetBranchAddress("lep_promptLeptonInput_TrackJetNTrack_0", &lep_promptLeptonInput_TrackJetNTrack_0, &b_lep_promptLeptonInput_TrackJetNTrack_0);
    tree->SetBranchAddress("lep_promptLeptonInput_DL1mu_0", &lep_promptLeptonInput_DL1mu_0, &b_lep_promptLeptonInput_DL1mu_0);
@@ -638,6 +628,9 @@ void tthmltree_v4::initRaw(TTree *tree)
    tree->SetBranchAddress("lep_DFCommonProdTrueZ_1", &lep_DFCommonProdTrueZ_1, &b_lep_DFCommonProdTrueZ_1);
    tree->SetBranchAddress("lep_chargeIDBDTLoose_1", &lep_chargeIDBDTLoose_1, &b_lep_chargeIDBDTLoose_1);
    tree->SetBranchAddress("lep_chargeIDBDTResult_1", &lep_chargeIDBDTResult_1, &b_lep_chargeIDBDTResult_1);
+   tree->SetBranchAddress("lep_chargeIDBDTResult_recalc_rel207_loose_1", &lep_chargeIDBDTResult_recalc_rel207_loose_1, &b_lep_chargeIDBDTResult_recalc_rel207_loose_1);
+   tree->SetBranchAddress("lep_chargeIDBDTResult_recalc_rel207_medium_1", &lep_chargeIDBDTResult_recalc_rel207_medium_1, &b_lep_chargeIDBDTResult_recalc_rel207_medium_1);
+   tree->SetBranchAddress("lep_chargeIDBDTResult_recalc_rel207_tight_1", &lep_chargeIDBDTResult_recalc_rel207_tight_1, &b_lep_chargeIDBDTResult_recalc_rel207_tight_1);
    tree->SetBranchAddress("lep_promptLeptonInput_sv1_jf_ntrkv_1", &lep_promptLeptonInput_sv1_jf_ntrkv_1, &b_lep_promptLeptonInput_sv1_jf_ntrkv_1);
    tree->SetBranchAddress("lep_promptLeptonInput_TrackJetNTrack_1", &lep_promptLeptonInput_TrackJetNTrack_1, &b_lep_promptLeptonInput_TrackJetNTrack_1);
    tree->SetBranchAddress("lep_promptLeptonInput_DL1mu_1", &lep_promptLeptonInput_DL1mu_1, &b_lep_promptLeptonInput_DL1mu_1);
@@ -791,6 +784,9 @@ void tthmltree_v4::initRaw(TTree *tree)
    tree->SetBranchAddress("lep_DFCommonProdTrueZ_2", &lep_DFCommonProdTrueZ_2, &b_lep_DFCommonProdTrueZ_2);
    tree->SetBranchAddress("lep_chargeIDBDTLoose_2", &lep_chargeIDBDTLoose_2, &b_lep_chargeIDBDTLoose_2);
    tree->SetBranchAddress("lep_chargeIDBDTResult_2", &lep_chargeIDBDTResult_2, &b_lep_chargeIDBDTResult_2);
+   tree->SetBranchAddress("lep_chargeIDBDTResult_recalc_rel207_loose_2", &lep_chargeIDBDTResult_recalc_rel207_loose_2, &b_lep_chargeIDBDTResult_recalc_rel207_loose_2);
+   tree->SetBranchAddress("lep_chargeIDBDTResult_recalc_rel207_medium_2", &lep_chargeIDBDTResult_recalc_rel207_medium_2, &b_lep_chargeIDBDTResult_recalc_rel207_medium_2);
+   tree->SetBranchAddress("lep_chargeIDBDTResult_recalc_rel207_tight_2", &lep_chargeIDBDTResult_recalc_rel207_tight_2, &b_lep_chargeIDBDTResult_recalc_rel207_tight_2);
    tree->SetBranchAddress("lep_promptLeptonInput_sv1_jf_ntrkv_2", &lep_promptLeptonInput_sv1_jf_ntrkv_2, &b_lep_promptLeptonInput_sv1_jf_ntrkv_2);
    tree->SetBranchAddress("lep_promptLeptonInput_TrackJetNTrack_2", &lep_promptLeptonInput_TrackJetNTrack_2, &b_lep_promptLeptonInput_TrackJetNTrack_2);
    tree->SetBranchAddress("lep_promptLeptonInput_DL1mu_2", &lep_promptLeptonInput_DL1mu_2, &b_lep_promptLeptonInput_DL1mu_2);
@@ -944,6 +940,9 @@ void tthmltree_v4::initRaw(TTree *tree)
    tree->SetBranchAddress("lep_DFCommonProdTrueZ_3", &lep_DFCommonProdTrueZ_3, &b_lep_DFCommonProdTrueZ_3);
    tree->SetBranchAddress("lep_chargeIDBDTLoose_3", &lep_chargeIDBDTLoose_3, &b_lep_chargeIDBDTLoose_3);
    tree->SetBranchAddress("lep_chargeIDBDTResult_3", &lep_chargeIDBDTResult_3, &b_lep_chargeIDBDTResult_3);
+   tree->SetBranchAddress("lep_chargeIDBDTResult_recalc_rel207_loose_3", &lep_chargeIDBDTResult_recalc_rel207_loose_3, &b_lep_chargeIDBDTResult_recalc_rel207_loose_3);
+   tree->SetBranchAddress("lep_chargeIDBDTResult_recalc_rel207_medium_3", &lep_chargeIDBDTResult_recalc_rel207_medium_3, &b_lep_chargeIDBDTResult_recalc_rel207_medium_3);
+   tree->SetBranchAddress("lep_chargeIDBDTResult_recalc_rel207_tight_3", &lep_chargeIDBDTResult_recalc_rel207_tight_3, &b_lep_chargeIDBDTResult_recalc_rel207_tight_3);
    tree->SetBranchAddress("lep_promptLeptonInput_sv1_jf_ntrkv_3", &lep_promptLeptonInput_sv1_jf_ntrkv_3, &b_lep_promptLeptonInput_sv1_jf_ntrkv_3);
    tree->SetBranchAddress("lep_promptLeptonInput_TrackJetNTrack_3", &lep_promptLeptonInput_TrackJetNTrack_3, &b_lep_promptLeptonInput_TrackJetNTrack_3);
    tree->SetBranchAddress("lep_promptLeptonInput_DL1mu_3", &lep_promptLeptonInput_DL1mu_3, &b_lep_promptLeptonInput_DL1mu_3);
@@ -1097,6 +1096,9 @@ void tthmltree_v4::initRaw(TTree *tree)
    tree->SetBranchAddress("lep_DFCommonProdTrueZ_4", &lep_DFCommonProdTrueZ_4, &b_lep_DFCommonProdTrueZ_4);
    tree->SetBranchAddress("lep_chargeIDBDTLoose_4", &lep_chargeIDBDTLoose_4, &b_lep_chargeIDBDTLoose_4);
    tree->SetBranchAddress("lep_chargeIDBDTResult_4", &lep_chargeIDBDTResult_4, &b_lep_chargeIDBDTResult_4);
+   tree->SetBranchAddress("lep_chargeIDBDTResult_recalc_rel207_loose_4", &lep_chargeIDBDTResult_recalc_rel207_loose_4, &b_lep_chargeIDBDTResult_recalc_rel207_loose_4);
+   tree->SetBranchAddress("lep_chargeIDBDTResult_recalc_rel207_medium_4", &lep_chargeIDBDTResult_recalc_rel207_medium_4, &b_lep_chargeIDBDTResult_recalc_rel207_medium_4);
+   tree->SetBranchAddress("lep_chargeIDBDTResult_recalc_rel207_tight_4", &lep_chargeIDBDTResult_recalc_rel207_tight_4, &b_lep_chargeIDBDTResult_recalc_rel207_tight_4);
    tree->SetBranchAddress("lep_promptLeptonInput_sv1_jf_ntrkv_4", &lep_promptLeptonInput_sv1_jf_ntrkv_4, &b_lep_promptLeptonInput_sv1_jf_ntrkv_4);
    tree->SetBranchAddress("lep_promptLeptonInput_TrackJetNTrack_4", &lep_promptLeptonInput_TrackJetNTrack_4, &b_lep_promptLeptonInput_TrackJetNTrack_4);
    tree->SetBranchAddress("lep_promptLeptonInput_DL1mu_4", &lep_promptLeptonInput_DL1mu_4, &b_lep_promptLeptonInput_DL1mu_4);
@@ -1275,6 +1277,7 @@ void tthmltree_v4::initRaw(TTree *tree)
    tree->SetBranchAddress("custTrigMatch_TightElMediumMuID_FCLooseIso_DLT", &custTrigMatch_TightElMediumMuID_FCLooseIso_DLT, &b_custTrigMatch_TightElMediumMuID_FCLooseIso_DLT);
    tree->SetBranchAddress("GlobalTrigDecision_2e12_lhloose_L12EM10VH", &GlobalTrigDecision_2e12_lhloose_L12EM10VH, &b_GlobalTrigDecision_2e12_lhloose_L12EM10VH);
    tree->SetBranchAddress("GlobalTrigDecision_2e17_lhvloose_nod0", &GlobalTrigDecision_2e17_lhvloose_nod0, &b_GlobalTrigDecision_2e17_lhvloose_nod0);
+   tree->SetBranchAddress("GlobalTrigDecision_2e24_lhvloose_nod0", &GlobalTrigDecision_2e24_lhvloose_nod0, &b_GlobalTrigDecision_2e24_lhvloose_nod0);
    tree->SetBranchAddress("GlobalTrigDecision_e120_lhloose", &GlobalTrigDecision_e120_lhloose, &b_GlobalTrigDecision_e120_lhloose);
    tree->SetBranchAddress("GlobalTrigDecision_e140_lhloose_nod0", &GlobalTrigDecision_e140_lhloose_nod0, &b_GlobalTrigDecision_e140_lhloose_nod0);
    tree->SetBranchAddress("GlobalTrigDecision_e17_lhloose_mu14", &GlobalTrigDecision_e17_lhloose_mu14, &b_GlobalTrigDecision_e17_lhloose_mu14);
@@ -1288,7 +1291,6 @@ void tthmltree_v4::initRaw(TTree *tree)
    tree->SetBranchAddress("GlobalTrigDecision_mu22_mu8noL1", &GlobalTrigDecision_mu22_mu8noL1, &b_GlobalTrigDecision_mu22_mu8noL1);
    tree->SetBranchAddress("GlobalTrigDecision_mu26_ivarmedium", &GlobalTrigDecision_mu26_ivarmedium, &b_GlobalTrigDecision_mu26_ivarmedium);
    tree->SetBranchAddress("GlobalTrigDecision_mu50", &GlobalTrigDecision_mu50, &b_GlobalTrigDecision_mu50);
-   tree->SetBranchAddress("met_sumet", &met_sumet, &b_met_sumet);
    tree->SetBranchAddress("higgsDecayMode", &higgsDecayMode, &b_higgsDecayMode);
    tree->SetBranchAddress("m_truth_m", &m_truth_m, &b_m_truth_m);
    tree->SetBranchAddress("m_truth_pt", &m_truth_pt, &b_m_truth_pt);
@@ -1300,6 +1302,7 @@ void tthmltree_v4::initRaw(TTree *tree)
    tree->SetBranchAddress("m_truth_barcode", &m_truth_barcode, &b_m_truth_barcode);
    tree->SetBranchAddress("m_truth_parents", &m_truth_parents, &b_m_truth_parents);
    tree->SetBranchAddress("m_truth_children", &m_truth_children, &b_m_truth_children);
+   tree->SetBranchAddress("met_sumet", &met_sumet, &b_met_sumet);
    tree->SetBranchAddress("tauSFRNNMedium_TAU_SF_NOMINAL", &tauSFRNNMedium_TAU_SF_NOMINAL, &b_tauSFRNNMedium_TAU_SF_NOMINAL);
    tree->SetBranchAddress("tauSFRNNLoose_TAU_SF_NOMINAL", &tauSFRNNLoose_TAU_SF_NOMINAL, &b_tauSFRNNLoose_TAU_SF_NOMINAL);
    tree->SetBranchAddress("bTagSF_weight_DL1_70", &bTagSF_weight_DL1_70, &b_bTagSF_weight_DL1_70);
@@ -1310,5 +1313,6 @@ void tthmltree_v4::initRaw(TTree *tree)
    tree->SetBranchAddress("bTagSF_weight_DL1r_77", &bTagSF_weight_DL1r_77, &b_bTagSF_weight_DL1r_77);
    tree->SetBranchAddress("bTagSF_weight_DL1r_85", &bTagSF_weight_DL1r_85, &b_bTagSF_weight_DL1r_85);
    tree->SetBranchAddress("bTagSF_weight_DL1r_60", &bTagSF_weight_DL1r_60, &b_bTagSF_weight_DL1r_60);
+   tree->SetBranchAddress("bTagSF_weight_DL1r_Continuous", &bTagSF_weight_DL1r_Continuous, &b_bTagSF_weight_DL1r_Continuous);
    tree->SetBranchAddress("mc_norm", &mc_norm, &b_mc_norm);
 }

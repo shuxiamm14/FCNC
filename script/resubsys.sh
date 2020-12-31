@@ -11,7 +11,7 @@ do
 	if [ "$test" != "" ]; then
 		continue;
 	fi
-	keyword="fcnc_NOMINAL.root"
+	keyword="_NOMINAL.root"
 	if [[ $1 == "4" ]] || [[ $1 == "6" ]] ; then
 		keyword="fake_NOMINAL.root"
 	fi

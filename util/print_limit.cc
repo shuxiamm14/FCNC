@@ -30,13 +30,14 @@ int main(int argc, char const *argv[])
 	auto sigsample = getSigSamples("tthML",0.2);
 	vector<TString> signals = {"fcnc_ch","fcnc_ch_prod","tcH","tuH"};
 	vector<TString> signalstitle = {"tuH","tcH"};
-	vector<TString> channels = {"reg1l1tau1b2j_os","reg1l1tau1b3j_os","reg1l2tau1bnj_os"};
-	vector<TString> channelstitle = {"STH $\\tlhad$", "TTH $\\tlhad$", "$l\\thadhad$"};
+	vector<TString> channels = {"reg1l1tau1b2j_ss","reg1l1tau1b1j_ss","reg1l1tau1b2j_os","reg1l1tau1b3j_os","reg1l2tau1bnj_os"};
+	vector<TString> channelstitle = {"$l\\tauhad$2j", "$l\\tauhad$1j", "STH $\\tlhad$", "TTH $\\tlhad$", "$l\\thadhad$"};
+	string framework = "tthML";
 	LatexChart *chart = new LatexChart("limit");
 	for (int isig = 0; isig < sigsample.size(); ++isig)
 	{
 		string samptitle=sigsample[isig].title.Data();
-		if(samptitle.find("#")!=string::npos) samptitle = "$" + samptitle + "samptitle";
+		if(samptitle.find("#")!=string::npos) samptitle = "$" + samptitle + "$";
 		findAndReplaceAll(samptitle,"rightarrow","to ");
 		findAndReplaceAll(samptitle,"#","\\");
 		for (int ichan = 0; ichan < channels.size(); ++ichan)
@@ -44,10 +45,10 @@ int main(int argc, char const *argv[])
 			TString jobname = sigsample[isig].name + "/" + channels[ichan] + "_" + variable;
 			setlimit(chart, jobname + "/Limits/asymptotics/myLimit_BLIND_CL95.root", samptitle, channelstitle[ichan].Data());
 		}
-		TString jobname = sigsample[isig].name + "/combined";
+		TString jobname = sigsample[isig].name + "/combined" + "_" + variable;
 		setlimit(chart, jobname + "/Limits/asymptotics/myLimit_BLIND_CL95.root", samptitle, "Combined");
 	}
 	chart->caption="The limits derived from leptonic channels.";
-	chart->print("limits");
+	chart->print(string(TABLE_DIR)+"/" + framework + "/limits");
 	return 0;
 }

@@ -47,37 +47,36 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
    TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
    dataloader->AddVariable("tau_pt_0",'F');
    //dataloader->AddVariable("tau_pt_1",'F');
-   dataloader->AddVariable("drtautau",'F');
    dataloader->AddVariable("etmiss",'F');
    dataloader->AddVariable("ttvismass",'F');
-   dataloader->AddVariable("drtaujmin",'F');
+   if(region.Contains("j")) dataloader->AddVariable("drtaujmin",'F');
    if(framework == "tthML") {
       dataloader->AddVariable("drlb",'F');
-      if(region.Contains("2lSS")) dataloader->AddVariable("lep_pt_0",'F');
+      dataloader->AddVariable("drltau",'F');
+      dataloader->AddVariable("drtaub",'F');
+      if(region.Contains("2tau")) dataloader->AddVariable("drtautau",'F');
+      dataloader->AddVariable("lep_pt_0",'F');
+   }else{
+      dataloader->AddVariable("drtautau",'F');
+      dataloader->AddVariable("t2mass",'F');
    }
    if(region.Contains("2j") || region.Contains("3j")){
       dataloader->AddVariable("dphitauetmiss",'F');
       dataloader->AddVariable("phicent",'F');
       dataloader->AddVariable("tautaumass",'F');
-      dataloader->AddVariable("t2mass",'F');
       dataloader->AddVariable("x1fit",'F');
       dataloader->AddVariable("x2fit",'F');
       dataloader->AddVariable("t1mass",'F');
       if(region.Contains("1l1tau")){
-         dataloader->AddVariable("drtaub",'F');
          dataloader->AddVariable("mjjmin",'F');
       }
       if(!region.Contains("1l1tau1b2j")){
          dataloader->AddVariable("wmass",'F');
       }
-      //if(region.Contains("1l1tau1b2j")){
-      //   dataloader->AddVariable("allpz",'F');
-      //   dataloader->AddVariable("allmass",'F');
-      //}
+      if(region.Contains("1l1tau1b3j_os"))  dataloader->AddVariable("chi2",'F');
    }else if(region.Contains("1l2tau1") || region.Contains("2lSS")){
       dataloader->AddVariable("t1vismass",'F');
       dataloader->AddVariable("mtaujmin",'F');
-      dataloader->AddVariable("drltau",'F');
       dataloader->AddVariable("etamax",'F');
       dataloader->AddVariable("mtw",'F');
       dataloader->AddVariable("drlbditau",'F');

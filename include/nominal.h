@@ -57,8 +57,11 @@ public :
   bool tightTau;
   bool fit_collinear;
   bool mass_collinear;
+  bool mergeProngFF;
+  bool plotProng;
+  bool plotLeptype;
   //=============================configurations===============================
-
+  TString dataDir = ".";
   TString SystematicsName = "NOMINAL";
   CutFlow cut_flow;
   TMinuit* gMinside;
@@ -104,8 +107,8 @@ public :
 
   static int GeV;
   std::vector<TString> plotNPs;
-  std::map<TString,std::map<TString,std::vector<observable>>> newFakeSF;
-  std::map<TString,std::vector<observable>> newFakeSFSys;
+  std::map<TString,std::map<TString,std::vector<observable>>> newFakeSF[2];
+  std::map<TString,std::vector<observable>> newFakeSFSys[2];
   Int_t ierflg;
   int ifill = 0;
 
@@ -170,7 +173,7 @@ public :
                               const float metetx, const float metety,            // met
                               float &mass, float &xp1, float &xp2);
   bool MassCollinear(bool kMMCsynchronize, float &mass, float &xp1, float &xp2);
-  void fillhist(histSaver *plots, TString region, int nprong, TString sample, int taubtag, TString NP);
+  void fillhist(histSaver *plots, TString region, TString sample, TString NP);
   void fill_notau(TString region, TString sample, TString NP);
   bool SelectTLepid(int id);
   void calcfakesf(std::vector<int> origin);
@@ -283,6 +286,14 @@ public :
   float      drtaujmin;
   float      drtauj;
   float      MET_RefFinal_et;
+  // hadhad specific
+  float      tau0RNN;
+  float      tau1RNN;
+  float      ditau_coll_approx_m;
+  float      ditau_coll_approx_x0;
+  float      ditau_coll_approx_x1;
+  float      met_sumet;
+  float      met_sigma;
   //======================================================variables for kinematic fit========================================
   static TH2F* prob_20_40;
   static TH2F* prob_40_60;
@@ -306,13 +317,6 @@ public :
   static RooAddPdf   _pdf_;
 
   std::map<TString,std::vector<TLorentzVector*>*> fitvec;
-  // hadhad specific
-  float      tau0RNN;
-  float      tau1RNN;
-  float      ditau_coll_approx_m;
-  float      ditau_coll_approx_x0;
-  float      ditau_coll_approx_x1;
-  float      met_sumet;
 
 };
 #endif

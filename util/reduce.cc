@@ -1,11 +1,15 @@
-#define VERSION 4
+#define TTHMLVERSION 5
 #include "hadhadtree.h"
-#if VERSION==2
+#if TTHMLVERSION==2
 #include "tthmltree_v2.h"
-#elif VERSION==3
+#elif TTHMLVERSION==3
 #include "tthmltree_v3.h"
-#elif VERSION==4
+#elif TTHMLVERSION==4
 #include "tthmltree_v4.h"
+#include "tthmltree_v3.h"
+#elif TTHMLVERSION==5
+#include "tthmltree_v5.h"
+#include "tthmltree_v3.h"
 #endif
 #include "TROOT.h"
 #include "TSystem.h"
@@ -28,9 +32,11 @@ int main(int argc, char const *argv[])
 	bool onlyMajorNP = 0; // set to 0 for current xTFW analysis.
 	bool applynewSF = 0; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
 	bool nominalOnly = 1;
+	TString version = "v3"; //define your n-tuple version
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
 	TString framework = argv[1];
+	if(framework == "tthML") version = TString("v") + char('0'+TTHMLVERSION);
 	if(reduce > 4){
 		reduce-=2;
 		applynewSF = 1;
@@ -50,7 +56,7 @@ int main(int argc, char const *argv[])
 		printf("sys sample doesnt have the systematic trees\n");
 		return 0;
 	}
-	TString samplefilefullname = prefix + "/datafiles/" + framework + "/v3/run/"+ ((systname != "nominal" && framework == "tthML") ? "sys_" : "" ) + samplefile;
+	TString samplefilefullname = prefix + "/datafiles/" + framework + "/" + version + "/run/"+ ((systname != "nominal" && framework == "tthML") ? "sys_" : "" ) + samplefile;
 	printf("reading list: %s\n",samplefilefullname.Data());
 	ifstream fn(samplefilefullname);
 	if(!fn) {
@@ -87,9 +93,9 @@ int main(int argc, char const *argv[])
 		regions.push_back("reg1ttau1mtau1b2jos");
 		regions.push_back("reg2ttau1b3jos");
 		regions.push_back("reg1ttau1mtau1b3jos");*/
-                regions.push_back("reg2mtau1b2jss");
-                regions.push_back("reg2mtau1b3jss");
-                regions.push_back("reg2mtau1b2jos");
+		regions.push_back("reg2mtau1b2jss");
+		regions.push_back("reg2mtau1b3jss");
+		regions.push_back("reg2mtau1b2jos");
 		regions.push_back("reg2mtau1b3jos");
 		regions.push_back("reg2mtau2b2jss");
 		regions.push_back("reg2mtau2b3jss");
@@ -109,31 +115,44 @@ int main(int argc, char const *argv[])
 		regions.push_back("reg2ltau1b3jos");
 	}else{
 		if(tthdofcnc || reduce == 1){
-			regions.push_back("reg1l1tau1b_os");
-			regions.push_back("reg1l1tau1b1j_os");
-			regions.push_back("reg1l1tau1b2j_os");
-			regions.push_back("reg1l1tau1b3j_os");
-			regions.push_back("reg1l1tau2b1j_os");
-			regions.push_back("reg1l1tau2b2j_os");
-			regions.push_back("reg1l1tau2b3j_os");
-			regions.push_back("reg1l1tau2b1j_ss");
-			regions.push_back("reg1l1tau2b2j_ss");
-			regions.push_back("reg1l1tau2b3j_ss");
+//			regions.push_back("reg1l1tau1b_os");
 			regions.push_back("reg1l1tau1b_ss");
+//			regions.push_back("reg1l1tau1b1j_os");
 			regions.push_back("reg1l1tau1b1j_ss");
+			regions.push_back("reg1l1tau1b2j_os");
 			regions.push_back("reg1l1tau1b2j_ss");
-			regions.push_back("reg1l1tau1b3j_ss");
-			regions.push_back("reg1l2tau1bnj_os");
-			regions.push_back("reg1l2tau1bnj_ss");
-			regions.push_back("reg1l2tau2bnj_os");
-			regions.push_back("reg1l2tau2bnj_ss");
-			regions.push_back("reg2lSS1tau1bnj_os");
-			regions.push_back("reg2lSS1tau1bnj_os_antiiso");
-			regions.push_back("reg2lSS1tau1bnj_os_antiisolead");
+			regions.push_back("reg1l1tau1b3j_os");
+//			regions.push_back("reg1l1tau1b3j_ss");
+//			regions.push_back("reg1l1tau1b_os_antiiso");
+			regions.push_back("reg1l1tau1b_ss_antiiso");
+//			regions.push_back("reg1l1tau1b1j_os_antiiso");
+			regions.push_back("reg1l1tau1b1j_ss_antiiso");
+			regions.push_back("reg1l1tau1b2j_os_antiiso");
+			regions.push_back("reg1l1tau1b2j_ss_antiiso");
+			regions.push_back("reg1l1tau1b3j_os_antiiso");
+//			regions.push_back("reg1l1tau1b3j_ss_antiiso");
 			regions.push_back("reg2l1tau1bnj");
 			regions.push_back("reg2l1tau2bnj");
-			regions.push_back("reg2l1bnj");
-			regions.push_back("reg2l2bnj");
+//			regions.push_back("reg1l1tau2b_os");
+//			regions.push_back("reg1l1tau2b_ss");
+//			regions.push_back("reg1l1tau2b1j_os");
+//			regions.push_back("reg1l1tau2b1j_ss");
+			regions.push_back("reg1l1tau2b2j_os");
+			regions.push_back("reg1l1tau2b2j_ss");
+			regions.push_back("reg1l1tau2b3j_os");
+			regions.push_back("reg1l1tau2b3j_ss");
+			regions.push_back("reg1l2tau1bnj_os");
+			regions.push_back("reg1l2tau1bnj_ss");
+//			regions.push_back("reg1l2tau2bnj_os");
+//			regions.push_back("reg1l2tau2bnj_ss");
+//			regions.push_back("reg2lSS1tau1bnj_os");
+//			regions.push_back("reg2lSS1tau1bnj_os_antiiso");
+//			regions.push_back("reg2lSS1tau1bnj_os_antiisolead");
+//			regions.push_back("reg2l1bnj");
+//			regions.push_back("reg2l2bnj");
+//			regions.push_back("reg2lSSnj");
+//			regions.push_back("reg2lSS1bnj");
+//			regions.push_back("reg2lSS2bnj");
 
 			//regions.push_back("reg2lSS1tau1bnj_ss");
 			//regions.push_back("reg2lSS1tau2bnj_os");
@@ -159,31 +178,50 @@ int main(int argc, char const *argv[])
 	TString inputconfig = samplefile;
 	inputconfig.Remove(inputconfig.Sizeof()-5,4); //remove ".txt"
 	gSystem->mkdir(prefix+"/data");
+	gSystem->mkdir(prefix+"/data/" + version);
 	if(!debug) gErrorIgnoreLevel=kError;
 	nominal *analysis;
 	if(framework == "xTFW") analysis = new hadhadtree();
 	else if(framework == "tthML") {
-#if VERSION==2
+#if TTHMLVERSION==2
 		analysis = new tthmltree_v2();
 		analysis->version = 7;
 		if(inputconfig.Contains("ml"))
 		analysis->version = 5;
-#elif VERSION==3
+#elif TTHMLVERSION==3
 		analysis = new tthmltree_v3();
-#elif VERSION==4
-		analysis = new tthmltree_v4();
+#elif TTHMLVERSION==4
+		if(inputconfig.Contains("fcnc"))
+			analysis = new tthmltree_v3();
+		else analysis = new tthmltree_v4();
+#elif TTHMLVERSION==5
+		if(inputconfig.Contains("fcnc"))
+			analysis = new tthmltree_v3();
+		else analysis = new tthmltree_v5();
 #endif
 	}
 	analysis->SystematicsName = systname;
 	analysis->dumptruth = 0;
-	analysis->doBDT = 1;
+	analysis->dumpeventnumber = 0;
 	analysis->dofit = 1;
 	analysis->reduce = reduce;
 	analysis->debug = debug;
 	analysis->plotTauFake = 1;
 	analysis->ctagFCNC = 0;
-	analysis->fit_collinear = 0;
-	analysis->mass_collinear = 1;
+	analysis->mergeProngFF = 0;  //Should be merge prong SF
+	if(applynewSF) {
+		analysis->plotProng = 0;
+		analysis->plotLeptype = 1;
+		analysis->doBDT = 1;
+	}
+	else {
+		analysis->plotProng = 1;
+		analysis->plotLeptype = 0;
+		if(framework=="tthML") analysis->doBDT = 0;
+	}
+	analysis->fit_collinear = 1;
+	analysis->mass_collinear = 0;
+	analysis->dataDir = prefix+"/data/" + version;
 	analysis->nominaltree = inputconfig.Contains("sys")? 0 : (analysis->SystematicsName == "NOMINAL" || analysis->SystematicsName == "nominal");
 	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
 	analysis->doubleCounting = 1;
@@ -209,9 +247,10 @@ int main(int argc, char const *argv[])
 				regions = regions_fake;
 				regions.insert(regions.end(),regions_notau.begin(),regions_notau.end());
 			}
-			analysis->dumpeventnumber = 1;
+			analysis->dumpeventnumber = 0;
 		}
 		if(doplot) {
+			analysis->plotNPs.push_back("NOMINAL");
 			if(!inputconfig.Contains("data")){
 				if(analysis->nominaltree == 1 && !nominalOnly){
 					//for(auto v: fakeNPlist) analysis->plotNPs.push_back(v);
@@ -220,26 +259,27 @@ int main(int argc, char const *argv[])
 							if(framework == "tthML") for(auto v: tthMLmajorNPlist) analysis->plotNPs.push_back(v);
 							else for(auto v: xTFWmajorNPlist) analysis->plotNPs.push_back(v);
 						}else{
-							if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
-							else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
+							//if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
+							//else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
 							//for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
-							for(auto v: commonNPlist) analysis->plotNPs.push_back(v);
-                                                        if(applynewSF) for(auto v: xsecNPlist) analysis->plotNPs.push_back(v);
-							for(auto v: fakeNPlist) if(v.Contains("fakeSFNP")) analysis->plotNPs.push_back(v);
+							//for(auto v: commonNPlist) analysis->plotNPs.push_back(v);
+                                                        //for(auto v: xsecNPlist) analysis->plotNPs.push_back(v);
+							if(applynewSF)
+								for(auto v: (framework == "tthML"?tthMLfakeNPlist:xTFWfakeNPlist))
+									if(v.Contains("fakeSFNP")) analysis->plotNPs.push_back(v);
 						}
 					}
 				}
-				else analysis->plotNPs.push_back("NOMINAL");
-			}else analysis->plotNPs.push_back("NOMINAL");
+			}
 			for(auto NPs: analysis->plotNPs) printf("Plotting NPs: %s\n",NPs.Data());
 			if(applynewSF) analysis->ConfigNewFakeSF();
 			analysis->fcnc_regions = regions;
-                        analysis->init_hist(inputconfig);
+			analysis->init_hist(inputconfig);
 		}
 	        analysis->fcnc_regions = regions;
         	analysis->init_sample(inputconfig,inputconfig);
-		TString inputfilename = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/" + analysis->SystematicsName + "/" + inputconfig + "_tree.root";
-		TString inputfilename_nominal = prefix + "/data/" + framework + "reduce" + to_string(reduce-1) + "/nominal/" + inputconfig + "_tree.root";
+		TString inputfilename = prefix + "/data/" + version + "/" + framework + "reduce" + to_string(reduce-1) + "/" + analysis->SystematicsName + "/" + inputconfig + "_tree.root";
+		TString inputfilename_nominal = prefix + "/data/" + version + "/" + framework + "reduce" + to_string(reduce-1) + "/nominal/" + inputconfig + "_tree.root";
 		printf("reading file: %s\n", inputfilename.Data());
 		TFile inputfile(inputfilename,"read");
 		TFile *inputfile_nominal = 0;
@@ -472,7 +512,7 @@ int main(int argc, char const *argv[])
 				if(analysis->nominaltree) analysis->saveweightslist(prefix + "/config/theoryweightlist/" + framework + "_" + to_string(lastdsid) + ".txt");
 			}
 			if(dsid != lastdsid) analysis->init_dsid();
-			//if(framework == "tthML" && inputconfig.Contains("ml") && analysis->version == 5) ((tthmltree_v2*)analysis)->mc_norm = xsecs[dsid]*luminosity/totgenweighted[dsid];
+			//if(framework == "tthML" && inputconfig.Contains("ml") && analysis->TTHMLVERSION == 5) ((tthmltree_v2*)analysis)->mc_norm = xsecs[dsid]*luminosity/totgenweighted[dsid];
 			analysis->Loop( (TTree*)inputfile.Get(systname), inputconfig, (framework == "xTFW")? xsecs[dsid]*luminosity/totgenweighted[dsid] : 1);
 			if(framework == "xTFW") printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		}
