@@ -31,6 +31,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString NPname = findNPname(dirname,iNP,framework);
 	TString nominalname = "NOMINAL";
 	TString histmiddlename =  (dirname==NPname || NPname.Contains("ABCD"))? nominalname:NPname;
+	std::cout<<"histmiddlename:"<<histmiddlename<<std::endl;
 	TString figuredir = method.Contains("test")?"." : FIGURE_DIR;
 	TString chartdir = method.Contains("test")?"." : TABLE_DIR;
 	observable fakeFactorl;
@@ -454,8 +455,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	TString datafilesname[3] = {"data1516","data17","data18"};
 	for (int i = campaignfrom; i < campaignto; ++i)
 	{
-				datafile[i] = new TFile(framework== "tthML"? "nominal/" + datafilesname[i] + "_NOMINAL.root" : "NOMINAL/" + datafilesname[i] + "_NOMINAL.root");
-				tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile[i]);
+				if(!NPname.Contains("FFNP"))datafile[i] = new TFile(framework== "tthML"? "nominal/" + datafilesname[i] + "_NOMINAL.root" : "NOMINAL/" + datafilesname[i] + "_NOMINAL.root");
+				if(!NPname.Contains("FFNP"))tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile[i]);
+				if(NPname.Contains("FFNP")) datafile[i] = new TFile("NOMINAL/" + datafilesname[i] + "_"+NPname+".root");
+				if(NPname.Contains("FFNP"))tau_plots->read_sample("data","data",NPname,"data",kBlack, 1, datafile[i]);
 //		if(calculate_fake_calibration && framework== "tthML") {
 //			datafile_fake[i] = new TFile("nominal/" + datafilesname[i] + "_fake_NOMINAL.root");
 //			tau_plots->read_sample("data","data","NOMINAL","data",kBlack, 1, datafile_fake[i]);
@@ -512,7 +515,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 							if (mergeFake) {
 								for (int i = 1; i < origin.size() - 1; i++) {
 									//std::cout<<"===="<<std::endl;
-									tau_plots->read_sample( "fake1truth", samplename + "_"+origin.at(i).name, histmiddlename, "Fake MC, 1 truth #tau", kMagenta, norm, inputfile);//kMagenta
+									tau_plots->read_sample( "fake1truth", samplename + "_"+origin.at(i).name, histmiddlename, "only #tau_{sub} real", (enum EColor)43, norm, inputfile);//kMagenta
 								}
 								//tau_plots->read_sample( "fake0truth", samplename + "_doublefake", histmiddlename, "fake, 0 truth #tau", kTeal, norm,inputfile);
 							}else 
@@ -856,6 +859,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			if(i.second.size()>1) tau_plots->merge_regions(i.second, i.first);
 		}
 	}else{
+		tau_plots->merge_regions("reg2mtau1b3jss_vetobtagwp70_highmet","reg2mtau1b2jss_vetobtagwp70_highmet", "reg2mtau1bnjss");
+		tau_plots->merge_regions("reg2mtau1b3jos_vetobtagwp70_highmet","reg2mtau1b2jos_vetobtagwp70_highmet", "reg2mtau1bnjos");
 		tau_plots->merge_regions("reg1l2tau1bnj_os_vetobtagwp70_highmet","reg1l2tau1bnj_os_vetobtagwp70_lowmet", "reg1l2tau1bnj_os");
 		tau_plots->muteregion("reg1l2tau1bnj_os_vetobtagwp70_highmet");
 	}
@@ -875,7 +880,9 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		if(NPname.Contains("PDF")) tau_plots->trexdir = "PDF_trexinputs";
 		else if(NPname.Contains("muR")) tau_plots->trexdir = "scale_trexinputs";
 		else tau_plots->trexdir = "trexinputs";
+		std::cout<<"histmiddlename:"<<histmiddlename<<",NPname:"<<NPname<<std::endl;
 		tau_plots->write_trexinput(histmiddlename,NPname);
+		//tau_plots->write_trexinput(histmiddlename,"ff_sys_sb");
 	}
 	if(doPlots){
 

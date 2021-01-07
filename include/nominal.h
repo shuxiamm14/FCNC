@@ -367,96 +367,28 @@ public :
   int leading_index_bin;
 
   // apply FF_SS
-  int subleading_bin;
-  int leading_bin;
+  int subleading_bin=0;
+  int leading_bin=0;
 
   int fit_index_bin;
 
-  float read_para(float mmc);
-
-  float read_ss_fake_nm(int index_bin);
-  float read_ss_fake_lnm(int index_bin);
-  static TH1D FF_SS_1;//nm
-  static TH1D FF_SS_2;//lnm
-
-
  // write a function to retreve the ff root file once to store them in a array,delete
-  static TH1D create1D_(std::string root_name,std::string tree_name)
-  { 
-    std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/final/FCNCProject/FCNCAnalysis/ff_sys/"+root_name;
-    TFile *File_ = TFile::Open(full_name.c_str());
-    TH1D *hist1d = 0;
-    File_->GetObject(tree_name.c_str(),hist1d);
-    if(hist1d)std::cout<<"full_name: "<<full_name<<std::endl;
-    hist1d->SetDirectory(0);  //It crashes without this line!
-    return *hist1d;
-  }
- // useless,delete
-  static TH1F create1D(std::string root_name,std::string tree_name)
-  { 
-    std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/hhfake/";
-    full_name.append(root_name);
-    TFile *File_ = TFile::Open(full_name.c_str());
-    TH1F *hist1d = 0;
-    File_->GetObject(tree_name.c_str(),hist1d);
-    hist1d->SetDirectory(0);  //It crashes without this line!
-    return *hist1d;
-  }
+  static TH1D create1D_(std::string root_name,std::string tree_name);
+  static TH2D create2D(std::string root_name,std::string tree_name);
+  float  read_fake_factor(TString NPname,int subleading_bin);
 
-  static TH2D create2D(std::string root_name,std::string tree_name)
-  { 
-    std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/hhfake/";
-    full_name.append(root_name);
-    TFile *File_ = TFile::Open(full_name.c_str());
-    TH2D *hist2d = 0;
-    File_->GetObject(tree_name.c_str(),hist2d);
-    hist2d->SetDirectory(0);  //It crashes without this line!
-    return *hist2d;
-  }
-
-  static TH1F param;
-
-  float read_sys_fakefactors(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id, float mmc,int syst);
-  float read_ss(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id);
-
-  static TH1F ss_1p_lead_lnm;
-  static TH1F ss_3p_lead_lnm;
-  static TH2D ss_1p_nm;
-  static TH2D ss_3p_nm;
-  static TH1F ss_1p_sublead_lnm;
-  static TH1F ss_3p_sublead_lnm;
-  float read_ss_lnm_lead(float taupt, float taueta, int tauntracks);
-  float read_ss_nm(float taupt, float taueta, int tauntracks);
-  float read_ss_lnm_sublead(float taupt, float taueta, int tauntracks);
-
-
-  static TH2D hd_1p_lnm_lead;
-  static TH2D hd_3p_lnm_lead;
-  static TH2D hd_1p_nm_lead;
-  static TH2D hd_3p_nm_lead;
-  static TH2D hd_1p_nm_sublead;
-  static TH2D hd_3p_nm_sublead;
-  static TH2D hd_1p_lnm_sublead;
-  static TH2D hd_3p_lnm_sublead;
-  float read_hd_lnm_sublead(float taupt, float taueta, int tauntracks);
-  float read_hd_nm_sublead(float taupt, float taueta, int tauntracks);
-  float read_hd_nm_lead(float taupt, float taueta, int tauntracks);
-  float read_hd_lnm_lead(float taupt, float taueta, int tauntracks);
-  float read_hd(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id);
-
-
-  static TH2D fake_1p_lnm;
-  static TH2D fake_3p_lnm;
+  //ff_sys
+  static TH1D hhFakeSB;
+  static TH1D hhFakeSS;
+  // nominal
   static TH2D fake_1p_nm;
   static TH2D fake_3p_nm;
-  float read_fake_nm(float taupt, float taueta, int tauntracks, int syst);
-  float read_fake_lnm(float taupt, float taueta, int tauntracks, int syst);
-  float read_fake(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id, int syst);
 
-  std::vector<float> fake_factor_sys_vec;
-
-  // new fake factor
-  float newfakeweight=0;
+  static std::vector<observable> hhFakeSSVec;
+  static std::vector<observable> hhFakeSBVec;
+  static std::map<TString,observable> hhFakeSysMap;
+  static std::map<TString,observable> fill_hh_stat();
+  static std::vector<observable> fill_hh_sys(bool isSS);
 
   // only use nm ff
   float nmOnlyfakeweight=0;

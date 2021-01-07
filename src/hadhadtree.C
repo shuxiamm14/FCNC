@@ -123,7 +123,7 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots = new histSaver(histfilename);
   fcnc_plots->SetLumiAnaWorkflow("#it{#sqrt{s}} = 13TeV,  fb^{-1}","FCNC tqH H#rightarrow tautau","Internal");
   fcnc_plots->set_weight(&weight);
-  fcnc_plots->debug = debug;
+  fcnc_plots->debug =debug;
   auto vars = getVariables("xTFW");
   if(reduce == 3 && doBDT)
   fcnc_plots->add(vars["BDTG_train"],&BDTG_train);

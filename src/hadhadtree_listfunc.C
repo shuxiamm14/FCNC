@@ -70,7 +70,6 @@ void hadhadtree::definetaus(){
 
   int tau0id = tau_0_jet_rnn_tight?3:(tau_0_jet_rnn_medium?2:1);
   int tau1id = tau_1_jet_rnn_tight?3:(tau_1_jet_rnn_medium?2:1);
-
   taus_id->push_back(tau0id);
   taus_b_tagged->push_back(tau_0_b_tagged);
   taus_decay_mode->push_back(tau_0_decay_mode);

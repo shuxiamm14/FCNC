@@ -45,14 +45,33 @@ std::vector<TString> tthMLfakeNPlist = {
 	//"fake_mismodelling" //mis-modelling in SS region, the data-MC difference is added to OS w-jet faking uncertainty, make_plots (2nd time) to apply.
 };
 
-std::vector<TString> xTFWfakeNPlist{
-	//"fake_weight_a",
-    //"fake_weight_b",
-    //"fake_weight_c",
-    //"fake_weight_d",
-    //"fake_weight_e",
-    //"fake_weight_f",
-    //"fake_weight_g",
+std::vector<TString> xTFWfakeNPlist={
+  "FFNP_1prong_ptbin0_etabin0_up", 
+  "FFNP_1prong_ptbin0_etabin1_up",
+  "FFNP_1prong_ptbin1_etabin0_up",
+  "FFNP_1prong_ptbin1_etabin1_up",
+  "FFNP_1prong_ptbin2_etabin0_up",
+  "FFNP_1prong_ptbin2_etabin1_up",
+  "FFNP_1prong_ptbin0_etabin0_down", 
+  "FFNP_1prong_ptbin0_etabin1_down",
+  "FFNP_1prong_ptbin1_etabin0_down",
+  "FFNP_1prong_ptbin1_etabin1_down",
+  "FFNP_1prong_ptbin2_etabin0_down",
+  "FFNP_1prong_ptbin2_etabin1_down", 
+  "FFNP_3prong_ptbin0_etabin0_up", 
+  "FFNP_3prong_ptbin0_etabin1_up",
+  "FFNP_3prong_ptbin1_etabin0_up",
+  "FFNP_3prong_ptbin1_etabin1_up",
+  "FFNP_3prong_ptbin2_etabin0_up",
+  "FFNP_3prong_ptbin2_etabin1_up",
+  "FFNP_3prong_ptbin0_etabin0_down", 
+  "FFNP_3prong_ptbin0_etabin1_down",
+  "FFNP_3prong_ptbin1_etabin0_down",
+  "FFNP_3prong_ptbin1_etabin1_down",
+  "FFNP_3prong_ptbin2_etabin0_down",
+  "FFNP_3prong_ptbin2_etabin1_down",
+  "FFNP_samesign",
+  "FFNP_sideband"
 };
 
 std::vector<TString> commonNPlist = { //common NP for both tthML and xTFW
@@ -528,12 +547,14 @@ TString findNPname(TString &dirname, int iNP = 0, TString framework = "tthML"){
 	std::vector<TString> *treeNPlist = framework == "xTFW"?&xTFWtreeNPlist:&tthMLtreeNPlist;
 	std::vector<TString> *fakeNPlist = framework == "xTFW"?&xTFWfakeNPlist:&tthMLfakeNPlist;
 	std::vector<std::vector<TString>*> nlist = {fakeNPlist,&commonNPlist,specNPlist,treeNPlist,&theoryNPlist,&sampleNPlist};
+	//std::vector<std::vector<TString>*> nlist = {treeNPlist,fakeNPlist,&commonNPlist,specNPlist,&theoryNPlist,&sampleNPlist};
 	//except fakeNP, rerun from reduce 3 to update NPs.
 	int totalNP = 0;
 	for (int i = 0; i < nlist.size(); ++i)
 	{
 		if(npidx < nlist[i]->size()) {
 			if(i == 3) dirname = nlist[i]->at(npidx);
+			//if(i == 0) dirname = nlist[i]->at(npidx);
 			else dirname = framework == "tthML"? "nominal" : "NOMINAL";
 			return nlist[i]->at(npidx);
 		}

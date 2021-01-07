@@ -2,308 +2,155 @@
 #include "fcnc_include.h"
 #include "common.h"
 #include "LatexChart.h"
+#include "weightsys_list.h"
 using namespace std;
 int nominal::GeV = 0;
 
-
-TH1F nominal::param=create1D("hhff_param.root","hh_fakefactors_param_closure");
-
-
-float nominal::read_para(float mmc){
-    int bin = param.FindBin(mmc);
-    return param.GetBinContent(bin);
+TH2D nominal::create2D(std::string root_name,std::string tree_name){ 
+    std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/hhfake/";
+    full_name.append(root_name);
+    TFile *File_ = TFile::Open(full_name.c_str());
+    TH2D *hist2d = 0;
+    File_->GetObject(tree_name.c_str(),hist2d);
+    hist2d->SetDirectory(0);  //It crashes without this line!
+    return *hist2d;
 }
 
-//TH1D nominal::FF_SS_1=create1D_("FF_ss_nm.root","outhist1p");
-TH1D nominal::FF_SS_1=create1D_("FF_sideband_nm.root","outhist1p");
-TH1D nominal::FF_SS_2=create1D_("FF_ss_lnm.root","outhist1p"); 
-
-float nominal::read_ss_fake_nm(int index_bin){
-  return FF_SS_1.GetBinContent(index_bin+1)>0?FF_SS_1.GetBinContent(index_bin+1):0;
+TH1D nominal::create1D_(std::string root_name,std::string tree_name){ 
+    std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/final/FCNCProject/FCNCAnalysis/ff_sys/"+root_name;
+    TFile *File_ = TFile::Open(full_name.c_str());
+    TH1D *hist1d = 0;
+    File_->GetObject(tree_name.c_str(),hist1d);
+    if(hist1d)std::cout<<"full_name: "<<full_name<<std::endl;
+    hist1d->SetDirectory(0);  //It crashes without this line!
+    return *hist1d;
 }
 
-float nominal::read_ss_fake_lnm(int index_bin){
-  return FF_SS_2.GetBinContent(index_bin);
+std::vector<observable> nominal::fill_hh_sys(bool isSS){
+  std::vector<observable> result;
+  result.clear();
+
+  if(isSS){
+    for(int ibin = 1; ibin <= hhFakeSS.GetNbinsX(); ++ibin){
+      if(hhFakeSS.GetBinContent(ibin)>0)result.push_back(observable(hhFakeSS.GetBinContent(ibin),hhFakeSS.GetBinError(ibin)));
+      if(hhFakeSS.GetBinContent(ibin)<0)result.push_back(observable(0,0));
+      //std::cout<<"npname:SS"<<", ibin:"<<ibin<<std::endl;
+      //std::cout<<"value:"<<result.back().nominal<<", error:"<<result.back().error<<std::endl;
+    }
+  }else{
+    for(int ibin = 1; ibin <= hhFakeSB.GetNbinsX(); ++ibin){
+      if(hhFakeSB.GetBinContent(ibin)>0)result.push_back(observable(hhFakeSB.GetBinContent(ibin),hhFakeSB.GetBinError(ibin)));
+      if(hhFakeSB.GetBinContent(ibin)<0)result.push_back(observable(0,0));
+      //std::cout<<"npname:SB"<<", ibin:"<<ibin<<std::endl;
+      //std::cout<<"value:"<<result.back().nominal<<", error:"<<result.back().error<<std::endl;
+    }
+  }
+  return result;
+}
+  
+std::map<TString,observable> nominal::fill_hh_stat(){
+  int ptindex=0;
+  int etaindex=0;
+  int prongindex=0;
+  
+  std::map<TString,observable> result;
+
+  for(auto &item:xTFWfakeNPlist){
+    if(!item.Contains("prong")) continue;
+    //pt
+    if(item.Contains("ptbin0"))      ptindex=1;
+    else if(item.Contains("ptbin1")) ptindex=2;
+    else if(item.Contains("ptbin2")) ptindex=3;
+    //eta
+    if (item.Contains("etabin0"))     etaindex=1;
+    else if(item.Contains("etabin1")) etaindex=2;
+    
+    // fill map
+    if(item.Contains("1prong")){ //1p
+      prongindex=1;
+      result[item]=observable(fake_1p_nm.GetBinContent(ptindex, etaindex),fake_1p_nm.GetBinError(ptindex, etaindex));
+    }else if(item.Contains("3prong")){
+      prongindex=3;
+      result[item]=observable(fake_3p_nm.GetBinContent(ptindex, etaindex),fake_3p_nm.GetBinError(ptindex, etaindex));
+    }
+    //std::cout<<"npname:"<<item<<", ptindex:"<<ptindex<<", etaindex:"<<etaindex<<",prongindex:"<<prongindex<<std::endl;
+    //std::cout<<"value:"<<result[item].nominal<<", error:"<<result[item].error<<std::endl;
+  }
+  return result;
 }
 
-
-
-
-TH1F nominal::ss_1p_lead_lnm=create1D("hhffsfromhh_obj_tau_0_eta_hhff.root","FF_preselection_lead1p_fake_factors_hh_same_sign_anti_lead_tau_loose");
-TH1F nominal::ss_3p_lead_lnm=create1D("hhffsfromhh_obj_tau_0_eta_hhff.root","FF_preselection_lead3p_fake_factors_hh_same_sign_anti_lead_tau_loose");
-TH2D nominal::ss_1p_nm=create2D("hhffsfromhh_obj_2d_tau_0_pt_hhff_tau_0_eta_hhff.root","FF_preselection_comb1p");
-TH2D nominal::ss_3p_nm=create2D("hhffsfromhh_obj_2d_tau_0_pt_hhff_tau_0_eta_hhff.root","FF_preselection_comb3p");
-TH1F nominal::ss_1p_sublead_lnm=create1D("hhffsfromhh_obj_tau_0_eta_hhff.root","FF_preselection_sublead1p_fake_factors_hh_same_sign_anti_sublead_tau_loose");
-TH1F nominal::ss_3p_sublead_lnm=create1D("hhffsfromhh_obj_tau_0_eta_hhff.root","FF_preselection_sublead3p_fake_factors_hh_same_sign_anti_sublead_tau_loose");
-
-float nominal::read_ss_lnm_lead(float taupt, float taueta, int tauntracks){
-    if(tauntracks == 1){
-      int bin =ss_1p_lead_lnm.FindBin(taueta);//hhffsfromhh_obj_tau_0_eta_hhff.root ==> FF_preselection_lead1p_fake_factors_hh_same_sign_anti_lead_tau_loose
-      return ss_1p_lead_lnm.GetBinContent(bin);
-    }
-    else{
-      int bin = ss_3p_lead_lnm.FindBin(taueta);
-      return ss_3p_lead_lnm.GetBinContent(bin);
-    }
-}
-
-float nominal::read_ss_nm(float taupt, float taueta, int tauntracks){
-    if(tauntracks == 1){
-      int bin =ss_1p_nm.FindBin(taupt, taueta); //hhffsfromhh_obj_2d_tau_0_pt_hhff_tau_0_eta_hhff.root   FF_preselection_comb1p
-      return ss_1p_nm.GetBinContent(bin);
-    }
-    else{
-      int bin =ss_3p_nm.FindBin(taupt, taueta);// hhffsfromhh_obj_2d_tau_0_pt_hhff_tau_0_eta_hhff.root  FF_preselection_comb3p
-      return ss_3p_nm.GetBinContent(bin);
-    }
-}
-
-float nominal::read_ss_lnm_sublead(float taupt, float taueta, int tauntracks){
-    if(tauntracks == 1){
-      int bin =ss_1p_sublead_lnm.FindBin(taueta);//hhffsfromhh_obj_tau_0_eta_hhff.root FF_preselection_sublead1p_fake_factors_hh_same_sign_anti_sublead_tau_loose
-      return ss_1p_sublead_lnm.GetBinContent(bin);
-    }
-    else{
-      int bin = ss_3p_sublead_lnm.FindBin(taueta);// hhffsfromhh_obj_tau_0_eta_hhff.root FF_preselection_sublead3p_fake_factors_hh_same_sign_anti_sublead_tau_loose
-      return ss_3p_sublead_lnm.GetBinContent(bin);
-    }
-}
-
-float nominal::read_ss(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id){
-
-  if(tau1id == 1 and tau2id == 0){
-    return -.5*read_ss_lnm_lead(tau1pt, tau1eta, tau1ntracks)*read_ss_nm(tau2pt, tau2eta, tau2ntracks); // factor 0.5 to allow for using bigger template
-  }
-  else if(tau1id == 0 and tau2id == 1){
-    return -.5*read_ss_nm(tau1pt, tau1eta, tau1ntracks)*read_ss_lnm_sublead(tau2pt, tau2eta, tau2ntracks); // factor 0.5 to allow for using bigger template
-  }
-  else if(tau1id == 1 and tau2id == 1){ //loose-loose case, overlap of two templates, need to "double-count" that by adding up previous FF expressions
-    return -.5*(read_ss_nm(tau1pt, tau1eta, tau1ntracks)*read_ss_lnm_sublead(tau2pt, tau2eta, tau2ntracks) + read_ss_lnm_lead(tau1pt, tau1eta, tau1ntracks)*read_ss_nm(tau2pt, tau2eta, tau2ntracks)); // factor 0.5 to allow for using bigger template
-  }
-  else if(tau1id == 2 and tau2id < 2){
-    return read_ss_nm(tau2pt, tau2eta, tau2ntracks);
-  }
-  else if(tau1id < 2 and tau2id == 2){
-    return read_ss_nm(tau1pt, tau1eta, tau1ntracks);
-  }
-  else{
-    return 0.;
-  }
-}
-
-
-
-TH2D nominal::hd_1p_lnm_lead=create2D("hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_lnm_tau_0_eta_hhff_high_deta_lnm.root", "FF_preselection_lead1p_high_deta_anti_lead_tau"); // discard loose
-TH2D nominal::hd_3p_lnm_lead=create2D("hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_lnm_tau_0_eta_hhff_high_deta_lnm.root", "FF_preselection_lead3p_high_deta_anti_lead_tau");
-TH2D nominal::hd_1p_nm_lead=create2D("hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_tau_0_eta_hhff_high_deta.root", "FF_preselection_lead1p_high_deta_anti_lead_tau");
-TH2D nominal::hd_3p_nm_lead=create2D("hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_tau_0_eta_hhff_high_deta.root", "FF_preselection_lead3p_high_deta_anti_lead_tau");
-TH2D nominal::hd_1p_nm_sublead=create2D("hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_tau_0_eta_hhff_high_deta.root", "FF_preselection_sublead1p_high_deta_anti_sublead_tau");
-TH2D nominal::hd_3p_nm_sublead=create2D("hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_tau_0_eta_hhff_high_deta.root", "FF_preselection_sublead3p_high_deta_anti_sublead_tau");
-TH2D nominal::hd_1p_lnm_sublead=create2D("hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_lnm_tau_0_eta_hhff_high_deta_lnm.root", "FF_preselection_sublead1p_high_deta_anti_sublead_tau");
-TH2D nominal::hd_3p_lnm_sublead=create2D("hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_lnm_tau_0_eta_hhff_high_deta_lnm.root", "FF_preselection_sublead3p_high_deta_anti_sublead_tau");
-
-
-float nominal::read_hd_lnm_lead(float taupt, float taueta, int tauntracks){
-    if(tauntracks == 1){
-      int bin =hd_1p_lnm_lead.FindBin(taupt, taueta);// FF_preselection_lead1p_high_deta_anti_lead_tau_loose  hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_lnm_tau_0_eta_hhff_high_deta_lnm.root
-      return hd_1p_lnm_lead.GetBinContent(bin);
-    }
-    else{
-      int bin = hd_3p_lnm_lead.FindBin(taupt, taueta);// FF_preselection_lead3p_high_deta_anti_lead_tau_loose  hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_lnm_tau_0_eta_hhff_high_deta_lnm.root
-      return hd_3p_lnm_lead.GetBinContent(bin);
-    }
-  }
-
-
-
-float nominal::read_hd_nm_lead(float taupt, float taueta, int tauntracks){
-    if(tauntracks == 1){
-      int bin = hd_1p_nm_lead.FindBin(taupt, taueta); //hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_tau_0_eta_hhff_high_deta.root FF_preselection_lead1p_high_deta_anti_lead_tau
-      return hd_1p_nm_lead.GetBinContent(bin);
-    }
-    else{
-      int bin = hd_3p_nm_lead.FindBin(taupt, taueta); //hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_tau_0_eta_hhff_high_deta.root FF_preselection_lead3p_high_deta_anti_lead_tau
-      return hd_3p_nm_lead.GetBinContent(bin);
-    }
-  }
-
-
-float nominal::read_hd_nm_sublead(float taupt, float taueta, int tauntracks){
-    if(tauntracks == 1){
-      int bin = hd_1p_nm_sublead.FindBin(taupt, taueta); //hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_tau_0_eta_hhff_high_deta.root FF_preselection_sublead1p_high_deta_anti_sublead_tau
-      return hd_1p_nm_sublead.GetBinContent(bin);
-    }
-    else{
-      int bin = hd_3p_nm_sublead.FindBin(taupt, taueta);//hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_tau_0_eta_hhff_high_deta.root FF_preselection_sublead3p_high_deta_anti_sublead_tau
-      return hd_3p_nm_sublead.GetBinContent(bin);
-    }
-  }
-
-
-
-float nominal::read_hd_lnm_sublead(float taupt, float taueta, int tauntracks){
-    if(tauntracks == 1){
-      int bin = hd_1p_lnm_sublead.FindBin(taupt, taueta);//hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_lnm_tau_0_eta_hhff_high_deta_lnm.root FF_preselection_sublead1p_high_deta_anti_sublead_tau_loose
-      return hd_1p_lnm_sublead.GetBinContent(bin);
-    }
-    else{
-      int bin = hd_3p_lnm_sublead.FindBin(taupt, taueta);// hhffsfromhh_obj_2d_tau_0_pt_hhff_high_deta_lnm_tau_0_eta_hhff_high_deta_lnm.root FF_preselection_sublead3p_high_deta_anti_sublead_tau_loose
-      return hd_3p_lnm_sublead.GetBinContent(bin);
-    }
-  }
-
-//hd =high deta
-float nominal::read_hd(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id){
-    // id: tau_loose_rnn + tau_medium_rnn, so it is 0 for notloose, 1 for loosenotmedium, 2 for medium
-    if(tau1id == 1 and tau2id == 0){
-      return -.5*read_hd_lnm_lead(tau1pt, tau1eta, tau1ntracks)*read_hd_nm_sublead(tau2pt, tau2eta, tau2ntracks); // factor 0.5 to allow for using bigger template
-    }
-    else if(tau1id == 0 and tau2id == 1){
-      return -.5*read_hd_nm_lead(tau1pt, tau1eta, tau1ntracks)*read_hd_lnm_sublead(tau2pt, tau2eta, tau2ntracks); // factor 0.5 to allow for using bigger template
-    }
-    else if(tau1id == 1 and tau2id == 1){ //loose-loose case, overlap of two templates, need to "double-count" that by adding up previous FF expressions
-      return -.5*(read_hd_nm_lead(tau1pt, tau1eta, tau1ntracks)*read_hd_lnm_sublead(tau2pt, tau2eta, tau2ntracks) + read_hd_lnm_lead(tau1pt, tau1eta, tau1ntracks)*read_hd_nm_sublead(tau2pt, tau2eta, tau2ntracks)); // factor 0.5 to allow for using bigger template
-    }
-    else if(tau1id == 2 and tau2id < 2){
-      return read_hd_nm_sublead(tau2pt, tau2eta, tau2ntracks);
-    }
-    else if(tau1id < 2 and tau2id == 2){
-      return read_hd_nm_lead(tau1pt, tau1eta, tau1ntracks);
-    }
-    else{
-      return 0.;
-    }
-  }
-
-
-TH2D nominal::fake_1p_lnm=create2D("FFs_lephad_W_lnm_g40.root","FF_WCR_Presel_All_Comb_SLT_1prong");
-TH2D nominal::fake_3p_lnm=create2D("FFs_lephad_W_lnm_g40.root","FF_WCR_Presel_All_Comb_SLT_3prong");
+//ff_sys
+TH1D nominal::hhFakeSB=create1D_("FF_sideband_nm.root","outhist1p");
+TH1D nominal::hhFakeSS=create1D_("FF_ss_nm.root","outhist1p");
+// nominal
 TH2D nominal::fake_1p_nm =create2D("FFs_hadhad_muOnly.root","FF_WCR_Presel_All_Comb_SLTandTLT_1prong");
 TH2D nominal::fake_3p_nm =create2D("FFs_hadhad_muOnly.root","FF_WCR_Presel_All_Comb_SLTandTLT_3prong");
 
-float nominal::read_fake_lnm(float taupt, float taueta, int tauntracks, int syst){
-    if(tauntracks == 1){//FFs_lephad_W_lnm_g40.root FF_WCR_Presel_All_Comb_SLT_1prong
-      int bin = fake_1p_lnm.FindBin(taupt, taueta);
-      if(syst ==1){ //  syst::hh_fake_ff_stat_1p_lnm
-        return fake_1p_lnm.GetBinContent(bin) + fake_1p_lnm.GetBinError(bin);
-      }
-      else{
-        return fake_1p_lnm.GetBinContent(bin);
-      }
-    }
-    else{//FFs_lephad_W_lnm_g40.root FF_WCR_Presel_All_Comb_SLT_3prong
-      int bin = fake_3p_lnm.FindBin(taupt, taueta);
-      if(syst ==2){ // syst::hh_fake_ff_stat_3p_lnm
-        return fake_3p_lnm.GetBinContent(bin) + fake_3p_lnm.GetBinError(bin);
-      }
-      else{
-        return fake_3p_lnm.GetBinContent(bin);
-      }
-    }
+std::vector<observable> nominal::hhFakeSSVec=fill_hh_sys(true);
+std::vector<observable> nominal::hhFakeSBVec=fill_hh_sys(false);
+std::map<TString,observable> nominal::hhFakeSysMap=fill_hh_stat();
+
+
+// calculate FF_SS
+// pt 30-40/pt 40-60/pt 60-500  eta <1.37/eta >1.37     1prong/3prong
+// 6-11:3prong        0-5:1prong     0 1 2(eta <1.37 barrel)   3 4 5(eta >1.37 endcap)
+float nominal::read_fake_factor(TString NPname,int subleading_bin){  //  subleading_bin ==>determine ptindex_, etaindex_,prong
+
+  //std::cout<<"IN nominal::read_fake_factor,NPname: "<<NPname<<std::endl;
+  if(subleading_bin>12||subleading_bin<0){
+    std::cout<<"IN nominal::read_fake_factor,subleading_bin: "<<subleading_bin<<std::endl;
+    exit(0);
   }
 
-
-
-float nominal::read_fake_nm(float taupt, float taueta, int tauntracks, int syst){
-    if(tauntracks == 1){//FFs_lephad_W_nm_g40.root  FF_WCR_Presel_All_Comb_SLT_1prong
-      int bin = fake_1p_nm.FindBin(taupt, taueta);
-      if(syst == 3){// syst::hh_fake_ff_stat_1p_nm
-        return fake_1p_nm.GetBinContent(bin) + fake_1p_nm.GetBinError(bin);
-      }
-      else{
-        return fake_1p_nm.GetBinContent(bin);
-      }
+  int prong_=0; int ptindex_=0; int etaindex_=0;
+  if(int(subleading_bin)/6==0){
+    prong_=1;
+    if(int(subleading_bin)/3==0){
+      ptindex_=subleading_bin;
+      etaindex_=0;
+    }else if(int(subleading_bin)/3==1){
+      ptindex_=subleading_bin-3;
+      etaindex_=1;
     }
-    else{ // FFs_lephad_W_nm_g40.root     FF_WCR_Presel_All_Comb_SLT_3prong
-      int bin = fake_3p_nm.FindBin(taupt, taueta);
-      if(syst == 4){ //  syst::hh_fake_ff_stat_3p_nm
-        return fake_3p_nm.GetBinContent(bin) + fake_3p_nm.GetBinError(bin);
-      }
-      else{
-        return fake_3p_nm.GetBinContent(bin);
-      }
+  }else if(int(subleading_bin)/6==1){
+    prong_=3;
+    if(int(subleading_bin-6)/3==0){
+      ptindex_=subleading_bin-6;
+      etaindex_=0;
+    }else if(int(subleading_bin-6)/3==1){
+      ptindex_=subleading_bin-6-3;
+      etaindex_=1;
     }
   }
+  
+  bool isPlus=true;
+  // "FFNP_1prong_ptbin0_etabin0_up"
+  TString thisNP=string("FFNP")+(prong_==1?string("_1prong"):string("_3prong"))+(ptindex_==0?string("_ptbin0"):(ptindex_==1?string("_ptbin1"):string("_ptbin2")))+(etaindex_==0?string("_etabin0"):string("_etabin1"));
+  //std::cout<<"thisNP: "<<thisNP<<std::endl;
+  //std::cout<<"NPname:"<<NPname<<std::endl;
+  if(NPname.Contains("prong")&&NPname.Contains("FFNP")||(!NPname.Contains("FFNP"))){ // ff statistic  and other weight NP,tree NP,NOMINAL
 
-float nominal::read_fake(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id, int syst){
-    if(tau1id == 1 and tau2id == 0){
-      return -.5*read_fake_lnm(tau1pt, tau1eta, tau1ntracks,syst)*read_fake_nm(tau2pt, tau2eta, tau2ntracks,syst); // factor 0.5 to allow for using bigger template
-    }
-    else if(tau1id == 0 and tau2id == 1){
-      return -.5*read_fake_nm(tau1pt, tau1eta, tau1ntracks,syst)*read_fake_lnm(tau2pt, tau2eta, tau2ntracks,syst);
-    }
-    else if(tau1id == 1 and tau2id == 1){ //loose-loose case, overlap of two templates, need to "double-count" that by adding up previous FF expressions
-      return -.5*(read_fake_nm(tau1pt, tau1eta, tau1ntracks,syst)*read_fake_lnm(tau2pt, tau2eta, tau2ntracks,syst) + read_fake_lnm(tau1pt, tau1eta, tau1ntracks,syst)*read_fake_nm(tau2pt, tau2eta, tau2ntracks,syst));
-    }
-    else if(tau1id == 2 and tau2id < 2){
-      return read_fake_nm(tau2pt, tau2eta, tau2ntracks,syst);
-    }
-    else if(tau1id < 2 and tau2id == 2){
-      return read_fake_nm(tau1pt, tau1eta, tau1ntracks,syst);
-    }
-    else{
-      return 0.;
+    if(NPname.Contains(thisNP)){
+      // up down
+      if(NPname.Contains("up"))        isPlus=true;
+      else if(NPname.Contains("down")) isPlus=false;
+      return hhFakeSysMap[NPname].nominal+(isPlus?1.0*hhFakeSysMap[NPname].error:-1.0*hhFakeSysMap[NPname].error);
+    } 
+    return  hhFakeSysMap[thisNP+"_up"].nominal;
+  
+  }else if(NPname.Contains("FFNP")){
+    // ff_ss   and   ff_sb
+    if(NPname.Contains("samesign")){
+      //std::cout<<"hhFakeSSVechhFakeSSVechhFakeSSVec"<<std::endl;
+      return hhFakeSSVec.at(subleading_bin).nominal;
+    }else if(NPname.Contains("sideband")){
+      //std::cout<<"hhFakeSBVechhFakeSBVechhFakeSBVec"<<std::endl;
+      return hhFakeSBVec.at(subleading_bin).nominal;
     }
   }
-
-float nominal::read_sys_fakefactors(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id, float mmc,int syst){
-    if(syst ==5){ // ss
-      return read_ss(tau1pt, tau2pt, tau1eta, tau2eta, tau1ntracks, tau2ntracks, tau1id, tau2id);
-    }
-    else if(syst == 6){ // high deta
-      return read_hd(tau1pt, tau2pt, tau1eta, tau2eta, tau1ntracks, tau2ntracks, tau1id, tau2id);
-    }
-    else { // 0(nominal) 1 2 3 4 7 param_unc_weight
-      float mmcWeight = 1.;
-      if(syst==7) mmcWeight = read_para(mmc); 
-      return mmcWeight*read_fake(tau1pt, tau2pt, tau1eta, tau2eta, tau1ntracks, tau2ntracks, tau1id, tau2id,syst);
-    }
+  return 1; 
 }
 
-/*
-float nominal::_read_ff_lnm(float taupt, float taueta, int tauntracks){
-    if(tauntracks == 1){
-      int bin = nominal::lnm_1p.FindBin(taupt, taueta);
-      return nominal::lnm_1p.GetBinContent(bin);
-    }
-    else{
-      int bin = nominal::lnm_3p.FindBin(taupt, taueta);
-      return nominal::lnm_3p.GetBinContent(bin);
-    }
-}
-
-float nominal::_read_ff_nm(float taupt, float taueta, int tauntracks){
-    if(tauntracks == 1){
-      int bin = nominal::nm_1p.FindBin(taupt, taueta);
-      return nominal::nm_1p.GetBinContent(bin);
-    }
-    else{
-      int bin = nominal::nm_3p.FindBin(taupt, taueta);
-      return nominal::nm_3p.GetBinContent(bin);
-    }
-}
-
-float nominal::_read_ff_single_fake(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id){// id: tau_loose_rnn + tau_medium_rnn, so it is 0 for notloose, 1 for loosenotmedium, 2 for medium
-    if(tau1id == 1 and tau2id == 0){
-      return -0.5*_read_ff_lnm(tau1pt, tau1eta, tau1ntracks)*_read_ff_nm(tau2pt, tau2eta, tau2ntracks); // factor 0.5 to allow for using bigger template
-    }
-    else if(tau1id == 0 and tau2id == 1){
-      return -0.5*_read_ff_nm(tau1pt, tau1eta, tau1ntracks)*_read_ff_lnm(tau2pt, tau2eta, tau2ntracks); // factor 0.5 to allow for using bigger template
-    }
-    else if(tau1id == 1 and tau2id == 1){ //loose-loose case, overlap of two templates, need to "double-count" that by adding up previous FF expressions
-      return -0.5*(_read_ff_nm(tau1pt, tau1eta, tau1ntracks)*_read_ff_lnm(tau2pt, tau2eta, tau2ntracks) + _read_ff_lnm(tau1pt, tau1eta, tau1ntracks)*_read_ff_nm(tau2pt, tau2eta, tau2ntracks)); // factor 0.5 to allow for using bigger template
-    }
-    else if(tau1id == 2 and tau2id < 2){
-      return _read_ff_nm(tau2pt, tau2eta, tau2ntracks);
-    }
-    else if(tau1id < 2 and tau2id == 2){
-      return _read_ff_nm(tau1pt, tau1eta, tau1ntracks);
-    }
-    else{
-      return 0.;
-    }
-  }
-*/
 
 void nominal::initMVA(TString region){
 
@@ -321,9 +168,11 @@ void nominal::initMVA(TString region){
     tmpreader->AddVariable("drtaub",&drtaub);
     if(region.Contains("2tau")) tmpreader->AddVariable("drtautau",&drtautau);
     tmpreader->AddVariable("lep_pt_0",&lep_pt_0);
-  }else
+  }else{
     tmpreader->AddVariable("drtautau",&drtautau);
-  if(region.Contains("2j") || region.Contains("3j")||region.Contains("1j")||region.Contains("4j")||region.Contains("5j")){
+    tmpreader->AddVariable("t2mass",&t2mass);
+  }
+  if(region.Contains("2j") || region.Contains("3j")){
     tmpreader->AddVariable("dphitauetmiss",&dphitauetmiss);
     tmpreader->AddVariable("phicent",&phicent);
     tmpreader->AddVariable("tautaumass",&tautaumass);
@@ -337,7 +186,6 @@ void nominal::initMVA(TString region){
        tmpreader->AddVariable("wmass",&wmass);
     }
     if(region.Contains("1l1tau1b3j_os"))  tmpreader->AddVariable("chi2",&chi2);
-    if(region.Contains("2mtau1b3j"))  tmpreader->AddVariable("t2mass",&t2mass);
   }else if(region.Contains("1l2tau1") || region.Contains("2lSS")){
     tmpreader->AddVariable("t1vismass",&t1vismass);
     tmpreader->AddVariable("mtaujmin",&mtaujmin);
@@ -594,15 +442,6 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("tau0ntracks",&tau0ntracks);//!!
   tree->SetBranchAddress("fake_weight",&fake_weight);
   tree->SetBranchAddress("ditau_mmc_mlm_M", &ditau_mmc_mlm_M);
-  tree->SetBranchAddress("fake_weight_a",&fake_weight_a);
-  tree->SetBranchAddress("fake_weight_b",&fake_weight_b);
-  tree->SetBranchAddress("fake_weight_c",&fake_weight_c);
-  tree->SetBranchAddress("fake_weight_d",&fake_weight_d);
-  tree->SetBranchAddress("fake_weight_e",&fake_weight_e);
-  tree->SetBranchAddress("fake_weight_f",&fake_weight_f);
-  tree->SetBranchAddress("fake_weight_g",&fake_weight_g);
-  //new
-  tree->SetBranchAddress("newfakeweight",&newfakeweight);
   tree->SetBranchAddress("nmOnlyfakeweight",&nmOnlyfakeweight);
 }
 
@@ -690,15 +529,6 @@ tree->Branch("tau1ntracks",&tau1ntracks);//!!
 tree->Branch("tau0ntracks",&tau0ntracks);//!!
 tree->Branch("fake_weight",&fake_weight);
 tree->Branch("ditau_mmc_mlm_M", &ditau_mmc_mlm_M);
-tree->Branch("fake_weight_a",&fake_weight_a);
-tree->Branch("fake_weight_b",&fake_weight_b);
-tree->Branch("fake_weight_c",&fake_weight_c);
-tree->Branch("fake_weight_d",&fake_weight_d);
-tree->Branch("fake_weight_e",&fake_weight_e);
-tree->Branch("fake_weight_f",&fake_weight_f);
-tree->Branch("fake_weight_g",&fake_weight_g);
-//new
-tree->Branch("newfakeweight",&newfakeweight);
 tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
 }
 
@@ -756,13 +586,6 @@ tree->SetBranchAddress("tau1ntracks",&tau1ntracks);//!!
 tree->SetBranchAddress("tau0ntracks",&tau0ntracks);//!!
 tree->SetBranchAddress("fake_weight",&fake_weight);
 tree->SetBranchAddress("ditau_mmc_mlm_M", &ditau_mmc_mlm_M);
-tree->SetBranchAddress("fake_weight_a",&fake_weight_a);
-tree->SetBranchAddress("fake_weight_b",&fake_weight_b);
-tree->SetBranchAddress("fake_weight_c",&fake_weight_c);
-tree->SetBranchAddress("fake_weight_d",&fake_weight_d);
-tree->SetBranchAddress("fake_weight_e",&fake_weight_e);
-tree->SetBranchAddress("fake_weight_f",&fake_weight_f);
-tree->SetBranchAddress("fake_weight_g",&fake_weight_g);
 //
 //tree->SetBranchAddress("newfakeweight",&newfakeweight);
 //tree->SetBranchAddress("nmOnlyfakeweight",&nmOnlyfakeweight);
@@ -821,16 +644,9 @@ void nominal::vecBranch(TTree *tree){
   tree->Branch("tau0ntracks",&tau0ntracks);//!!
   tree->Branch("fake_weight",&fake_weight);
   tree->Branch("ditau_mmc_mlm_M", &ditau_mmc_mlm_M);
-  tree->Branch("fake_weight_a",&fake_weight_a);
-  tree->Branch("fake_weight_b",&fake_weight_b);
-  tree->Branch("fake_weight_c",&fake_weight_c);
-  tree->Branch("fake_weight_d",&fake_weight_d);
-  tree->Branch("fake_weight_e",&fake_weight_e);
-  tree->Branch("fake_weight_f",&fake_weight_f);
-  tree->Branch("fake_weight_g",&fake_weight_g);
   //
-  tree->Branch("newfakeweight",&newfakeweight);
-  tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
+  //tree->Branch("newfakeweight",&newfakeweight);
+  //tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
 }
 
 void nominal::initFit(){
@@ -1720,31 +1536,21 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       weight = weights->at(0);
       if(debug)std::cout<<"weight_size: "<<weights->size()<<"  weight[0]: "<<weights->at(0)<<std::endl;
       if(debug)std::cout<<"leps_id size: "<<leps_id->size()<<std::endl; // distinguish hadhad and lephad when reduce==3
-      if(reduce==3&&leps_id->size()==0){//hadhad
-        //weight=(fake_weight==0.?1:abs(fake_weight))*weight;//aim to data
-        fake_factor_sys_vec.clear();
-        fake_factor_sys_vec.push_back(fake_weight_a);
-        fake_factor_sys_vec.push_back(fake_weight_b);
-        fake_factor_sys_vec.push_back(fake_weight_c);
-        fake_factor_sys_vec.push_back(fake_weight_d);
-        fake_factor_sys_vec.push_back(fake_weight_e);
-        fake_factor_sys_vec.push_back(fake_weight_f);
-        fake_factor_sys_vec.push_back(fake_weight_g);
-      }
-
     }
       //===============================pre-selections===============================
     if(reduce == 2) {
       if(leps_p4->size()==0){
         njetNumber=ljets_p4->size()+bjets_p4->size(); 
-        fake_weight=read_sys_fakefactors(taus_p4->at(0)->Pt(),taus_p4->at(1)->Pt(),abs(taus_p4->at(0)->Eta()),abs(taus_p4->at(1)->Eta()),tau0ntracks,tau1ntracks,tausid->at(0),tausid->at(1),ditau_mmc_mlm_M,0);
+        //fake_weight=read_sys_fakefactors(taus_p4->at(0)->Pt(),taus_p4->at(1)->Pt(),abs(taus_p4->at(0)->Eta()),abs(taus_p4->at(1)->Eta()),tau0ntracks,tau1ntracks,tausid->at(0),tausid->at(1),ditau_mmc_mlm_M,0);
         
-        if(belong_regions.have("1lnmtau1mtau")) newfakeweight=read_fake_lnm(taus_p4->at(0)->Pt(), abs(taus_p4->at(0)->Eta()), tau0ntracks,0); //  leading medium          subleading loose-not-medium
-        if(belong_regions.have("1mtau1lnmtau")) newfakeweight=read_fake_lnm(taus_p4->at(1)->Pt(), abs(taus_p4->at(0)->Eta()), tau1ntracks,0);    //  subleading medium       leading loose-not-medium
-        if(belong_regions.have("2ltau"))        newfakeweight=read_fake_lnm(taus_p4->at(0)->Pt(), abs(taus_p4->at(0)->Eta()), tau0ntracks,0)*read_fake_lnm(taus_p4->at(1)->Pt(), abs(taus_p4->at(0)->Eta()), tau1ntracks,0); // leading subleading loose-not-medium
-        if(belong_regions.have("1mtau1ltau"))   nmOnlyfakeweight=read_fake_nm(taus_p4->at(1)->Pt(), abs(taus_p4->at(1)->Eta()), tau1ntracks,0);
-        std::cout<<"newff:"<<newfakeweight<<std::endl;
-        std::cout<<"nmOnlyfakeweight:"<<nmOnlyfakeweight<<std::endl;
+        //if(belong_regions.have("1lnmtau1mtau")) newfakeweight=read_fake_lnm(taus_p4->at(0)->Pt(), abs(taus_p4->at(0)->Eta()), tau0ntracks,0); //  leading medium          subleading loose-not-medium
+        //if(belong_regions.have("1mtau1lnmtau")) newfakeweight=read_fake_lnm(taus_p4->at(1)->Pt(), abs(taus_p4->at(0)->Eta()), tau1ntracks,0);    //  subleading medium       leading loose-not-medium
+        //if(belong_regions.have("2ltau"))        newfakeweight=read_fake_lnm(taus_p4->at(0)->Pt(), abs(taus_p4->at(0)->Eta()), tau0ntracks,0)*read_fake_lnm(taus_p4->at(1)->Pt(), abs(taus_p4->at(0)->Eta()), tau1ntracks,0); // leading subleading loose-not-medium
+        //if(belong_regions.have("1mtau1ltau"))   nmOnlyfakeweight=read_fake_nm(taus_p4->at(1)->Pt(), abs(taus_p4->at(1)->Eta()), tau1ntracks,0);
+        //if(belong_regions.have("1mtau1ltau"))   nmOnlyfakeweight=read_fake_nm(taus_p4->at(1)->Pt(), abs(taus_p4->at(1)->Eta()), tau1ntracks,3);
+        //if(belong_regions.have("1mtau1ltau"))   nmOnlyfakeweight=read_fake_nm(taus_p4->at(1)->Pt(), abs(taus_p4->at(1)->Eta()), tau1ntracks,4);
+        //std::cout<<"newff:"<<newfakeweight<<std::endl;
+        //std::cout<<"nmOnlyfakeweight:"<<nmOnlyfakeweight<<std::endl;
 
       }
       cut_flow.fill("this region");
@@ -2157,6 +1963,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           if(taus_n_charged_tracks->at(0)==3)  leading_index_bin+=6;
         }
 
+        /*
         if(taus_p4->at(0)->Pt()>=30&&taus_p4->at(0)->Pt()<40) fit_index_bin=0;
         else if(taus_p4->at(0)->Pt()>=40&&taus_p4->at(0)->Pt()<60) fit_index_bin=1;
         else fit_index_bin=2;
@@ -2169,7 +1976,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         if(fabs(taus_p4->at(1)->Eta())>1.37) fit_index_bin+=36; 
         if(taus_n_charged_tracks->at(1)==3)  fit_index_bin+=72;
         //std::cout<<"fit_index_bin: "<<fit_index_bin<<", tau0pt:"<<taus_p4->at(0)->Pt()<<",tau1pt:"<<taus_p4->at(1)->Pt()<<", tau0eta:"<<fabs(taus_p4->at(0)->Eta())<<", tau1eta:"<<fabs(taus_p4->at(1)->Eta())<<",tau0track:"<<taus_n_charged_tracks->at(0)<<",tau1track:"<<taus_n_charged_tracks->at(1)<<std::endl;
-
+        */
         
         // APPLY  FF_SS
         // leading_bin
@@ -2281,62 +2088,40 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
               //  weight = weights->at(2) * weights->at(index);
               else if(index !=0)
                 weight *= weights->at(index);
-
-              if(leps_id->size()==0){ //hadhad
-                if(index==0){//NIOMINAL
-                  //weight=fake_weight==0.?weights->at(0):abs(fake_weight)*weights->at(0);
-                  //weight=newfakeweight==0?weights->at(0):abs(newfakeweight)*weights->at(0);//lnm
-                  //weight=weights->at(0); //open this line for measure ff
-                  weight=nmOnlyfakeweight==0?weights->at(0):abs(nmOnlyfakeweight)*weights->at(0);
-                }else{ // not nominal,  NOMINAL*(i-th)*fakefactor 
-                  //weight=fake_weight==0.?weights->at(0)*weights->at(index):abs(fake_weight)*weights->at(0)*weights->at(index);
-                  //weight=newfakeweight==0?weights->at(0)*weights->at(index):abs(newfakeweight)*weights->at(0)*weights->at(index);//lnm
-                  //weight=weights->at(0); // //open this line for measure ff
-                  weight=nmOnlyfakeweight==0?weights->at(0)*weights->at(index):abs(nmOnlyfakeweight)*weights->at(0)*weights->at(index);
-                  
-                }
-              }
             }
-           
-
-            //if(region.Contains("1mtau1ltau1b")) weight=weights->at(0)*read_ss_fake_nm(subleading_bin); 
-            // ff_ss
-            //std::cout<<"region: "<<region<<std::endl;
-            //std::cout<<",leading_bin: "<<leading_bin<<", subleading_bin:"<<subleading_bin<<"read_ss_fake_nm(subleading_bin):"<<read_ss_fake_nm(subleading_bin)<<std::endl;
-            //if(region.Contains("1mtau1ltau")) weight=weights->at(0)*read_ss_fake_nm(subleading_bin); //  leading medium          subleading not-medium
-            /*if(region.Contains("1ltau1mtau")) weight=weights->at(0)*read_ss_fake_nm(leading_bin);    //  subleading medium       leading not-medium
-            if(region.Contains("1ltau1ntau")) weight=weights->at(0)* 1/2*read_ss_fake_lnm(leading_bin)*read_ss_fake_nm(subleading_bin); // leading loose-not-medium        subleading not loose
-            if(region.Contains("1ntau1ltau")) weight=weights->at(0)*1/2*read_ss_fake_lnm(leading_bin)*read_ss_fake_nm(subleading_bin); // leading not loose               subleading loose-not-medium    
-            if(region.Contains("2ltau")) weight=weights->at(0)*1/2*(read_ss_fake_nm(leading_bin)*read_ss_fake_lnm(subleading_bin)+read_ss_fake_lnm(leading_bin)*read_ss_fake_nm(subleading_bin)); // leading subleading loose-not-medium
-            *///std::cout<<"weight before ff_ss: "<<weights->at(0)<<", weight after ff_ss: "<<weight<<std::endl;
-            //if(!nominaltree) weight=fake_weight==0.?weights->at(0):abs(fake_weight)*weights->at(0);// tree NP
-            //std::cout<<"weight before ff_ss: "<<weights->at(0)<<", weight after ff_ss: "<<weight<<std::endl;
+            if(region.Contains("1mtau1ltau1b")) { weight*=read_fake_factor(theNP,subleading_bin); std::cout<<"ff:"<<read_fake_factor(theNP,subleading_bin)<<std::endl;}
+            if(!nominaltree){// tree NP
+              weight=weights->at(0);
+              if(region.Contains("1mtau1ltau1b")) weight*=read_fake_factor(theNP,subleading_bin); 
+            }
             if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, theNP);
             //else if(!region.Contains("tau")) fill_notau(region, sample, theNP);
             else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0))) {
             	(fcnc?fcnc_plots:fake_plots)->fill_hist(leporigin,region,theNP);
             }
+            
+            if(theNP=="NOMINAL"){
+              for(auto &item:xTFWfakeNPlist){
+                weight=weights->at(0);
+                if(region.Contains("1mtau1ltau1b")) weight*=read_fake_factor(item,subleading_bin);
+                if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, item.Data());
+              }
+            }
           }
-        }else{ //data
-            // ff_ss
-            //weight=fake_weight==0.?weights->at(0):abs(fake_weight)*weights->at(0);;//aim to data
-            //weight=newfakeweight==0?weights->at(0):abs(newfakeweight)*weights->at(0);// lnm
-            //weight=weights->at(0);
-            weight=nmOnlyfakeweight==0?weights->at(0):abs(nmOnlyfakeweight)*weights->at(0);
-            //std::cout<<"region: "<<region<<std::endl;
-            //std::cout<<"leading_bin: "<<leading_bin<<", subleading_bin:"<<subleading_bin<<std::endl;
-            //if(region.Contains("1mtau1ltau1b")) weight=weights->at(0)*read_ss_fake_nm(subleading_bin); 
-            //std::cout<<"weight:"<<weight<<",leading_bin: "<<leading_bin<<", subleading_bin:"<<subleading_bin<<"read_ss_fake_nm(subleading_bin):"<<read_ss_fake_nm(subleading_bin)<<std::endl;
-            //if(region.Contains("1mtau1ltau")) weight=weights->at(0)*read_ss_fake_nm(subleading_bin); //  leading medium          subleading not-medium
-            /*if(region.Contains("1ltau1mtau")) weight=weights->at(0)*read_ss_fake_nm(leading_bin);    //  subleading medium       leading not-medium
-            if(region.Contains("1ltau1ntau")) weight=weights->at(0)* 1/2*read_ss_fake_lnm(leading_bin)*read_ss_fake_nm(subleading_bin); // leading loose-not-medium        subleading not loose
-            if(region.Contains("1ntau1ltau")) weight=weights->at(0)*1/2*read_ss_fake_lnm(leading_bin)*read_ss_fake_nm(subleading_bin); // leading not loose               subleading loose-not-medium    
-            if(region.Contains("2ltau")) weight=weights->at(0)*1/2*(read_ss_fake_nm(leading_bin)*read_ss_fake_lnm(subleading_bin)+read_ss_fake_lnm(leading_bin)*read_ss_fake_nm(subleading_bin)); // leading subleading loose-not-medium
-            */
-           std::cout<<"weight before ff_ss: "<<weights->at(0)<<", weight after ff_ss: "<<weight<<std::endl;
+        }else{ //data  
+          weight=weights->at(0);
+          if(region.Contains("1mtau1ltau1b")) weight*=read_fake_factor("NOMINAL",subleading_bin); 
+
           if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, "NOMINAL");
-          //else if(!region.Contains("tau")) fill_notau(region, sample, "NOMINAL");
           else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0))) (fcnc?fcnc_plots:fake_plots)->fill_hist("data",region,"NOMINAL");
+
+          for(auto &item:xTFWfakeNPlist){
+            weight=weights->at(0);
+            if(region.Contains("1mtau1ltau1b")) weight*=read_fake_factor(item,subleading_bin);
+            if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, item.Data());
+          }
+          //else if(!region.Contains("tau")) fill_notau(region, sample, "NOMINAL");
+          
         }
       } // match dohist
       if(debug == 2) printf("finish hist\n");
