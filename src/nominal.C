@@ -1359,7 +1359,7 @@ void nominal::fillhist(histSaver* plots, TString region, TString sample, TString
   if(debug) printf("nominal::fillhist\n");
   //if(dobwp[bwps[1]] == 1 && taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_" + bwps[1],NP);
   //if(dovetobwp[bwps[1]] == 1 && !taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_veto" + bwps[1] + (taus_p4->at(0)->Eta() < 20*GeV? "_lowmet" : "_highmet"),NP);
-  if(dovetobwp[bwps[1]] == 1 && !taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_veto" + bwps[1] + (etmiss < 20*GeV? "_lowmet" : "_highmet"),NP);
+  if(dovetobwp[bwps[1]] == 1 && !taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_veto" + bwps[1] + (etmiss < 20*GeV? "_lowmet" : (passReduce3Cut?"_highmet":"_highmet_SB")),NP);
 }
 
 void nominal::readweightsysmap(int dsid, TString framework){
@@ -1618,10 +1618,10 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           //if(ditau_coll_approx_x1<=0.1||ditau_coll_approx_x1>=1.7) continue; 
           //cut_flow.fill("x0x1 cut");
           
-          if(ttvismass < 60*GeV) continue;
+          /*if(ttvismass < 60*GeV) continue;
           cut_flow.fill("$m_{\\tau\\tau,vis}>60$");
           if(ttvismass > 120*GeV) continue;
-          cut_flow.fill("$m_{\\tau\\tau,vis}<120$");
+          cut_flow.fill("$m_{\\tau\\tau,vis}<120$");*/
           if(drtautau > 3.4) continue;
           cut_flow.fill("$\\Delta R(\\tau,\\tau)<3.4$");
           if (belong_regions.have("1l2tau"))
@@ -1900,7 +1900,21 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             evtfile<<reg<<" "<<runNumber<<" "<<eventNumber<<" "<<weights->at(0)<<endl;
         }
       }
-    }
+      
+      std::cout<<"passReduce3Cut: "<<passReduce3Cut<<std::endl;
+      if(ttvismass > 60*GeV){
+        cut_flow.fill("$m_{\\tau\\tau,vis}>60$");
+        if(ttvismass < 120*GeV){
+          cut_flow.fill("$m_{\\tau\\tau,vis}<120$");
+          if(tautaumass<150*GeV && tautaumass>100*GeV){
+            cut_flow.fill("100GeV<$m_{\\tau\\tau}<150GeV$");
+            if(t2mass>140*GeV){
+              cut_flow.fill("$m_{t,FCNC}>$140GeV");
+              passReduce3Cut=true;
+            }
+          }
+        } 
+      }
   
     if(debug) printf("nominal::Loop : Finding origins\n");
   

@@ -392,7 +392,8 @@ public :
 
   // only use nm ff
   float nmOnlyfakeweight=0;
-
+  bool plotSB=false;
+  bool passReduce3Cut=false;
   
 };
 #endif
