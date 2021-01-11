@@ -21,8 +21,10 @@ void nominal::initMVA(TString region){
     tmpreader->AddVariable("drtaub",&drtaub);
     if(region.Contains("2tau")) tmpreader->AddVariable("drtautau",&drtautau);
     tmpreader->AddVariable("lep_pt_0",&lep_pt_0);
-  }else
+  }else{
     tmpreader->AddVariable("drtautau",&drtautau);
+    tmpreader->AddVariable("t2mass",&t2mass);
+  }
   if(region.Contains("2j") || region.Contains("3j")){
     tmpreader->AddVariable("dphitauetmiss",&dphitauetmiss);
     tmpreader->AddVariable("phicent",&phicent);
@@ -1103,7 +1105,11 @@ void nominal::fillhist(histSaver* plots, TString region, TString sample, TString
   if(plotProng) prongname = prongname + "_" + char('0'+ taus_n_charged_tracks->at(0))+"prong";
   if(debug) printf("nominal::fillhist\n");
   if(dobwp[bwps[1]] == 1 && taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_" + bwps[1],NP);
-  if(dovetobwp[bwps[1]] == 1 && !taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_veto" + bwps[1] + (etmiss < 20*GeV? "_lowmet" : "_highmet"),NP);
+  if(dovetobwp[bwps[1]] == 1 && !taus_b_tagged->at(0)) {
+    plots->fill_hist(sample,region+prongname + "_veto" + bwps[1] + (etmiss < 20*GeV? "_lowmet" : "_highmet"),NP);
+    if(BDTG_test<-0.6) plots->fill_hist(sample,region+"_lowBDT"+prongname + "_veto" + bwps[1] + (etmiss < 20*GeV? "_lowmet" : "_highmet"),NP);
+  }
+
 }
 
 void nominal::readweightsysmap(int dsid, TString framework){

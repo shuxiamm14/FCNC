@@ -58,6 +58,7 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
       dataloader->AddVariable("lep_pt_0",'F');
    }else{
       dataloader->AddVariable("drtautau",'F');
+      dataloader->AddVariable("t2mass",'F');
    }
    if(region.Contains("2j") || region.Contains("3j")){
       dataloader->AddVariable("dphitauetmiss",'F');

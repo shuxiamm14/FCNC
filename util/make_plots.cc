@@ -60,6 +60,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool doFakeFactor = 0;
 	bool realOnly = 0;
 	bool mergeleptype = 1;
+	bool doClosureTest = 1;
 	if(method.Contains("nofake")){
 		showFake = 0;
 	}
@@ -253,6 +254,11 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 //		"reg2l1tau1bnj",
 //		"reg2l1tau2bnj",
 	};
+	if(doClosureTest){
+		for(auto ele : regions_tthML_faketau){
+			ele+="_lowBDT";
+		}
+	}
 	vector<TString> regions_tthML_fakelep = {
 		"reg2l1bnj",
 		"reg2l2bnj",
@@ -808,6 +814,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					gSystem->mkdir(chartdir + "/" + savename);
 			}
 			savename += "/" + NPname;
+			if(doClosureTest) savename+="_closureTest";
 			tau_plots->plot_stack(histmiddlename, figuredir + "/" + savename,chartdir + "/" + savename);
 		}
 		
