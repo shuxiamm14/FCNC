@@ -572,7 +572,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				}
 				for(auto FFreg: FFregions){
 					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD_e","QCD Fake e",(enum EColor)51,0,fakeFactor_e["combine"].nominal);
-					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD_mu","QCD Fake $mu",(enum EColor)52,0,fakeFactor_mu["combine"].nominal);
+					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD_mu","QCD Fake #mu",(enum EColor)52,0,fakeFactor_mu["combine"].nominal);
 				}
 			}
 			if(fittodata){
