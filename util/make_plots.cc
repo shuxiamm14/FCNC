@@ -156,13 +156,13 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 //					var.first!="drlbditau"
 //					&&var.first!="etmiss"
 //					&&var.first!="ttvismass"
-//					&&var.first!="lep_pt_0"
-					var.first!="chi2"
+					var.first!="lep_pt_0"
+					//var.first!="chi2"
 					//&&var.first!="BDTG_test"
-					&&var.first!="drlb"
-					&&var.first!="x1fit"
-					&&var.first!="x2fit"
-					&&var.first!="ttvismass"
+					//&&var.first!="drlb"
+					//&&var.first!="x1fit"
+					//&&var.first!="x2fit"
+					//&&var.first!="ttvismass"
 				) continue;
 				if(varcount / perpart == ipart){
 					printf("registered variable: %s\n",var.first.Data());
@@ -255,8 +255,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 //		"reg2l1tau2bnj",
 	};
 	if(doClosureTest){
-		for(auto ele : regions_tthML_faketau){
-			ele+="_lowBDT";
+		for(auto& ele : regions_tthML_faketau){
+			ele="lowBDT_"+ele;
 		}
 	}
 	vector<TString> regions_tthML_fakelep = {
@@ -533,7 +533,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					"reg1l1tau1b3j_os",
 					//"reg1l1tau1b3j_ss"
 				};
-				for(auto FFreg: FFregions){
+				for(auto &FFreg: FFregions){
+					if(doClosureTest) FFreg = "lowBDT_"+FFreg;
 					if(ipart == 0){
 						fakeFactor_e[FFreg]=tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet",fakeFormular,histmiddlename);
 						fakeFactor_e[FFreg].error = rms(fakeFactor_e[FFreg].error,tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet","1 tuH",histmiddlename).nominal);

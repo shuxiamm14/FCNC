@@ -122,7 +122,6 @@ int main(int argc, char const *argv[])
 					if(cut_name == "") break;
 					if(cut_name == "PLV for lephad") continue;
 					if(sample.name != "data" && !isSignal) bkgyield[cut_name] += observable(cutflow_hist->GetBinContent(ibin), cutflow_hist->GetBinError(ibin));
-					if(sample.name != "data") bkgyield[cut_name] += observable(cutflow_hist->GetBinContent(ibin), cutflow_hist->GetBinError(ibin));
 					if(cutflow_hist->GetBinContent(ibin)) chart->set(cut_name.Data(), sample.title.Data(), cutflow_hist->GetBinContent(ibin), cutflow_hist->GetBinError(ibin));
 				}
 			}
