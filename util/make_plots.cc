@@ -61,6 +61,9 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool realOnly = 0;
 	bool mergeleptype = 1;
 	bool doClosureTest = 0;
+	bool printSRTable = 1;
+	bool printSFCRTable = 0;
+	bool printlowBDTTable = 0;
 	if(method.Contains("nofake")){
 		showFake = 0;
 	}
@@ -377,6 +380,33 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	map<TString,vector<TString>> ret;
 	mergeregion(-1,ret);
 	for(auto reg : ret["all"]) tau_plots->add_region(reg);
+
+	if(framework=="tthML"){
+		if(printSRTable){
+			tau_plots->regioninTables["reg1l2tau1bnj_os"] = "l\\thadhad";
+			tau_plots->regioninTables["reg1l1tau1b1j_ss_vetobtagwp70_highmet"] = "l\\tauhad 1j";
+			tau_plots->regioninTables["reg1l1tau1b2j_os_vetobtagwp70_highmet"] = "STH \\tlhad";
+			tau_plots->regioninTables["reg1l1tau1b2j_ss_vetobtagwp70_highmet"] = "l\\tauhad 2j";
+			tau_plots->regioninTables["reg1l1tau1b3j_os_vetobtagwp70_highmet"] = "TTH \\tlhad";
+		}
+		if(printSFCRTable){
+			tau_plots->regioninTables["reg2l1tau1bnj_vetobtagwp70_highmet"] = "2l1tau1bnj";
+			tau_plots->regioninTables["reg2l1tau2bnj_vetobtagwp70_highmet"] = "2l1tau2bnj";
+			tau_plots->regioninTables["reg1l1tau2b3j_ss_vetobtagwp70_highmet"] = "1l1tau2b3jSS";
+			tau_plots->regioninTables["reg1l1tau2b2j_os_vetobtagwp70_highmet"] = "1l1tau2b2jOS";
+			tau_plots->regioninTables["reg1l1tau2b2j_ss_vetobtagwp70_highmet"] = "1l1tau2b2jSS";
+			tau_plots->regioninTables["reg1l1tau2b3j_os_vetobtagwp70_highmet"] = "1l1tau2b3jOS";
+		}
+		if(printlowBDTTable){
+			tau_plots->regioninTables["lowBDT_reg1l2tau1bnj_os"] = "l\\thadhad";
+			tau_plots->regioninTables["lowBDT_reg1l1tau1b1j_ss_vetobtagwp70_highmet"] = "l\\tauhad 1j";
+			tau_plots->regioninTables["lowBDT_reg1l1tau1b2j_os_vetobtagwp70_highmet"] = "STH \\tlhad";
+			tau_plots->regioninTables["lowBDT_reg1l1tau1b2j_ss_vetobtagwp70_highmet"] = "l\\tauhad 2j";
+			tau_plots->regioninTables["lowBDT_reg1l1tau1b3j_os_vetobtagwp70_highmet"] = "TTH \\tlhad";
+		}
+	}
+
+
 
 	auto origin = plotFakeLep?getFakeLepOrigin() : getFakeTauOrigin();
 
