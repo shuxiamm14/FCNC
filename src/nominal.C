@@ -1019,7 +1019,7 @@ void nominal::ConfigNewFakeSF(){ //origin=-1,0,1,2,3 for real/lep,b,c,g,j
     }
     if(chart) {
       chart->caption = "The results of the fit in CR regions.";
-      chart->print(chart->label + (mergeProngFF?"":nprongstrs[iprong].Data()));
+      chart->print(chart->label);
       deletepointer(chart);
     }
     if(mergeProngFF) break;

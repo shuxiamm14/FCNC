@@ -61,9 +61,16 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool realOnly = 0;
 	bool mergeleptype = 1;
 	bool doClosureTest = 0;
-	bool printSRTable = 1;
+	bool printSRTable = 0;
 	if(method.Contains("SROnly")){
 		printSRTable = 1;
+	}
+	if(method.Contains("Closure")){
+		mergeOrigin = 1;
+		plotFakeLep = 0;
+		doFakeFactor = 1;
+		prefit = 0;
+		doClosureTest = 1;
 	}
 	if(method.Contains("nofake")){
 		showFake = 0;
@@ -160,9 +167,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 //					var.first!="drlbditau"
 //					&&var.first!="etmiss"
 //					&&var.first!="ttvismass"
-					var.first!="lep_pt_0"
+					(doClosureTest && var.first!="lep_pt_0")
 					//var.first!="chi2"
-					//&&var.first!="BDTG_test"
+					||(printSRTable && var.first!="BDTG_test")
+					|| var.first!="BDTG_test"
 					//&&var.first!="drlb"
 					//&&var.first!="x1fit"
 					//&&var.first!="x2fit"
