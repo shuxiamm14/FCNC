@@ -61,8 +61,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool realOnly = 0;
 	bool mergeleptype = 1;
 	bool doClosureTest = 0;
-	bool printSRTable = 1;
-	bool printSFCRTable = 0;
+	bool printSRTable = 0;
+	bool printSFCRTable = 1;
 	bool printlowBDTTable = 0;
 	if(method.Contains("nofake")){
 		showFake = 0;
@@ -106,7 +106,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	tau_plots->doROC = 0;
 	TString lumitag = "#it{#sqrt{s}} = 13TeV, ";
 	lumitag += campaignto == 3 ? "140 fb^{-1}" : (campaignto==2?"80 fb^{-1}":"36.1 fb^{-1}");
-	tau_plots->SetLumiAnaWorkflow(lumitag,"FCNC tqH H#rightarrow tautau","Work in progress");
+	tau_plots->SetLumiAnaWorkflow(lumitag,"FCNC tqH H#rightarrow#tau#tau","Internal");
 	tau_plots->debug = debug;
 /*
 	tau_plots->checkread = 1;
@@ -397,7 +397,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			tau_plots->regioninTables["reg1l1tau2b2j_ss_vetobtagwp70_highmet"] = "1l1tau2b2jSS";
 			tau_plots->regioninTables["reg1l1tau2b3j_os_vetobtagwp70_highmet"] = "1l1tau2b3jOS";
 		}
-		if(printlowBDTTable){
+		if(doClosureTest){
 			tau_plots->regioninTables["lowBDT_reg1l2tau1bnj_os"] = "l\\thadhad";
 			tau_plots->regioninTables["lowBDT_reg1l1tau1b1j_ss_vetobtagwp70_highmet"] = "l\\tauhad 1j";
 			tau_plots->regioninTables["lowBDT_reg1l1tau1b2j_os_vetobtagwp70_highmet"] = "STH \\tlhad";
@@ -847,7 +847,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			}
 			savename += "/" + NPname;
 			if(doClosureTest) savename+="_closureTest";
-			tau_plots->plot_stack(histmiddlename, figuredir + "/" + savename,chartdir + "/" + savename);
+			tau_plots->plot_stack(histmiddlename, figuredir + "/" + savename,chartdir + "/" + savename + (printSFCRTable?"_SFCR":""));
 		}
 		
 	}
