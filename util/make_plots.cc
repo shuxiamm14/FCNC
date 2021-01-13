@@ -61,9 +61,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool realOnly = 0;
 	bool mergeleptype = 1;
 	bool doClosureTest = 0;
-	bool printSRTable = 0;
-	bool printSFCRTable = 1;
-	bool printlowBDTTable = 0;
+	bool printSRTable = 1;
+	if(method.Contains("SROnly")){
+		printSRTable = 1;
+	}
 	if(method.Contains("nofake")){
 		showFake = 0;
 	}
@@ -388,21 +389,34 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			tau_plots->regioninTables["reg1l1tau1b2j_os_vetobtagwp70_highmet"] = "STH \\tlhad";
 			tau_plots->regioninTables["reg1l1tau1b2j_ss_vetobtagwp70_highmet"] = "l\\tauhad 2j";
 			tau_plots->regioninTables["reg1l1tau1b3j_os_vetobtagwp70_highmet"] = "TTH \\tlhad";
-		}
-		if(printSFCRTable){
+		}else{
 			tau_plots->regioninTables["reg2l1tau1bnj_vetobtagwp70_highmet"] = "2l1tau1bnj";
 			tau_plots->regioninTables["reg2l1tau2bnj_vetobtagwp70_highmet"] = "2l1tau2bnj";
 			tau_plots->regioninTables["reg1l1tau2b3j_ss_vetobtagwp70_highmet"] = "1l1tau2b3jSS";
 			tau_plots->regioninTables["reg1l1tau2b2j_os_vetobtagwp70_highmet"] = "1l1tau2b2jOS";
 			tau_plots->regioninTables["reg1l1tau2b2j_ss_vetobtagwp70_highmet"] = "1l1tau2b2jSS";
 			tau_plots->regioninTables["reg1l1tau2b3j_os_vetobtagwp70_highmet"] = "1l1tau2b3jOS";
-		}
-		if(doClosureTest){
 			tau_plots->regioninTables["lowBDT_reg1l2tau1bnj_os"] = "l\\thadhad";
 			tau_plots->regioninTables["lowBDT_reg1l1tau1b1j_ss_vetobtagwp70_highmet"] = "l\\tauhad 1j";
 			tau_plots->regioninTables["lowBDT_reg1l1tau1b2j_os_vetobtagwp70_highmet"] = "STH \\tlhad";
 			tau_plots->regioninTables["lowBDT_reg1l1tau1b2j_ss_vetobtagwp70_highmet"] = "l\\tauhad 2j";
 			tau_plots->regioninTables["lowBDT_reg1l1tau1b3j_os_vetobtagwp70_highmet"] = "TTH \\tlhad";
+			tau_plots->regioninTables["reg1l1tau1b1j_ss_vetobtagwp70_highmet"] = "l\\tauhad 1j D";
+			tau_plots->regioninTables["reg1l1tau1b1j_ss_antiiso_vetobtagwp70_highmet"] = "l\\tauhad 1j C";
+			tau_plots->regioninTables["reg1l1tau1b1j_ss_vetobtagwp70_lowmet"] = "l\\tauhad 1j B";
+			tau_plots->regioninTables["reg1l1tau1b1j_ss_antiiso_vetobtagwp70_lowmet"] = "l\\tauhad 1j A";
+			tau_plots->regioninTables["reg1l1tau1b2j_os_vetobtagwp70_highmet"] = "STH \\tlhad D";
+			tau_plots->regioninTables["reg1l1tau1b2j_os_antiiso_vetobtagwp70_highmet"] = "STH \\tlhad C";
+			tau_plots->regioninTables["reg1l1tau1b2j_os_vetobtagwp70_lowmet"] = "STH \\tlhad B";
+			tau_plots->regioninTables["reg1l1tau1b2j_os_antiiso_vetobtagwp70_lowmet"] = "STH \\tlhad A";
+			tau_plots->regioninTables["reg1l1tau1b2j_ss_vetobtagwp70_highmet"] = "l\\tauhad 2j D";
+			tau_plots->regioninTables["reg1l1tau1b2j_ss_antiiso_vetobtagwp70_highmet"] = "l\\tauhad 2j C";
+			tau_plots->regioninTables["reg1l1tau1b2j_ss_vetobtagwp70_lowmet"] = "l\\tauhad 2j B";
+			tau_plots->regioninTables["reg1l1tau1b2j_ss_antiiso_vetobtagwp70_lowmet"] = "l\\tauhad 2j A";
+			tau_plots->regioninTables["reg1l1tau1b3j_os_vetobtagwp70_highmet"] = "TTH \\tlhad D";
+			tau_plots->regioninTables["reg1l1tau1b3j_os_antiiso_vetobtagwp70_highmet"] = "TTH \\tlhad C";
+			tau_plots->regioninTables["reg1l1tau1b3j_os_vetobtagwp70_lowmet"] = "TTH \\tlhad B";
+			tau_plots->regioninTables["reg1l1tau1b3j_os_antiiso_vetobtagwp70_lowmet"] = "TTH \\tlhad A";
 		}
 	}
 
@@ -847,7 +861,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			}
 			savename += "/" + NPname;
 			if(doClosureTest) savename+="_closureTest";
-			tau_plots->plot_stack(histmiddlename, figuredir + "/" + savename,chartdir + "/" + savename + (printSFCRTable?"_SFCR":""));
+			tau_plots->plot_stack(histmiddlename, figuredir + "/" + savename,chartdir + "/" + savename + (printSRTable?"_SROnly":""));
 		}
 		
 	}
