@@ -60,7 +60,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool doFakeFactor = 0;
 	bool realOnly = 0;
 	bool mergeleptype = 1;
-	bool doClosureTest = 1;
+	bool doClosureTest = 0;
 	if(method.Contains("nofake")){
 		showFake = 0;
 	}
@@ -179,6 +179,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			tau_plots->muteregion("2j");
 		}else{
 			tau_plots->sensitivevariable = "tau_pt_0";
+			tau_plots->sensitivevariable = "BDT_test";
 			for(auto var : vars){
 				
 				if(   var.first!="tau_pt_0"
