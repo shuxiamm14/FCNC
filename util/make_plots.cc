@@ -63,6 +63,18 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool doFakeFactor = 0;
 	bool realOnly = 0;//0
 	bool mergeleptype = 1;
+	bool doClosureTest = 0;
+	bool printSRTable = 0;
+	if(method.Contains("SROnly")){
+		printSRTable = 1;
+	}
+	if(method.Contains("Closure")){
+		mergeOrigin = 1;
+		plotFakeLep = 0;
+		doFakeFactor = 1;
+		prefit = 0;
+		doClosureTest = 1;
+	}
 	if(method.Contains("nofake")){
 		showFake = 0;
 	}
@@ -105,7 +117,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	tau_plots->doROC = 0;
 	TString lumitag = "#it{#sqrt{s}} = 13TeV, ";
 	lumitag += campaignto == 3 ? "140 fb^{-1}" : (campaignto==2?"80 fb^{-1}":"36.1 fb^{-1}");
-	tau_plots->SetLumiAnaWorkflow(lumitag,"FCNC tqH H#rightarrow tautau","Work in progress");
+	tau_plots->SetLumiAnaWorkflow(lumitag,"FCNC tqH H#rightarrow#tau#tau","Internal");
 	tau_plots->debug = debug;
 /*
 	tau_plots->checkread = 1;
@@ -158,13 +170,14 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 //					var.first!="drlbditau"
 //					&&var.first!="etmiss"
 //					&&var.first!="ttvismass"
-//					&&var.first!="lep_pt_0"
-					var.first!="chi2"
-					//&&var.first!="BDTG_test"
-					&&var.first!="drlb"
-					&&var.first!="x1fit"
-					&&var.first!="x2fit"
-					&&var.first!="ttvismass"
+					(doClosureTest && var.first!="lep_pt_0")
+					//var.first!="chi2"
+					||(printSRTable && var.first!="BDTG_test")
+					|| var.first!="BDTG_test"
+					//&&var.first!="drlb"
+					//&&var.first!="x1fit"
+					//&&var.first!="x2fit"
+					//&&var.first!="ttvismass"
 				) continue;
 				if(varcount / perpart == ipart){
 					printf("registered variable: %s\n",var.first.Data());
@@ -181,6 +194,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			tau_plots->muteregion("2j");
 		}else{
 			tau_plots->sensitivevariable = "tau_pt_0";
+			tau_plots->sensitivevariable = "BDT_test";
 			for(auto var : vars){
 				
 				if(   var.first!="tau_pt_0"
@@ -314,6 +328,11 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 //		"reg2l1tau1bnj",
 //		"reg2l1tau2bnj",
 	};
+	if(doClosureTest){
+		for(auto& ele : regions_tthML_faketau){
+			ele="lowBDT_"+ele;
+		}
+	}
 	vector<TString> regions_tthML_fakelep = {
 		"reg2l1bnj",
 		"reg2l2bnj",
@@ -442,6 +461,48 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	mergeregion(-1,ret);
 	for(auto reg : ret["all"]) tau_plots->add_region(reg);
     tau_plots->show();
+
+	if(framework=="tthML"){
+		if(printSRTable){
+			tau_plots->regioninTables["reg1l2tau1bnj_os"] = "l\\thadhad";
+			tau_plots->regioninTables["reg1l1tau1b1j_ss_vetobtagwp70_highmet"] = "l\\tauhad 1j";
+			tau_plots->regioninTables["reg1l1tau1b2j_os_vetobtagwp70_highmet"] = "STH \\tlhad";
+			tau_plots->regioninTables["reg1l1tau1b2j_ss_vetobtagwp70_highmet"] = "l\\tauhad 2j";
+			tau_plots->regioninTables["reg1l1tau1b3j_os_vetobtagwp70_highmet"] = "TTH \\tlhad";
+		}else{
+			tau_plots->regioninTables["reg2l1tau1bnj_vetobtagwp70_highmet"] = "2l1tau1bnj";
+			tau_plots->regioninTables["reg2l1tau2bnj_vetobtagwp70_highmet"] = "2l1tau2bnj";
+			tau_plots->regioninTables["reg1l1tau2b3j_ss_vetobtagwp70_highmet"] = "1l1tau2b3jSS";
+			tau_plots->regioninTables["reg1l1tau2b2j_os_vetobtagwp70_highmet"] = "1l1tau2b2jOS";
+			tau_plots->regioninTables["reg1l1tau2b2j_ss_vetobtagwp70_highmet"] = "1l1tau2b2jSS";
+			tau_plots->regioninTables["reg1l1tau2b3j_os_vetobtagwp70_highmet"] = "1l1tau2b3jOS";
+			tau_plots->regioninTables["lowBDT_reg1l2tau1bnj_os"] = "l\\thadhad";
+			tau_plots->regioninTables["lowBDT_reg1l1tau1b1j_ss_vetobtagwp70_highmet"] = "l\\tauhad 1j";
+			tau_plots->regioninTables["lowBDT_reg1l1tau1b2j_os_vetobtagwp70_highmet"] = "STH \\tlhad";
+			tau_plots->regioninTables["lowBDT_reg1l1tau1b2j_ss_vetobtagwp70_highmet"] = "l\\tauhad 2j";
+			tau_plots->regioninTables["lowBDT_reg1l1tau1b3j_os_vetobtagwp70_highmet"] = "TTH \\tlhad";
+			if(!prefit){
+				tau_plots->regioninTables["reg1l1tau1b1j_ss_vetobtagwp70_highmet"] = "l\\tauhad 1j C";
+				tau_plots->regioninTables["reg1l1tau1b1j_ss_vetobtagwp70_lowmet"] = "l\\tauhad 1j B";
+				tau_plots->regioninTables["reg1l1tau1b1j_ss_antiiso_vetobtagwp70_lowmet"] = "l\\tauhad 1j A";
+				tau_plots->regioninTables["reg1l1tau1b2j_os_vetobtagwp70_highmet"] = "STH \\tlhad C";
+				tau_plots->regioninTables["reg1l1tau1b2j_os_vetobtagwp70_lowmet"] = "STH \\tlhad B";
+				tau_plots->regioninTables["reg1l1tau1b2j_os_antiiso_vetobtagwp70_lowmet"] = "STH \\tlhad A";
+				tau_plots->regioninTables["reg1l1tau1b2j_ss_vetobtagwp70_highmet"] = "l\\tauhad 2j C";
+				tau_plots->regioninTables["reg1l1tau1b2j_ss_vetobtagwp70_lowmet"] = "l\\tauhad 2j B";
+				tau_plots->regioninTables["reg1l1tau1b2j_ss_antiiso_vetobtagwp70_lowmet"] = "l\\tauhad 2j A";
+				tau_plots->regioninTables["reg1l1tau1b3j_os_vetobtagwp70_highmet"] = "TTH \\tlhad C";
+				tau_plots->regioninTables["reg1l1tau1b3j_os_vetobtagwp70_lowmet"] = "TTH \\tlhad B";
+				tau_plots->regioninTables["reg1l1tau1b3j_os_antiiso_vetobtagwp70_lowmet"] = "TTH \\tlhad A";
+				//tau_plots->regioninTables["reg1l1tau1b3j_os_vetobtagwp70_highmet"] = "TTH \\tlhad D";
+				//tau_plots->regioninTables["reg1l1tau1b1j_ss_vetobtagwp70_highmet"] = "l\\tauhad 1j D";
+				//tau_plots->regioninTables["reg1l1tau1b2j_os_vetobtagwp70_highmet"] = "STH \\tlhad D";
+				//tau_plots->regioninTables["reg1l1tau1b2j_ss_vetobtagwp70_highmet"] = "l\\tauhad 2j D";
+			}
+		}
+	}
+
+
 	auto origin = plotFakeLep?getFakeLepOrigin() : getFakeTauOrigin();
 
 	if(!plotFakeLep){//xTFW
@@ -600,7 +661,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					"reg1l1tau1b3j_os",
 					//"reg1l1tau1b3j_ss"
 				};
-				for(auto FFreg: FFregions){
+				for(auto &FFreg: FFregions){
+					if(doClosureTest) FFreg = "lowBDT_"+FFreg;
 					if(ipart == 0){
 						fakeFactor_e[FFreg]=tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet",fakeFormular,histmiddlename);
 						fakeFactor_e[FFreg].error = rms(fakeFactor_e[FFreg].error,tau_plots->calculateYield(FFreg + "_e_vetobtagwp70_lowmet","1 tuH",histmiddlename).nominal);
@@ -637,8 +699,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					}
 				}
 				for(auto FFreg: FFregions){
-					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD_e","eFF(QCD)",(enum EColor)51,0,fakeFactor_e["combine"].nominal);
-					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD_mu","#muFF(QCD)",(enum EColor)52,0,fakeFactor_mu["combine"].nominal);
+					tau_plots->templatesample(FFreg + "_antiiso_e_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_e_vetobtagwp70_highmet","FF_QCD_e","QCD Fake e",(enum EColor)51,0,fakeFactor_e["combine"].nominal);
+					tau_plots->templatesample(FFreg + "_antiiso_mu_vetobtagwp70_highmet",histmiddlename,fakeFormular,FFreg + "_mu_vetobtagwp70_highmet","FF_QCD_mu","QCD Fake #mu",(enum EColor)52,0,fakeFactor_mu["combine"].nominal);
 				}
 			}
 			if(fittodata){//tthML
@@ -930,7 +992,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					gSystem->mkdir(chartdir + "/" + savename);
 			}
 			savename += "/" + NPname+(plotSB?"_SB":"");
-			tau_plots->plot_stack(histmiddlename, figuredir + "/" + savename,chartdir + "/" + savename);
+			if(doClosureTest) savename+="_closureTest";
+			tau_plots->plot_stack(histmiddlename, figuredir + "/" + savename,chartdir + "/" + savename + (printSRTable?"_SROnly":""));
 		}
 		
 	}
