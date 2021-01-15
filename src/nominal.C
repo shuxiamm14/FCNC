@@ -2,6 +2,7 @@
 #include "fcnc_include.h"
 #include "common.h"
 #include "LatexChart.h"
+#define FitvMass 0
 using namespace std;
 int nominal::GeV = 0;
 
@@ -472,7 +473,11 @@ void nominal::fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t 
     f =  pow((wmass-81*GeV)/10/GeV,2) + pow((t1.M()-172.5*GeV)/25/GeV,2) +pow((pxMiss-met->at(0)->Px())/met_resol,2) + pow((pyMiss-met->at(0)->Py())/met_resol,2) + pow((Hmass-125*GeV)/10/GeV,2);// + pow((t2mass-172.5)/30,2);// + pow((pConstrain-110)/20,2);
   }else{
     neutrino[0].SetPtEtaPhiM(par[0],par[1],par[2],0);
+#if FitvMass==1
     neutrino[1].SetPtEtaPhiM(par[3],par[4],par[5],channel == "lephad" ? par[6] : 0);
+#else
+    neutrino[1].SetPtEtaPhiM(par[3],par[4],par[5],0);
+#endif
     Float_t prob1(0), prob2(0);
     Float_t mass1, mass2, mass, pxMiss, pyMiss;
     
@@ -1389,10 +1394,12 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
               gMinside->mnparm(4, "v2eta", tau2->Eta(), 0.01, tau2->Eta()-0.25, tau2->Eta()+0.25, ierflg);
               gMinside->mnparm(5, "v2phi", tau2->Phi(), 0.01, tau2->Phi()-0.25, tau2->Phi()+0.25, ierflg);
               arglist[0] = 6;
+#if FitvMass==1
               if(leps_p4->size()) {
                 gMinside->mnparm(6, "v2m", 0.5*GeV, 1e-5*GeV, 0, 1.776*GeV, ierflg);
                 arglist[0]++;
               }
+#endif
             }
             int nvarfit = arglist[0];
             gMinside->SetObjectFit((TObject*)&fitvec);
@@ -1411,7 +1418,9 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             } else if (fit_collinear){
               gMinside->mnparm(0, "rpt1", val[0], 0.01, 0., 2., ierflg);
               gMinside->mnparm(1, "rpt2", val[1], 0.01, 0., 2., ierflg);
+#if FitvMass==1
               if(leps_p4->size()) gMinside->mnparm(2, "v2m",   val[2], 0.01, 0, 1776, ierflg);
+#endif
             } else {
               gMinside->mnparm(0, "v1pt",  val[0], 1, 0., 1000*GeV, ierflg);
               gMinside->mnparm(1, "v1eta", val[1], 0.01, taus_p4->at(0)->Eta()-0.25, taus_p4->at(0)->Eta()+0.25, ierflg);
@@ -1464,6 +1473,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           else {
             tauv1_v->SetPtEtaPhiM(val[0],val[1],val[2],0);
             tauv2_v->SetPtEtaPhiM(val[3],val[4],val[5],val[6]);
+
             x1fit = taus_p4->at(0)->E() / (*taus_p4->at(0) + *tauv1_v).E();
             x2fit = tau2->E() / (*tau2 + *tauv2_v).E();
           }
