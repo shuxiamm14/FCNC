@@ -33,6 +33,10 @@ namespace TMVA{
       }
    };
 }
+
+float Optimisatinfunction(float averageArea, float diffArea){
+   return averageArea-2*fabs(diffArea);
+}
 void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weightfile = "", TString ncuts = "", TString ntrees = "", char ipart = '0') 
 {
    TString framework = (region.Contains("2mtau") || region.Contains("2ltau") || region.Contains("1mtau1ltau")) ? "xTFW" : "tthML";
@@ -41,7 +45,7 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
    std::cout << std::endl;
    std::cout << "==> Start TMVARegression" << std::endl;
    TString myMethodList = "BDTG";
-   TFile* outputFile = TFile::Open(weightfile+"_out.root", "RECREATE" );
+   TFile* outputFile = TFile::Open(weightfile+ncuts+ntrees+"_out.root", "RECREATE" );
    TMVA::Factory *factory = new TMVA::Factory(weightfile, outputFile,
                                                "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
    TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
@@ -124,6 +128,7 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
       }
       for (auto &bkgsample : inputbkgsamples)
       {
+         if(uselowtauID&&bkgsample.name=="zll")continue;
          background->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
       }
       if(useSS){
@@ -205,7 +210,7 @@ int main(int argc, char const *argv[])
       char stri1= stri-1;
       TString weightfile = catname+"TMVAClassification_"+stri;
       RunMVA(catname,TCut(cutnb+stri1),weightfile,argv[3],argv[4],stri);
-      outputfile[i-1] = new TFile(weightfile+"_out.root");
+      outputfile[i-1] = new TFile(weightfile+argv[3]+argv[4]+"_out.root");
       if(testonly) break;
    }
 
@@ -231,6 +236,9 @@ int main(int argc, char const *argv[])
       gPad->SetGrid();
       testeven->Draw();
       testodd->Draw("same");
+      std::cout<<"testeven integral:"<<testeven->Integral()<<std::endl;
+      std::cout<<"testodd integral:"<<testodd->Integral()<<std::endl;
+      std::cout<<"optmisationScore:"<<Optimisatinfunction(testeven->Integral()+testodd->Integral(),testodd->Integral()-testeven->Integral())<<std::endl;
       l1.Draw();
       TString framework = (catname.Contains("2mtau") || catname.Contains("2ltau") || catname.Contains("1mtau1ltau")) ? "xTFW" : "tthML";
       gSystem->Exec(("mkdir -p "+figdir + "/" + framework + "/BDT/").Data()) ;

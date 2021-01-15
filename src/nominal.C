@@ -1754,11 +1754,11 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           }
           x1fit = 1 - neutrinos_p4->at(0)->E() / (*(taus_p4->at(0)) + *neutrinos_p4->at(0)).E();
           x2fit = 1 - neutrinos_p4->at(1)->E() / (*(tau2) + *neutrinos_p4->at(1)).E();
-          if(tautaumass>150*GeV)  continue;
-          if(tautaumass<100*GeV)  continue;
-          cut_flow.fill("100GeV<$m_{\\tau\\tau}<150GeV$");
-          if(t2mass<140*GeV) continue;
-          cut_flow.fill("$m_{t,FCNC}>$140GeV");
+          //if(tautaumass>150*GeV)  continue;
+          //if(tautaumass<100*GeV)  continue;
+          //cut_flow.fill("100GeV<$m_{\\tau\\tau}<150GeV$");
+          //if(t2mass<140*GeV) continue;
+          //cut_flow.fill("$m_{t,FCNC}>$140GeV");
           if(!true){
             if( (tautaumass<150*GeV &&tautaumass>100*GeV)&&(t2mass>=140*GeV)&&(ttvismass >60*GeV && ttvismass<120*GeV)) continue; 
             cut_flow.fill("side_band");
@@ -1900,7 +1900,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             evtfile<<reg<<" "<<runNumber<<" "<<eventNumber<<" "<<weights->at(0)<<endl;
         }
       }
-      
+      passReduce3Cut=0;
       std::cout<<"passReduce3Cut: "<<passReduce3Cut<<std::endl;
       if(ttvismass > 60*GeV){
         cut_flow.fill("$m_{\\tau\\tau,vis}>60$");
@@ -1915,7 +1915,8 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           }
         } 
       }
-  
+    }
+
     if(debug) printf("nominal::Loop : Finding origins\n");
   
     if (dohist && mcChannelNumber && weightsysmap.find(mcChannelNumber) == weightsysmap.end()) {
