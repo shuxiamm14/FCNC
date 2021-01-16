@@ -20,10 +20,11 @@
 #include "AtlasStyle.h"
 #include "AtlasLabels.h"
 #include "common.h"
+#include "LatexChart.h"
 #include <fstream>
 #endif
 using namespace TMVA;
-
+using namespace std;
 namespace TMVA{
    class CrossValidation{
    public:
@@ -189,42 +190,86 @@ int main(int argc, char const *argv[])
    cutnb += char(*argv[2]);
    cutnb += ")!=";
    TFile *outputfile[5];
-
-   for (int i = 1; i < classnb+1; ++i)
-   {
-      char stri = i+'0';
-      char stri1= stri-1;
-      TString weightfile = catname+"TMVAClassification_"+stri;
-      RunMVA(catname,TCut(cutnb+stri1),weightfile,argv[3],argv[4],stri);
-      outputfile[i-1] = new TFile(weightfile+"_out.root");
-      if(testonly) break;
-   }
-
-   if(classnb == 2){
-      SetAtlasStyle();
-      TH1D* testeven = (TH1D*) outputfile[0]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
-      if(!testeven) testeven = (TH1D*) outputfile[0]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
-      testeven->SetNameTitle("Test Even","Test Even");
-      testeven->SetLineColor(2);
-      testeven->SetMarkerSize(0);
-      TH1D* testodd = (TH1D*) outputfile[1]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
-      if(!testodd) testodd = (TH1D*) outputfile[1]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
-      testodd->SetNameTitle("Test Odd","Test Odd");
-      testodd->SetLineColor(4);
-      testodd->SetMarkerSize(0);
-      TCanvas c1(catname,catname,1000,1000);
-      testeven->GetXaxis()->SetRangeUser(0,1);
-      testeven->GetYaxis()->SetRangeUser(0,1);
-      TLegend l1(0.3,0.55,0.7,0.4);
-      l1.AddEntry(testeven,"Test Even");
-      l1.AddEntry(testodd,"Test Odd");
-      c1.cd();
-      gPad->SetGrid();
-      testeven->Draw();
-      testodd->Draw("same");
-      l1.Draw();
-      TString framework = (catname.Contains("2mtau") || catname.Contains("2ltau") || catname.Contains("1mtau1ltau")) ? "xTFW" : "tthML";
-      c1.SaveAs(figdir + "/" + framework + "/BDT/roc_" + catname + ".pdf");
+   float optim = 0;
+   bool plotROC = 0;
+   int ncut,ntree;
+   auto train = [&](TString ncuts, TString ntrees){
+      for (int i = 1; i < classnb+1; ++i)
+      {
+         char stri = i+'0';
+         char stri1= stri-1;
+         TString weightfile = catname+"TMVAClassification_"+stri;
+         RunMVA(catname,TCut(cutnb+stri1),weightfile,ncuts,ntrees,stri);
+         outputfile[i-1] = new TFile(weightfile+"_out.root");
+         if(testonly) break;
+      }
+   
+      if(classnb == 2){
+         SetAtlasStyle();
+         TH1D* testeven = (TH1D*) outputfile[0]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
+         if(!testeven) testeven = (TH1D*) outputfile[0]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
+         TH1D* testodd = (TH1D*) outputfile[1]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
+         if(!testodd) testodd = (TH1D*) outputfile[1]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
+         float intodd = testodd->Integral()/testodd->GetNbinsX();
+         float inteven = testeven->Integral()/testeven->GetNbinsX();
+         return (intodd+inteven)/2 - fabs(intodd-inteven);
+         if(plotROC){
+            testeven->SetNameTitle("Test Even","Test Even");
+            testeven->SetLineColor(2);
+            testeven->SetMarkerSize(0);
+            testodd->SetNameTitle("Test Odd","Test Odd");
+            testodd->SetLineColor(4);
+            testodd->SetMarkerSize(0);
+            TCanvas c1(catname,catname,1000,1000);
+            testeven->GetXaxis()->SetRangeUser(0,1);
+            testeven->GetYaxis()->SetRangeUser(0,1);
+            TLegend l1(0.3,0.55,0.7,0.4);
+            l1.AddEntry(testeven,"Test Even");
+            l1.AddEntry(testodd,"Test Odd");
+            c1.cd();
+            gPad->SetGrid();
+            testeven->Draw();
+            testodd->Draw("same");
+            l1.Draw();
+            TString framework = (catname.Contains("2mtau") || catname.Contains("2ltau") || catname.Contains("1mtau1ltau")) ? "xTFW" : "tthML";
+            c1.SaveAs(figdir + "/" + framework + "/BDT/roc_" + catname + ".pdf");
+         }
+      }
+      return (float)0.;
+   };
+   if(argv[3] == "Optim"){
+      ncut=5;
+      ntree=10;
+      optim = train(to_string(ncut).c_str(),to_string(ntree).c_str());
+      LatexChart chart(catname.Data());
+      chart.set(to_string(ntree),to_string(ncut).c_str(),optim);
+      while(true){
+         float treestep = train(to_string(ncut).c_str(),to_string(ntree+10).c_str());
+         chart.set(to_string(ntree+10),to_string(ncut).c_str(),treestep);
+         float cutstep = train(to_string(ncut+5).c_str(),to_string(ntree).c_str());
+         chart.set(to_string(ntree),to_string(ncut+5).c_str(),cutstep);
+         if(treestep > cutstep){
+            if(treestep > optim) ntree+=10;
+            else{
+               plotROC = 1;
+               train(to_string(ncut).c_str(),to_string(ntree).c_str());
+               break;
+            }
+         }else{
+            if(cutstep > optim) ncut+=5;
+            else{
+               plotROC = 1;
+               train(to_string(ncut).c_str(),to_string(ntree).c_str());
+               break;
+            }
+         }
+      }
+      ofstream file(("OptimResult_" + catname + ".txt").Data());
+      file << ncut << endl << ntree;
+      file.close();
+   }else{
+      plotROC = 1;
+      train(argv[3],argv[4]);
    }
    return 0;
 }
