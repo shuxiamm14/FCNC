@@ -36,7 +36,7 @@ while (std::getline(infile, line))
     sscanf(line.c_str(), "%s %i %s %i %s %f ",cut,&cut_,tree,&tree_,score,&score_);
     printf("%s\n",line.c_str());
     std::cout<<cut_<<", "<<tree_<<", "<<score_<<std::endl;
-    mychart->set("tree="+std::to_string(tree_),"cut="+std::to_string(cut_),score_,0,0);
+    mychart->set("tree="+std::to_string(tree_),"cut="+std::to_string(cut_),score_/2.,0,0);
 }
   mychart->print("BDT_optimise_"+file_to_read);
   return 0;
