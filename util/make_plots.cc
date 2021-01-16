@@ -167,10 +167,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 //					var.first!="drlbditau"
 //					&&var.first!="etmiss"
 //					&&var.first!="ttvismass"
-					(doClosureTest && var.first!="lep_pt_0")
+					(!printSRTable||doClosureTest) && var.first!="lep_pt_0"
 					//var.first!="chi2"
-					||(printSRTable && var.first!="BDTG_test")
-					|| var.first!="BDTG_test"
 					//&&var.first!="drlb"
 					//&&var.first!="x1fit"
 					//&&var.first!="x2fit"

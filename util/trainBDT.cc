@@ -177,7 +177,7 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
 }
 int main(int argc, char const *argv[])
 {
-   if (argc!=5)
+   if (argc<4)
    {
     printf("please give the setting: region\nand mva splitting: 2 or 5\nnumber of cuts\nnumber of trees\n");
     return 0;
@@ -238,7 +238,7 @@ int main(int argc, char const *argv[])
       }
       return (float)0.;
    };
-   if(argv[3] == "Optim"){
+   if(TString(argv[3]) == "Optim"){
       ncut=5;
       ntree=10;
       optim = train(to_string(ncut).c_str(),to_string(ntree).c_str());
