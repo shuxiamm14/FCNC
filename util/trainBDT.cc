@@ -183,6 +183,7 @@ int main(int argc, char const *argv[])
     return 0;
    }
    TString figdir = FIGURE_DIR;
+   TString tabdir = TABLE_DIR;
    bool testonly = 0;
    TString catname=argv[1];
    int classnb(*argv[2]-'0');
@@ -267,6 +268,7 @@ int main(int argc, char const *argv[])
       ofstream file(("OptimResult_" + catname + ".txt").Data());
       file << ncut << endl << ntree;
       file.close();
+      chart.print((tabdir+"/BDT/Optim_"+catname).Data());
    }else{
       plotROC = 1;
       train(argv[3],argv[4]);
