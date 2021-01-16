@@ -244,7 +244,9 @@ int main(int argc, char const *argv[])
       optim = train(to_string(ncut).c_str(),to_string(ntree).c_str());
       LatexChart chart(catname.Data());
       chart.set(to_string(ntree),to_string(ncut).c_str(),optim);
+      ofstream debugfile("Optim_debug.txt");
       while(true){
+         debugfile << ncut <<" "<< ntree <<" "<<optim<<endl;
          float treestep = train(to_string(ncut).c_str(),to_string(ntree+10).c_str());
          chart.set(to_string(ntree+10),to_string(ncut).c_str(),treestep);
          float cutstep = train(to_string(ncut+5).c_str(),to_string(ntree).c_str());
@@ -263,8 +265,9 @@ int main(int argc, char const *argv[])
             optim = cutstep;
          }
       }
+      debugfile.close();
       ofstream file(("OptimResult_" + catname + ".txt").Data());
-      file << ncut << endl << ntree;
+      file << ncut << endl << ntree << endl;
       file.close();
       chart.print((tabdir+"/BDT/Optim_"+catname).Data());
    }else{
