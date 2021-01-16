@@ -249,20 +249,18 @@ int main(int argc, char const *argv[])
          chart.set(to_string(ntree+10),to_string(ncut).c_str(),treestep);
          float cutstep = train(to_string(ncut+5).c_str(),to_string(ntree).c_str());
          chart.set(to_string(ntree),to_string(ncut+5).c_str(),cutstep);
-         if(treestep > cutstep){
-            if(treestep > optim) ntree+=10;
-            else{
-               plotROC = 1;
-               train(to_string(ncut).c_str(),to_string(ntree).c_str());
-               break;
-            }
+         if(optim > cutstep && optim > treestep){
+            plotROC = 1;
+            train(to_string(ncut).c_str(),to_string(ntree).c_str());
+            break;
+         }
+         else if(treestep > cutstep)
+         {
+            ntree+=10;
+            optim = treestep;
          }else{
-            if(cutstep > optim) ncut+=5;
-            else{
-               plotROC = 1;
-               train(to_string(ncut).c_str(),to_string(ntree).c_str());
-               break;
-            }
+            ncut+=5;
+            optim = cutstep;
          }
       }
       ofstream file(("OptimResult_" + catname + ".txt").Data());
