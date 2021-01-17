@@ -465,8 +465,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			tau_plots->regioninTables["reg1l2tau1bnj_os"] = "l\\thadhad";
 			tau_plots->regioninTables["reg1l1tau1b1j_ss_vetobtagwp70_highmet"] = "l\\tauhad 1j";
 			tau_plots->regioninTables["reg1l1tau1b2j_os_vetobtagwp70_highmet"] = "STH \\tlhad";
-			tau_plots->regioninTables["reg1l1tau1b2j_ss_vetobtagwp70_highmet"] = "l\\tauhad 2j";
 			tau_plots->regioninTables["reg1l1tau1b3j_os_vetobtagwp70_highmet"] = "TTH \\tlhad";
+			tau_plots->regioninTables["reg1l1tau1b2j_ss_vetobtagwp70_highmet"] = "l\\tauhad 2j";
 		}else{
 			tau_plots->regioninTables["reg2l1tau1bnj_vetobtagwp70_highmet"] = "2l1tau1bnj";
 			tau_plots->regioninTables["reg2l1tau2bnj_vetobtagwp70_highmet"] = "2l1tau2bnj";
@@ -498,6 +498,9 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				//tau_plots->regioninTables["reg1l1tau1b2j_ss_vetobtagwp70_highmet"] = "l\\tauhad 2j D";
 			}
 		}
+	}else{
+		tau_plots->regioninTables["reg2mtau1b2j_os_vetobtagwp70_highmet"] = "STH \\thadhad";
+		tau_plots->regioninTables["reg2mtau1b3j_os_vetobtagwp70_highmet"] = "TTH \\thadhad";
 	}
 
 
