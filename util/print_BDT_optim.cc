@@ -25,7 +25,7 @@ int main(int argc, char const *argv[])
 		if(inputline[0]=='#') continue;
 		int ncut,ntree;
 		char channel[200];
-		sscanf(inputline,"%s %d %d", &channel, ncut, ntree);
+		sscanf(inputline,"%s %d %d", channel, &ncut, &ntree);
 		chart.set(regionTitles[channel],"NCuts", (float)ncut);
 		chart.set(regionTitles[channel],"NTrees", (float)ntree);
 	}
