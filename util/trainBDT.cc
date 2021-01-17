@@ -211,9 +211,6 @@ int main(int argc, char const *argv[])
          if(!testeven) testeven = (TH1D*) outputfile[0]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
          TH1D* testodd = (TH1D*) outputfile[1]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
          if(!testodd) testodd = (TH1D*) outputfile[1]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
-         float intodd = testodd->Integral()/testodd->GetNbinsX();
-         float inteven = testeven->Integral()/testeven->GetNbinsX();
-         return (intodd+inteven)/2 - fabs(intodd-inteven);
          if(plotROC){
             testeven->SetNameTitle("Test Even","Test Even");
             testeven->SetLineColor(2);
@@ -235,6 +232,9 @@ int main(int argc, char const *argv[])
             TString framework = (catname.Contains("2mtau") || catname.Contains("2ltau") || catname.Contains("1mtau1ltau")) ? "xTFW" : "tthML";
             c1.SaveAs(figdir + "/" + framework + "/BDT/roc_" + catname + ".pdf");
          }
+         float intodd = testodd->Integral()/testodd->GetNbinsX();
+         float inteven = testeven->Integral()/testeven->GetNbinsX();
+         return (intodd+inteven)/2 - fabs(intodd-inteven);
       }
       return (float)0.;
    };
@@ -248,9 +248,9 @@ int main(int argc, char const *argv[])
       while(true){
          debugfile << ncut <<" "<< ntree <<" "<<optim<<endl;
          float treestep = train(to_string(ncut).c_str(),to_string(ntree+10).c_str());
-         chart.set(to_string(ntree+10),to_string(ncut).c_str(),treestep);
+         chart.set("NTrees="+to_string(ntree+10),"NCuts="+to_string(ncut),treestep);
          float cutstep = train(to_string(ncut+5).c_str(),to_string(ntree).c_str());
-         chart.set(to_string(ntree),to_string(ncut+5).c_str(),cutstep);
+         chart.set("NTrees="+to_string(ntree),"NCuts=" + to_string(ncut+5),cutstep);
          if(optim > cutstep && optim > treestep){
             plotROC = 1;
             train(to_string(ncut).c_str(),to_string(ntree).c_str());
