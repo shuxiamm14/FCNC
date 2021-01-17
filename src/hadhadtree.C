@@ -146,9 +146,8 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots->add(vars["x1fit"],&x1fit);
   fcnc_plots->add(vars["x2fit"],&x2fit);
   fcnc_plots->add(vars["chi2"],&chi2);
-  fcnc_plots->add(vars["leading_index_bin"],&leading_index_bin); //
-  fcnc_plots->add(vars["subleading_index_bin"],&subleading_index_bin); 
-  fcnc_plots->add(vars["fit_index_bin"],&fit_index_bin); 
+  fcnc_plots->add(vars["leading_bin"],&leading_bin); //
+  fcnc_plots->add(vars["subleading_bin"],&subleading_bin); 
   for (int j = 0; j < fcnc_regions.size(); ++j)
   {
     for (int k = 0; k < 2; ++k)
@@ -273,9 +272,6 @@ void hadhadtree::prepare(){
     runNumber       = run_number;
     tau0RNN=tau_0_jet_rnn_score_trans;
     tau1RNN=tau_1_jet_rnn_score_trans;
-    ditau_coll_approx_m=ditau_coll_approx_m_;
-    ditau_coll_approx_x0=ditau_coll_approx_x0_;
-    ditau_coll_approx_x1=ditau_coll_approx_x1_;
     met_sumet=met_sumet_;
     /*
     leadingJetPt=jet_0_p4->Pt();
@@ -294,7 +290,6 @@ void hadhadtree::prepare(){
     ditau_jet_0_deta=fabs(ditau_p4->Eta() - jet_0_p4->Eta());*/
     tau1ntracks=tau_1_n_charged_tracks;//!!
     tau0ntracks=tau_0_n_charged_tracks;//!! 
-    ditau_mmc_mlm_M=ditau_mmc_mlm_m;
     if(isData){
       if(0 < run_number && run_number <= 284484){year=2015;}
       else if(284484 < run_number && run_number <= 311563){year=2016;}

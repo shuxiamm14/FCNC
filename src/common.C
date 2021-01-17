@@ -111,9 +111,8 @@ std::map<TString,variable*> getVariables(TString framework){
 		//ret["x1fit"] = new variable("x1fit","E_{vis-#tau,1}/E_{#tau,1}",70,0.3,1.,"",1,3.5);
 		//ret["x2fit"] = new variable("x2fit","E_{vis-#tau,2}/E_{#tau,2}",70,0.3,1.,"",1,3.5);
 		//ret["chi2"] = new variable("chi2","#chi^{2}",100,0.,20.,"",1,5);
-		ret["leading_index_bin"]=new variable("leading_index_bin","leading_index_bin",12, 0, 12,"",1,1);
-		ret["subleading_index_bin"]=new variable("subleading_index_bin","subleading_index_bin",12, 0, 12,"",1,1);
-		ret["fit_index_bin"]=new variable("fit_index_bin","fit_index_bin",144, 0, 144,"",1,1);
+		ret["leading_bin"]=new variable("leading_bin","leading_bin",12, 0, 12,"",1,1);
+		ret["subleading_bin"]=new variable("subleading_bin","subleading_bin",12, 0, 12,"",1,1);
 		ret["chi2"] = new variable("chi2","#chi^{2}",100,0.,5.,"",1,10);
 	//	ret["allmass"] = new variable("allmass","m_{all}",500,0.,1000.,"GeV",scale,50);
 	//	ret["allpz"] = new variable("allpz","P_{z,all}",500,0.,1000.,"GeV",scale,50);

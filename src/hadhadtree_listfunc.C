@@ -15,9 +15,6 @@ void hadhadtree::definetree(TTree * tree) {
     tree->Branch("bjets_origin",bjets_origin);
     tree->Branch("bjets_type",bjets_type);
     tree->Branch("bjets_width",bjets_width);
-    tree->Branch("ditau_coll_approx_m", &ditau_coll_approx_m);
-    tree->Branch("ditau_coll_approx_x0", &ditau_coll_approx_x0);
-    tree->Branch("ditau_coll_approx_x1", &ditau_coll_approx_x1);
     tree->Branch("met_sumet", &met_sumet);
     tree->Branch("taus_id",taus_id);
     tree->Branch("taus_decay_mode",taus_decay_mode);
@@ -46,7 +43,6 @@ void hadhadtree::definetree(TTree * tree) {
     tree->Branch("allpz", &allpz);
     tree->Branch("tau0RNN",&tau0RNN);
     tree->Branch("tau1RNN",&tau1RNN);
-    tree->Branch("ditau_coll_approx_m", &ditau_coll_approx_m);
     return;
   }
 }
@@ -423,7 +419,6 @@ void hadhadtree::initRaw(TTree *tree)
   // tree->SetBranchAddress("chi2",&chi2);
    tree->SetBranchAddress("allmass", &allmass);
    tree->SetBranchAddress("allpz", &allpz);
-   tree->SetBranchAddress("ditau_coll_approx_m", &ditau_coll_approx_m);
    tree->SetBranchAddress("tau0RNN", &tau0RNN);
    tree->SetBranchAddress("tau1RNN", &tau1RNN);
    return;
@@ -474,9 +469,6 @@ void hadhadtree::initRaw(TTree *tree)
     tree->SetBranchAddress("bjets_p4", &bjets_p4);
     tree->SetBranchAddress("bjets_type", &bjets_type);
     tree->SetBranchAddress("bjets_width", &bjets_width);
-    tree->SetBranchAddress("ditau_coll_approx_m", &ditau_coll_approx_m_);
-    tree->SetBranchAddress("ditau_coll_approx_x0", &ditau_coll_approx_x0_);
-    tree->SetBranchAddress("ditau_coll_approx_x1", &ditau_coll_approx_x1_);
     tree->SetBranchAddress("tau0RNN",&tau0RNN);
     tree->SetBranchAddress("tau1RNN",&tau1RNN);
     tree->SetBranchAddress("met_p4", &met_p4);
@@ -556,26 +548,7 @@ void hadhadtree::initRaw(TTree *tree)
   tau_1_track1_p4 = 0;
   tau_1_track2_p4 = 0;
    // Set branch addresses and branch pointers
-  tree->SetBranchAddress("ditau_mmc_mlm_m",&ditau_mmc_mlm_m,&b_ditau_mmc_mlm_m);
   tree->SetBranchAddress("dijet_p4", &dijet_p4, &b_dijet_p4);
-  tree->SetBranchAddress("ditau_coll_approx", &ditau_coll_approx, &b_ditau_coll_approx);
-  tree->SetBranchAddress("ditau_coll_approx_m", &ditau_coll_approx_m_, &b_ditau_coll_approx_m);
-  tree->SetBranchAddress("ditau_coll_approx_x0", &ditau_coll_approx_x0_, &b_ditau_coll_approx_x0);
-  tree->SetBranchAddress("ditau_coll_approx_x1", &ditau_coll_approx_x1_, &b_ditau_coll_approx_x1);
-  tree->SetBranchAddress("ditau_cosalpha", &ditau_cosalpha, &b_ditau_cosalpha);
-  tree->SetBranchAddress("ditau_deta", &ditau_deta, &b_ditau_deta);
-  tree->SetBranchAddress("ditau_dphi", &ditau_dphi, &b_ditau_dphi);
-  tree->SetBranchAddress("ditau_dr", &ditau_dr, &b_ditau_dr);
-  tree->SetBranchAddress("ditau_higgspt", &ditau_higgspt, &b_ditau_higgspt);
-  tree->SetBranchAddress("ditau_met_centrality", &ditau_met_centrality, &b_ditau_met_centrality);
-  tree->SetBranchAddress("ditau_met_lep0_cos_dphi", &ditau_met_lep0_cos_dphi, &b_ditau_met_lep0_cos_dphi);
-  tree->SetBranchAddress("ditau_met_lep1_cos_dphi", &ditau_met_lep1_cos_dphi, &b_ditau_met_lep1_cos_dphi);
-  tree->SetBranchAddress("ditau_met_min_dphi", &ditau_met_min_dphi, &b_ditau_met_min_dphi);
-  tree->SetBranchAddress("ditau_met_sum_cos_dphi", &ditau_met_sum_cos_dphi, &b_ditau_met_sum_cos_dphi);
-  tree->SetBranchAddress("ditau_mt_lep0_met", &ditau_mt_lep0_met, &b_ditau_mt_lep0_met);
-  tree->SetBranchAddress("ditau_mt_lep1_met", &ditau_mt_lep1_met, &b_ditau_mt_lep1_met);
-  tree->SetBranchAddress("ditau_p4", &ditau_p4, &b_ditau_p4);
-  tree->SetBranchAddress("ditau_qxq", &ditau_qxq, &b_ditau_qxq);
   tree->SetBranchAddress("ditau_scal_sum_pt", &ditau_scal_sum_pt, &b_ditau_scal_sum_pt);
   tree->SetBranchAddress("event_clean_EC_TightBad", &event_clean_EC_TightBad, &b_event_clean_EC_TightBad);
   tree->SetBranchAddress("event_number", &event_number, &b_event_number); // tree->SetBranchAddress("eventNumber", &eventNumber, &b_event_number);

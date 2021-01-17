@@ -80,16 +80,19 @@ std::map<TString,observable> nominal::fill_hh_stat(){
   return result;
 }
 
-//ff_sys
-TH1D nominal::hhFakeSB=create1D_("FF_sideband_nm.root","outhist1p");
-TH1D nominal::hhFakeSS=create1D_("FF_ss_nm.root","outhist1p");
-// nominal
-TH2D nominal::fake_1p_nm =create2D("FFs_hadhad_muOnly.root","FF_WCR_Presel_All_Comb_SLTandTLT_1prong");
-TH2D nominal::fake_3p_nm =create2D("FFs_hadhad_muOnly.root","FF_WCR_Presel_All_Comb_SLTandTLT_3prong");
+void nominal::initializeFF(){
+  //ff_sys
+  hhFakeSB=create1D_("FF_sideband_nm.root","outhist1p");
+  hhFakeSS=create1D_("FF_ss_nm.root","outhist1p");
+  // nominal
+  fake_1p_nm =create2D("FFs_hadhad_muOnly.root","FF_WCR_Presel_All_Comb_SLTandTLT_1prong");
+  fake_3p_nm =create2D("FFs_hadhad_muOnly.root","FF_WCR_Presel_All_Comb_SLTandTLT_3prong");
 
-std::vector<observable> nominal::hhFakeSSVec=fill_hh_sys(true);
-std::vector<observable> nominal::hhFakeSBVec=fill_hh_sys(false);
-std::map<TString,observable> nominal::hhFakeSysMap=fill_hh_stat();
+  hhFakeSSVec=fill_hh_sys(true);
+  hhFakeSBVec=fill_hh_sys(false);
+  hhFakeSysMap=fill_hh_stat();
+}
+
 
 
 // calculate FF_SS
@@ -412,9 +415,6 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("leps_first_EgMother_truth_origin", &leps_first_EgMother_truth_origin);
   tree->SetBranchAddress("leps_first_EgMother_truth_type", &leps_first_EgMother_truth_type);
   // hadhad specific
-  tree->SetBranchAddress("ditau_coll_approx_m", &ditau_coll_approx_m);
-  tree->SetBranchAddress("ditau_coll_approx_x0", &ditau_coll_approx_x0);
-  tree->SetBranchAddress("ditau_coll_approx_x1", &ditau_coll_approx_x1);
   tree->SetBranchAddress("tau0RNN",&tau0RNN);
   tree->SetBranchAddress("tau1RNN",&tau1RNN);
   tree->SetBranchAddress("tauvis0E", &tauvis0E);
@@ -423,26 +423,9 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("tau1E", &tau1E);
   tree->SetBranchAddress("neu0E", &neu0E);
   tree->SetBranchAddress("neu1E", &neu1E);
-  tree->SetBranchAddress("njetNumber",&njetNumber);
-  tree->SetBranchAddress("leadingJetPt",&leadingJetPt);
-  tree->SetBranchAddress("subleadingJetPt",&subleadingJetPt);
-  tree->SetBranchAddress("ditau_dr_",&ditau_dr_);
-  tree->SetBranchAddress("ditau_dphi_",&ditau_dphi_);
-  tree->SetBranchAddress("ditau_deta_",&ditau_deta_);
-  tree->SetBranchAddress("ditau_higgspt_",&ditau_higgspt_);
-  tree->SetBranchAddress("ditau_met_centrality_",&ditau_met_centrality_);
-  tree->SetBranchAddress("ditau_rapidity",&ditau_rapidity);
-  tree->SetBranchAddress("ditau_jet_2_delta_rapidity",&ditau_jet_2_delta_rapidity);
-  tree->SetBranchAddress("ditau_jet_1_delta_rapidity",&ditau_jet_1_delta_rapidity);
-  tree->SetBranchAddress("ditau_jet_0_delta_rapidity",&ditau_jet_0_delta_rapidity);
-  tree->SetBranchAddress("ditau_jet_2_deta",&ditau_jet_2_deta);
-  tree->SetBranchAddress("ditau_jet_1_deta",&ditau_jet_1_deta);
-  tree->SetBranchAddress("ditau_jet_0_deta",&ditau_jet_0_deta);
   tree->SetBranchAddress("tausid", &tausid);//!!!
   tree->SetBranchAddress("tau1ntracks",&tau1ntracks);//!!
   tree->SetBranchAddress("tau0ntracks",&tau0ntracks);//!!
-  tree->SetBranchAddress("fake_weight",&fake_weight);
-  tree->SetBranchAddress("ditau_mmc_mlm_M", &ditau_mmc_mlm_M);
   tree->SetBranchAddress("nmOnlyfakeweight",&nmOnlyfakeweight);
 }
 
@@ -499,9 +482,6 @@ void nominal::BDTBranch(TTree *tree){
   tree->Branch("leps_first_EgMother_truth_origin", &leps_first_EgMother_truth_origin);
   tree->Branch("leps_first_EgMother_truth_type", &leps_first_EgMother_truth_type);
   // hadhad specific
-  tree->Branch("ditau_coll_approx_m",  &ditau_coll_approx_m);
-  tree->Branch("ditau_coll_approx_x0", &ditau_coll_approx_x0);
-  tree->Branch("ditau_coll_approx_x1", &ditau_coll_approx_x1);
   tree->Branch("tau0RNN",&tau0RNN);
   tree->Branch("tau1RNN",&tau1RNN);
   tree->Branch("tauvis0E", &tauvis0E);
@@ -510,26 +490,9 @@ void nominal::BDTBranch(TTree *tree){
   tree->Branch("tau1E", &tau1E);
   tree->Branch("neu0E", &neu0E);
   tree->Branch("neu1E", &neu1E);
-  tree->Branch("njetNumber",&njetNumber);
-  tree->Branch("leadingJetPt",&leadingJetPt);
-  tree->Branch("subleadingJetPt",&subleadingJetPt);
-  tree->Branch("ditau_dr_",&ditau_dr_);
-tree->Branch("ditau_dphi_",&ditau_dphi_);
-tree->Branch("ditau_deta_",&ditau_deta_);
-tree->Branch("ditau_higgspt_",&ditau_higgspt_);
-tree->Branch("ditau_met_centrality_",&ditau_met_centrality_);
-tree->Branch("ditau_rapidity",&ditau_rapidity);
-tree->Branch("ditau_jet_2_delta_rapidity",&ditau_jet_2_delta_rapidity);
-tree->Branch("ditau_jet_1_delta_rapidity",&ditau_jet_1_delta_rapidity);
-tree->Branch("ditau_jet_0_delta_rapidity",&ditau_jet_0_delta_rapidity);
-tree->Branch("ditau_jet_2_deta",&ditau_jet_2_deta);
-tree->Branch("ditau_jet_1_deta",&ditau_jet_1_deta);
-tree->Branch("ditau_jet_0_deta",&ditau_jet_0_deta);
 tree->Branch("tausid", &tausid);//!!
 tree->Branch("tau1ntracks",&tau1ntracks);//!!
 tree->Branch("tau0ntracks",&tau0ntracks);//!!
-tree->Branch("fake_weight",&fake_weight);
-tree->Branch("ditau_mmc_mlm_M", &ditau_mmc_mlm_M);
 tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
 }
 
@@ -562,31 +525,11 @@ void nominal::setVecBranch(TTree *tree){
   tree->SetBranchAddress("leps_first_EgMother_truth_origin", &leps_first_EgMother_truth_origin);
   tree->SetBranchAddress("leps_first_EgMother_truth_type", &leps_first_EgMother_truth_type);
   // hadhad specific
-  tree->SetBranchAddress("ditau_coll_approx_m", &ditau_coll_approx_m);
-  tree->SetBranchAddress("ditau_coll_approx_x0", &ditau_coll_approx_x0);
-  tree->SetBranchAddress("ditau_coll_approx_x1", &ditau_coll_approx_x1);
   tree->SetBranchAddress("met_sumet", &met_sumet);
   tree->SetBranchAddress("tau0RNN",&tau0RNN);
   tree->SetBranchAddress("tau1RNN",&tau1RNN);
-   tree->SetBranchAddress("njetNumber",&njetNumber);
-  tree->SetBranchAddress("leadingJetPt",&leadingJetPt);
-  tree->SetBranchAddress("subleadingJetPt",&subleadingJetPt);
-  tree->SetBranchAddress("ditau_dr_",&ditau_dr_);
-tree->SetBranchAddress("ditau_dphi_",&ditau_dphi_);
-tree->SetBranchAddress("ditau_deta_",&ditau_deta_);
-tree->SetBranchAddress("ditau_higgspt_",&ditau_higgspt_);
-tree->SetBranchAddress("ditau_met_centrality_",&ditau_met_centrality_);
-tree->SetBranchAddress("ditau_rapidity",&ditau_rapidity);
-tree->SetBranchAddress("ditau_jet_2_delta_rapidity",&ditau_jet_2_delta_rapidity);
-tree->SetBranchAddress("ditau_jet_1_delta_rapidity",&ditau_jet_1_delta_rapidity);
-tree->SetBranchAddress("ditau_jet_0_delta_rapidity",&ditau_jet_0_delta_rapidity);
-tree->SetBranchAddress("ditau_jet_2_deta",&ditau_jet_2_deta);
-tree->SetBranchAddress("ditau_jet_1_deta",&ditau_jet_1_deta);
-tree->SetBranchAddress("ditau_jet_0_deta",&ditau_jet_0_deta);
 tree->SetBranchAddress("tau1ntracks",&tau1ntracks);//!!
 tree->SetBranchAddress("tau0ntracks",&tau0ntracks);//!!
-tree->SetBranchAddress("fake_weight",&fake_weight);
-tree->SetBranchAddress("ditau_mmc_mlm_M", &ditau_mmc_mlm_M);
 //
 //tree->SetBranchAddress("newfakeweight",&newfakeweight);
 //tree->SetBranchAddress("nmOnlyfakeweight",&nmOnlyfakeweight);
@@ -620,31 +563,11 @@ void nominal::vecBranch(TTree *tree){
   tree->Branch("leps_first_EgMother_truth_origin", &leps_first_EgMother_truth_origin);
   tree->Branch("leps_first_EgMother_truth_type", &leps_first_EgMother_truth_type);
   // hadhad specific
-  tree->Branch("ditau_coll_approx_m",  &ditau_coll_approx_m);
-  tree->Branch("ditau_coll_approx_x0", &ditau_coll_approx_x0);
-  tree->Branch("ditau_coll_approx_x1", &ditau_coll_approx_x1);
   tree->Branch("met_sumet", &met_sumet);
   tree->Branch("tau0RNN",&tau0RNN);
   tree->Branch("tau1RNN",&tau1RNN);
-  tree->Branch("njetNumber",&njetNumber);
-  tree->Branch("leadingJetPt",&leadingJetPt);
-  tree->Branch("subleadingJetPt",&subleadingJetPt);
-  tree->Branch("ditau_dr_",&ditau_dr_);
-  tree->Branch("ditau_dphi_",&ditau_dphi_);
-  tree->Branch("ditau_deta_",&ditau_deta_);
-  tree->Branch("ditau_higgspt_",&ditau_higgspt_);
-  tree->Branch("ditau_met_centrality_",&ditau_met_centrality_);
-  tree->Branch("ditau_rapidity",&ditau_rapidity);
-  tree->Branch("ditau_jet_2_delta_rapidity",&ditau_jet_2_delta_rapidity);
-  tree->Branch("ditau_jet_1_delta_rapidity",&ditau_jet_1_delta_rapidity);
-  tree->Branch("ditau_jet_0_delta_rapidity",&ditau_jet_0_delta_rapidity);
-  tree->Branch("ditau_jet_2_deta",&ditau_jet_2_deta);
-  tree->Branch("ditau_jet_1_deta",&ditau_jet_1_deta);
-  tree->Branch("ditau_jet_0_deta",&ditau_jet_0_deta);
   tree->Branch("tau1ntracks",&tau1ntracks);//!!
   tree->Branch("tau0ntracks",&tau0ntracks);//!!
-  tree->Branch("fake_weight",&fake_weight);
-  tree->Branch("ditau_mmc_mlm_M", &ditau_mmc_mlm_M);
   //
   //tree->Branch("newfakeweight",&newfakeweight);
   //tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
@@ -1442,6 +1365,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
     printf("is FCNC SR or SRCR? %d\n", fcnc);
   }
 
+  
   nonfcncmatched = 0;
   fcncmatched = 0;
   leptonicw = 0;
@@ -1546,22 +1470,13 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       if(debug)std::cout<<"weight_size: "<<weights->size()<<"  weight[0]: "<<weights->at(0)<<std::endl;
       if(debug)std::cout<<"leps_id size: "<<leps_id->size()<<std::endl; // distinguish hadhad and lephad when reduce==3
     }
+
+    if(leps_id->size()==0&& hhFakeSSVec.size()==0) {
+      initializeFF();
+      std::cout<<"===========================once============"<<std::endl;
+    }
       //===============================pre-selections===============================
     if(reduce == 2) {
-      if(leps_p4->size()==0){
-        njetNumber=ljets_p4->size()+bjets_p4->size(); 
-        //fake_weight=read_sys_fakefactors(taus_p4->at(0)->Pt(),taus_p4->at(1)->Pt(),abs(taus_p4->at(0)->Eta()),abs(taus_p4->at(1)->Eta()),tau0ntracks,tau1ntracks,tausid->at(0),tausid->at(1),ditau_mmc_mlm_M,0);
-        
-        //if(belong_regions.have("1lnmtau1mtau")) newfakeweight=read_fake_lnm(taus_p4->at(0)->Pt(), abs(taus_p4->at(0)->Eta()), tau0ntracks,0); //  leading medium          subleading loose-not-medium
-        //if(belong_regions.have("1mtau1lnmtau")) newfakeweight=read_fake_lnm(taus_p4->at(1)->Pt(), abs(taus_p4->at(0)->Eta()), tau1ntracks,0);    //  subleading medium       leading loose-not-medium
-        //if(belong_regions.have("2ltau"))        newfakeweight=read_fake_lnm(taus_p4->at(0)->Pt(), abs(taus_p4->at(0)->Eta()), tau0ntracks,0)*read_fake_lnm(taus_p4->at(1)->Pt(), abs(taus_p4->at(0)->Eta()), tau1ntracks,0); // leading subleading loose-not-medium
-        //if(belong_regions.have("1mtau1ltau"))   nmOnlyfakeweight=read_fake_nm(taus_p4->at(1)->Pt(), abs(taus_p4->at(1)->Eta()), tau1ntracks,0);
-        //if(belong_regions.have("1mtau1ltau"))   nmOnlyfakeweight=read_fake_nm(taus_p4->at(1)->Pt(), abs(taus_p4->at(1)->Eta()), tau1ntracks,3);
-        //if(belong_regions.have("1mtau1ltau"))   nmOnlyfakeweight=read_fake_nm(taus_p4->at(1)->Pt(), abs(taus_p4->at(1)->Eta()), tau1ntracks,4);
-        //std::cout<<"newff:"<<newfakeweight<<std::endl;
-        //std::cout<<"nmOnlyfakeweight:"<<nmOnlyfakeweight<<std::endl;
-
-      }
       cut_flow.fill("this region");
       if(!passRegionCut()) continue;
       /*if (taus_p4->size() && taus_b_tagged->at(0) == 1) continue;
@@ -1978,35 +1893,6 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         // calculate FF_SS
         // pt 30-40/pt 40-60/pt 60-500  eta <1.37/eta >1.37     1prong/3prong
         //  6-11:3prong        0-5:1prong     0 1 2(eta <1.37 barrel)   3 4 5(eta >1.37 endcap)
-        if(tausid->at(0)==2){ // leading medium
-          if(taus_p4->at(1)->Pt()>=30&&taus_p4->at(1)->Pt()<40) subleading_index_bin=0;
-          else if(taus_p4->at(1)->Pt()>=40&&taus_p4->at(1)->Pt()<60) subleading_index_bin=1;
-          else subleading_index_bin=2;
-          if(fabs(taus_p4->at(1)->Eta())>1.37) subleading_index_bin+=3; 
-          if(taus_n_charged_tracks->at(1)==3)subleading_index_bin+=6;
-        }
-        if(tausid->at(1)==2){ //// subleading medium
-          if(taus_p4->at(0)->Pt()>=40&&taus_p4->at(0)->Pt()<60) leading_index_bin=1;
-          else leading_index_bin=2;
-          if(fabs(taus_p4->at(0)->Eta())>1.37) leading_index_bin+=3; 
-          if(taus_n_charged_tracks->at(0)==3)  leading_index_bin+=6;
-        }
-
-        /*
-        if(taus_p4->at(0)->Pt()>=30&&taus_p4->at(0)->Pt()<40) fit_index_bin=0;
-        else if(taus_p4->at(0)->Pt()>=40&&taus_p4->at(0)->Pt()<60) fit_index_bin=1;
-        else fit_index_bin=2;
-        if(fabs(taus_p4->at(0)->Eta())>1.37) fit_index_bin+=3; 
-        if(taus_n_charged_tracks->at(0)==3)  fit_index_bin+=6;
-
-        if(taus_p4->at(1)->Pt()>=30&&taus_p4->at(1)->Pt()<40) fit_index_bin+=0;
-        else if(taus_p4->at(1)->Pt()>=40&&taus_p4->at(1)->Pt()<60) fit_index_bin+=12;
-        else fit_index_bin+=24;
-        if(fabs(taus_p4->at(1)->Eta())>1.37) fit_index_bin+=36; 
-        if(taus_n_charged_tracks->at(1)==3)  fit_index_bin+=72;
-        //std::cout<<"fit_index_bin: "<<fit_index_bin<<", tau0pt:"<<taus_p4->at(0)->Pt()<<",tau1pt:"<<taus_p4->at(1)->Pt()<<", tau0eta:"<<fabs(taus_p4->at(0)->Eta())<<", tau1eta:"<<fabs(taus_p4->at(1)->Eta())<<",tau0track:"<<taus_n_charged_tracks->at(0)<<",tau1track:"<<taus_n_charged_tracks->at(1)<<std::endl;
-        */
-        
         // APPLY  FF_SS
         // leading_bin
         if(taus_p4->at(0)->Pt()>=30&&taus_p4->at(0)->Pt()<40)      leading_bin=0;

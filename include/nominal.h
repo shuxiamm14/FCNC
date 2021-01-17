@@ -329,66 +329,38 @@ public :
   // hadhad specific
   float      tau0RNN;
   float      tau1RNN;
-  float      ditau_coll_approx_m;
-  float      ditau_coll_approx_x0;
-  float      ditau_coll_approx_x1;
   float      met_sumet;
   float      met_sigma;
-  int        njetNumber;
-  float      leadingJetPt;
-  float      subleadingJetPt;
-  float      fake_weight;
   // need to delete
-  float      fake_weight_a;
-  float      fake_weight_b;
-  float      fake_weight_c;
-  float      fake_weight_d;
-  float      fake_weight_e;
-  float      fake_weight_f;
-  float      fake_weight_g;
-   Float_t  ditau_dr_;
-   Float_t  ditau_dphi_;
-   Float_t  ditau_deta_;
-   Double_t ditau_higgspt_;
-   Float_t  ditau_met_centrality_;
-   Float_t  ditau_rapidity;
-   Float_t  ditau_jet_2_delta_rapidity;
-   Float_t  ditau_jet_1_delta_rapidity;
-   Float_t  ditau_jet_0_delta_rapidity;
-   Float_t  ditau_jet_2_deta;
-   Float_t  ditau_jet_1_deta;
-   Float_t  ditau_jet_0_deta;
    int      tau1ntracks;
    int      tau0ntracks;
-   float    ditau_mmc_mlm_M;
   
-  // calculate FF_SS
-  int subleading_index_bin;
-  int leading_index_bin;
+
 
   // apply FF_SS
   int subleading_bin=0;
   int leading_bin=0;
 
-  int fit_index_bin;
 
  // write a function to retreve the ff root file once to store them in a array,delete
-  static TH1D create1D_(std::string root_name,std::string tree_name);
-  static TH2D create2D(std::string root_name,std::string tree_name);
+  TH1D create1D_(std::string root_name,std::string tree_name);
+  TH2D create2D(std::string root_name,std::string tree_name);
   float  read_fake_factor(TString NPname,int subleading_bin);
 
   //ff_sys
-  static TH1D hhFakeSB;
-  static TH1D hhFakeSS;
+  TH1D hhFakeSB;
+  TH1D hhFakeSS;
   // nominal
-  static TH2D fake_1p_nm;
-  static TH2D fake_3p_nm;
+  TH2D fake_1p_nm;
+  TH2D fake_3p_nm;
 
-  static std::vector<observable> hhFakeSSVec;
-  static std::vector<observable> hhFakeSBVec;
-  static std::map<TString,observable> hhFakeSysMap;
-  static std::map<TString,observable> fill_hh_stat();
-  static std::vector<observable> fill_hh_sys(bool isSS);
+  std::vector<observable> hhFakeSSVec;
+  std::vector<observable> hhFakeSBVec;
+  std::map<TString,observable> hhFakeSysMap;
+  std::map<TString,observable> fill_hh_stat();
+  std::vector<observable> fill_hh_sys(bool isSS);
+
+  void initializeFF();
 
   // only use nm ff
   float nmOnlyfakeweight=0;
