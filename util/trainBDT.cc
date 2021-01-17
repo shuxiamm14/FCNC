@@ -20,10 +20,11 @@
 #include "AtlasStyle.h"
 #include "AtlasLabels.h"
 #include "common.h"
+#include "LatexChart.h"
 #include <fstream>
 #endif
 using namespace TMVA;
-
+using namespace std;
 namespace TMVA{
    class CrossValidation{
    public:
@@ -190,12 +191,13 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
 }
 int main(int argc, char const *argv[])
 {
-   if (argc!=5)
+   if (argc<4)
    {
     printf("please give the setting: region\nand mva splitting: 2 or 5\nnumber of cuts\nnumber of trees\n");
     return 0;
    }
    TString figdir = FIGURE_DIR;
+   TString tabdir = TABLE_DIR;
    bool testonly = 0;
    TString catname=argv[1];
    int classnb(*argv[2]-'0');
@@ -203,46 +205,88 @@ int main(int argc, char const *argv[])
    cutnb += char(*argv[2]);
    cutnb += ")!=";
    TFile *outputfile[5];
-
-   for (int i = 1; i < classnb+1; ++i)
-   {
-      char stri = i+'0';
-      char stri1= stri-1;
-      TString weightfile = catname+"TMVAClassification_"+stri;
-      RunMVA(catname,TCut(cutnb+stri1),weightfile,argv[3],argv[4],stri);
-      outputfile[i-1] = new TFile(weightfile+argv[3]+argv[4]+"_out.root");
-      if(testonly) break;
-   }
-
-   if(classnb == 2){
-      SetAtlasStyle();
-      TH1D* testeven = (TH1D*) outputfile[0]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
-      if(!testeven) testeven = (TH1D*) outputfile[0]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
-      testeven->SetNameTitle("Test Even","Test Even");
-      testeven->SetLineColor(2);
-      testeven->SetMarkerSize(0);
-      TH1D* testodd = (TH1D*) outputfile[1]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
-      if(!testodd) testodd = (TH1D*) outputfile[1]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
-      testodd->SetNameTitle("Test Odd","Test Odd");
-      testodd->SetLineColor(4);
-      testodd->SetMarkerSize(0);
-      TCanvas c1(catname,catname,1000,1000);
-      testeven->GetXaxis()->SetRangeUser(0,1);
-      testeven->GetYaxis()->SetRangeUser(0,1);
-      TLegend l1(0.3,0.55,0.7,0.4);
-      l1.AddEntry(testeven,"Test Even");
-      l1.AddEntry(testodd,"Test Odd");
-      c1.cd();
-      gPad->SetGrid();
-      testeven->Draw();
-      testodd->Draw("same");
-      std::cout<<"testeven integral:"<<testeven->Integral()<<std::endl;
-      std::cout<<"testodd integral:"<<testodd->Integral()<<std::endl;
-      std::cout<<"optmisationScore:"<<Optimisatinfunction(testeven->Integral()+testodd->Integral(),testodd->Integral()-testeven->Integral())<<std::endl;
-      l1.Draw();
-      TString framework = (catname.Contains("2mtau") || catname.Contains("2ltau") || catname.Contains("1mtau1ltau")) ? "xTFW" : "tthML";
-      gSystem->Exec(("mkdir -p "+figdir + "/" + framework + "/BDT/").Data()) ;
-      c1.SaveAs(figdir + "/" + framework + "/BDT/roc_" + catname + ".pdf");
+   float optim = 0;
+   bool plotROC = 0;
+   int ncut,ntree;
+   auto train = [&](TString ncuts, TString ntrees){
+      for (int i = 1; i < classnb+1; ++i)
+      {
+         char stri = i+'0';
+         char stri1= stri-1;
+         TString weightfile = catname+"TMVAClassification_"+stri;
+         RunMVA(catname,TCut(cutnb+stri1),weightfile,ncuts,ntrees,stri);
+         outputfile[i-1] = new TFile(weightfile+"_out.root");
+         if(testonly) break;
+      }
+   
+      if(classnb == 2){
+         SetAtlasStyle();
+         TH1D* testeven = (TH1D*) outputfile[0]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
+         if(!testeven) testeven = (TH1D*) outputfile[0]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
+         TH1D* testodd = (TH1D*) outputfile[1]->Get("dataset/Method_BDTG/BDTG/MVA_BDTG_rejBvsS");
+         if(!testodd) testodd = (TH1D*) outputfile[1]->Get("dataset/Method_BDT/BDTG/MVA_BDTG_rejBvsS");
+         if(plotROC){
+            testeven->SetNameTitle("Test Even","Test Even");
+            testeven->SetLineColor(2);
+            testeven->SetMarkerSize(0);
+            testodd->SetNameTitle("Test Odd","Test Odd");
+            testodd->SetLineColor(4);
+            testodd->SetMarkerSize(0);
+            TCanvas c1(catname,catname,1000,1000);
+            testeven->GetXaxis()->SetRangeUser(0,1);
+            testeven->GetYaxis()->SetRangeUser(0,1);
+            TLegend l1(0.3,0.55,0.7,0.4);
+            l1.AddEntry(testeven,"Test Even");
+            l1.AddEntry(testodd,"Test Odd");
+            c1.cd();
+            gPad->SetGrid();
+            testeven->Draw();
+            testodd->Draw("same");
+            l1.Draw();
+            TString framework = (catname.Contains("2mtau") || catname.Contains("2ltau") || catname.Contains("1mtau1ltau")) ? "xTFW" : "tthML";
+            c1.SaveAs(figdir + "/" + framework + "/BDT/roc_" + catname + ".pdf");
+         }
+         float intodd = testodd->Integral()/testodd->GetNbinsX();
+         float inteven = testeven->Integral()/testeven->GetNbinsX();
+         return (intodd+inteven)/4 - fabs(intodd-inteven)/2;
+      }
+      return (float)0.;
+   };
+   if(TString(argv[3]) == "Optim"){
+      ncut=5;
+      ntree=10;
+      optim = train(to_string(ncut).c_str(),to_string(ntree).c_str());
+      LatexChart chart(catname.Data());
+      chart.set(to_string(ntree),to_string(ncut).c_str(),optim);
+      ofstream debugfile("Optim_debug.txt");
+      while(true){
+         debugfile << ncut <<" "<< ntree <<" "<<optim<<endl;
+         float treestep = train(to_string(ncut).c_str(),to_string(ntree+10).c_str());
+         chart.set("NTrees="+to_string(ntree+10),"NCuts="+to_string(ncut),treestep);
+         float cutstep = train(to_string(ncut+5).c_str(),to_string(ntree).c_str());
+         chart.set("NTrees="+to_string(ntree),"NCuts=" + to_string(ncut+5),cutstep);
+         if(optim > cutstep && optim > treestep){
+            plotROC = 1;
+            train(to_string(ncut).c_str(),to_string(ntree).c_str());
+            break;
+         }
+         else if(treestep > cutstep)
+         {
+            ntree+=10;
+            optim = treestep;
+         }else{
+            ncut+=5;
+            optim = cutstep;
+         }
+      }
+      debugfile.close();
+      ofstream file(("OptimResult_" + catname + ".txt").Data());
+      file << ncut << endl << ntree << endl;
+      file.close();
+      chart.print((tabdir+"/BDT/Optim_"+catname).Data());
+   }else{
+      plotROC = 1;
+      train(argv[3],argv[4]);
    }
    return 0;
 }
