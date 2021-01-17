@@ -15,9 +15,6 @@ void hadhadtree::definetree(TTree * tree) {
     tree->Branch("bjets_origin",bjets_origin);
     tree->Branch("bjets_type",bjets_type);
     tree->Branch("bjets_width",bjets_width);
-    tree->Branch("ditau_coll_approx_m", &ditau_coll_approx_m);
-    tree->Branch("ditau_coll_approx_x0", &ditau_coll_approx_x0);
-    tree->Branch("ditau_coll_approx_x1", &ditau_coll_approx_x1);
     tree->Branch("met_sumet", &met_sumet);
     tree->Branch("taus_id",taus_id);
     tree->Branch("taus_decay_mode",taus_decay_mode);
@@ -46,7 +43,6 @@ void hadhadtree::definetree(TTree * tree) {
     tree->Branch("allpz", &allpz);
     tree->Branch("tau0RNN",&tau0RNN);
     tree->Branch("tau1RNN",&tau1RNN);
-    tree->Branch("ditau_coll_approx_m", &ditau_coll_approx_m);
     return;
   }
 }
@@ -63,33 +59,65 @@ void hadhadtree::definetaus(){
   if(taus_p4->size()) taus_p4->clear();
   if(taus_q->size()) taus_q->clear();
   if(taus_id->size()) taus_id->clear();
+  if(tausid->size()) tausid->clear();
+
+  tausid->push_back(tau_0_jet_rnn_medium+tau_0_jet_rnn_loose);
+  tausid->push_back(tau_1_jet_rnn_medium+tau_1_jet_rnn_loose);
 
   int tau0id = tau_0_jet_rnn_tight?3:(tau_0_jet_rnn_medium?2:1);
   int tau1id = tau_1_jet_rnn_tight?3:(tau_1_jet_rnn_medium?2:1);
   taus_id->push_back(tau0id);
   taus_b_tagged->push_back(tau_0_b_tagged);
   taus_decay_mode->push_back(tau_0_decay_mode);
-  if(!isData ) taus_matched_mother_pdgId->push_back(tau_0_matched_mother_pdgId);
-  if(!isData ) taus_matched_mother_status->push_back(tau_0_matched_mother_status);
-  if(!isData ) taus_matched_p4->push_back(tau_0_matched_p4);
-  if(!isData ) taus_matched_pdgId->push_back(tau_0_matched_pdgId);
-  if(!isData ) taus_matched_vis_p4->push_back(tau_0_matched_vis_p4);
-  taus_n_charged_tracks->push_back(tau_0_allTrk_n);
+  if(!isData ) {
+    taus_matched_mother_pdgId->push_back(tau_0_matched_mother_pdgId);
+    taus_matched_mother_status->push_back(tau_0_matched_mother_status);
+    taus_matched_p4->push_back(tau_0_matched_p4);
+    taus_matched_vis_p4->push_back(tau_0_matched_vis_p4);
+
+    if( fabs(tau_0_matched_pdgId)==15&&tau_0_matched_classifierParticleType==10){
+      taus_matched_pdgId->push_back(tau_0_matched_pdgId);
+    }else if(fabs(tau_0_matched_pdgId)==15&&tau_0_matched_classifierParticleType!=10){
+      taus_matched_pdgId->push_back(tau_0_matched_pdgId/fabs(tau_0_matched_pdgId));
+    }else{
+      taus_matched_pdgId->push_back(tau_0_matched_pdgId);
+    }
+  }
+  //if(!isData ) taus_matched_pdgId->push_back((tau_0_matched_pdgId==15&&tau_0_matched_classifierParticleType==10)?tau_0_matched_pdgId:1);
+  //if(!isData ) taus_matched_pdgId->push_back(tau_0_matched_pdgId);
+  
+  taus_n_charged_tracks->push_back(tau_0_n_charged_tracks);
   taus_p4->push_back(tau_0_p4);
   taus_q->push_back(tau_0_q);
 
   taus_id->push_back(tau1id);
   taus_b_tagged->push_back(tau_1_b_tagged);
   taus_decay_mode->push_back(tau_1_decay_mode);
-  if(!isData ) taus_matched_mother_pdgId->push_back(tau_1_matched_mother_pdgId);
-  if(!isData ) taus_matched_mother_status->push_back(tau_1_matched_mother_status);
-  if(!isData ) taus_matched_p4->push_back(tau_1_matched_p4);
-  if(!isData ) taus_matched_pdgId->push_back(tau_1_matched_pdgId);
-  if(!isData ) taus_matched_vis_p4->push_back(tau_1_matched_vis_p4);
-  taus_n_charged_tracks->push_back(tau_1_allTrk_n);
+  if(!isData ) {
+    taus_matched_mother_pdgId->push_back(tau_1_matched_mother_pdgId);
+    taus_matched_mother_status->push_back(tau_1_matched_mother_status);
+    taus_matched_p4->push_back(tau_1_matched_p4);
+    taus_matched_vis_p4->push_back(tau_1_matched_vis_p4);
+    
+    if( fabs(tau_1_matched_pdgId)==15&&tau_1_matched_classifierParticleType==10){
+      taus_matched_pdgId->push_back(tau_1_matched_pdgId);
+    }else if(fabs(tau_1_matched_pdgId)==15&&tau_1_matched_classifierParticleType!=10){
+      taus_matched_pdgId->push_back(tau_1_matched_pdgId/fabs(tau_1_matched_pdgId));
+    }else{
+      taus_matched_pdgId->push_back(tau_1_matched_pdgId);
+    }
+    
+  }
+  //if(!isData ) taus_matched_pdgId->push_back(tau_1_matched_classifierParticleType==10?tau_1_matched_pdgId:1);
+  //if(!isData ) taus_matched_pdgId->push_back(tau_1_matched_pdgId);
+  
+  taus_n_charged_tracks->push_back(tau_1_n_charged_tracks);
   taus_p4->push_back(tau_1_p4);
   taus_q->push_back(tau_1_q);
 }
+
+
+
 
 void hadhadtree::definejets(){
   if(ljets_fjvt->size()) ljets_fjvt->clear();
@@ -107,22 +135,26 @@ void hadhadtree::definejets(){
   if(bjets_width->size()) bjets_width->clear();
   if(ljets_bscore->size())ljets_bscore->clear();
   if(bjets_score->size())bjets_score->clear();
-  if(jet_0_b_tagged_DL1r_FixedCutBEff_70){
-    bjets_fjvt->push_back(jet_0_fjvt);
-    bjets_is_Jvt_HS->push_back(jet_0_is_Jvt_HS);
-    bjets_jvt->push_back(jet_0_jvt);
-    bjets_p4->push_back(jet_0_p4);
-    bjets_width->push_back(jet_0_width);
-    bjets_score->push_back(jet_0_b_tag_score);
+
+  if(fabs(jet_0_p4->Eta())<2.5){
+    if(jet_0_b_tagged_DL1r_FixedCutBEff_70){
+      bjets_fjvt->push_back(jet_0_fjvt);
+      bjets_is_Jvt_HS->push_back(jet_0_is_Jvt_HS);
+      bjets_jvt->push_back(jet_0_jvt);
+      bjets_p4->push_back(jet_0_p4);
+      bjets_width->push_back(jet_0_width);
+      bjets_score->push_back(jet_0_b_tag_score);
+    }
+    else{
+      ljets_fjvt->push_back(jet_0_fjvt);
+      ljets_is_Jvt_HS->push_back(jet_0_is_Jvt_HS);
+      ljets_jvt->push_back(jet_0_jvt);
+      ljets_p4->push_back(jet_0_p4);
+      ljets_width->push_back(jet_0_width);
+      ljets_bscore->push_back(jet_0_b_tag_score);
+    }
   }
-  else{
-    ljets_fjvt->push_back(jet_0_fjvt);
-    ljets_is_Jvt_HS->push_back(jet_0_is_Jvt_HS);
-    ljets_jvt->push_back(jet_0_jvt);
-    ljets_p4->push_back(jet_0_p4);
-    ljets_width->push_back(jet_0_width);
-    ljets_bscore->push_back(jet_0_b_tag_score);
-  }
+  if(fabs(jet_1_p4->Eta())<2.5){
   if(jet_1_b_tagged_DL1r_FixedCutBEff_70){
     bjets_fjvt->push_back(jet_1_fjvt);
     bjets_is_Jvt_HS->push_back(jet_1_is_Jvt_HS);
@@ -139,6 +171,8 @@ void hadhadtree::definejets(){
     ljets_width->push_back(jet_1_width);
     ljets_bscore->push_back(jet_1_b_tag_score);
   }
+  }
+  if(fabs(jet_2_p4->Eta())<2.5){
   if(jet_2_b_tagged_DL1r_FixedCutBEff_70){
     bjets_fjvt->push_back(jet_2_fjvt);
     bjets_is_Jvt_HS->push_back(jet_2_is_Jvt_HS);
@@ -155,8 +189,9 @@ void hadhadtree::definejets(){
     ljets_width->push_back(jet_2_width);
     ljets_bscore->push_back(jet_2_b_tag_score);
   }
-  if (jet_3)
-  {
+  }
+  if ((!jet_3)?false:fabs(jet_3_p4->Eta())<2.5)
+  { 
     if(jet_3_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_3_fjvt);
       bjets_is_Jvt_HS->push_back(jet_3_is_Jvt_HS);
@@ -174,7 +209,7 @@ void hadhadtree::definejets(){
       ljets_bscore->push_back(jet_3_b_tag_score);
     }
   }
-  if (jet_4)
+  if ((!jet_4)?false:fabs(jet_4_p4->Eta())<2.5)
   {
     if(jet_4_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_4_fjvt);
@@ -193,7 +228,7 @@ void hadhadtree::definejets(){
       ljets_bscore->push_back(jet_4_b_tag_score);
     }
   }
-  if (jet_5)
+  if ((!jet_5)?false:fabs(jet_5_p4->Eta())<2.5)
   {
     if(jet_5_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_5_fjvt);
@@ -212,7 +247,7 @@ void hadhadtree::definejets(){
       ljets_bscore->push_back(jet_5_b_tag_score);
     }
   }
-  if (jet_6)
+  if (!(jet_6)?false:fabs(jet_6_p4->Eta())<2.5)
   {
     if(jet_6_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_6_fjvt);
@@ -231,7 +266,7 @@ void hadhadtree::definejets(){
       ljets_bscore->push_back(jet_6_b_tag_score);
     }
   }
-  if (jet_7)
+  if (!(jet_7)?false:fabs(jet_7_p4->Eta())<2.5)
   {
     if(jet_7_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_7_fjvt);
@@ -259,15 +294,28 @@ void hadhadtree::definejets(){
 
 bool hadhadtree::addWeightSys(){
   
+  // pile up
   addweights(PRW_DATASF_1up_pileup_combined_weight/NOMINAL_pileup_combined_weight,"PRW_up");
   addweights(PRW_DATASF_1down_pileup_combined_weight/NOMINAL_pileup_combined_weight,"PRW_down");
-
+  // b-tag weight systematics  13
   addweights(jet_FT_EFF_Eigen_B_0_1up_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_0_1up_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_0_up");
   addweights(jet_FT_EFF_Eigen_B_0_1down_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_0_1down_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_0_down");
   addweights(jet_FT_EFF_Eigen_B_1_1up_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_1_1up_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_1_up");
   addweights(jet_FT_EFF_Eigen_B_1_1down_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_1_1down_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_1_down");
   addweights(jet_FT_EFF_Eigen_B_2_1up_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_2_up");
   addweights(jet_FT_EFF_Eigen_B_2_1down_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_2_1down_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_2_down");
+  addweights(jet_FT_EFF_Eigen_B_3_1up_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_3_1up_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_3_up");
+  addweights(jet_FT_EFF_Eigen_B_3_1down_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_3_1down_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_3_down");
+  addweights(jet_FT_EFF_Eigen_B_4_1up_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_4_1up_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_4_up");  
+  addweights(jet_FT_EFF_Eigen_B_4_1down_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_4_1down_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_4_down");
+  addweights(jet_FT_EFF_Eigen_B_5_1up_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_5_1up_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_5_up");
+  addweights(jet_FT_EFF_Eigen_B_5_1down_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_5_1down_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_5_down");
+  addweights(jet_FT_EFF_Eigen_B_6_1up_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_6_1up_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_6_up");
+  addweights(jet_FT_EFF_Eigen_B_6_1down_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_6_1down_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_6_down");
+  addweights(jet_FT_EFF_Eigen_B_7_1up_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_7_1up_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_7_up");
+  addweights(jet_FT_EFF_Eigen_B_7_1down_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_7_1down_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_7_down");
+  addweights(jet_FT_EFF_Eigen_B_8_1up_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_8_1up_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_8_up");
+  addweights(jet_FT_EFF_Eigen_B_8_1down_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_B_8_1down_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_B_8_down");
   addweights(jet_FT_EFF_Eigen_C_0_1up_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_C_0_1up_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_C_0_up");
   addweights(jet_FT_EFF_Eigen_C_0_1down_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_C_0_1down_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_C_0_down");
   addweights(jet_FT_EFF_Eigen_C_1_1up_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_Eigen_C_1_1up_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_C_1_up");
@@ -290,28 +338,64 @@ bool hadhadtree::addWeightSys(){
   addweights(jet_FT_EFF_extrapolation_1down_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_extrapolation_1down_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_extrapolation_down");
   addweights(jet_FT_EFF_extrapolation_from_charm_1up_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_extrapolation_from_charm_1up_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_extrapolation_from_charm_up");
   addweights(jet_FT_EFF_extrapolation_from_charm_1down_global_effSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_effSF_DL1r_FixedCutBEff_70*jet_FT_EFF_extrapolation_from_charm_1down_global_ineffSF_DL1r_FixedCutBEff_70/jet_NOMINAL_global_ineffSF_DL1r_FixedCutBEff_70,"btag_extrapolation_from_charm_down");
+  // jvt fjvt
   addweights(jet_JET_JvtEfficiency_1up_central_jets_global_effSF_JVT/jet_NOMINAL_central_jets_global_effSF_JVT*jet_JET_JvtEfficiency_1up_central_jets_global_ineffSF_JVT/jet_NOMINAL_central_jets_global_ineffSF_JVT,"jvt_up");
   addweights(jet_JET_JvtEfficiency_1down_central_jets_global_effSF_JVT/jet_NOMINAL_central_jets_global_effSF_JVT*jet_JET_JvtEfficiency_1down_central_jets_global_ineffSF_JVT/jet_NOMINAL_central_jets_global_ineffSF_JVT,"jvt_down");
-  //addweights(jet_JET_fJvtEfficiency_1up_forward_jets_global_effSF_JVT/jet_NOMINAL_forward_jets_global_effSF_JVT*jet_JET_fJvtEfficiency_1up_forward_jets_global_ineffSF_JVT/jet_NOMINAL_forward_jets_global_ineffSF_JVT,"fjvt_up");
-  //addweights(jet_JET_fJvtEfficiency_1down_forward_jets_global_effSF_JVT/jet_NOMINAL_forward_jets_global_effSF_JVT*jet_JET_fJvtEfficiency_1down_forward_jets_global_ineffSF_JVT/jet_NOMINAL_forward_jets_global_ineffSF_JVT,"fjvt_down");
+  //  addweights(jet_JET_fJvtEfficiency_1up_forward_jets_global_effSF_JVT/jet_NOMINAL_forward_jets_global_effSF_JVT*jet_JET_fJvtEfficiency_1up_forward_jets_global_ineffSF_JVT/jet_NOMINAL_forward_jets_global_ineffSF_JVT,"fjvt_up");
+  //  addweights(jet_JET_fJvtEfficiency_1down_forward_jets_global_effSF_JVT/jet_NOMINAL_forward_jets_global_effSF_JVT*jet_JET_fJvtEfficiency_1down_forward_jets_global_ineffSF_JVT/jet_NOMINAL_forward_jets_global_ineffSF_JVT,"fjvt_down");
+  
 
-
-
- /* if(weight_mc_v){
-    for (int i = 1; i <= theoryweightsum->GetNbinsX(); ++i)
-    {
-      if(theoryweightsum->GetXaxis()->GetBinLabel(i))
-        if((TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("LHE3Weight_muR=") && TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("muF=")) || TString(theoryweightsum->GetXaxis()->GetBinLabel(i)).Contains("LHE3Weight_PDFset=260") )
-          addweights(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),theoryweightsum->GetXaxis()->GetBinLabel(i));
-    }
-  }*/
-
+// tau weight systematics  12
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1up_TauEffSF_reco/tau_1_NOMINAL_TauEffSF_reco*tau_0_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1up_TauEffSF_reco/tau_0_NOMINAL_TauEffSF_reco,"tauRecon_TOTAL_up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1down_TauEffSF_reco/tau_1_NOMINAL_TauEffSF_reco*tau_0_TAUS_TRUEHADTAU_EFF_RECO_TOTAL_1down_TauEffSF_reco/tau_0_NOMINAL_TauEffSF_reco,"tauRecon_TOTAL_down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1up_TauEffSF_HadTauEleOLR_tauhad/tau_1_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*tau_0_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1up_TauEffSF_HadTauEleOLR_tauhad/tau_0_NOMINAL_TauEffSF_HadTauEleOLR_tauhad,"tauEveto_TOTAL_up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1down_TauEffSF_HadTauEleOLR_tauhad/tau_1_NOMINAL_TauEffSF_HadTauEleOLR_tauhad*tau_0_TAUS_TRUEHADTAU_EFF_ELEOLR_TOTAL_1down_TauEffSF_HadTauEleOLR_tauhad/tau_0_NOMINAL_TauEffSF_HadTauEleOLR_tauhad,"tauEveto_TOTAL_down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_1P2025_up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_1P2025_down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_1P2530_up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_1P2530_down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_1P3040_up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_1P3040_down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_1PGE40_up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_1PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_1PGE40_down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1up_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_3P2030_up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2025_1down_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_3P2030_down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1up_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_3P2530_up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT2530_1down_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_3P2530_down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1up_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_3P3040_up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPT3040_1down_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_3P3040_down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1up_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_3PGE30_up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_3PRONGSTATSYSTPTGE40_1down_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_3PGE30_down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1up_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1up_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_HIGHPT_up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1down_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_HIGHPT_1down_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_HIGHPT_down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1up_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1up_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_SYST_up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1down_TauEffSF_JetRNNmedium/tau_1_NOMINAL_TauEffSF_JetRNNmedium*tau_0_TAUS_TRUEHADTAU_EFF_RNNID_SYST_1down_TauEffSF_JetRNNmedium/tau_0_NOMINAL_TauEffSF_JetRNNmedium,"MEDIUM_tauID_SYST_down");
+  //trigger  2018
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM,"tauTrigger_STATDATA2018up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM,"tauTrigger_STATDATA2018down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM,"tauTrigger_STATMC2018up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM,"tauTrigger_STATMC2018down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM,"tauTrigger_SYST2018up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM,"tauTrigger_SYST2018down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1up_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM,"tauTrigger_SYSTMU2018up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwoEF_JETIDRNNMEDIUM*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU2018_1down_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwoEF_JETIDRNNMEDIUM,"tauTrigger_SYSTMU2018down");
+  // trigger 2015-2016
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM * tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM ,"tauTrigger_STATDATA161718up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM * tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATDATA161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM,"tauTrigger_STATDATA161718down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM  * tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM,"tauTrigger_STATMC161718up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM  * tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_STATMC161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM,"tauTrigger_STATMC161718down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM* tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM,"tauTrigger_SYST161718up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM* tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYST161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM,"tauTrigger_SYST161718down");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM *tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1up_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM,"tauTrigger_SYSTMU161718up");
+  addweights(tau_1_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM/tau_1_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDRNNMEDIUM*tau_0_TAUS_TRUEHADTAU_EFF_TRIGGER_SYSTMU161718_1down_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM/tau_0_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDRNNMEDIUM,"tauTrigger_SYSTMU161718down");
+  
+  /*
   for(int i = 0; i < weights->size(); i++){
     if(weights->at(i)!=weights->at(i)) {
       printf("weight is nan, event_number: %llu, n_weight: %d\n", event_number, i);
       return 0;
     }
-  }
+  } */
 
    return 1;
 }
@@ -335,30 +419,6 @@ void hadhadtree::initRaw(TTree *tree)
   // tree->SetBranchAddress("chi2",&chi2);
    tree->SetBranchAddress("allmass", &allmass);
    tree->SetBranchAddress("allpz", &allpz);
-  //tree->SetBranchAddress("taus_b_tagged",&taus_b_tagged);
-  /* tree->SetBranchAddress("taus_b_tagged",&taus_b_tagged);
-   tree->SetBranchAddress("taus_n_charged_tracks",&taus_n_charged_tracks);
-   tree->SetBranchAddress("tauabspdg",&tauabspdg);
-   tree->SetBranchAddress("event_number", &event_number);// tree->SetBranchAddress("eventNumber", &eventNumber);
-   tree->SetBranchAddress("mc_channel_number", &mc_channel_number);
-   tree->SetBranchAddress("run_number", &run_number);// tree->SetBranchAddress("runNumber", &runNumber);
-   tree->SetBranchAddress("weights", &weights);
-   tree->SetBranchAddress("tauabspdg", &tauabspdg);
-   tree->SetBranchAddress("tau_pt_0", &tau_pt_0);
-   tree->SetBranchAddress("tau_pt_1", &tau_pt_1);
-   tree->SetBranchAddress("etmiss", &etmiss);
-   tree->SetBranchAddress("dphitauetmiss", &dphitauetmiss);
-   tree->SetBranchAddress("ttvismass", &ttvismass);
-   tree->SetBranchAddress("drtautau", &drtautau);
-   tree->SetBranchAddress("drtaujmin", &drtaujmin);
-   tree->SetBranchAddress("phicent", &phicent);
-   tree->SetBranchAddress("t1mass", &t1mass);
-   tree->SetBranchAddress("tautaumass", &tautaumass);
-   tree->SetBranchAddress("wmass", &wmass);
-   tree->SetBranchAddress("t2mass", &t2mass);
-   tree->SetBranchAddress("x1fit", &x1fit);
-   tree->SetBranchAddress("x2fit", &x2fit);
- */tree->SetBranchAddress("ditau_coll_approx_m", &ditau_coll_approx_m);
    tree->SetBranchAddress("tau0RNN", &tau0RNN);
    tree->SetBranchAddress("tau1RNN", &tau1RNN);
    return;
@@ -409,9 +469,6 @@ void hadhadtree::initRaw(TTree *tree)
     tree->SetBranchAddress("bjets_p4", &bjets_p4);
     tree->SetBranchAddress("bjets_type", &bjets_type);
     tree->SetBranchAddress("bjets_width", &bjets_width);
-    tree->SetBranchAddress("ditau_coll_approx_m", &ditau_coll_approx_m_);
-    tree->SetBranchAddress("ditau_coll_approx_x0", &ditau_coll_approx_x0_);
-    tree->SetBranchAddress("ditau_coll_approx_x1", &ditau_coll_approx_x1_);
     tree->SetBranchAddress("tau0RNN",&tau0RNN);
     tree->SetBranchAddress("tau1RNN",&tau1RNN);
     tree->SetBranchAddress("met_p4", &met_p4);
@@ -492,24 +549,6 @@ void hadhadtree::initRaw(TTree *tree)
   tau_1_track2_p4 = 0;
    // Set branch addresses and branch pointers
   tree->SetBranchAddress("dijet_p4", &dijet_p4, &b_dijet_p4);
-  tree->SetBranchAddress("ditau_coll_approx", &ditau_coll_approx, &b_ditau_coll_approx);
-  tree->SetBranchAddress("ditau_coll_approx_m", &ditau_coll_approx_m_, &b_ditau_coll_approx_m);
-  tree->SetBranchAddress("ditau_coll_approx_x0", &ditau_coll_approx_x0_, &b_ditau_coll_approx_x0);
-  tree->SetBranchAddress("ditau_coll_approx_x1", &ditau_coll_approx_x1_, &b_ditau_coll_approx_x1);
-  tree->SetBranchAddress("ditau_cosalpha", &ditau_cosalpha, &b_ditau_cosalpha);
-  tree->SetBranchAddress("ditau_deta", &ditau_deta, &b_ditau_deta);
-  tree->SetBranchAddress("ditau_dphi", &ditau_dphi, &b_ditau_dphi);
-  tree->SetBranchAddress("ditau_dr", &ditau_dr, &b_ditau_dr);
-  tree->SetBranchAddress("ditau_higgspt", &ditau_higgspt, &b_ditau_higgspt);
-  tree->SetBranchAddress("ditau_met_centrality", &ditau_met_centrality, &b_ditau_met_centrality);
-  tree->SetBranchAddress("ditau_met_lep0_cos_dphi", &ditau_met_lep0_cos_dphi, &b_ditau_met_lep0_cos_dphi);
-  tree->SetBranchAddress("ditau_met_lep1_cos_dphi", &ditau_met_lep1_cos_dphi, &b_ditau_met_lep1_cos_dphi);
-  tree->SetBranchAddress("ditau_met_min_dphi", &ditau_met_min_dphi, &b_ditau_met_min_dphi);
-  tree->SetBranchAddress("ditau_met_sum_cos_dphi", &ditau_met_sum_cos_dphi, &b_ditau_met_sum_cos_dphi);
-  tree->SetBranchAddress("ditau_mt_lep0_met", &ditau_mt_lep0_met, &b_ditau_mt_lep0_met);
-  tree->SetBranchAddress("ditau_mt_lep1_met", &ditau_mt_lep1_met, &b_ditau_mt_lep1_met);
-  tree->SetBranchAddress("ditau_p4", &ditau_p4, &b_ditau_p4);
-  tree->SetBranchAddress("ditau_qxq", &ditau_qxq, &b_ditau_qxq);
   tree->SetBranchAddress("ditau_scal_sum_pt", &ditau_scal_sum_pt, &b_ditau_scal_sum_pt);
   tree->SetBranchAddress("event_clean_EC_TightBad", &event_clean_EC_TightBad, &b_event_clean_EC_TightBad);
   tree->SetBranchAddress("event_number", &event_number, &b_event_number); // tree->SetBranchAddress("eventNumber", &eventNumber, &b_event_number);
@@ -623,30 +662,16 @@ void hadhadtree::initRaw(TTree *tree)
     tree->SetBranchAddress("tau_1_n_all_tracks", &tau_1_n_all_tracks, &b_tau_1_n_all_tracks);
     tree->SetBranchAddress("tau_1_n_charged_tracks", &tau_1_n_charged_tracks, &b_tau_1_n_charged_tracks);
     tree->SetBranchAddress("tau_1_n_conversion_tracks", &tau_1_n_conversion_tracks, &b_tau_1_n_conversion_tracks);
-    tree->SetBranchAddress("tau_1_n_core_tracks", &tau_1_n_core_tracks, &b_tau_1_n_core_tracks);
-    tree->SetBranchAddress("tau_1_n_failTrackFilter_tracks", &tau_1_n_failTrackFilter_tracks, &b_tau_1_n_failTrackFilter_tracks);
     tree->SetBranchAddress("tau_1_n_fake_tracks", &tau_1_n_fake_tracks, &b_tau_1_n_fake_tracks);
     tree->SetBranchAddress("tau_1_n_isolation_tracks", &tau_1_n_isolation_tracks, &b_tau_1_n_isolation_tracks);
-    tree->SetBranchAddress("tau_1_n_modified_isolation_tracks", &tau_1_n_modified_isolation_tracks, &b_tau_1_n_modified_isolation_tracks);
-    tree->SetBranchAddress("tau_1_n_old_tracks", &tau_1_n_old_tracks, &b_tau_1_n_old_tracks);
-    tree->SetBranchAddress("tau_1_n_passTrkSelectionTight_tracks", &tau_1_n_passTrkSelectionTight_tracks, &b_tau_1_n_passTrkSelectionTight_tracks);
-    tree->SetBranchAddress("tau_1_n_passTrkSelector_tracks", &tau_1_n_passTrkSelector_tracks, &b_tau_1_n_passTrkSelector_tracks);
     tree->SetBranchAddress("tau_1_n_unclassified_tracks", &tau_1_n_unclassified_tracks, &b_tau_1_n_unclassified_tracks);
-    tree->SetBranchAddress("tau_1_n_wide_tracks", &tau_1_n_wide_tracks, &b_tau_1_n_wide_tracks);
     tree->SetBranchAddress("tau_1_type", &tau_1_type, &b_tau_1_type);
     tree->SetBranchAddress("tau_0_n_all_tracks", &tau_0_n_all_tracks, &b_tau_0_n_all_tracks);
     tree->SetBranchAddress("tau_0_n_charged_tracks", &tau_0_n_charged_tracks, &b_tau_0_n_charged_tracks);
     tree->SetBranchAddress("tau_0_n_conversion_tracks", &tau_0_n_conversion_tracks, &b_tau_0_n_conversion_tracks);
-    tree->SetBranchAddress("tau_0_n_core_tracks", &tau_0_n_core_tracks, &b_tau_0_n_core_tracks);
-    tree->SetBranchAddress("tau_0_n_failTrackFilter_tracks", &tau_0_n_failTrackFilter_tracks, &b_tau_0_n_failTrackFilter_tracks);
     tree->SetBranchAddress("tau_0_n_fake_tracks", &tau_0_n_fake_tracks, &b_tau_0_n_fake_tracks);
     tree->SetBranchAddress("tau_0_n_isolation_tracks", &tau_0_n_isolation_tracks, &b_tau_0_n_isolation_tracks);
-    tree->SetBranchAddress("tau_0_n_modified_isolation_tracks", &tau_0_n_modified_isolation_tracks, &b_tau_0_n_modified_isolation_tracks);
-    tree->SetBranchAddress("tau_0_n_old_tracks", &tau_0_n_old_tracks, &b_tau_0_n_old_tracks);
-    tree->SetBranchAddress("tau_0_n_passTrkSelectionTight_tracks", &tau_0_n_passTrkSelectionTight_tracks, &b_tau_0_n_passTrkSelectionTight_tracks);
-    tree->SetBranchAddress("tau_0_n_passTrkSelector_tracks", &tau_0_n_passTrkSelector_tracks, &b_tau_0_n_passTrkSelector_tracks);
     tree->SetBranchAddress("tau_0_n_unclassified_tracks", &tau_0_n_unclassified_tracks, &b_tau_0_n_unclassified_tracks);
-    tree->SetBranchAddress("tau_0_n_wide_tracks", &tau_0_n_wide_tracks, &b_tau_0_n_wide_tracks);
     tree->SetBranchAddress("tau_0_type", &tau_0_type, &b_tau_0_type);
   tree->SetBranchAddress("met_p4", &met_p4, &b_met_p4);
   tree->SetBranchAddress("met_sign_met_over_sqrt_ht", &met_sign_met_over_sqrt_ht, &b_met_sign_met_over_sqrt_ht);
@@ -696,18 +721,11 @@ void hadhadtree::initRaw(TTree *tree)
   tree->SetBranchAddress("run_number", &run_number, &b_run_number); // tree->SetBranchAddress("runNumber", &runNumber, &b_run_number);
   tree->SetBranchAddress("scalar_sum_pt", &scalar_sum_pt, &b_scalar_sum_pt);
   tree->SetBranchAddress("tau_0", &tau_0, &b_tau_0);
-  tree->SetBranchAddress("tau_0_allTrk_eta", &tau_0_allTrk_eta, &b_tau_0_allTrk_eta);
-  tree->SetBranchAddress("tau_0_allTrk_n", &tau_0_allTrk_n, &b_tau_0_allTrk_n);
-  tree->SetBranchAddress("tau_0_allTrk_phi", &tau_0_allTrk_phi, &b_tau_0_allTrk_phi);
-  tree->SetBranchAddress("tau_0_allTrk_pt", &tau_0_allTrk_pt, &b_tau_0_allTrk_pt);
   tree->SetBranchAddress("tau_0_b_tagged", &tau_0_b_tagged, &b_tau_0_b_tagged);
   tree->SetBranchAddress("tau_0_decay_mode", &tau_0_decay_mode, &b_tau_0_decay_mode);
-  tree->SetBranchAddress("tau_0_ele_bdt_eff_sf", &tau_0_ele_bdt_eff_sf, &b_tau_0_ele_bdt_eff_sf);
   tree->SetBranchAddress("tau_0_ele_bdt_loose_retuned", &tau_0_ele_bdt_loose_retuned, &b_tau_0_ele_bdt_loose_retuned);
   tree->SetBranchAddress("tau_0_ele_bdt_medium_retuned", &tau_0_ele_bdt_medium_retuned, &b_tau_0_ele_bdt_medium_retuned);
-  tree->SetBranchAddress("tau_0_ele_bdt_score", &tau_0_ele_bdt_score, &b_tau_0_ele_bdt_score);
   tree->SetBranchAddress("tau_0_ele_bdt_score_retuned", &tau_0_ele_bdt_score_retuned, &b_tau_0_ele_bdt_score_retuned);
-  tree->SetBranchAddress("tau_0_ele_bdt_score_trans", &tau_0_ele_bdt_score_trans, &b_tau_0_ele_bdt_score_trans);
   tree->SetBranchAddress("tau_0_ele_bdt_score_trans_retuned", &tau_0_ele_bdt_score_trans_retuned, &b_tau_0_ele_bdt_score_trans_retuned);
   tree->SetBranchAddress("tau_0_ele_bdt_tight_retuned", &tau_0_ele_bdt_tight_retuned, &b_tau_0_ele_bdt_tight_retuned);
   tree->SetBranchAddress("tau_0_ele_match_lhscore", &tau_0_ele_match_lhscore, &b_tau_0_ele_match_lhscore);
@@ -720,15 +738,9 @@ void hadhadtree::initRaw(TTree *tree)
   tree->SetBranchAddress("tau_0_jet_rnn_tight", &tau_0_jet_rnn_tight, &b_tau_0_jet_rnn_tight);
   tree->SetBranchAddress("tau_0_jet_rnn_veryloose", &tau_0_jet_rnn_veryloose, &b_tau_0_jet_rnn_veryloose);
   tree->SetBranchAddress("tau_0_jet_width", &tau_0_jet_width, &b_tau_0_jet_width);
-  tree->SetBranchAddress("tau_0_leadTrk_eta", &tau_0_leadTrk_eta, &b_tau_0_leadTrk_eta);
-  tree->SetBranchAddress("tau_0_leadTrk_phi", &tau_0_leadTrk_phi, &b_tau_0_leadTrk_phi);
-  tree->SetBranchAddress("tau_0_leadTrk_pt", &tau_0_leadTrk_pt, &b_tau_0_leadTrk_pt);
   tree->SetBranchAddress("tau_0_origin", &tau_0_origin, &b_tau_0_origin);
   tree->SetBranchAddress("tau_0_p4", &tau_0_p4, &b_tau_0_p4);
   tree->SetBranchAddress("tau_0_q", &tau_0_q, &b_tau_0_q);
-  tree->SetBranchAddress("tau_0_track0_p4", &tau_0_track0_p4, &b_tau_0_track0_p4);
-  tree->SetBranchAddress("tau_0_track1_p4", &tau_0_track1_p4, &b_tau_0_track1_p4);
-  tree->SetBranchAddress("tau_0_track2_p4", &tau_0_track2_p4, &b_tau_0_track2_p4);
   tree->SetBranchAddress("tau_0_trig_HLT_tau25_medium1_tracktwo", &tau_0_trig_HLT_tau25_medium1_tracktwo, &b_tau_0_trig_HLT_tau25_medium1_tracktwo);
   tree->SetBranchAddress("tau_0_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25", &tau_0_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25, &b_tau_0_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25);
   tree->SetBranchAddress("tau_0_trig_HLT_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25", &tau_0_trig_HLT_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25, &b_tau_0_trig_HLT_tau25_medium1_tracktwoEF_L1DR_TAU20ITAU12I_J25);
@@ -751,18 +763,11 @@ void hadhadtree::initRaw(TTree *tree)
   tree->SetBranchAddress("tau_0_trig_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25", &tau_0_trig_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25, &b_tau_0_trig_HLT_tau35_mediumRNN_tracktwoMVA_tau25_mediumRNN_tracktwoMVA_L1DR_TAU20ITAU12I_J25);
   tree->SetBranchAddress("tau_0_trig_trigger_matched", &tau_0_trig_trigger_matched, &b_tau_0_trig_trigger_matched);
   tree->SetBranchAddress("tau_1", &tau_1, &b_tau_1);
-  tree->SetBranchAddress("tau_1_allTrk_eta", &tau_1_allTrk_eta, &b_tau_1_allTrk_eta);
-  tree->SetBranchAddress("tau_1_allTrk_n", &tau_1_allTrk_n, &b_tau_1_allTrk_n);
-  tree->SetBranchAddress("tau_1_allTrk_phi", &tau_1_allTrk_phi, &b_tau_1_allTrk_phi);
-  tree->SetBranchAddress("tau_1_allTrk_pt", &tau_1_allTrk_pt, &b_tau_1_allTrk_pt);
   tree->SetBranchAddress("tau_1_b_tagged", &tau_1_b_tagged, &b_tau_1_b_tagged);
   tree->SetBranchAddress("tau_1_decay_mode", &tau_1_decay_mode, &b_tau_1_decay_mode);
-  tree->SetBranchAddress("tau_1_ele_bdt_eff_sf", &tau_1_ele_bdt_eff_sf, &b_tau_1_ele_bdt_eff_sf);
   tree->SetBranchAddress("tau_1_ele_bdt_loose_retuned", &tau_1_ele_bdt_loose_retuned, &b_tau_1_ele_bdt_loose_retuned);
   tree->SetBranchAddress("tau_1_ele_bdt_medium_retuned", &tau_1_ele_bdt_medium_retuned, &b_tau_1_ele_bdt_medium_retuned);
-  tree->SetBranchAddress("tau_1_ele_bdt_score", &tau_1_ele_bdt_score, &b_tau_1_ele_bdt_score);
   tree->SetBranchAddress("tau_1_ele_bdt_score_retuned", &tau_1_ele_bdt_score_retuned, &b_tau_1_ele_bdt_score_retuned);
-  tree->SetBranchAddress("tau_1_ele_bdt_score_trans", &tau_1_ele_bdt_score_trans, &b_tau_1_ele_bdt_score_trans);
   tree->SetBranchAddress("tau_1_ele_bdt_score_trans_retuned", &tau_1_ele_bdt_score_trans_retuned, &b_tau_1_ele_bdt_score_trans_retuned);
   tree->SetBranchAddress("tau_1_ele_bdt_tight_retuned", &tau_1_ele_bdt_tight_retuned, &b_tau_1_ele_bdt_tight_retuned);
   tree->SetBranchAddress("tau_1_ele_match_lhscore", &tau_1_ele_match_lhscore, &b_tau_1_ele_match_lhscore);
@@ -775,15 +780,9 @@ void hadhadtree::initRaw(TTree *tree)
   tree->SetBranchAddress("tau_1_jet_rnn_tight", &tau_1_jet_rnn_tight, &b_tau_1_jet_rnn_tight);
   tree->SetBranchAddress("tau_1_jet_rnn_veryloose", &tau_1_jet_rnn_veryloose, &b_tau_1_jet_rnn_veryloose);
   tree->SetBranchAddress("tau_1_jet_width", &tau_1_jet_width, &b_tau_1_jet_width);
-  tree->SetBranchAddress("tau_1_leadTrk_eta", &tau_1_leadTrk_eta, &b_tau_1_leadTrk_eta);
-  tree->SetBranchAddress("tau_1_leadTrk_phi", &tau_1_leadTrk_phi, &b_tau_1_leadTrk_phi);
-  tree->SetBranchAddress("tau_1_leadTrk_pt", &tau_1_leadTrk_pt, &b_tau_1_leadTrk_pt);
   tree->SetBranchAddress("tau_1_origin", &tau_1_origin, &b_tau_1_origin);
   tree->SetBranchAddress("tau_1_p4", &tau_1_p4, &b_tau_1_p4);
   tree->SetBranchAddress("tau_1_q", &tau_1_q, &b_tau_1_q);
-  tree->SetBranchAddress("tau_1_track0_p4", &tau_1_track0_p4, &b_tau_1_track0_p4);
-  tree->SetBranchAddress("tau_1_track1_p4", &tau_1_track1_p4, &b_tau_1_track1_p4);
-  tree->SetBranchAddress("tau_1_track2_p4", &tau_1_track2_p4, &b_tau_1_track2_p4);
   tree->SetBranchAddress("tau_1_trig_trigger_matched", &tau_1_trig_trigger_matched, &b_tau_1_trig_trigger_matched);
   tree->SetBranchAddress("tau_1_trig_HLT_tau25_medium1_tracktwo", &tau_1_trig_HLT_tau25_medium1_tracktwo, &b_tau_1_trig_HLT_tau25_medium1_tracktwo);
   tree->SetBranchAddress("tau_1_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25", &tau_1_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25, &b_tau_1_trig_HLT_tau25_medium1_tracktwoEF_03dR30_L1DR_TAU20ITAU12I_J25);
@@ -842,7 +841,7 @@ void hadhadtree::initRaw(TTree *tree)
    tree->SetBranchAddress("tau_0_NOMINAL_TauEffSF_reco", &tau_0_NOMINAL_TauEffSF_reco, &b_tau_0_NOMINAL_TauEffSF_reco);
    tree->SetBranchAddress("tau_0_NOMINAL_TauEffSF_selection", &tau_0_NOMINAL_TauEffSF_selection, &b_tau_0_NOMINAL_TauEffSF_selection);
    if(nominaltree){
-     // tree->SetBranchAddress("weight_mc_v", &weight_mc_v);
+    tree->SetBranchAddress("weight_mc_v", &weight_mc_v);
     
    tree->SetBranchAddress("tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1down_TauEffSF_LooseEleBDT_electron", &tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1down_TauEffSF_LooseEleBDT_electron, &b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1down_TauEffSF_LooseEleBDT_electron);
    tree->SetBranchAddress("tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1up_TauEffSF_LooseEleBDT_electron", &tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1up_TauEffSF_LooseEleBDT_electron, &b_tau_0_TAUS_TRUEELECTRON_EFF_ELEBDT_STAT_1up_TauEffSF_LooseEleBDT_electron);
@@ -1244,6 +1243,30 @@ void hadhadtree::initRaw(TTree *tree)
       tree->SetBranchAddress("jet_FT_EFF_Eigen_B_2_1down_global_ineffSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_2_1down_global_ineffSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_2_1down_global_ineffSF_DL1r_FixedCutBEff_70);
       tree->SetBranchAddress("jet_FT_EFF_Eigen_B_2_1up_global_effSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_2_1up_global_effSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_2_1up_global_effSF_DL1r_FixedCutBEff_70);
       tree->SetBranchAddress("jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_2_1up_global_ineffSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_3_1down_global_effSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_3_1down_global_effSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_3_1down_global_effSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_3_1down_global_ineffSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_3_1down_global_ineffSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_3_1down_global_ineffSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_3_1up_global_effSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_3_1up_global_effSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_3_1up_global_effSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_3_1up_global_ineffSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_3_1up_global_ineffSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_3_1up_global_ineffSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_4_1down_global_effSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_4_1down_global_effSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_4_1down_global_effSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_4_1down_global_ineffSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_4_1down_global_ineffSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_4_1down_global_ineffSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_4_1up_global_effSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_4_1up_global_effSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_4_1up_global_effSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_4_1up_global_ineffSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_4_1up_global_ineffSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_4_1up_global_ineffSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_5_1down_global_effSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_5_1down_global_effSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_5_1down_global_effSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_5_1down_global_ineffSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_5_1down_global_ineffSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_5_1down_global_ineffSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_5_1up_global_effSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_5_1up_global_effSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_5_1up_global_effSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_5_1up_global_ineffSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_5_1up_global_ineffSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_5_1up_global_ineffSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_6_1down_global_effSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_6_1down_global_effSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_6_1down_global_effSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_6_1down_global_ineffSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_6_1down_global_ineffSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_6_1down_global_ineffSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_6_1up_global_effSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_6_1up_global_effSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_6_1up_global_effSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_6_1up_global_ineffSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_6_1up_global_ineffSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_6_1up_global_ineffSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_7_1down_global_effSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_7_1down_global_effSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_7_1down_global_effSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_7_1down_global_ineffSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_7_1down_global_ineffSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_7_1down_global_ineffSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_7_1up_global_effSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_7_1up_global_effSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_7_1up_global_effSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_7_1up_global_ineffSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_7_1up_global_ineffSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_7_1up_global_ineffSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_8_1down_global_effSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_8_1down_global_effSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_8_1down_global_effSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_8_1down_global_ineffSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_8_1down_global_ineffSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_8_1down_global_ineffSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_8_1up_global_effSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_8_1up_global_effSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_8_1up_global_effSF_DL1r_FixedCutBEff_70);
+      tree->SetBranchAddress("jet_FT_EFF_Eigen_B_8_1up_global_ineffSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_B_8_1up_global_ineffSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_B_8_1up_global_ineffSF_DL1r_FixedCutBEff_70);
       tree->SetBranchAddress("jet_FT_EFF_Eigen_C_0_1down_global_effSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_C_0_1down_global_effSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_C_0_1down_global_effSF_DL1r_FixedCutBEff_70);
       tree->SetBranchAddress("jet_FT_EFF_Eigen_C_0_1down_global_ineffSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_C_0_1down_global_ineffSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_C_0_1down_global_ineffSF_DL1r_FixedCutBEff_70);
       tree->SetBranchAddress("jet_FT_EFF_Eigen_C_0_1up_global_effSF_DL1r_FixedCutBEff_70", &jet_FT_EFF_Eigen_C_0_1up_global_effSF_DL1r_FixedCutBEff_70, &b_jet_FT_EFF_Eigen_C_0_1up_global_effSF_DL1r_FixedCutBEff_70);
@@ -1292,7 +1315,12 @@ void hadhadtree::initRaw(TTree *tree)
       tree->SetBranchAddress("jet_JET_JvtEfficiency_1down_central_jets_global_ineffSF_JVT", &jet_JET_JvtEfficiency_1down_central_jets_global_ineffSF_JVT, &b_jet_JET_JvtEfficiency_1down_central_jets_global_ineffSF_JVT);
       tree->SetBranchAddress("jet_JET_JvtEfficiency_1up_central_jets_global_effSF_JVT", &jet_JET_JvtEfficiency_1up_central_jets_global_effSF_JVT, &b_jet_JET_JvtEfficiency_1up_central_jets_global_effSF_JVT);
       tree->SetBranchAddress("jet_JET_JvtEfficiency_1up_central_jets_global_ineffSF_JVT", &jet_JET_JvtEfficiency_1up_central_jets_global_ineffSF_JVT, &b_jet_JET_JvtEfficiency_1up_central_jets_global_ineffSF_JVT);
-   }
+   
+      tree->SetBranchAddress("jet_JET_fJvtEfficiency_1down_forward_jets_global_effSF_JVT", &jet_JET_fJvtEfficiency_1down_forward_jets_global_effSF_JVT, &b_jet_JET_fJvtEfficiency_1down_forward_jets_global_effSF_JVT);
+      tree->SetBranchAddress("jet_JET_fJvtEfficiency_1down_forward_jets_global_ineffSF_JVT", &jet_JET_fJvtEfficiency_1down_forward_jets_global_ineffSF_JVT, &b_jet_JET_fJvtEfficiency_1down_forward_jets_global_ineffSF_JVT);
+      tree->SetBranchAddress("jet_JET_fJvtEfficiency_1up_forward_jets_global_effSF_JVT", &jet_JET_fJvtEfficiency_1up_forward_jets_global_effSF_JVT, &b_jet_JET_fJvtEfficiency_1up_forward_jets_global_effSF_JVT);
+      tree->SetBranchAddress("jet_JET_fJvtEfficiency_1up_forward_jets_global_ineffSF_JVT", &jet_JET_fJvtEfficiency_1up_forward_jets_global_ineffSF_JVT, &b_jet_JET_fJvtEfficiency_1up_forward_jets_global_ineffSF_JVT);
+  }
       tree->SetBranchAddress("tau_1_matched", &tau_1_matched, &b_tau_1_matched);
       tree->SetBranchAddress("tau_1_matched_classifierParticleOrigin", &tau_1_matched_classifierParticleOrigin, &b_tau_1_matched_classifierParticleOrigin);
       tree->SetBranchAddress("tau_1_matched_classifierParticleType", &tau_1_matched_classifierParticleType, &b_tau_1_matched_classifierParticleType);
@@ -1332,6 +1360,10 @@ void hadhadtree::initRaw(TTree *tree)
     tree->SetBranchAddress("HTXS_prodMode", &HTXS_prodMode, &b_HTXS_prodMode);
     tree->SetBranchAddress("NOMINAL_pileup_combined_weight", &NOMINAL_pileup_combined_weight, &b_NOMINAL_pileup_combined_weight);
     if(nominaltree){
+      tree->SetBranchAddress("theory_weights_CT14_pdfset", &theory_weights_CT14_pdfset, &b_theory_weights_CT14_pdfset);
+      tree->SetBranchAddress("theory_weights_MMHT_pdfset", &theory_weights_MMHT_pdfset, &b_theory_weights_MMHT_pdfset);
+      tree->SetBranchAddress("theory_weights_alphaS_down", &theory_weights_alphaS_down, &b_theory_weights_alphaS_down);
+      tree->SetBranchAddress("theory_weights_alphaS_up", &theory_weights_alphaS_up, &b_theory_weights_alphaS_up);
       tree->SetBranchAddress("boson_0_truth_p4", &boson_0_truth_p4, &b_boson_0_truth_p4);
       tree->SetBranchAddress("boson_0_truth_pdgId", &boson_0_truth_pdgId, &b_boson_0_truth_pdgId);
       tree->SetBranchAddress("boson_0_truth_q", &boson_0_truth_q, &b_boson_0_truth_q);

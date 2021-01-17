@@ -92,27 +92,49 @@ int main(int argc, char const *argv[])
 		regions.push_back("reg2ttau1b2jos");
 		regions.push_back("reg1ttau1mtau1b2jos");
 		regions.push_back("reg2ttau1b3jos");
-		regions.push_back("reg1ttau1mtau1b3jos");*/
+		regions.push_back("reg1ttau1mtau1b3jos");
 		regions.push_back("reg2mtau1b2jss");
-		regions.push_back("reg2mtau1b3jss");
-		regions.push_back("reg2mtau1b2jos");
-		regions.push_back("reg2mtau1b3jos");
-		regions.push_back("reg2mtau2b2jss");
-		regions.push_back("reg2mtau2b3jss");
-		regions.push_back("reg2mtau2b2jos");
-		regions.push_back("reg2mtau2b3jos");
-		//regions.push_back("reg2mtau0b4jos");
-		//regions.push_back("reg2mtau0b3jos");
-		//regions.push_back("reg2mtau0b4jss");
-		//regions.push_back("reg2mtau0b3jss");
-		//regions.push_back("reg2mtau4jos");
-		//regions.push_back("reg2mtau3jos");
-		//regions.push_back("reg2mtau4jss");
-		//regions.push_back("reg2mtau3jss");
-		regions.push_back("reg2ltau1b2jss");
-		regions.push_back("reg2ltau1b3jss");
-		regions.push_back("reg2ltau1b2jos");
-		regions.push_back("reg2ltau1b3jos");
+		regions.push_back("reg2ltau1b3jos");*/
+		regions.push_back("reg2mtau1b2jss");
+        regions.push_back("reg2mtau1b2jos");
+        regions.push_back("reg2mtau1b3jos");
+        regions.push_back("reg2mtau1b3jss");
+        regions.push_back("reg1mtau1ltau1b2jos");
+        regions.push_back("reg1ltau1mtau1b2jos");
+        regions.push_back("reg1mtau1ltau1b3jos");
+        regions.push_back("reg1ltau1mtau1b3jos");
+        regions.push_back("reg1ltau1ntau1b2jos");
+        regions.push_back("reg1ltau1ntau1b3jos");
+        regions.push_back("reg1ntau1ltau1b2jos");
+        regions.push_back("reg1ntau1ltau1b3jos");
+        regions.push_back("reg2ltau1b2jos");
+        regions.push_back("reg2ltau1b3jos");
+        regions.push_back("reg1mtau1ltau1b2jss");
+        regions.push_back("reg1ltau1mtau1b2jss");
+        regions.push_back("reg1mtau1ltau1b3jss");
+        regions.push_back("reg1ltau1mtau1b3jss");
+        regions.push_back("reg1ltau1ntau1b2jss");
+        regions.push_back("reg1ltau1ntau1b3jss");
+        regions.push_back("reg1ntau1ltau1b2jss");
+        regions.push_back("reg1ntau1ltau1b3jss");
+        regions.push_back("reg2ltau1b2jss");
+        regions.push_back("reg2ltau1b3jss");
+		// new
+		regions.push_back("reg1lnmtau1mtau1b2jss");
+        regions.push_back("reg1lnmtau1mtau1b2jos");
+        regions.push_back("reg1lnmtau1mtau1b3jss");
+        regions.push_back("reg1lnmtau1mtau1b3jos");
+        regions.push_back("reg1mtau1lnmtau1b2jss");
+        regions.push_back("reg1mtau1lnmtau1b2jos");
+        regions.push_back("reg1mtau1lnmtau1b3jss");
+        regions.push_back("reg1mtau1lnmtau1b3jos");
+        //regions.push_back("reg2mtau1b5jos");
+        //regions.push_back("reg2mtau1b5jss");
+        //regions.push_back("reg1mtau1ltau1b5jos");
+        //regions.push_back("reg1ltau1mtau1b5jos");
+        //regions.push_back("reg1ltau1ntau1b5jos");
+        //regions.push_back("reg1ntau1ltau1b5jos");
+        //regions.push_back("reg2ltau1b5jos");
 	}else{
 		if(tthdofcnc || reduce == 1){
 //			regions.push_back("reg1l1tau1b_os");
@@ -226,6 +248,7 @@ int main(int argc, char const *argv[])
 	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
 	analysis->doubleCounting = 1;
   	analysis->belong_regions.enable(regions);
+	if(framework == "xTFW")analysis->xTFWfakeNPlist_=xTFWfakeNPlist;
     char inputline[500];
 	if(reduce > 1){
         if(framework == "xTFW")analysis->dovetobwp["btagwp70"] = 1;

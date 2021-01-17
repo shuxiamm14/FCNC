@@ -16,6 +16,7 @@
 #include "TVector3.h"
 #include "observable.h"
 #include "cutflow.h"
+#include <TH2D.h>
 // Header file for the classes stored in the TTree if any.
 
 #ifndef NO_TMINUIT
@@ -205,6 +206,11 @@ public :
   virtual bool passRegionCut(){return 1;}
   virtual void prepare(){ printf("WARNING: virtual function prepare is used in nominal.h\n"); }
   TString classifyLepFakes(int ilep);
+  //hadhad FF
+  float _read_ff_lnm(float taupt, float taueta, int tauntracks);
+  float _read_ff_nm(float taupt, float taueta, int tauntracks);
+  float _read_ff_single_fake(float tau1pt, float tau2pt, float tau1eta, float tau2eta, int tau1ntracks, int tau2ntracks, int tau1id, int tau2id);
+
   //======================================================general necessary variables========================================
   ULong64_t  eventNumber;
   UInt_t        runNumber;
@@ -242,6 +248,9 @@ public :
   std::map<ULong64_t,std::vector<int>*> taumatchmap;// cannot use eventnumber as a vector index
   std::vector<float>           *bjets_score;
   std::vector<float>           *ljets_bscore;
+  // test htautau method
+  std::vector<int>           *tausid;// functionality same as the taus_id, just for FF method
+
   //======================================================flat variables for BDT========================================
   float      mll;
   float      drttjmin;
@@ -286,14 +295,14 @@ public :
   float      drtaujmin;
   float      drtauj;
   float      MET_RefFinal_et;
-  // hadhad specific
-  float      tau0RNN;
-  float      tau1RNN;
-  float      ditau_coll_approx_m;
-  float      ditau_coll_approx_x0;
-  float      ditau_coll_approx_x1;
-  float      met_sumet;
-  float      met_sigma;
+  // varibles for x1/x2 check
+  float      tauvis0E;
+  float      tauvis1E;
+  float      tau0E;
+  float      tau1E;
+  float      neu0E;
+  float      neu1E;
+ 
   //======================================================variables for kinematic fit========================================
   static TH2F* prob_20_40;
   static TH2F* prob_40_60;
@@ -317,6 +326,48 @@ public :
   static RooAddPdf   _pdf_;
 
   std::map<TString,std::vector<TLorentzVector*>*> fitvec;
+  // hadhad specific
+  float      tau0RNN;
+  float      tau1RNN;
+  float      met_sumet;
+  float      met_sigma;
+  // need to delete
+   int      tau1ntracks;
+   int      tau0ntracks;
+  
 
+
+  // apply FF_SS
+  int subleading_bin=0;
+  int leading_bin=0;
+
+
+ // write a function to retreve the ff root file once to store them in a array,delete
+  TH1D create1D_(std::string root_name,std::string tree_name);
+  TH2D create2D(std::string root_name,std::string tree_name);
+  float  read_fake_factor(TString NPname,int subleading_bin);
+
+  //ff_sys
+  TH1D hhFakeSB;
+  TH1D hhFakeSS;
+  // nominal
+  TH2D fake_1p_nm;
+  TH2D fake_3p_nm;
+
+  std::vector<observable> hhFakeSSVec;
+  std::vector<observable> hhFakeSBVec;
+  std::map<TString,observable> hhFakeSysMap;
+  std::map<TString,observable> fill_hh_stat();
+  std::vector<observable> fill_hh_sys(bool isSS);
+
+  void initializeFF();
+
+  // only use nm ff
+  float nmOnlyfakeweight=0;
+  bool plotSB=false;
+  bool passReduce3Cut=0;
+
+  std::vector<TString> xTFWfakeNPlist_;
+  
 };
 #endif

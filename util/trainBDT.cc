@@ -34,6 +34,10 @@ namespace TMVA{
       }
    };
 }
+
+float Optimisatinfunction(float averageArea, float diffArea){
+   return averageArea-2*fabs(diffArea);
+}
 void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weightfile = "", TString ncuts = "", TString ntrees = "", char ipart = '0') 
 {
    TString framework = (region.Contains("2mtau") || region.Contains("2ltau") || region.Contains("1mtau1ltau")) ? "xTFW" : "tthML";
@@ -42,7 +46,7 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
    std::cout << std::endl;
    std::cout << "==> Start TMVARegression" << std::endl;
    TString myMethodList = "BDTG";
-   TFile* outputFile = TFile::Open(weightfile+"_out.root", "RECREATE" );
+   TFile* outputFile = TFile::Open(weightfile+ncuts+ntrees+"_out.root", "RECREATE" );
    TMVA::Factory *factory = new TMVA::Factory(weightfile, outputFile,
                                                "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
    TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
@@ -91,11 +95,19 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
 
    TChain* datatreess = 0;
    TChain* mctreess =0;
-   bool useSS = framework == "xTFW" || region.Contains("reg1l2tau1bnj");
+   //bool useSS = framework == "xTFW" || region.Contains("reg1l2tau1bnj");
+   bool useSS =region.Contains("reg1l2tau1bnj");
+   bool uselowtauID= framework == "xTFW";
 
    if(useSS){
       TString regionss = region;
       regionss.ReplaceAll("os","ss");
+      datatreess = new TChain(regionss);
+      mctreess = new TChain(regionss);
+   }
+   if(uselowtauID){
+      TString regionss = region;
+      regionss.ReplaceAll("2mtau","1mtau1ltau");
       datatreess = new TChain(regionss);
       mctreess = new TChain(regionss);
    }
@@ -109,28 +121,30 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
    {
       for (auto &file : inputcHfiles)
       {
-         signal->Add(prefix + "/data/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
+         signal->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
       }
       for (auto &file : inputuHfiles)
       {
-         signal->Add(prefix + "/data/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
+         signal->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
       }
       for (auto &bkgsample : inputbkgsamples)
       {
-         background->Add(prefix + "/data/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
+         if(uselowtauID&&bkgsample.name=="zll")continue;
+         background->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
       }
       if(useSS){
          for (auto &bkgsample : inputbkgsamples)
          {
-            mctreess->Add(prefix + "/data/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
+            mctreess->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
          }
-         datatreess->Add(prefix + "/data/" + framework + "reduce2/" + nominaltreedir + data_campaigns[icamp] + "_tree.root");
+         datatreess->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + data_campaigns[icamp] + "_tree.root");
       }
    }
    TCut mycuts = "abs(taus_matched_pdgId[0]) == 15 && abs(taus_matched_pdgId[1]) == 15 && weights[0] >0";
 
    //double norm = region == "reg2mtau1b2jos"? 4097.810002/2816.409586 : 4331.872451/3191.282355;
-   double norm = region == "reg2mtau1b2jos"? 1.09 : 1.57;
+   //double norm = region == "reg2mtau1b2jos"? 1.09 : 1.57;
+   double norm =0.3;
 
    if(framework == "tthML") mycuts = region.Contains("2tau") ? "abs(taus_matched_pdgId[0]) == 15 && abs(taus_matched_pdgId[1]) == 15 && weights[0] >0" : "abs(taus_matched_pdgId[0]) == 15 && weights[0] >0";
    TCut mycutb = "weights[0]>0";
@@ -191,6 +205,7 @@ int main(int argc, char const *argv[])
    cutnb += char(*argv[2]);
    cutnb += ")!=";
    TFile *outputfile[5];
+
    float optim = 0;
    bool plotROC = 0;
    int ncut,ntree;

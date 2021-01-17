@@ -86,14 +86,15 @@ std::map<TString,variable*> getVariables(TString framework){
 	if(framework == "xTFW"){
 		ret["BDTG_train"] = new variable("BDTG_train","BDT discriminant",100,-1.,1.,"",1,10);
 		ret["BDTG_test"] = new variable("BDTG_test","BDT discriminant",100,-1.,1.,"",1,10);
-		ret["tau_pt_0"] = new variable("tau_pt_0","p_{T,lead-#tau}",100,40.,140.,"GeV",scale,10);
+		ret["tau_pt_0"] = new variable("tau_pt_0","p_{T,lead-#tau}",90,40.,130.,"GeV",scale,10);
 		ret["tau_pt_1"] = new variable("tau_pt_1","p_{T,sublead-#tau}",100,30.,80.,"GeV",scale,10);
 		ret["etmiss"] = new variable("etmiss","E^{T}_{miss}",100,15.,115.,"GeV",scale,10);
 		ret["dphitauetmiss"] = new variable("dphitauetmiss","#Delta#phi(#tau#tau,P^{T}_{miss})",60,0.,3.,"",1,6);
 		ret["ttvismass"] = new variable("ttvismass","m_{#tau#tau,vis}",60,60.,120.,"GeV",scale,6);
 		ret["drtautau"] = new variable("drtautau","#DeltaR(#tau,#tau)",100,0.4,3.4,"",1,10);
-	    ret["drttjmin"] = new variable("drttjmin","#DeltaR(#tau,light-jet,min)",80,0.2,4.2,"",1,8);
-		ret["drttj"] = new variable("drttj","#DeltaR(#tau,light-jet)",80,0.2,4.2,"",1,8);
+	    //ret["drttjmin"] = new variable("drttjmin","#DeltaR(#tau,light-jet,min)",80,0.2,4.2,"",1,8);
+		//ret["drttj"] = new variable("drttj","#DeltaR(#tau,light-jet)",80,0.2,4.2,"",1,8);
+		ret["drtaujmin"] = new variable("drtaujmin","#DeltaR(#tau,light-jet,min)",60,0.4,3.4,"",1,5);
         ret["phicent"] = new variable("phicent","E^{T}_{miss} centrality",60,-1.5,1.5,"",1,6);
 		ret["t1mass"] = new variable("t1mass","m_{t,SM}",400,100.,500.,"GeV",scale,40);
 		ret["tautaumass"] = new variable("tautaumass","m_{#tau,#tau}",100,100.,150.,"GeV",scale,10);
@@ -104,9 +105,17 @@ std::map<TString,variable*> getVariables(TString framework){
 		ret["t1vismass"] = new variable("t1vismass","m_{t,SM,vis}",100,50.,250.,"GeV",scale,10);
 		ret["x1fit"] = new variable("x1fit","E_{vis-#tau,1}/E_{#tau,1}",70,0.3,1.,"",1,7);
 		ret["x2fit"] = new variable("x2fit","E_{vis-#tau,2}/E_{#tau,2}",70,0.3,1.,"",1,7);
+		//ret["tautauvispt"] = new variable("tautauvispt","P_{t,#tau#tau,vis}",100,50.,250.,"GeV",scale,5);
+		//ret["t2vismass"] = new variable("t2vismass","m_{t,FCNC,vis}",100,50.,250.,"GeV",scale,5);
+		//ret["t1vismass"] = new variable("t1vismass","m_{t,SM,vis}",100,50.,250.,"GeV",scale,5);
+		//ret["x1fit"] = new variable("x1fit","E_{vis-#tau,1}/E_{#tau,1}",70,0.3,1.,"",1,3.5);
+		//ret["x2fit"] = new variable("x2fit","E_{vis-#tau,2}/E_{#tau,2}",70,0.3,1.,"",1,3.5);
+		//ret["chi2"] = new variable("chi2","#chi^{2}",100,0.,20.,"",1,5);
+		ret["leading_bin"]=new variable("leading_bin","leading_bin",12, 0, 12,"",1,1);
+		ret["subleading_bin"]=new variable("subleading_bin","subleading_bin",12, 0, 12,"",1,1);
 		ret["chi2"] = new variable("chi2","#chi^{2}",100,0.,5.,"",1,10);
-		ret["allmass"] = new variable("allmass","m_{all}",500,0.,1000.,"GeV",scale,50);
-		ret["allpz"] = new variable("allpz","P_{z,all}",500,0.,1000.,"GeV",scale,50);
+	//	ret["allmass"] = new variable("allmass","m_{all}",500,0.,1000.,"GeV",scale,50);
+	//	ret["allpz"] = new variable("allpz","P_{z,all}",500,0.,1000.,"GeV",scale,50);
 	}else{
 		ret["BDTG_train"] = new variable("BDTG_train","BDT discriminant",100,-1.,1.,"",1,10);
 		ret["BDTG_test"] = new variable("BDTG_test","BDT discriminant",100,-1.,1.,"",1,10);
