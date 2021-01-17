@@ -248,9 +248,9 @@ int main(int argc, char const *argv[])
       while(true){
          debugfile << ncut <<" "<< ntree <<" "<<optim<<endl;
          float treestep = train(to_string(ncut).c_str(),to_string(ntree+10).c_str());
-         chart.set(to_string(ntree+10),to_string(ncut).c_str(),treestep);
+         chart.set("NTrees="+to_string(ntree+10),"NCuts="+to_string(ncut),treestep);
          float cutstep = train(to_string(ncut+5).c_str(),to_string(ntree).c_str());
-         chart.set(to_string(ntree),to_string(ncut+5).c_str(),cutstep);
+         chart.set("NTrees="+to_string(ntree),"NCuts=" + to_string(ncut+5),cutstep);
          if(optim > cutstep && optim > treestep){
             plotROC = 1;
             train(to_string(ncut).c_str(),to_string(ntree).c_str());
