@@ -258,6 +258,7 @@ int main(int argc, char const *argv[])
       ntree=10;
       optim = train(to_string(ncut).c_str(),to_string(ntree).c_str());
       LatexChart chart(catname.Data());
+      chart.maxcolumn=7;
       chart.set(to_string(ntree),to_string(ncut).c_str(),optim);
       ofstream debugfile("Optim_debug.txt");
       while(true){
