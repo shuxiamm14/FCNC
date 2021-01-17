@@ -205,6 +205,7 @@ int main(int argc, char const *argv[])
    cutnb += char(*argv[2]);
    cutnb += ")!=";
    TFile *outputfile[5];
+
    float optim = 0;
    bool plotROC = 0;
    int ncut,ntree;
@@ -257,6 +258,7 @@ int main(int argc, char const *argv[])
       ntree=10;
       optim = train(to_string(ncut).c_str(),to_string(ntree).c_str());
       LatexChart chart(catname.Data());
+      chart.maxcolumn=7;
       chart.set(to_string(ntree),to_string(ncut).c_str(),optim);
       ofstream debugfile("Optim_debug.txt");
       while(true){
