@@ -2,7 +2,7 @@
 #include "fcnc_include.h"
 #include "common.h"
 #include "LatexChart.h"
-#include "weightsys_list.h"
+//#include "weightsys_list.h"
 #define FitvMass 0
 using namespace std;
 int nominal::GeV = 0;
@@ -56,7 +56,7 @@ std::map<TString,observable> nominal::fill_hh_stat(){
   
   std::map<TString,observable> result;
 
-  for(auto &item:xTFWfakeNPlist){
+  for(auto &item:xTFWfakeNPlist_){
     if(!item.Contains("prong")) continue;
     //pt
     if(item.Contains("ptbin0"))      ptindex=1;
@@ -1830,7 +1830,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         }
       }
       passReduce3Cut=0;
-      std::cout<<"passReduce3Cut: "<<passReduce3Cut<<std::endl;
+      //std::cout<<"passReduce3Cut: "<<passReduce3Cut<<std::endl;
       if(ttvismass > 60*GeV){
         cut_flow.fill("$m_{\\tau\\tau,vis}>60$");
         if(ttvismass < 120*GeV){
@@ -2016,7 +2016,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             }
             
             if(theNP=="NOMINAL"){
-              for(auto &item:xTFWfakeNPlist){
+              for(auto &item:xTFWfakeNPlist_){
                 weight=weights->at(0);
                 if(region.Contains("1mtau1ltau1b")) weight*=read_fake_factor(item,subleading_bin);
                 if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, item.Data());
@@ -2030,7 +2030,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
           if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, "NOMINAL");
           else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0))) (fcnc?fcnc_plots:fake_plots)->fill_hist("data",region,"NOMINAL");
 
-          for(auto &item:xTFWfakeNPlist){
+          for(auto &item:xTFWfakeNPlist_){
             weight=weights->at(0);
             if(region.Contains("1mtau1ltau1b")) weight*=read_fake_factor(item,subleading_bin);
             if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, item.Data());

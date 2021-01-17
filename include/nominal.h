@@ -366,6 +366,8 @@ public :
   float nmOnlyfakeweight=0;
   bool plotSB=false;
   bool passReduce3Cut=0;
+
+  std::vector<TString> xTFWfakeNPlist_;
   
 };
 #endif
