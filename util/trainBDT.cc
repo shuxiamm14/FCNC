@@ -34,10 +34,6 @@ namespace TMVA{
       }
    };
 }
-
-float Optimisatinfunction(float averageArea, float diffArea){
-   return averageArea-2*fabs(diffArea);
-}
 void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weightfile = "", TString ncuts = "", TString ntrees = "", char ipart = '0') 
 {
    TString framework = (region.Contains("2mtau") || region.Contains("2ltau") || region.Contains("1mtau1ltau")) ? "xTFW" : "tthML";
@@ -46,7 +42,7 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
    std::cout << std::endl;
    std::cout << "==> Start TMVARegression" << std::endl;
    TString myMethodList = "BDTG";
-   TFile* outputFile = TFile::Open(weightfile+ncuts+ntrees+"_out.root", "RECREATE" );
+   TFile* outputFile = TFile::Open(weightfile+"_out.root", "RECREATE" );
    TMVA::Factory *factory = new TMVA::Factory(weightfile, outputFile,
                                                "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
    TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
@@ -259,7 +255,7 @@ int main(int argc, char const *argv[])
       optim = train(to_string(ncut).c_str(),to_string(ntree).c_str());
       LatexChart chart(catname.Data());
       chart.maxcolumn=7;
-      chart.set(to_string(ntree),to_string(ncut).c_str(),optim);
+      chart.set("NTrees="+to_string(ntree),"NCuts="+to_string(ncut),optim);
       ofstream debugfile("Optim_debug.txt");
       while(true){
          debugfile << ncut <<" "<< ntree <<" "<<optim<<endl;
