@@ -2,7 +2,6 @@
 #include "fcnc_include.h"
 #include "common.h"
 #include "LatexChart.h"
-//#include "weightsys_list.h"
 #define FitvMass 0
 using namespace std;
 int nominal::GeV = 0;
@@ -35,15 +34,11 @@ std::vector<observable> nominal::fill_hh_sys(bool isSS){
     for(int ibin = 1; ibin <= hhFakeSS.GetNbinsX(); ++ibin){
       if(hhFakeSS.GetBinContent(ibin)>0)result.push_back(observable(hhFakeSS.GetBinContent(ibin),hhFakeSS.GetBinError(ibin)));
       if(hhFakeSS.GetBinContent(ibin)<0)result.push_back(observable(0,0));
-      //std::cout<<"npname:SS"<<", ibin:"<<ibin<<std::endl;
-      //std::cout<<"value:"<<result.back().nominal<<", error:"<<result.back().error<<std::endl;
     }
   }else{
     for(int ibin = 1; ibin <= hhFakeSB.GetNbinsX(); ++ibin){
       if(hhFakeSB.GetBinContent(ibin)>0)result.push_back(observable(hhFakeSB.GetBinContent(ibin),hhFakeSB.GetBinError(ibin)));
       if(hhFakeSB.GetBinContent(ibin)<0)result.push_back(observable(0,0));
-      //std::cout<<"npname:SB"<<", ibin:"<<ibin<<std::endl;
-      //std::cout<<"value:"<<result.back().nominal<<", error:"<<result.back().error<<std::endl;
     }
   }
   return result;
@@ -74,8 +69,6 @@ std::map<TString,observable> nominal::fill_hh_stat(){
       prongindex=3;
       result[item]=observable(fake_3p_nm.GetBinContent(ptindex, etaindex),fake_3p_nm.GetBinError(ptindex, etaindex));
     }
-    //std::cout<<"npname:"<<item<<", ptindex:"<<ptindex<<", etaindex:"<<etaindex<<",prongindex:"<<prongindex<<std::endl;
-    //std::cout<<"value:"<<result[item].nominal<<", error:"<<result[item].error<<std::endl;
   }
   return result;
 }
@@ -100,59 +93,26 @@ void nominal::initializeFF(){
 // 6-11:3prong        0-5:1prong     0 1 2(eta <1.37 barrel)   3 4 5(eta >1.37 endcap)
 float nominal::read_fake_factor(TString NPname,int subleading_bin){  //  subleading_bin ==>determine ptindex_, etaindex_,prong
 
-  //std::cout<<"IN nominal::read_fake_factor,NPname: "<<NPname<<std::endl;
   if(subleading_bin>12||subleading_bin<0){
     std::cout<<"IN nominal::read_fake_factor,subleading_bin: "<<subleading_bin<<std::endl;
     exit(0);
   }
 
   int prong_=0; int ptindex_=0; int etaindex_=0;
-  if(int(subleading_bin)/6==0){
-    prong_=1;
-    if(int(subleading_bin)/3==0){
-      ptindex_=subleading_bin;
-      etaindex_=0;
-    }else if(int(subleading_bin)/3==1){
-      ptindex_=subleading_bin-3;
-      etaindex_=1;
-    }
-  }else if(int(subleading_bin)/6==1){
-    prong_=3;
-    if(int(subleading_bin-6)/3==0){
-      ptindex_=subleading_bin-6;
-      etaindex_=0;
-    }else if(int(subleading_bin-6)/3==1){
-      ptindex_=subleading_bin-6-3;
-      etaindex_=1;
-    }
-  }
+  prong_=int(subleading_bin)/6;
+  ptindex_=int(subleading_bin)%3;
+  etaindex_=(int(subleading_bin)/3)%2;
   
-  bool isPlus=true;
   // "FFNP_1prong_ptbin0_etabin0_up"
-  TString thisNP=string("FFNP")+(prong_==1?string("_1prong"):string("_3prong"))+(ptindex_==0?string("_ptbin0"):(ptindex_==1?string("_ptbin1"):string("_ptbin2")))+(etaindex_==0?string("_etabin0"):string("_etabin1"));
-  //std::cout<<"thisNP: "<<thisNP<<std::endl;
-  //std::cout<<"NPname:"<<NPname<<std::endl;
-  if(NPname.Contains("prong")&&NPname.Contains("FFNP")||(!NPname.Contains("FFNP"))){ // ff statistic  and other weight NP,tree NP,NOMINAL
-
-    if(NPname.Contains(thisNP)){
-      // up down
-      if(NPname.Contains("up"))        isPlus=true;
-      else if(NPname.Contains("down")) isPlus=false;
-      return hhFakeSysMap[NPname].nominal+(isPlus?1.0*hhFakeSysMap[NPname].error:-1.0*hhFakeSysMap[NPname].error);
-    } 
-    return  hhFakeSysMap[thisNP+"_up"].nominal;
-  
-  }else if(NPname.Contains("FFNP")){
-    // ff_ss   and   ff_sb
+  TString thisNP=string("FFNP")+(prong_==0?string("_1prong"):string("_3prong"))+(ptindex_==0?string("_ptbin0"):(ptindex_==1?string("_ptbin1"):string("_ptbin2")))+(etaindex_==0?string("_etabin0"):string("_etabin1"));
+  if(NPname.Contains("FFNP")){
     if(NPname.Contains("samesign")){
-      //std::cout<<"hhFakeSSVechhFakeSSVechhFakeSSVec"<<std::endl;
       return hhFakeSSVec.at(subleading_bin).nominal;
     }else if(NPname.Contains("sideband")){
-      //std::cout<<"hhFakeSBVechhFakeSBVechhFakeSBVec"<<std::endl;
       return hhFakeSBVec.at(subleading_bin).nominal;
     }
   }
-  return 1; 
+  return  hhFakeSysMap[thisNP].nominal+NPname.Contains(thisNP)*hhFakeSysMap[thisNP].error;
 }
 
 
@@ -1862,7 +1822,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         if(!isData){
           weight = generalweight*calcRegionSF(region);
           addweights(weight,"NOMINAL");
-          calcfakesf_pdg();
+          //calcfakesf_pdg();
           if(nominaltree){
             if(!addWeightSys()) continue;
             if(!addTheorySys()) {
@@ -1995,32 +1955,18 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             }// end of applyNewFakeSF
             if(!theNP.Contains("Xsec") && !theNP.Contains("fakeSF") && nominaltree) { ////this part deal with "weight"
               std::vector<TString>::iterator it = std::find(weightvec.begin(), weightvec.end(), theNP);
-              int index = 2;
+              int index = 0;
               if(it != weightvec.end()) index = std::distance(weightvec.begin(), it);
-              else continue;
-              if(index==2 || index==1) weight = weights->at(index);
-              //else if(index > 8 && index < 17)
-              //  weight = weights->at(2) * weights->at(index);
-              else if(index !=0)
+              //else continue;
+              //if(index==2 || index==1) weight = weights->at(index);
+              if(index !=0)
                 weight *= weights->at(index);
             }
-            if(region.Contains("1mtau1ltau1b")) { weight*=read_fake_factor(theNP,subleading_bin); std::cout<<"ff:"<<read_fake_factor(theNP,subleading_bin)<<std::endl;}
-            if(!nominaltree){// tree NP
-              weight=weights->at(0);
-              if(region.Contains("1mtau1ltau1b")) weight*=read_fake_factor(theNP,subleading_bin); 
-            }
+            if(region.Contains("1mtau1ltau1b")) { weight*=read_fake_factor(theNP,subleading_bin); }
             if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, theNP);
             //else if(!region.Contains("tau")) fill_notau(region, sample, theNP);
             else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0))) {
             	(fcnc?fcnc_plots:fake_plots)->fill_hist(leporigin,region,theNP);
-            }
-            
-            if(theNP=="NOMINAL"){
-              for(auto &item:xTFWfakeNPlist_){
-                weight=weights->at(0);
-                if(region.Contains("1mtau1ltau1b")) weight*=read_fake_factor(item,subleading_bin);
-                if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, item.Data());
-              }
             }
           }
         }else{ //data  
