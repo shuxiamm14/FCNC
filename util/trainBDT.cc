@@ -249,7 +249,7 @@ int main(int argc, char const *argv[])
          }
          float intodd = testodd->Integral()/testodd->GetNbinsX();
          float inteven = testeven->Integral()/testeven->GetNbinsX();
-         return (intodd+inteven)/4 - fabs(intodd-inteven)/2;
+         return (intodd+inteven)*50 - fabs(intodd-inteven)*100;
       }
       return (float)0.;
    };
