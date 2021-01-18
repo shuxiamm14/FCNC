@@ -5,88 +5,49 @@
 #define FitvMass 0
 using namespace std;
 int nominal::GeV = 0;
-
-TH2D nominal::create2D(std::string root_name,std::string tree_name){ 
-    std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/hhfake/";
-    full_name.append(root_name);
-    TFile *File_ = TFile::Open(full_name.c_str());
-    TH2D *hist2d = 0;
-    File_->GetObject(tree_name.c_str(),hist2d);
-    hist2d->SetDirectory(0);  //It crashes without this line!
-    return *hist2d;
-}
-
-TH1D nominal::create1D_(std::string root_name,std::string tree_name){ 
-    std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/final/FCNCProject/FCNCAnalysis/ff_sys/"+root_name;
+  
+void nominal::initializeFF(){
+  //ff_sys
+  auto getResult = [&](std::string root_name,std::string tree_name){ 
+    std::string full_name=PACKAGE_DIR;
+    full_name += "/data/ff_sys/"+root_name;
     TFile *File_ = TFile::Open(full_name.c_str());
     TH1D *hist1d = 0;
     File_->GetObject(tree_name.c_str(),hist1d);
-    if(hist1d)std::cout<<"full_name: "<<full_name<<std::endl;
-    hist1d->SetDirectory(0);  //It crashes without this line!
-    return *hist1d;
-}
-
-std::vector<observable> nominal::fill_hh_sys(bool isSS){
-  std::vector<observable> result;
-  result.clear();
-
-  if(isSS){
-    for(int ibin = 1; ibin <= hhFakeSS.GetNbinsX(); ++ibin){
-      if(hhFakeSS.GetBinContent(ibin)>0)result.push_back(observable(hhFakeSS.GetBinContent(ibin),hhFakeSS.GetBinError(ibin)));
-      if(hhFakeSS.GetBinContent(ibin)<0)result.push_back(observable(0,0));
+    if(hist1d) std::cout<<"full_name: "<<full_name<<std::endl;
+    std::vector<observable> result;
+    for(int ibin = 1; ibin <= hist1d->GetNbinsX(); ++ibin){
+      if(hist1d->GetBinContent(ibin)>0) result.push_back(observable(hist1d->GetBinContent(ibin),hist1d->GetBinError(ibin)));
+      if(hist1d->GetBinContent(ibin)<0) result.push_back(observable(0,0));
     }
-  }else{
-    for(int ibin = 1; ibin <= hhFakeSB.GetNbinsX(); ++ibin){
-      if(hhFakeSB.GetBinContent(ibin)>0)result.push_back(observable(hhFakeSB.GetBinContent(ibin),hhFakeSB.GetBinError(ibin)));
-      if(hhFakeSB.GetBinContent(ibin)<0)result.push_back(observable(0,0));
-    }
+    File_->Close();
+    return result;
+  };
+  hhFakeSSVec=getResult("FF_sideband_nm.root","outhist1p");
+  hhFakeSBVec=getResult("FF_ss_nm.root","outhist1p");
+
+  std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/hhfake/FFs_hadhad_muOnly.root";
+
+  hhFakeSysMap.clear();
+  TH2D *FFhist[2] = {0,0};
+  for (int iprong = 0; iprong < 2; ++iprong)
+  {
+    TH2D *hist2d = 0;
+    TFile *File_ = TFile::Open(full_name.c_str());
+    TString histname = "FF_WCR_Presel_All_Comb_SLTandTLT_";
+    histname = histname + (iprong==0?"_1prong":"_3prong");
+    File_->GetObject(histname,FFhist[iprong]);
+    if(!FFhist[iprong]) printf("ERROR: FFhist wasn't found: %s\n",histname.Data());
+    FFhist[iprong]->SetDirectory(0);
+    for (int iptbin = 0; iptbin < 3; ++iptbin)
+      for (int ietabin = 0; ietabin < 2; ++ietabin){
+        //"FFNP_1prong_ptbin0_etabin0"
+        TString binname = TString("FFNP_") + (iprong==0?"1prong_":"3prong_") + "ptbin" + char(iptbin+'0') + "_etabin" + char(ietabin+'0');
+        hhFakeSysMap[binname]=observable(FFhist[iprong]->GetBinContent(iptbin, ietabin),FFhist[iprong]->GetBinError(iptbin, ietabin));
+      }
+    File_->Close();
   }
-  return result;
 }
-  
-std::map<TString,observable> nominal::fill_hh_stat(){
-  int ptindex=0;
-  int etaindex=0;
-  int prongindex=0;
-  
-  std::map<TString,observable> result;
-
-  for(auto &item:xTFWfakeNPlist_){
-    if(!item.Contains("prong")) continue;
-    //pt
-    if(item.Contains("ptbin0"))      ptindex=1;
-    else if(item.Contains("ptbin1")) ptindex=2;
-    else if(item.Contains("ptbin2")) ptindex=3;
-    //eta
-    if (item.Contains("etabin0"))     etaindex=1;
-    else if(item.Contains("etabin1")) etaindex=2;
-    
-    // fill map
-    if(item.Contains("1prong")){ //1p
-      prongindex=1;
-      result[item]=observable(fake_1p_nm.GetBinContent(ptindex, etaindex),fake_1p_nm.GetBinError(ptindex, etaindex));
-    }else if(item.Contains("3prong")){
-      prongindex=3;
-      result[item]=observable(fake_3p_nm.GetBinContent(ptindex, etaindex),fake_3p_nm.GetBinError(ptindex, etaindex));
-    }
-  }
-  return result;
-}
-
-void nominal::initializeFF(){
-  //ff_sys
-  hhFakeSB=create1D_("FF_sideband_nm.root","outhist1p");
-  hhFakeSS=create1D_("FF_ss_nm.root","outhist1p");
-  // nominal
-  fake_1p_nm =create2D("FFs_hadhad_muOnly.root","FF_WCR_Presel_All_Comb_SLTandTLT_1prong");
-  fake_3p_nm =create2D("FFs_hadhad_muOnly.root","FF_WCR_Presel_All_Comb_SLTandTLT_3prong");
-
-  hhFakeSSVec=fill_hh_sys(true);
-  hhFakeSBVec=fill_hh_sys(false);
-  hhFakeSysMap=fill_hh_stat();
-}
-
-
 
 // calculate FF_SS
 // pt 30-40/pt 40-60/pt 60-500  eta <1.37/eta >1.37     1prong/3prong
@@ -299,7 +260,7 @@ void nominal::initReduce1(){
   taus_n_charged_tracks = new std::vector<UInt_t>();
   taus_b_tagged = new std::vector<Int_t>();
   taus_id = new std::vector<Int_t>();
-  tausid = new std::vector<int>();//!!hadhad
+  taus_id = new std::vector<int>();//!!hadhad
   taus_q = new std::vector<Float_t>();
   taus_p4 = new std::vector<TLorentzVector*>();
   taus_matched_mother_pdgId = new std::vector<int>();
@@ -383,9 +344,6 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("tau1E", &tau1E);
   tree->SetBranchAddress("neu0E", &neu0E);
   tree->SetBranchAddress("neu1E", &neu1E);
-  tree->SetBranchAddress("tausid", &tausid);//!!!
-  tree->SetBranchAddress("tau1ntracks",&tau1ntracks);//!!
-  tree->SetBranchAddress("tau0ntracks",&tau0ntracks);//!!
   tree->SetBranchAddress("nmOnlyfakeweight",&nmOnlyfakeweight);
 }
 
@@ -450,10 +408,7 @@ void nominal::BDTBranch(TTree *tree){
   tree->Branch("tau1E", &tau1E);
   tree->Branch("neu0E", &neu0E);
   tree->Branch("neu1E", &neu1E);
-tree->Branch("tausid", &tausid);//!!
-tree->Branch("tau1ntracks",&tau1ntracks);//!!
-tree->Branch("tau0ntracks",&tau0ntracks);//!!
-tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
+  tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
 }
 
 
@@ -465,7 +420,6 @@ void nominal::setVecBranch(TTree *tree){
   tree->SetBranchAddress("taus_n_charged_tracks", &taus_n_charged_tracks);
   tree->SetBranchAddress("taus_b_tagged", &taus_b_tagged);
   tree->SetBranchAddress("taus_id", &taus_id);
-  tree->SetBranchAddress("tausid", &tausid);//!! hadhad
   tree->SetBranchAddress("taus_q", &taus_q);
   tree->SetBranchAddress("taus_p4", &taus_p4);
   tree->SetBranchAddress("taus_matched_mother_pdgId", &taus_matched_mother_pdgId);
@@ -488,8 +442,6 @@ void nominal::setVecBranch(TTree *tree){
   tree->SetBranchAddress("met_sumet", &met_sumet);
   tree->SetBranchAddress("tau0RNN",&tau0RNN);
   tree->SetBranchAddress("tau1RNN",&tau1RNN);
-tree->SetBranchAddress("tau1ntracks",&tau1ntracks);//!!
-tree->SetBranchAddress("tau0ntracks",&tau0ntracks);//!!
 //
 //tree->SetBranchAddress("newfakeweight",&newfakeweight);
 //tree->SetBranchAddress("nmOnlyfakeweight",&nmOnlyfakeweight);
@@ -503,7 +455,6 @@ void nominal::vecBranch(TTree *tree){
   tree->Branch("taus_n_charged_tracks", &taus_n_charged_tracks);
   tree->Branch("taus_b_tagged", &taus_b_tagged);
   tree->Branch("taus_id", &taus_id);
-  tree->Branch("tausid", &tausid);//!!
   tree->Branch("taus_q", &taus_q);
   tree->Branch("taus_p4", &taus_p4);
   tree->Branch("taus_matched_mother_pdgId", &taus_matched_mother_pdgId);
@@ -526,8 +477,6 @@ void nominal::vecBranch(TTree *tree){
   tree->Branch("met_sumet", &met_sumet);
   tree->Branch("tau0RNN",&tau0RNN);
   tree->Branch("tau1RNN",&tau1RNN);
-  tree->Branch("tau1ntracks",&tau1ntracks);//!!
-  tree->Branch("tau0ntracks",&tau0ntracks);//!!
   //
   //tree->Branch("newfakeweight",&newfakeweight);
   //tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
@@ -1248,7 +1197,23 @@ void nominal::fillhist(histSaver* plots, TString region, TString sample, TString
   //if(dobwp[bwps[1]] == 1 && taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_" + bwps[1],NP);
   //if(dovetobwp[bwps[1]] == 1 && !taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_veto" + bwps[1] + (taus_p4->at(0)->Eta() < 20*GeV? "_lowmet" : "_highmet"),NP);
   if(dovetobwp[bwps[1]] == 1 && !taus_b_tagged->at(0)){
-    plots->fill_hist(sample,region+prongname + "_veto" + bwps[1] + (etmiss < 20*GeV? "_lowmet" : (passReduce3Cut?"_highmet":"_highmet_SB")),NP);
+    if(leps_id->size() == 0){
+      passReduce3Cut=0;
+      if(ttvismass > 60*GeV){
+        cut_flow.fill("$m_{\\tau\\tau,vis}>60$");
+        if(ttvismass < 120*GeV){
+          cut_flow.fill("$m_{\\tau\\tau,vis}<120$");
+          if(tautaumass<150*GeV && tautaumass>100*GeV){
+            cut_flow.fill("100GeV<$m_{\\tau\\tau}<150GeV$");
+            if(t2mass>140*GeV){
+              cut_flow.fill("$m_{t,FCNC}>$140GeV");
+              passReduce3Cut=true;
+            }
+          }
+        } 
+      }
+      plots->fill_hist(sample,region+prongname + "_veto" + bwps[1] + (etmiss < 20*GeV? "_lowmet" : (passReduce3Cut?"_highmet":"_highmet_SB")),NP);
+    }
     if(BDTG_test<-0.6) plots->fill_hist(sample,"lowBDT_" + region+prongname + "_veto" + bwps[1] + (etmiss < 20*GeV? "_lowmet" : "_highmet"),NP);
   }
 
@@ -1789,23 +1754,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             evtfile<<reg<<" "<<runNumber<<" "<<eventNumber<<" "<<weights->at(0)<<endl;
         }
       }
-      passReduce3Cut=0;
-      //std::cout<<"passReduce3Cut: "<<passReduce3Cut<<std::endl;
-      if(ttvismass > 60*GeV){
-        cut_flow.fill("$m_{\\tau\\tau,vis}>60$");
-        if(ttvismass < 120*GeV){
-          cut_flow.fill("$m_{\\tau\\tau,vis}<120$");
-          if(tautaumass<150*GeV && tautaumass>100*GeV){
-            cut_flow.fill("100GeV<$m_{\\tau\\tau}<150GeV$");
-            if(t2mass>140*GeV){
-              cut_flow.fill("$m_{t,FCNC}>$140GeV");
-              passReduce3Cut=true;
-            }
-          }
-        } 
-      }
     }
-
     if(debug) printf("nominal::Loop : Finding origins\n");
   
     if (dohist && mcChannelNumber && weightsysmap.find(mcChannelNumber) == weightsysmap.end()) {
@@ -2024,59 +1973,59 @@ void nominal::defineRegions(){
   if(!leps_p4 || leps_p4->size()==0){
 
     
-if((tausid->at(0)==2) && (tausid->at(1)==2) &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1)  belong_regions.add("reg2mtau1b2jss");//a
-if((tausid->at(0)==2) && (tausid->at(1)==2) &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau1b2jos");
-if((tausid->at(0)==2) && (tausid->at(1)==2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau1b3jos");
-if((tausid->at(0)==2) && (tausid->at(1)==2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1)  belong_regions.add("reg2mtau1b3jss");//a
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1)  belong_regions.add("reg2mtau1b2jss");//a
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau1b2jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2mtau1b3jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1)  belong_regions.add("reg2mtau1b3jss");//a
 
-if((tausid->at(0)==2) && (tausid->at(1)<2)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1mtau1ltau1b2jos");
-if((tausid->at(0)<2)  && (tausid->at(1)==2) &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1ltau1mtau1b2jos");
-if((tausid->at(0)==2) && (tausid->at(1)<2)  && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1mtau1ltau1b3jos");
-if((tausid->at(0)<2)  && (tausid->at(1)==2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1ltau1mtau1b3jos");
-
-
-if((tausid->at(0)==1) && (tausid->at(1)==0)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1ltau1ntau1b2jos");
-if((tausid->at(0)==1)  && (tausid->at(1)==0) &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1ltau1ntau1b3jos");
-if((tausid->at(0)==0) && (tausid->at(1)==1)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1ntau1ltau1b2jos");
-if((tausid->at(0)==0)  && (tausid->at(1)==1) &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1ntau1ltau1b3jos");
-
-if((tausid->at(0)==1) && (tausid->at(1)==1)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ltau1b2jos");
-if((tausid->at(0)==1)  && (tausid->at(1)==1) &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ltau1b3jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)<2)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1mtau1ltau1b2jos");
+if((taus_id->at(0)<2)  && (taus_id->at(1)>=2) &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1ltau1mtau1b2jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)<2)  && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1mtau1ltau1b3jos");
+if((taus_id->at(0)<2)  && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1ltau1mtau1b3jos");
 
 
-if((tausid->at(0)==2) && (tausid->at(1)<2)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1mtau1ltau1b2jss");
-if((tausid->at(0)<2)  && (tausid->at(1)==2) &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1ltau1mtau1b2jss");//a
-if((tausid->at(0)==2) && (tausid->at(1)<2)  &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1mtau1ltau1b3jss");
-if((tausid->at(0)<2)  && (tausid->at(1)==2) &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1ltau1mtau1b3jss");//a
-if((tausid->at(0)==1) && (tausid->at(1)==0) &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1ltau1ntau1b2jss");
-if((tausid->at(0)==1) && (tausid->at(1)==0) &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1ltau1ntau1b3jss");
-if((tausid->at(0)==0) && (tausid->at(1)==1) &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1ntau1ltau1b2jss");
-if((tausid->at(0)==0) && (tausid->at(1)==1) &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1ntau1ltau1b3jss");
-if((tausid->at(0)==1) && (tausid->at(1)==1) &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ltau1b2jss");
-if((tausid->at(0)==1) && (tausid->at(1)==1) &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ltau1b3jss");
+if((taus_id->at(0)==1) && (taus_id->at(1)==0)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1ltau1ntau1b2jos");
+if((taus_id->at(0)==1)  && (taus_id->at(1)==0) &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1ltau1ntau1b3jos");
+if((taus_id->at(0)==0) && (taus_id->at(1)==1)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1ntau1ltau1b2jos");
+if((taus_id->at(0)==0)  && (taus_id->at(1)==1) &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1ntau1ltau1b3jos");
+
+if((taus_id->at(0)==1) && (taus_id->at(1)==1)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ltau1b2jos");
+if((taus_id->at(0)==1)  && (taus_id->at(1)==1) &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg2ltau1b3jos");
+
+
+if((taus_id->at(0)>=2) && (taus_id->at(1)<2)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1mtau1ltau1b2jss");
+if((taus_id->at(0)<2)  && (taus_id->at(1)>=2) &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1ltau1mtau1b2jss");//a
+if((taus_id->at(0)>=2) && (taus_id->at(1)<2)  &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1mtau1ltau1b3jss");
+if((taus_id->at(0)<2)  && (taus_id->at(1)>=2) &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1ltau1mtau1b3jss");//a
+if((taus_id->at(0)==1) && (taus_id->at(1)==0) &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1ltau1ntau1b2jss");
+if((taus_id->at(0)==1) && (taus_id->at(1)==0) &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1ltau1ntau1b3jss");
+if((taus_id->at(0)==0) && (taus_id->at(1)==1) &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1ntau1ltau1b2jss");
+if((taus_id->at(0)==0) && (taus_id->at(1)==1) &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg1ntau1ltau1b3jss");
+if((taus_id->at(0)==1) && (taus_id->at(1)==1) &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ltau1b2jss");
+if((taus_id->at(0)==1) && (taus_id->at(1)==1) &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2ltau1b3jss");
 
 // new
 
-if((tausid->at(0)==1) && (tausid->at(1)==2)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg1lnmtau1mtau1b2jss");
-if((tausid->at(0)==1) && (tausid->at(1)==2)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1lnmtau1mtau1b2jos");
-if((tausid->at(0)==1) && (tausid->at(1)==2)  &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg1lnmtau1mtau1b3jss");
-if((tausid->at(0)==1) && (tausid->at(1)==2)  &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1lnmtau1mtau1b3jos");
+if((taus_id->at(0)==1) && (taus_id->at(1)>=2)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg1lnmtau1mtau1b2jss");
+if((taus_id->at(0)==1) && (taus_id->at(1)>=2)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1lnmtau1mtau1b2jos");
+if((taus_id->at(0)==1) && (taus_id->at(1)>=2)  &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg1lnmtau1mtau1b3jss");
+if((taus_id->at(0)==1) && (taus_id->at(1)>=2)  &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1lnmtau1mtau1b3jos");
 
 
-if((tausid->at(0)==2) && (tausid->at(1)==1)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg1mtau1lnmtau1b2jss");
-if((tausid->at(0)==2) && (tausid->at(1)==1)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1mtau1lnmtau1b2jos");
-if((tausid->at(0)==2) && (tausid->at(1)==1)  &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg1mtau1lnmtau1b3jss");
-if((tausid->at(0)==2) && (tausid->at(1)==1)  &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1mtau1lnmtau1b3jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)==1)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg1mtau1lnmtau1b2jss");
+if((taus_id->at(0)>=2) && (taus_id->at(1)==1)  &&  bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1mtau1lnmtau1b2jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)==1)  &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) ==  1) belong_regions.add("reg1mtau1lnmtau1b3jss");
+if((taus_id->at(0)>=2) && (taus_id->at(1)==1)  &&  bjets_p4->size() == 1 && ljets_p4->size() >= 3 && taus_q->at(0)*taus_q->at(1) == -1) belong_regions.add("reg1mtau1lnmtau1b3jos");
 
 
 /*
-if((tausid->at(0)==2) && (tausid->at(1)==2) && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) == -1)  belong_regions.add("reg2mtau1b5jos");
-if((tausid->at(0)==2) && (tausid->at(1)==2) && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) ==  1)  belong_regions.add("reg2mtau1b5jss");
-if((tausid->at(0)==2) && (tausid->at(1)<2)  && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) == -1)  belong_regions.add("reg1mtau1ltau1b5jos");
-if((tausid->at(0)<2)  && (tausid->at(1)==2) && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) == -1)  belong_regions.add("reg1ltau1mtau1b5jos");
-if((tausid->at(0)==1) && (tausid->at(1)==0) && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) == -1)  belong_regions.add("reg1ltau1ntau1b5jos");
-if((tausid->at(0)==0) && (tausid->at(1)==1) && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) == -1)  belong_regions.add("reg1ntau1ltau1b5jos");
-if((tausid->at(0)==1) && (tausid->at(1)==1) && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) == -1)  belong_regions.add("reg2ltau1b5jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) == -1)  belong_regions.add("reg2mtau1b5jos");
+if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) ==  1)  belong_regions.add("reg2mtau1b5jss");
+if((taus_id->at(0)>=2) && (taus_id->at(1)<2)  && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) == -1)  belong_regions.add("reg1mtau1ltau1b5jos");
+if((taus_id->at(0)<2)  && (taus_id->at(1)>=2) && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) == -1)  belong_regions.add("reg1ltau1mtau1b5jos");
+if((taus_id->at(0)==1) && (taus_id->at(1)==0) && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) == -1)  belong_regions.add("reg1ltau1ntau1b5jos");
+if((taus_id->at(0)==0) && (taus_id->at(1)==1) && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) == -1)  belong_regions.add("reg1ntau1ltau1b5jos");
+if((taus_id->at(0)==1) && (taus_id->at(1)==1) && ( (bjets_p4->size() == 1 && ljets_p4->size() >=5)||(bjets_p4->size() == 2 && ljets_p4->size() >=3) ) && taus_q->at(0)*taus_q->at(1) == -1)  belong_regions.add("reg2ltau1b5jos");
 */
     /*
     if((taus_id->at(0)>=2) && (taus_id->at(1)>=2) && bjets_p4->size() == 1 && ljets_p4->size() == 2 && taus_q->at(0)*taus_q->at(1) == 1) belong_regions.add("reg2mtau1b2jss");

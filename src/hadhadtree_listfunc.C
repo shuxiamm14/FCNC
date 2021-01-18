@@ -59,14 +59,8 @@ void hadhadtree::definetaus(){
   if(taus_p4->size()) taus_p4->clear();
   if(taus_q->size()) taus_q->clear();
   if(taus_id->size()) taus_id->clear();
-  if(tausid->size()) tausid->clear();
 
-  tausid->push_back(tau_0_jet_rnn_medium+tau_0_jet_rnn_loose);
-  tausid->push_back(tau_1_jet_rnn_medium+tau_1_jet_rnn_loose);
-
-  int tau0id = tau_0_jet_rnn_tight?3:(tau_0_jet_rnn_medium?2:1);
-  int tau1id = tau_1_jet_rnn_tight?3:(tau_1_jet_rnn_medium?2:1);
-  taus_id->push_back(tau0id);
+  taus_id->push_back(tau_0_jet_rnn_tight+tau_0_jet_rnn_medium+tau_0_jet_rnn_loose);
   taus_b_tagged->push_back(tau_0_b_tagged);
   taus_decay_mode->push_back(tau_0_decay_mode);
   if(!isData ) {
@@ -90,7 +84,7 @@ void hadhadtree::definetaus(){
   taus_p4->push_back(tau_0_p4);
   taus_q->push_back(tau_0_q);
 
-  taus_id->push_back(tau1id);
+  taus_id->push_back(tau_1_jet_rnn_tight+tau_1_jet_rnn_medium+tau_1_jet_rnn_loose);
   taus_b_tagged->push_back(tau_1_b_tagged);
   taus_decay_mode->push_back(tau_1_decay_mode);
   if(!isData ) {
