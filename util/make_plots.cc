@@ -41,7 +41,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool prefit = 1;
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 1;
-	bool mergeFake = 1;// template: mergeFake=0,showfake=0       hadhad realonly=1,mergeFake=0 ==>0,1
+	bool mergeFake = 0;// template: mergeFake=0,showfake=0       hadhad realonly=1,mergeFake=0 ==>0,1
 	bool mergeOrigin = 0;
 	bool doTrex = 1;
 	bool plotnj = 0;
