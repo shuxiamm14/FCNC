@@ -458,7 +458,6 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	map<TString,vector<TString>> ret;
 	mergeregion(-1,ret);
 	for(auto reg : ret["all"]) tau_plots->add_region(reg);
-    tau_plots->show();
 
 	if(framework=="tthML"){
 		if(printSRTable){
@@ -616,7 +615,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		for(auto i : ret){
 			if(i.second.size()>1) tau_plots->merge_regions(i.second, i.first);
 		}
-	} tau_plots->show();
+	}
 	if(plot_option == 2){
 		for(auto samp: samples){
 			if(signalmap.find(samp.name) == signalmap.end()) tau_plots->stackorder.push_back(samp.name);
@@ -934,14 +933,12 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			if(i.second.size()>1) tau_plots->merge_regions(i.second, i.first);
 		}
 	}else{
+		tau_plots->merge_regions("reg1l2tau1bnj_os_vetobtagwp70_highmet","reg1l2tau1bnj_os_vetobtagwp70_lowmet", "reg1l2tau1bnj_os");
+	}
+	if(framework == "xTFW"){
 		tau_plots->merge_regions(string("reg2mtau1b3jss_vetobtagwp70_highmet")+(plotSB?"_SB":""),string("reg2mtau1b2jss_vetobtagwp70_highmet")+(plotSB?"_SB":""), string("reg2mtau1bnjss")+(plotSB?"_SB":""));
 		tau_plots->merge_regions(string("reg2mtau1b3jos_vetobtagwp70_highmet")+(plotSB?"_SB":""),string("reg2mtau1b2jos_vetobtagwp70_highmet")+(plotSB?"_SB":""), string("reg2mtau1bnjos")+(plotSB?"_SB":""));
-		//tau_plots->merge_regions("reg1l2tau1bnj_os_vetobtagwp70_highmet","reg1l2tau1bnj_os_vetobtagwp70_lowmet", "reg1l2tau1bnj_os");
-		tau_plots->muteregion("reg1l2tau1bnj");
 	}
-	tau_plots->show();
-	//tau_plots->printyield("reg1l1tau1b3j_os");
-	//tau_plots->printyield("reg1l1tau1b2j_os");
 	if(doTrex){
 		std::string nptmp = NPname.Data();
 		findAndReplaceAll(nptmp,"__1down","_down");
@@ -1020,7 +1017,6 @@ int main(int argc, char const *argv[])
 	TString method = argv[4];
 	plotSB=method.Contains("SB")?true:false;
 	method=method.ReplaceAll("SB","");
-	std::cout<<"plotSB:"<<plotSB<<std::endl;
 	for (int i = from; i <= to; ++i)
 	{
 		printf("=============================generating NP %d : %s=============================\n", i, findNPname(dirname,i,framework).Data());

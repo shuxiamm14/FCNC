@@ -1801,18 +1801,20 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         //  6-11:3prong        0-5:1prong     0 1 2(eta <1.37 barrel)   3 4 5(eta >1.37 endcap)
         // APPLY  FF_SS
         // leading_bin
-        if(taus_p4->at(0)->Pt()>=30&&taus_p4->at(0)->Pt()<40)      leading_bin=0;
-        else if(taus_p4->at(0)->Pt()>=40&&taus_p4->at(0)->Pt()<60) leading_bin=1;
-        else leading_bin=2;
-        if(fabs(taus_p4->at(0)->Eta())>1.37) leading_bin+=3; 
-        if(taus_n_charged_tracks->at(0)==3)  leading_bin+=6;
+        if(leps_id->size()==0){
+          if(taus_p4->at(0)->Pt()>=30&&taus_p4->at(0)->Pt()<40)      leading_bin=0;
+          else if(taus_p4->at(0)->Pt()>=40&&taus_p4->at(0)->Pt()<60) leading_bin=1;
+          else leading_bin=2;
+          if(fabs(taus_p4->at(0)->Eta())>1.37) leading_bin+=3; 
+          if(taus_n_charged_tracks->at(0)==3)  leading_bin+=6;
 
-        // subleading_bin
-        if(taus_p4->at(1)->Pt()>=30&&taus_p4->at(1)->Pt()<40)      subleading_bin=0;
-        else if(taus_p4->at(1)->Pt()>=40&&taus_p4->at(1)->Pt()<60) subleading_bin=1;
-        else subleading_bin=2;
-        if(fabs(taus_p4->at(1)->Eta())>1.37) subleading_bin+=3; 
-        if(taus_n_charged_tracks->at(1)==3)  subleading_bin+=6;
+          // subleading_bin
+          if(taus_p4->at(1)->Pt()>=30&&taus_p4->at(1)->Pt()<40)      subleading_bin=0;
+          else if(taus_p4->at(1)->Pt()>=40&&taus_p4->at(1)->Pt()<60) subleading_bin=1;
+          else subleading_bin=2;
+          if(fabs(taus_p4->at(1)->Eta())>1.37) subleading_bin+=3; 
+          if(taus_n_charged_tracks->at(1)==3)  subleading_bin+=6;
+        }
 
 
 
