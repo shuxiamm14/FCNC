@@ -113,27 +113,28 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
    auto inputuHfiles = signalmap.at("tuH");
    
    TString nominaltreedir  = framework=="tthML" ? "nominal/" : "NOMINAL/";
+   TString version = framework=="tthML"?"5":"3";
    for (int icamp = 0; icamp < 3; ++icamp)
    {
       for (auto &file : inputcHfiles)
       {
-         signal->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
+         signal->Add(prefix + "/data/v"+version+"/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
       }
       for (auto &file : inputuHfiles)
       {
-         signal->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
+         signal->Add(prefix + "/data/v"+version+"/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
       }
       for (auto &bkgsample : inputbkgsamples)
       {
          if(uselowtauID&&bkgsample.name=="zll")continue;
-         background->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
+         background->Add(prefix + "/data/v"+version+"/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
       }
       if(useSS){
          for (auto &bkgsample : inputbkgsamples)
          {
-            mctreess->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
+            mctreess->Add(prefix + "/data/v"+version+"/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
          }
-         datatreess->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + data_campaigns[icamp] + "_tree.root");
+         datatreess->Add(prefix + "/data/v"+version+"/" + framework + "reduce2/" + nominaltreedir + data_campaigns[icamp] + "_tree.root");
       }
    }
    TCut mycuts = "abs(taus_matched_pdgId[0]) == 15 && abs(taus_matched_pdgId[1]) == 15 && weights[0] >0";
