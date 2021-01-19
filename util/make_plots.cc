@@ -154,7 +154,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	//	}
 	//}
 	auto vars = getVariables(framework);
-	tau_plots->yieldvariable = "tau_pt_0";
+	if(printSRTable || !doFakeFactor) tau_plots->yieldvariable = "tau_pt_0";
+	else tau_plots->yieldvariable = "lep_pt_0";
 	if(framework == "tthML"){
 		if(plot2lttbar){
 			tau_plots->add(vars.at("nljet"));
@@ -492,10 +493,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 				tau_plots->regioninTables["reg1l1tau1b3j_os_vetobtagwp70_highmet"] = "TTH \\tlhad C";
 				tau_plots->regioninTables["reg1l1tau1b3j_os_vetobtagwp70_lowmet"] = "TTH \\tlhad B";
 				tau_plots->regioninTables["reg1l1tau1b3j_os_antiiso_vetobtagwp70_lowmet"] = "TTH \\tlhad A";
-				//tau_plots->regioninTables["reg1l1tau1b3j_os_vetobtagwp70_highmet"] = "TTH \\tlhad D";
-				//tau_plots->regioninTables["reg1l1tau1b1j_ss_vetobtagwp70_highmet"] = "l\\tauhad 1j D";
-				//tau_plots->regioninTables["reg1l1tau1b2j_os_vetobtagwp70_highmet"] = "STH \\tlhad D";
-				//tau_plots->regioninTables["reg1l1tau1b2j_ss_vetobtagwp70_highmet"] = "l\\tauhad 2j D";
+				tau_plots->regioninTables["reg1l1tau1b3j_os_vetobtagwp70_highmet"] = "TTH \\tlhad D";
+				tau_plots->regioninTables["reg1l1tau1b1j_ss_vetobtagwp70_highmet"] = "l\\tauhad 1j D";
+				tau_plots->regioninTables["reg1l1tau1b2j_os_vetobtagwp70_highmet"] = "STH \\tlhad D";
+				tau_plots->regioninTables["reg1l1tau1b2j_ss_vetobtagwp70_highmet"] = "l\\tauhad 2j D";
 			}
 		}
 	}else{
