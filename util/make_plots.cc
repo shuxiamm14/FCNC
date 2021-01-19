@@ -499,8 +499,16 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			}
 		}
 	}else{
-		tau_plots->regioninTables["reg2mtau1b2j_os_vetobtagwp70_highmet"] = "STH \\thadhad";
-		tau_plots->regioninTables["reg2mtau1b3j_os_vetobtagwp70_highmet"] = "TTH \\thadhad";
+		tau_plots->regioninTables[string("reg2mtau1b2jos_vetobtagwp70_highmet")+(plotSB?"_SB":"")] = "STH \\thadhad";
+		tau_plots->regioninTables[string("reg2mtau1b3jos_vetobtagwp70_highmet")+(plotSB?"_SB":"")] = "TTH \\thadhad";
+		tau_plots->regioninTables[string("reg2mtau1b2jss_vetobtagwp70_highmet")+(plotSB?"_SB":"")] = "STH \\thadhad SSCR";
+		tau_plots->regioninTables[string("reg2mtau1b3jss_vetobtagwp70_highmet")+(plotSB?"_SB":"")] = "TTH \\thadhad SSCR";
+		tau_plots->regioninTables[string("reg1mtau1ltau1b2jos_vetobtagwp70_highmet")+(plotSB?"_SB":")")]=string("reg1mtau1ltau1b2jos")+(plotSB?"_SB":"");
+		tau_plots->regioninTables[string("reg1mtau1ltau1b3jos_vetobtagwp70_highmet")+(plotSB?"_SB":")")]=string("reg1mtau1ltau1b3jos")+(plotSB?"_SB":"");
+		tau_plots->regioninTables[string("reg1mtau1ltau1b2jss_vetobtagwp70_highmet")+(plotSB?"_SB":")")]=string("reg1mtau1ltau1b2jss")+(plotSB?"_SB":"");
+		tau_plots->regioninTables[string("reg1mtau1ltau1b3jss_vetobtagwp70_highmet")+(plotSB?"_SB":")")]=string("reg1mtau1ltau1b3jss")+(plotSB?"_SB":"");
+		tau_plots->regioninTables[string("reg2mtau1bnjss")+(plotSB?"_SB":"")]="SS CR";
+		tau_plots->regioninTables[string("reg2mtau1bnjos")+(plotSB?"_SB":"")]="OS CR";
 	}
 
 

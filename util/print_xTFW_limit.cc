@@ -21,7 +21,7 @@ void setlimit(LatexChart *chart, TString filename, string row, string column){
 	chart->set(row,column,limit);
 }
 
-int main(int argc, char const *argv[])
+int main(int argc, char const *argv[])// run in fitter base directory
 {
 	TString variable = "BDTG_test";
 	auto sigsample = getSigSamples("xTFW",0.2);
