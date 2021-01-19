@@ -34,10 +34,6 @@ namespace TMVA{
       }
    };
 }
-
-float Optimisatinfunction(float averageArea, float diffArea){
-   return averageArea-2*fabs(diffArea);
-}
 void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weightfile = "", TString ncuts = "", TString ntrees = "", char ipart = '0') 
 {
    TString framework = (region.Contains("2mtau") || region.Contains("2ltau") || region.Contains("1mtau1ltau")) ? "xTFW" : "tthML";
@@ -46,8 +42,8 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
    std::cout << std::endl;
    std::cout << "==> Start TMVARegression" << std::endl;
    TString myMethodList = "BDTG";
-  // TFile* outputFile = TFile::Open(weightfile+ncuts+ntrees+"_out.root", "RECREATE" );
-  TFile* outputFile = TFile::Open(weightfile+"_out.root", "RECREATE" );
+   TFile* outputFile = TFile::Open(weightfile+"_out.root", "RECREATE" );
+
    TMVA::Factory *factory = new TMVA::Factory(weightfile, outputFile,
                                                "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
    TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
@@ -118,27 +114,28 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
    auto inputuHfiles = signalmap.at("tuH");
    
    TString nominaltreedir  = framework=="tthML" ? "nominal/" : "NOMINAL/";
+   TString version = framework=="tthML"?"5":"3";
    for (int icamp = 0; icamp < 3; ++icamp)
    {
       for (auto &file : inputcHfiles)
       {
-         signal->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
+         signal->Add(prefix + "/data/v"+version+"/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
       }
       for (auto &file : inputuHfiles)
       {
-         signal->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
+         signal->Add(prefix + "/data/v"+version+"/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
       }
       for (auto &bkgsample : inputbkgsamples)
       {
          if(uselowtauID&&bkgsample.name=="zll")continue;
-         background->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
+         background->Add(prefix + "/data/v"+version+"/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
       }
       if(useSS){
          for (auto &bkgsample : inputbkgsamples)
          {
-            mctreess->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
+            mctreess->Add(prefix + "/data/v"+version+"/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
          }
-         datatreess->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + data_campaigns[icamp] + "_tree.root");
+         datatreess->Add(prefix + "/data/v"+version+"/" + framework + "reduce2/" + nominaltreedir + data_campaigns[icamp] + "_tree.root");
       }
    }
    TCut mycuts = "abs(taus_matched_pdgId[0]) == 15 && abs(taus_matched_pdgId[1]) == 15 && weights[0] >0";
@@ -250,7 +247,7 @@ int main(int argc, char const *argv[])
          }
          float intodd = testodd->Integral()/testodd->GetNbinsX();
          float inteven = testeven->Integral()/testeven->GetNbinsX();
-         return (intodd+inteven)/4 - fabs(intodd-inteven)/2;
+         return (intodd+inteven)*50 - fabs(intodd-inteven)*100;
       }
       return (float)0.;
    };
@@ -260,7 +257,8 @@ int main(int argc, char const *argv[])
       optim = train(to_string(ncut).c_str(),to_string(ntree).c_str());
       LatexChart chart(catname.Data());
       chart.maxcolumn=7;
-      chart.set(to_string(ntree),to_string(ncut).c_str(),optim);
+      chart.maxrow=37;
+      chart.set("NTrees="+to_string(ntree),"NCuts="+to_string(ncut),optim);
       ofstream debugfile("Optim_debug.txt");
       while(true){
          debugfile << ncut <<" "<< ntree <<" "<<optim<<endl;

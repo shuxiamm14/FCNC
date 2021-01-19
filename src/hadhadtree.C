@@ -273,23 +273,6 @@ void hadhadtree::prepare(){
     tau0RNN=tau_0_jet_rnn_score_trans;
     tau1RNN=tau_1_jet_rnn_score_trans;
     met_sumet=met_sumet_;
-    /*
-    leadingJetPt=jet_0_p4->Pt();
-    subleadingJetPt=jet_1_p4->Pt();
-    ditau_dr_=ditau_dr;
-    ditau_dphi_=ditau_dphi;
-    ditau_deta_=ditau_deta;
-    ditau_higgspt_=ditau_higgspt;
-    ditau_met_centrality_=ditau_met_centrality;
-    ditau_rapidity=ditau_p4->Rapidity();
-    ditau_jet_2_delta_rapidity=fabs(ditau_p4->Rapidity() - jet_2_p4->Rapidity());
-    ditau_jet_1_delta_rapidity=fabs(ditau_p4->Rapidity() - jet_1_p4->Rapidity());
-    ditau_jet_0_delta_rapidity=fabs(ditau_p4->Rapidity() - jet_0_p4->Rapidity());
-    ditau_jet_2_deta=fabs(ditau_p4->Eta() - jet_2_p4->Eta());
-    ditau_jet_1_deta=fabs(ditau_p4->Eta() - jet_1_p4->Eta());
-    ditau_jet_0_deta=fabs(ditau_p4->Eta() - jet_0_p4->Eta());*/
-    tau1ntracks=tau_1_n_charged_tracks;//!!
-    tau0ntracks=tau_0_n_charged_tracks;//!! 
     if(isData){
       if(0 < run_number && run_number <= 284484){year=2015;}
       else if(284484 < run_number && run_number <= 311563){year=2016;}

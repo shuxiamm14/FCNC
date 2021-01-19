@@ -154,6 +154,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	//	}
 	//}
 	auto vars = getVariables(framework);
+	tau_plots->yieldvariable = "tau_pt_0";
 	if(framework == "tthML"){
 		if(plot2lttbar){
 			tau_plots->add(vars.at("nljet"));
@@ -458,7 +459,6 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	map<TString,vector<TString>> ret;
 	mergeregion(-1,ret);
 	for(auto reg : ret["all"]) tau_plots->add_region(reg);
-    tau_plots->show();
 
 	if(framework=="tthML"){
 		if(printSRTable){
@@ -624,7 +624,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		for(auto i : ret){
 			if(i.second.size()>1) tau_plots->merge_regions(i.second, i.first);
 		}
-	} tau_plots->show();
+	}
 	if(plot_option == 2){
 		for(auto samp: samples){
 			if(signalmap.find(samp.name) == signalmap.end()) tau_plots->stackorder.push_back(samp.name);
@@ -877,12 +877,12 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
                         //tau_plots->FakeFactorMethod("reg2mtau1b2jos","reg1mtau1lnmtau1b2jos","reg1lnmtau1mtau1b2jos","reg2ltau1b2jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
                         //tau_plots->FakeFactorMethod("reg2mtau1b3jos","reg1mtau1lnmtau1b3jos","reg1lnmtau1mtau1b3jos","reg2ltau1b3jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
                         //tau_plots->FakeFactorMethod("reg2mtau1b3jss","reg1mtau1lnmtau1b3jss","reg1lnmtau1mtau1b3jss","reg2ltau1b3jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42);
-                        //tau_plots->FakeFactorMethod("reg2mtau1b2jss","reg1mtau1lnmtau1b2jss","reg1lnmtau1mtau1b2jss","reg2ltau1b2jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42); 
-					    tau_plots->FakeFactorMethod("reg2mtau1b2jos","reg1mtau1ltau1b2jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42,plotSB);
-                        tau_plots->FakeFactorMethod("reg2mtau1b3jos","reg1mtau1ltau1b3jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42,plotSB);
-                        tau_plots->FakeFactorMethod("reg2mtau1b3jss","reg1mtau1ltau1b2jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42,plotSB);
-                        tau_plots->FakeFactorMethod("reg2mtau1b2jss","reg1mtau1ltau1b3jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42,plotSB);
-						//tau_plots->templatesample("reg1mtau1ltau1b3jss_vetobtagwp70",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ttbar -1 ztautau -1 others -1 ttV","reg2mtau1b3jss_vetobtagwp70","Fake","Fake",(enum EColor)42,false,1.0);
+                         //tau_plots->FakeFactorMethod("reg2mtau1b2jss","reg1mtau1lnmtau1b2jss","reg1lnmtau1mtau1b2jss","reg2ltau1b2jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42); 
+					    //tau_plots->FakeFactorMethod("reg2mtau1b2jos","reg1mtau1ltau1b2jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42,plotSB);
+                        //tau_plots->FakeFactorMethod("reg2mtau1b3jos","reg1mtau1ltau1b3jos",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42,plotSB);
+                        //tau_plots->FakeFactorMethod("reg2mtau1b3jss","reg1mtau1ltau1b2jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42,plotSB);
+                        //tau_plots->FakeFactorMethod("reg2mtau1b2jss","reg1mtau1ltau1b3jss",histmiddlename,"Fake","Fake",tmp_regions_,(enum EColor)42,plotSB);
+						 //tau_plots->templatesample("reg1mtau1ltau1b3jss_vetobtagwp70",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ttbar -1 ztautau -1 others -1 ttV","reg2mtau1b3jss_vetobtagwp70","Fake","Fake",(enum EColor)42,false,1.0);
                         //tau_plots->templatesample("reg1mtau1ltau1b2jss_vetobtagwp70",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ttbar -1 ztautau -1 others -1 ttV","reg2mtau1b2jss_vetobtagwp70","Fake","Fake",(enum EColor)42,false,1.0);
                         //tau_plots->templatesample("reg1mtau1ltau1b3jos_vetobtagwp70",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ttbar -1 ztautau -1 others -1 ttV","reg2mtau1b3jos_vetobtagwp70","Fake","Fake",(enum EColor)42,false,1.0);
                         //tau_plots->templatesample("reg1mtau1ltau1b2jos_vetobtagwp70",histmiddlename,"1 data -1 smhiggs -1 wjet -1 diboson -1 ttbar -1 ztautau -1 others -1 ttV","reg2mtau1b2jos_vetobtagwp70","Fake","Fake",(enum EColor)42,false,1.0);
@@ -942,14 +942,18 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 			if(i.second.size()>1) tau_plots->merge_regions(i.second, i.first);
 		}
 	}else{
+		tau_plots->merge_regions("reg1l2tau1bnj_os_vetobtagwp70_highmet","reg1l2tau1bnj_os_vetobtagwp70_lowmet", "reg1l2tau1bnj_os");
+	}
+	if(framework == "xTFW"){
 		tau_plots->merge_regions(string("reg2mtau1b3jss_vetobtagwp70_highmet")+(plotSB?"_SB":""),string("reg2mtau1b2jss_vetobtagwp70_highmet")+(plotSB?"_SB":""), string("reg2mtau1bnjss")+(plotSB?"_SB":""));
 		tau_plots->merge_regions(string("reg2mtau1b3jos_vetobtagwp70_highmet")+(plotSB?"_SB":""),string("reg2mtau1b2jos_vetobtagwp70_highmet")+(plotSB?"_SB":""), string("reg2mtau1bnjos")+(plotSB?"_SB":""));
-		//tau_plots->merge_regions("reg1l2tau1bnj_os_vetobtagwp70_highmet","reg1l2tau1bnj_os_vetobtagwp70_lowmet", "reg1l2tau1bnj_os");
-		tau_plots->muteregion("reg1l2tau1bnj");
+		if(plotSB){
+			tau_plots->muteregion("nj");
+			tau_plots->muteregion("ss");
+			tau_plots->muteregion("1l");
+		}
+
 	}
-	tau_plots->show();
-	//tau_plots->printyield("reg1l1tau1b3j_os");
-	//tau_plots->printyield("reg1l1tau1b2j_os");
 	if(doTrex){
 		std::string nptmp = NPname.Data();
 		findAndReplaceAll(nptmp,"__1down","_down");
@@ -1028,7 +1032,6 @@ int main(int argc, char const *argv[])
 	TString method = argv[4];
 	plotSB=method.Contains("SB")?true:false;
 	method=method.ReplaceAll("SB","");
-	std::cout<<"plotSB:"<<plotSB<<std::endl;
 	for (int i = from; i <= to; ++i)
 	{
 		printf("=============================generating NP %d : %s=============================\n", i, findNPname(dirname,i,framework).Data());

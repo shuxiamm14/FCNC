@@ -8,14 +8,18 @@ int main(int argc, char const *argv[])
 {
 	std::map<string, string> regionTitles;
 
-	string framework = "tthML";
+	//string framework = "tthML";
 
-	regionTitles["reg1l2tau1bnj_os"] = "l\\thadhad";
-	regionTitles["reg1l1tau1b1j_ss"] = "l\\tauhad 1j";
-	regionTitles["reg1l1tau1b2j_os"] = "STH \\tlhad";
-	regionTitles["reg1l1tau1b2j_ss"] = "l\\tauhad 2j";
-	regionTitles["reg1l1tau1b3j_os"] = "TTH \\tlhad";
+	//regionTitles["reg1l2tau1bnj_os"] = "l\\thadhad";
+	//regionTitles["reg1l1tau1b1j_ss"] = "l\\tauhad 1j";
+	//regionTitles["reg1l1tau1b2j_os"] = "STH \\tlhad";
+	//regionTitles["reg1l1tau1b2j_ss"] = "l\\tauhad 2j";
+	//regionTitles["reg1l1tau1b3j_os"] = "TTH \\tlhad";
+    
+    string framework = "xTFW";
 
+	regionTitles["reg2mtau1b2jos"] = "STH \thadhad";
+	regionTitles["reg2mtau1b3jos"] = "TTH \thadhad";
 	LatexChart chart("BDTOptimResult");
 	ifstream inputfile(argv[1]);
 	char inputline[200];
