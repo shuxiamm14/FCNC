@@ -154,7 +154,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	//	}
 	//}
 	auto vars = getVariables(framework);
-	tau_plots->yieldvariable == "tau_pt_0";
+	tau_plots->yieldvariable = "tau_pt_0";
 	if(framework == "tthML"){
 		if(plot2lttbar){
 			tau_plots->add(vars.at("nljet"));
