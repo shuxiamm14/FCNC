@@ -172,7 +172,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 //					var.first!="drlbditau"
 //					&&var.first!="etmiss"
 //					&&var.first!="ttvismass"
-					(!printSRTable||doClosureTest) && var.first!="lep_pt_0"
+					((!printSRTable||doClosureTest) && !doTrex && var.first!="lep_pt_0")||
+					(doTrex && var.first!="BDTG_test")
 					//var.first!="chi2"
 					//&&var.first!="drlb"
 					//&&var.first!="x1fit"
@@ -397,9 +398,6 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		  {"1prong","3prong"},
 		  {"vetobtagwp70_lowmet","vetobtagwp70_highmet"}
 	    };
-	}
-	if(!doFakeFactor) {
-		merge_suffix[3].erase(merge_suffix[3].begin());
 	}
 	vector<int> primensuffix;
 	for(auto x: merge_suffix) primensuffix.push_back(x.size());
@@ -696,7 +694,8 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 					if(FFchart) {
 						FFchart->set("Combined","Electron",fakeFactor_e["combine"]);
 						FFchart->set("Combined","Muon",fakeFactor_mu["combine"]);
-						FFchart->print((chartdir + "/FF/fakeFactor").Data());
+						if(doClosureTest) FFchart->print((chartdir + "/FF/fakeFactor_closure").Data());
+						else FFchart->print((chartdir + "/FF/fakeFactor").Data());
 						deletepointer(FFchart);
 					}
 				}
