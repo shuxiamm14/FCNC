@@ -130,7 +130,7 @@ void hadhadtree::definejets(){
   if(ljets_bscore->size())ljets_bscore->clear();
   if(bjets_score->size())bjets_score->clear();
 
-  if(fabs(jet_0_p4->Eta())<2.5){
+  if(fabs(jet_0_p4->Eta())<2.4){
     if(jet_0_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_0_fjvt);
       bjets_is_Jvt_HS->push_back(jet_0_is_Jvt_HS);
@@ -148,7 +148,7 @@ void hadhadtree::definejets(){
       ljets_bscore->push_back(jet_0_b_tag_score);
     }
   }
-  if(fabs(jet_1_p4->Eta())<2.5){
+  if(fabs(jet_1_p4->Eta())<2.4){
   if(jet_1_b_tagged_DL1r_FixedCutBEff_70){
     bjets_fjvt->push_back(jet_1_fjvt);
     bjets_is_Jvt_HS->push_back(jet_1_is_Jvt_HS);
@@ -166,7 +166,7 @@ void hadhadtree::definejets(){
     ljets_bscore->push_back(jet_1_b_tag_score);
   }
   }
-  if(fabs(jet_2_p4->Eta())<2.5){
+  if(fabs(jet_2_p4->Eta())<2.4){
   if(jet_2_b_tagged_DL1r_FixedCutBEff_70){
     bjets_fjvt->push_back(jet_2_fjvt);
     bjets_is_Jvt_HS->push_back(jet_2_is_Jvt_HS);
@@ -184,7 +184,7 @@ void hadhadtree::definejets(){
     ljets_bscore->push_back(jet_2_b_tag_score);
   }
   }
-  if ((!jet_3)?false:fabs(jet_3_p4->Eta())<2.5)
+  if ((!jet_3)?false:fabs(jet_3_p4->Eta())<2.4)
   { 
     if(jet_3_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_3_fjvt);
@@ -203,7 +203,7 @@ void hadhadtree::definejets(){
       ljets_bscore->push_back(jet_3_b_tag_score);
     }
   }
-  if ((!jet_4)?false:fabs(jet_4_p4->Eta())<2.5)
+  if ((!jet_4)?false:fabs(jet_4_p4->Eta())<2.4)
   {
     if(jet_4_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_4_fjvt);
@@ -222,7 +222,7 @@ void hadhadtree::definejets(){
       ljets_bscore->push_back(jet_4_b_tag_score);
     }
   }
-  if ((!jet_5)?false:fabs(jet_5_p4->Eta())<2.5)
+  if ((!jet_5)?false:fabs(jet_5_p4->Eta())<2.4)
   {
     if(jet_5_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_5_fjvt);
@@ -241,7 +241,7 @@ void hadhadtree::definejets(){
       ljets_bscore->push_back(jet_5_b_tag_score);
     }
   }
-  if (!(jet_6)?false:fabs(jet_6_p4->Eta())<2.5)
+  if (!(jet_6)?false:fabs(jet_6_p4->Eta())<2.4)
   {
     if(jet_6_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_6_fjvt);
@@ -260,7 +260,7 @@ void hadhadtree::definejets(){
       ljets_bscore->push_back(jet_6_b_tag_score);
     }
   }
-  if (!(jet_7)?false:fabs(jet_7_p4->Eta())<2.5)
+  if (!(jet_7)?false:fabs(jet_7_p4->Eta())<2.4)
   {
     if(jet_7_b_tagged_DL1r_FixedCutBEff_70){
       bjets_fjvt->push_back(jet_7_fjvt);
