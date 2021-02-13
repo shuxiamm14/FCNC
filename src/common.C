@@ -129,7 +129,7 @@ std::map<TString,variable*> getVariables(TString framework){
 		ret["mtw"] = new variable("mtw","m^{T}_{W}",100,0.,200.,"GeV",scale,10);
 		ret["tautaumass"] = new variable("tautaumass","m_{#tau,#tau}",100,50.,250.,"GeV",scale,5);
 		ret["wmass"] = new variable("wmass","m_{W}",100,0.,250.,"GeV",scale,5);
-		ret["t2mass"] = new variable("t2mass","m_{t,FCNC}",150,120.,270.,"GeV",scale,5);
+		ret["t2mass"] = new variable("t2mass","m_{t,FCNC}",200,120.,920.,"GeV",scale,5);
 		ret["ttvismass"] = new variable("ttvismass","m_{#tau#tau,vis}",200,25.,225.,"GeV",scale,10);
 		ret["tautauvispt"] = new variable("tautauvispt","P_{t,#tau#tau,vis}",100,0.,200.,"GeV",scale,10);
 		ret["t2vismass"] = new variable("t2vismass","m_{t,FCNC,vis}",100,50.,250.,"GeV",scale,10);
@@ -138,9 +138,9 @@ std::map<TString,variable*> getVariables(TString framework){
 		ret["mtaujmin"] = new variable("mtaujmin","M(#tau light-jet,min)",100,50.,250.,"GeV",scale,10);
 		ret["mjjmin"] = new variable("mjjmin","M(light-jet,light-jet,min)",100,20.,200.,"GeV",scale,5);
 		ret["etmiss"] = new variable("etmiss","E^{T}_{miss}",100,15.,115.,"GeV",scale,10);
-		ret["x1fit"] = new variable("x1fit","E_{#nu,1}/E_{#tau,1}",140,0.3,1.,"",1,7);
-		ret["x2fit"] = new variable("x2fit","E_{#nu,2}/E_{#tau,2}",140,0.3,1.,"",1,7);
-		ret["drlbditau"] = new variable("drlbditau","#DeltaR(l+b-jet,#tau+#tau)",50,0.,5.,"",1,5);
+		ret["x1fit"] = new variable("x1fit","E_{vis-#tau,1}/E_{#tau,1}",140,0.3,1.,"",1,7);
+		ret["x2fit"] = new variable("x2fit","E_{vis-#tau,2}/E_{#tau,2}",140,0.3,1.,"",1,7);
+		ret["drlbditau"] = new variable("drlbditau","#DeltaR(l+b-jet,#tau#tau)",50,0.,5.,"",1,5);
 		ret["drlb"] = new variable("drlb","#DeltaR(l,b-jet)",50,0.,5.,"",1,5);
 		ret["drtaub"] = new variable("drtaub","#DeltaR(#tau,b-jet)",60,0.,6.,"",1,5);
 		ret["etamax"] = new variable("etamax","#eta_{#tau,max}",100,0.,2.5,"",1,10);
