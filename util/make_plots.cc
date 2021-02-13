@@ -594,7 +594,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 							}else 
 								for (int i = 1; i < origin.size() - (framework=="xTFW"); i++){  //no double fake for hadhad channel
 									if(mergeOrigin && find(mergedOrigins.begin(),mergedOrigins.end(),origin.at(i).name) != mergedOrigins.end())
-										tau_plots->read_sample( "other_fake", samplename + "_" + origin.at(i).name, histmiddlename, "Other Fake #tau", (enum EColor)(i+40), norm, inputfile);
+										tau_plots->read_sample( "other_fake", samplename + "_" + origin.at(i).name, histmiddlename, "Other Fake #tau", (enum EColor)(41), norm, inputfile);
 									else
 										tau_plots->read_sample( origin.at(i).name, samplename + "_" + origin.at(i).name, histmiddlename, origin.at(i).title, (enum EColor)(i+40), norm, inputfile);
 								}
