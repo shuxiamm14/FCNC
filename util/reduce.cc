@@ -1,4 +1,4 @@
-#define TTHMLVERSION 5
+#define TTHMLVERSION 6
 #include "hadhadtree.h"
 #if TTHMLVERSION==2
 #include "tthmltree_v2.h"
@@ -10,6 +10,8 @@
 #elif TTHMLVERSION==5
 #include "tthmltree_v5.h"
 #include "tthmltree_v3.h"
+#elif TTHMLVERSION==6
+#include "tthmltree_v6.h"
 #endif
 #include "TROOT.h"
 #include "TSystem.h"
@@ -220,6 +222,8 @@ int main(int argc, char const *argv[])
 		if(inputconfig.Contains("fcnc"))
 			analysis = new tthmltree_v3();
 		else analysis = new tthmltree_v5();
+#elif TTHMLVERSION==6
+		analysis = new tthmltree_v6();
 #endif
 	}
 	analysis->SystematicsName = systname;
