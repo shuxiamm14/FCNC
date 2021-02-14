@@ -1107,16 +1107,6 @@ public :
    Int_t           higgsDecayMode;
    Int_t           hhiggsDecayMode;
    Int_t           initial_state;
-   vector<float>   *m_truth_m;
-   vector<float>   *m_truth_pt;
-   vector<float>   *m_truth_eta;
-   vector<float>   *m_truth_phi;
-   vector<float>   *m_truth_e;
-   vector<int>     *m_truth_pdgId;
-   vector<int>     *m_truth_status;
-   vector<int>     *m_truth_barcode;
-   vector<vector<int> > *m_truth_parents;
-   vector<vector<int> > *m_truth_children;
    vector<vector<int> > *m_truth_parentsID;
    vector<vector<int> > *m_truth_childrenID;
    Float_t         lepSFObjLoose;
