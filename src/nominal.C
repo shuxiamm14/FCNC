@@ -1377,11 +1377,10 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       if(belong_regions.isEmpty()) continue;
   
       cut_flow.fill("SR+CR");
-      
-      defineTauTruth();
-
-      defineLepTruth();
-  
+      if(!isData){
+        defineTauTruth();
+        defineLepTruth();
+      }
       if(taus_p4->size()) tau_pt_0 = taus_p4->at(0)->Pt();
       if(taus_p4->size()>=2) tau_pt_1 = taus_p4->at(1)->Pt();
       if(leps_p4->size()) {
