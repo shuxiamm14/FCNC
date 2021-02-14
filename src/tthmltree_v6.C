@@ -314,6 +314,7 @@ bool tthmltree_v6::passBasicCut(){
 
 void tthmltree_v6::defineObjects(){
   MET_RefFinal_et = met_met;
+  weight_mc_v = mc_genWeights;
   taus_p4->clear();
   taus_b_tagged->clear();
   taus_q->clear();
