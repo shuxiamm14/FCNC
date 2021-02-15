@@ -1854,10 +1854,10 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
               else if (tauabspdg <= 3 && tauabspdg >=1) tauorigin = sample + "_j_fake";
               else if (tauabspdg == 21) tauorigin = sample + "_g_fake";
               else tauorigin = sample + "_nomatch";
-              if((tauabspdg == 4 || (tauabspdg <= 3 && tauabspdg >=1)) && abs(taus_matched_mother_pdgId->at(i)) == 24) tauorigin = sample + "_w_jet_fake";
+              if((tauabspdg <= 4 && tauabspdg >=1) && abs(taus_matched_mother_pdgId->at(i)) == 24) tauorigin = sample + "_w_jet_fake";
             }
           }
-          if(nfaketau == 1&&abs(taus_matched_pdgId->at(0))==15) continue;
+          if(leps_id->size()==0 && nfaketau == 1&&abs(taus_matched_pdgId->at(0))==15) continue;
           if(nfaketau == 0) tauorigin = sample + "_real";
           //if(nfaketau == 0||(nfaketau == 1&&(abs(taus_matched_pdgId->at(1))==15))) tauorigin = sample + "_real";
           else if(nfaketau >= 2) tauorigin = sample + "_doublefake";
