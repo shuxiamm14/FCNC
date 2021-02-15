@@ -427,6 +427,12 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("tau1ntracks",&tau1ntracks);//!!
   tree->SetBranchAddress("tau0ntracks",&tau0ntracks);//!!
   tree->SetBranchAddress("nmOnlyfakeweight",&nmOnlyfakeweight);
+  // add for xin
+  tree->SetBranchAddress("actual_mu", &actual_mu);
+  tree->SetBranchAddress("actual_mu_cor", &actual_mu_cor);
+  tree->SetBranchAddress("average_mu", &average_mu);
+  tree->SetBranchAddress("average_mu_cor", &average_mu_cor);
+
 }
 
 void nominal::BDTBranch(TTree *tree){
@@ -490,10 +496,15 @@ void nominal::BDTBranch(TTree *tree){
   tree->Branch("tau1E", &tau1E);
   tree->Branch("neu0E", &neu0E);
   tree->Branch("neu1E", &neu1E);
-tree->Branch("tausid", &tausid);//!!
-tree->Branch("tau1ntracks",&tau1ntracks);//!!
-tree->Branch("tau0ntracks",&tau0ntracks);//!!
-tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
+  tree->Branch("tausid", &tausid);//!!
+  tree->Branch("tau1ntracks",&tau1ntracks);//!!
+  tree->Branch("tau0ntracks",&tau0ntracks);//!!
+  tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
+  // add for xin
+  tree->Branch("actual_mu", &actual_mu);
+  tree->Branch("actual_mu_cor", &actual_mu_cor);
+  tree->Branch("average_mu", &average_mu);
+  tree->Branch("average_mu_cor", &average_mu_cor);
 }
 
 
@@ -528,11 +539,17 @@ void nominal::setVecBranch(TTree *tree){
   tree->SetBranchAddress("met_sumet", &met_sumet);
   tree->SetBranchAddress("tau0RNN",&tau0RNN);
   tree->SetBranchAddress("tau1RNN",&tau1RNN);
-tree->SetBranchAddress("tau1ntracks",&tau1ntracks);//!!
-tree->SetBranchAddress("tau0ntracks",&tau0ntracks);//!!
+  tree->SetBranchAddress("tau1ntracks",&tau1ntracks);//!!
+  tree->SetBranchAddress("tau0ntracks",&tau0ntracks);//!!
 //
 //tree->SetBranchAddress("newfakeweight",&newfakeweight);
 //tree->SetBranchAddress("nmOnlyfakeweight",&nmOnlyfakeweight);
+
+  // add for xin
+  tree->SetBranchAddress("actual_mu", &actual_mu);
+  tree->SetBranchAddress("actual_mu_cor", &actual_mu_cor);
+  tree->SetBranchAddress("average_mu", &average_mu);
+  tree->SetBranchAddress("average_mu_cor", &average_mu_cor);
 }
 
 void nominal::vecBranch(TTree *tree){
@@ -571,6 +588,13 @@ void nominal::vecBranch(TTree *tree){
   //
   //tree->Branch("newfakeweight",&newfakeweight);
   //tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
+
+    // add for xin
+  tree->Branch("actual_mu", &actual_mu);
+  tree->Branch("actual_mu_cor", &actual_mu_cor);
+  tree->Branch("average_mu", &average_mu);
+  tree->Branch("average_mu_cor", &average_mu_cor);
+
 }
 
 void nominal::initFit(){
@@ -1967,8 +1991,9 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             if(debug) printf("fill NP %s\n", theNP.Data());
             weight = weights->at(0);
 
-
-
+            if(iNP ==0&& false){
+              for(auto &_x_:weightvec)std::cout<<"np:"<<_x_<<std::endl;
+            }
             if(applyNewFakeSF){
               if(theNP.Contains("fakeSF")){
                 TString SFname;
@@ -1995,16 +2020,19 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             }// end of applyNewFakeSF
             if(!theNP.Contains("Xsec") && !theNP.Contains("fakeSF") && nominaltree) { ////this part deal with "weight"
               std::vector<TString>::iterator it = std::find(weightvec.begin(), weightvec.end(), theNP);
-              int index = 2;
+              int index = 0;
               if(it != weightvec.end()) index = std::distance(weightvec.begin(), it);
               else continue;
-              if(index==2 || index==1) weight = weights->at(index);
-              //else if(index > 8 && index < 17)
-              //  weight = weights->at(2) * weights->at(index);
-              else if(index !=0)
-                weight *= weights->at(index);
+              if(index !=0) weight *= weights->at(index);
+              //if(index==2 || index==1) weight = weights->at(index);
+              //else if(index !=0)
+              //  weight *= weights->at(index);
+              if(index !=0){
+                std::cout<<"nominal weight:"<<(weights->at(0))<<std::endl;
+                std::cout<<"weight:"<<weight<<std::endl;
+              }
             }
-            if(region.Contains("1mtau1ltau1b")) { weight*=read_fake_factor(theNP,subleading_bin); std::cout<<"ff:"<<read_fake_factor(theNP,subleading_bin)<<std::endl;}
+            if(region.Contains("1mtau1ltau1b")) { weight*=read_fake_factor(theNP,subleading_bin); /*std::cout<<"ff:"<<read_fake_factor(theNP,subleading_bin)<<std::endl;*/}
             if(!nominaltree){// tree NP
               weight=weights->at(0);
               if(region.Contains("1mtau1ltau1b")) weight*=read_fake_factor(theNP,subleading_bin); 

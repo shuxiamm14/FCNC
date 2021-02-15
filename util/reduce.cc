@@ -31,7 +31,7 @@ int main(int argc, char const *argv[])
 	bool dofake = 0;
 	bool onlyMajorNP = 0; // set to 0 for current xTFW analysis.
 	bool applynewSF = 0; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
-	bool nominalOnly = 1;
+	bool nominalOnly = 1; //when nominal =1
 	TString version = "v3"; //define your n-tuple version
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
@@ -280,11 +280,11 @@ int main(int argc, char const *argv[])
 					if(plot_sys){
 						if(onlyMajorNP){
 							if(framework == "tthML") for(auto v: tthMLmajorNPlist) analysis->plotNPs.push_back(v);
-							else for(auto v: xTFWmajorNPlist) analysis->plotNPs.push_back(v);
+							else for(auto v: xTFWmajorNPlist) analysis->plotNPs.push_back(v);//xTFW empty
 						}else{
 							//if(framework == "tthML") for(auto v: tthMLNPlist) analysis->plotNPs.push_back(v);
-							//else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
-							//for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
+						    //else for(auto v: xTFWNPlist) analysis->plotNPs.push_back(v);
+							for(auto v: theoryNPlist) analysis->plotNPs.push_back(v);
 							//for(auto v: commonNPlist) analysis->plotNPs.push_back(v);
                                                         //for(auto v: xsecNPlist) analysis->plotNPs.push_back(v);
 							if(applynewSF)

@@ -459,7 +459,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	mergeregion(-1,ret);
 	for(auto reg : ret["all"]) tau_plots->add_region(reg);
     tau_plots->show();
-
+	tau_plots->yieldvariable="tau_pt_0";
 	if(framework=="tthML"){
 		if(printSRTable){
 			tau_plots->regioninTables["reg1l2tau1bnj_os"] = "l\\thadhad";
@@ -503,10 +503,10 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		tau_plots->regioninTables[string("reg2mtau1b3jos_vetobtagwp70_highmet")+(plotSB?"_SB":"")] = "TTH \\thadhad";
 		tau_plots->regioninTables[string("reg2mtau1b2jss_vetobtagwp70_highmet")+(plotSB?"_SB":"")] = "STH \\thadhad SSCR";
 		tau_plots->regioninTables[string("reg2mtau1b3jss_vetobtagwp70_highmet")+(plotSB?"_SB":"")] = "TTH \\thadhad SSCR";
-		tau_plots->regioninTables[string("reg1mtau1ltau1b2jos_vetobtagwp70_highmet")+(plotSB?"_SB":")")]=string("reg1mtau1ltau1b2jos")+(plotSB?"_SB":"");
-		tau_plots->regioninTables[string("reg1mtau1ltau1b3jos_vetobtagwp70_highmet")+(plotSB?"_SB":")")]=string("reg1mtau1ltau1b3jos")+(plotSB?"_SB":"");
-		tau_plots->regioninTables[string("reg1mtau1ltau1b2jss_vetobtagwp70_highmet")+(plotSB?"_SB":")")]=string("reg1mtau1ltau1b2jss")+(plotSB?"_SB":"");
-		tau_plots->regioninTables[string("reg1mtau1ltau1b3jss_vetobtagwp70_highmet")+(plotSB?"_SB":")")]=string("reg1mtau1ltau1b3jss")+(plotSB?"_SB":"");
+		tau_plots->regioninTables[string("reg1mtau1ltau1b2jos_vetobtagwp70_highmet")+(plotSB?"_SB":"")]=string("reg1mtau1ltau1b2jos")+(plotSB?"_SB":"");
+		tau_plots->regioninTables[string("reg1mtau1ltau1b3jos_vetobtagwp70_highmet")+(plotSB?"_SB":"")]=string("reg1mtau1ltau1b3jos")+(plotSB?"_SB":"");
+		tau_plots->regioninTables[string("reg1mtau1ltau1b2jss_vetobtagwp70_highmet")+(plotSB?"_SB":"")]=string("reg1mtau1ltau1b2jss")+(plotSB?"_SB":"");
+		tau_plots->regioninTables[string("reg1mtau1ltau1b3jss_vetobtagwp70_highmet")+(plotSB?"_SB":"")]=string("reg1mtau1ltau1b3jss")+(plotSB?"_SB":"");
 		tau_plots->regioninTables[string("reg2mtau1bnjss")+(plotSB?"_SB":"")]="SS CR";
 		tau_plots->regioninTables[string("reg2mtau1bnjos")+(plotSB?"_SB":"")]="OS CR";
 	}
@@ -959,6 +959,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 		findAndReplaceAll(nptmp,"JET_JER_EffectiveNP","JER");
 		findAndReplaceAll(nptmp,"JET_EtaIntercalibration","JET_EtaInt");
 		findAndReplaceAll(nptmp,"TAUS_TRUEHADTAU_SME_TES","TES");
+		findAndReplaceAll(nptmp,"PDFset=26","PDFset26");
 		NPname = nptmp;
 		if(NPname.Contains("PDF")) tau_plots->trexdir = "PDF_trexinputs";
 		else if(NPname.Contains("muR")) tau_plots->trexdir = "scale_trexinputs";

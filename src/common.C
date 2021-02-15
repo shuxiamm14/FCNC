@@ -114,8 +114,13 @@ std::map<TString,variable*> getVariables(TString framework){
 		ret["leading_bin"]=new variable("leading_bin","leading_bin",12, 0, 12,"",1,1);
 		ret["subleading_bin"]=new variable("subleading_bin","subleading_bin",12, 0, 12,"",1,1);
 		ret["chi2"] = new variable("chi2","#chi^{2}",100,0.,5.,"",1,10);
-	//	ret["allmass"] = new variable("allmass","m_{all}",500,0.,1000.,"GeV",scale,50);
-	//	ret["allpz"] = new variable("allpz","P_{z,all}",500,0.,1000.,"GeV",scale,50);
+	    //ret["allmass"] = new variable("allmass","m_{all}",500,0.,1000.,"GeV",scale,50);
+	    //ret["allpz"] = new variable("allpz","P_{z,all}",500,0.,1000.,"GeV",scale,50);
+	    // add for xin
+		ret["actual_mu"]=new variable("actual_mu","actual_mu",100, 0, 100,"",1,5);
+		ret["actual_mu_cor"]=new variable("actual_mu_cor","actual_mu_cor",100, 0, 100,"",1,5);
+		ret["average_mu"]=new variable("average_mu","average_mu",100, 0, 100,"",1,5);
+		ret["average_mu_cor"]=new variable("average_mu_cor","average_mu_cor",100, 0, 100,"",1,5);
 	}else{
 		ret["BDTG_train"] = new variable("BDTG_train","BDT discriminant",100,-1.,1.,"",1,10);
 		ret["BDTG_test"] = new variable("BDTG_test","BDT discriminant",100,-1.,1.,"",1,10);
