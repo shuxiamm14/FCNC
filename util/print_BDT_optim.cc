@@ -16,6 +16,9 @@ int main(int argc, char const *argv[])
 	regionTitles["reg1l1tau1b2j_ss"] = "l\\tauhad 2j";
 	regionTitles["reg1l1tau1b3j_os"] = "TTH \\tlhad";
 
+	regionTitles["reg2mtau1b2jos"] = "STH \\thadhad";
+	regionTitles["reg2mtau1b3jos"] = "TTH \\thadhad";
+
 	LatexChart chart("BDTOptimResult");
 	ifstream inputfile(argv[1]);
 	char inputline[200];

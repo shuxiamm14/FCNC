@@ -34,10 +34,6 @@ namespace TMVA{
       }
    };
 }
-
-float Optimisatinfunction(float averageArea, float diffArea){
-   return averageArea-2*fabs(diffArea);
-}
 void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weightfile = "", TString ncuts = "", TString ntrees = "", char ipart = '0') 
 {
    TString framework = (region.Contains("2mtau") || region.Contains("2ltau") || region.Contains("1mtau1ltau")) ? "xTFW" : "tthML";
@@ -118,27 +114,28 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
    auto inputuHfiles = signalmap.at("tuH");
    
    TString nominaltreedir  = framework=="tthML" ? "nominal/" : "NOMINAL/";
+   TString version = framework=="tthML"?"5":"3";
    for (int icamp = 0; icamp < 3; ++icamp)
    {
       for (auto &file : inputcHfiles)
       {
-         signal->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
+         signal->Add(prefix + "/data/v"+version+"/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
       }
       for (auto &file : inputuHfiles)
       {
-         signal->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
+         signal->Add(prefix + "/data/v"+version+"/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + file + "_tree.root");
       }
       for (auto &bkgsample : inputbkgsamples)
       {
          if(uselowtauID&&bkgsample.name=="zll")continue;
-         background->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
+         background->Add(prefix + "/data/v"+version+"/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
       }
       if(useSS){
          for (auto &bkgsample : inputbkgsamples)
          {
-            mctreess->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
+            mctreess->Add(prefix + "/data/v"+version+"/" + framework + "reduce2/" + nominaltreedir + mc_campaigns[icamp] + "_" + bkgsample.name + "_tree.root");
          }
-         datatreess->Add(prefix + "/data/v3/" + framework + "reduce2/" + nominaltreedir + data_campaigns[icamp] + "_tree.root");
+         datatreess->Add(prefix + "/data/v"+version+"/" + framework + "reduce2/" + nominaltreedir + data_campaigns[icamp] + "_tree.root");
       }
    }
    TCut mycuts = "abs(taus_matched_pdgId[0]) == 15 && abs(taus_matched_pdgId[1]) == 15 && weights[0] >0";
@@ -231,9 +228,17 @@ int main(int argc, char const *argv[])
             testeven->SetNameTitle("Test Even","Test Even");
             testeven->SetLineColor(2);
             testeven->SetMarkerSize(0);
+            testeven->GetXaxis()->SetLabelSize(testeven->GetXaxis()->GetLabelSize()*2);
+            testeven->GetYaxis()->SetLabelSize(testeven->GetYaxis()->GetLabelSize()*2);
+            testeven->GetXaxis()->SetTitleSize(testeven->GetXaxis()->GetTitleSize()*2);
+            testeven->GetYaxis()->SetTitleSize(testeven->GetYaxis()->GetTitleSize()*2);
             testodd->SetNameTitle("Test Odd","Test Odd");
             testodd->SetLineColor(4);
             testodd->SetMarkerSize(0);
+            testodd->GetXaxis()->SetLabelSize(testeven->GetXaxis()->GetLabelSize()*2);
+            testodd->GetYaxis()->SetLabelSize(testeven->GetYaxis()->GetLabelSize()*2);
+            testodd->GetXaxis()->SetTitleSize(testeven->GetXaxis()->GetTitleSize()*2);
+            testodd->GetYaxis()->SetTitleSize(testeven->GetYaxis()->GetTitleSize()*2);
             TCanvas c1(catname,catname,1000,1000);
             testeven->GetXaxis()->SetRangeUser(0,1);
             testeven->GetYaxis()->SetRangeUser(0,1);
@@ -260,7 +265,8 @@ int main(int argc, char const *argv[])
       optim = train(to_string(ncut).c_str(),to_string(ntree).c_str());
       LatexChart chart(catname.Data());
       chart.maxcolumn=7;
-      chart.set(to_string(ntree),to_string(ncut).c_str(),optim);
+      chart.maxrow=37;
+      chart.set("NTrees="+to_string(ntree),"NCuts="+to_string(ncut),optim);
       ofstream debugfile("Optim_debug.txt");
       while(true){
          debugfile << ncut <<" "<< ntree <<" "<<optim<<endl;

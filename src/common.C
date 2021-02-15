@@ -24,7 +24,7 @@ std::vector<fcncSample> getFakeTauOrigin(){
 	samples.emplace_back("b_fake","b-jets fake #tau",(enum EColor)43);
 	samples.emplace_back("lep_fake","lepton fake #tau",(enum EColor)44);
 	samples.emplace_back("c_fake","c-jets fake #tau",(enum EColor)45);
-	samples.emplace_back("w_jet_fake","w-jet matched fake #tau",(enum EColor)46);
+	samples.emplace_back("w_jet_fake","#tau_{W}",(enum EColor)46);
 	samples.emplace_back("nomatch","no match fake #tau",(enum EColor)47);
 	samples.emplace_back("doublefake","double fake #tau",(enum EColor)48);
 	return samples;
