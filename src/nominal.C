@@ -2,157 +2,76 @@
 #include "fcnc_include.h"
 #include "common.h"
 #include "LatexChart.h"
-//#include "weightsys_list.h"
 #define FitvMass 0
 using namespace std;
 int nominal::GeV = 0;
 
-TH2D nominal::create2D(std::string root_name,std::string tree_name){ 
-    std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/hhfake/";
-    full_name.append(root_name);
-    TFile *File_ = TFile::Open(full_name.c_str());
-    TH2D *hist2d = 0;
-    File_->GetObject(tree_name.c_str(),hist2d);
-    hist2d->SetDirectory(0);  //It crashes without this line!
-    return *hist2d;
-}
-
-TH1D nominal::create1D_(std::string root_name,std::string tree_name){ 
-    std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/final/FCNCProject/FCNCAnalysis/ff_sys/"+root_name;
+void nominal::initializeFF(){
+  //ff_sys
+  auto getResult = [&](std::string root_name,std::string tree_name){ 
+    std::string full_name=PACKAGE_DIR;
+    full_name += "/ff_sys/"+root_name;
     TFile *File_ = TFile::Open(full_name.c_str());
     TH1D *hist1d = 0;
     File_->GetObject(tree_name.c_str(),hist1d);
-    if(hist1d)std::cout<<"full_name: "<<full_name<<std::endl;
-    hist1d->SetDirectory(0);  //It crashes without this line!
-    return *hist1d;
-}
-
-std::vector<observable> nominal::fill_hh_sys(bool isSS){
-  std::vector<observable> result;
-  result.clear();
-
-  if(isSS){
-    for(int ibin = 1; ibin <= hhFakeSS.GetNbinsX(); ++ibin){
-      if(hhFakeSS.GetBinContent(ibin)>0)result.push_back(observable(hhFakeSS.GetBinContent(ibin),hhFakeSS.GetBinError(ibin)));
-      if(hhFakeSS.GetBinContent(ibin)<0)result.push_back(observable(0,0));
-      //std::cout<<"npname:SS"<<", ibin:"<<ibin<<std::endl;
-      //std::cout<<"value:"<<result.back().nominal<<", error:"<<result.back().error<<std::endl;
+    if(hist1d) std::cout<<"full_name: "<<full_name<<std::endl;
+    std::vector<observable> result;
+    for(int ibin = 1; ibin <= hist1d->GetNbinsX(); ++ibin){
+      if(hist1d->GetBinContent(ibin)>0) result.push_back(observable(hist1d->GetBinContent(ibin),hist1d->GetBinError(ibin)));
+      if(hist1d->GetBinContent(ibin)<0) result.push_back(observable(0,0));
     }
-  }else{
-    for(int ibin = 1; ibin <= hhFakeSB.GetNbinsX(); ++ibin){
-      if(hhFakeSB.GetBinContent(ibin)>0)result.push_back(observable(hhFakeSB.GetBinContent(ibin),hhFakeSB.GetBinError(ibin)));
-      if(hhFakeSB.GetBinContent(ibin)<0)result.push_back(observable(0,0));
-      //std::cout<<"npname:SB"<<", ibin:"<<ibin<<std::endl;
-      //std::cout<<"value:"<<result.back().nominal<<", error:"<<result.back().error<<std::endl;
-    }
+    File_->Close();
+    return result;
+  };
+  hhFakeSSVec=getResult("FF_sideband_nm.root","outhist1p");
+  hhFakeSBVec=getResult("FF_ss_nm.root","outhist1p");
+
+  std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/hhfake/FFs_hadhad_muOnly.root";
+
+  hhFakeSysMap.clear();
+  TH2D *FFhist[2] = {0,0};
+  for (int iprong = 0; iprong < 2; ++iprong)
+  {
+    TH2D *hist2d = 0;
+    TFile *File_ = TFile::Open(full_name.c_str());
+    TString histname = "FF_WCR_Presel_All_Comb_SLTandTLT";
+    histname = histname + (iprong==0?"_1prong":"_3prong");
+    File_->GetObject(histname.Data(),FFhist[iprong]);
+    if(!FFhist[iprong]) printf("ERROR: FFhist wasn't found: %s\n",histname.Data());
+    FFhist[iprong]->SetDirectory(0);
+    for (int iptbin = 0; iptbin < 3; ++iptbin)
+      for (int ietabin = 0; ietabin < 2; ++ietabin){
+        //"FFNP_1prong_ptbin0_etabin0"
+        TString binname = TString("FFNP_") + (iprong==0?"1prong_":"3prong_") + "ptbin" + char(iptbin+'0') + "_etabin" + char(ietabin+'0');
+        hhFakeSysMap[binname]=observable(FFhist[iprong]->GetBinContent(iptbin+1, ietabin+1),FFhist[iprong]->GetBinError(iptbin+1, ietabin+1));
+      }
+    File_->Close();
   }
-  return result;
 }
-  
-std::map<TString,observable> nominal::fill_hh_stat(){
-  int ptindex=0;
-  int etaindex=0;
-  int prongindex=0;
-  
-  std::map<TString,observable> result;
-
-  for(auto &item:xTFWfakeNPlist_){
-    if(!item.Contains("prong")) continue;
-    //pt
-    if(item.Contains("ptbin0"))      ptindex=1;
-    else if(item.Contains("ptbin1")) ptindex=2;
-    else if(item.Contains("ptbin2")) ptindex=3;
-    //eta
-    if (item.Contains("etabin0"))     etaindex=1;
-    else if(item.Contains("etabin1")) etaindex=2;
-    
-    // fill map
-    if(item.Contains("1prong")){ //1p
-      prongindex=1;
-      result[item]=observable(fake_1p_nm.GetBinContent(ptindex, etaindex),fake_1p_nm.GetBinError(ptindex, etaindex));
-    }else if(item.Contains("3prong")){
-      prongindex=3;
-      result[item]=observable(fake_3p_nm.GetBinContent(ptindex, etaindex),fake_3p_nm.GetBinError(ptindex, etaindex));
-    }
-    //std::cout<<"npname:"<<item<<", ptindex:"<<ptindex<<", etaindex:"<<etaindex<<",prongindex:"<<prongindex<<std::endl;
-    //std::cout<<"value:"<<result[item].nominal<<", error:"<<result[item].error<<std::endl;
-  }
-  return result;
-}
-
-void nominal::initializeFF(){
-  //ff_sys
-  hhFakeSB=create1D_("FF_sideband_nm.root","outhist1p");
-  hhFakeSS=create1D_("FF_ss_nm.root","outhist1p");
-  // nominal
-  fake_1p_nm =create2D("FFs_hadhad_muOnly.root","FF_WCR_Presel_All_Comb_SLTandTLT_1prong");
-  fake_3p_nm =create2D("FFs_hadhad_muOnly.root","FF_WCR_Presel_All_Comb_SLTandTLT_3prong");
-
-  hhFakeSSVec=fill_hh_sys(true);
-  hhFakeSBVec=fill_hh_sys(false);
-  hhFakeSysMap=fill_hh_stat();
-}
-
-
 
 // calculate FF_SS
 // pt 30-40/pt 40-60/pt 60-500  eta <1.37/eta >1.37     1prong/3prong
 // 6-11:3prong        0-5:1prong     0 1 2(eta <1.37 barrel)   3 4 5(eta >1.37 endcap)
 float nominal::read_fake_factor(TString NPname,int subleading_bin){  //  subleading_bin ==>determine ptindex_, etaindex_,prong
 
-  //std::cout<<"IN nominal::read_fake_factor,NPname: "<<NPname<<std::endl;
   if(subleading_bin>12||subleading_bin<0){
     std::cout<<"IN nominal::read_fake_factor,subleading_bin: "<<subleading_bin<<std::endl;
     exit(0);
   }
-
-  int prong_=0; int ptindex_=0; int etaindex_=0;
-  if(int(subleading_bin)/6==0){
-    prong_=1;
-    if(int(subleading_bin)/3==0){
-      ptindex_=subleading_bin;
-      etaindex_=0;
-    }else if(int(subleading_bin)/3==1){
-      ptindex_=subleading_bin-3;
-      etaindex_=1;
-    }
-  }else if(int(subleading_bin)/6==1){
-    prong_=3;
-    if(int(subleading_bin-6)/3==0){
-      ptindex_=subleading_bin-6;
-      etaindex_=0;
-    }else if(int(subleading_bin-6)/3==1){
-      ptindex_=subleading_bin-6-3;
-      etaindex_=1;
-    }
-  }
-  
-  bool isPlus=true;
+  int prong_=int(subleading_bin)/6;
+  int ptindex_=int(subleading_bin)%3;
+  int etaindex_=(int(subleading_bin)/3)%2;
+  //std::cout<<"thisNP: "<<thisNP<<", NPname:"<<NPname<<std::endl;
   // "FFNP_1prong_ptbin0_etabin0_up"
-  TString thisNP=string("FFNP")+(prong_==1?string("_1prong"):string("_3prong"))+(ptindex_==0?string("_ptbin0"):(ptindex_==1?string("_ptbin1"):string("_ptbin2")))+(etaindex_==0?string("_etabin0"):string("_etabin1"));
-  //std::cout<<"thisNP: "<<thisNP<<std::endl;
-  //std::cout<<"NPname:"<<NPname<<std::endl;
-  if(NPname.Contains("prong")&&NPname.Contains("FFNP")||(!NPname.Contains("FFNP"))){ // ff statistic  and other weight NP,tree NP,NOMINAL
-
-    if(NPname.Contains(thisNP)){
-      // up down
-      if(NPname.Contains("up"))        isPlus=true;
-      else if(NPname.Contains("down")) isPlus=false;
-      return hhFakeSysMap[NPname].nominal+(isPlus?1.0*hhFakeSysMap[NPname].error:-1.0*hhFakeSysMap[NPname].error);
-    } 
-    return  hhFakeSysMap[thisNP+"_up"].nominal;
-  
-  }else if(NPname.Contains("FFNP")){
-    // ff_ss   and   ff_sb
+  TString thisNP=string("FFNP")+(prong_==0?string("_1prong"):string("_3prong"))+(ptindex_==0?string("_ptbin0"):(ptindex_==1?string("_ptbin1"):string("_ptbin2")))+(etaindex_==0?string("_etabin0"):string("_etabin1"));
+  if(NPname.Contains("FFNP")){
     if(NPname.Contains("samesign")){
-      //std::cout<<"hhFakeSSVechhFakeSSVechhFakeSSVec"<<std::endl;
       return hhFakeSSVec.at(subleading_bin).nominal;
     }else if(NPname.Contains("sideband")){
-      //std::cout<<"hhFakeSBVechhFakeSBVechhFakeSBVec"<<std::endl;
       return hhFakeSBVec.at(subleading_bin).nominal;
     }
   }
-  return 1; 
+  return hhFakeSysMap[thisNP].nominal+NPname.Contains(thisNP)*hhFakeSysMap[thisNP].error;
 }
 
 
@@ -1895,18 +1814,20 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
         //  6-11:3prong        0-5:1prong     0 1 2(eta <1.37 barrel)   3 4 5(eta >1.37 endcap)
         // APPLY  FF_SS
         // leading_bin
-        if(taus_p4->at(0)->Pt()>=30&&taus_p4->at(0)->Pt()<40)      leading_bin=0;
-        else if(taus_p4->at(0)->Pt()>=40&&taus_p4->at(0)->Pt()<60) leading_bin=1;
-        else leading_bin=2;
-        if(fabs(taus_p4->at(0)->Eta())>1.37) leading_bin+=3; 
-        if(taus_n_charged_tracks->at(0)==3)  leading_bin+=6;
+        if(leps_id->size()==0){
+          if(taus_p4->at(0)->Pt()>=30&&taus_p4->at(0)->Pt()<40)      leading_bin=0;
+          else if(taus_p4->at(0)->Pt()>=40&&taus_p4->at(0)->Pt()<60) leading_bin=1;
+          else leading_bin=2;
+          if(fabs(taus_p4->at(0)->Eta())>1.37) leading_bin+=3; 
+          if(taus_n_charged_tracks->at(0)==3)  leading_bin+=6;
 
-        // subleading_bin
-        if(taus_p4->at(1)->Pt()>=30&&taus_p4->at(1)->Pt()<40)      subleading_bin=0;
-        else if(taus_p4->at(1)->Pt()>=40&&taus_p4->at(1)->Pt()<60) subleading_bin=1;
-        else subleading_bin=2;
-        if(fabs(taus_p4->at(1)->Eta())>1.37) subleading_bin+=3; 
-        if(taus_n_charged_tracks->at(1)==3)  subleading_bin+=6;
+          // subleading_bin
+          if(taus_p4->at(1)->Pt()>=30&&taus_p4->at(1)->Pt()<40)      subleading_bin=0;
+          else if(taus_p4->at(1)->Pt()>=40&&taus_p4->at(1)->Pt()<60) subleading_bin=1;
+          else subleading_bin=2;
+          if(fabs(taus_p4->at(1)->Eta())>1.37) subleading_bin+=3; 
+          if(taus_n_charged_tracks->at(1)==3)  subleading_bin+=6;
+        }
 
 
 
@@ -2008,6 +1929,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
                 std::cout<<"weight:"<<weight<<std::endl;
               }
             }
+
             if(region.Contains("1mtau1ltau1b")) { weight*=read_fake_factor(theNP,subleading_bin); /*std::cout<<"ff:"<<read_fake_factor(theNP,subleading_bin)<<std::endl;*/}
             if(!nominaltree){// tree NP
               weight=weights->at(0);
