@@ -147,13 +147,7 @@ void hadhadtree::init_hist(TString histfilename){
   fcnc_plots->add(vars["x2fit"],&x2fit);
   fcnc_plots->add(vars["chi2"],&chi2);
   fcnc_plots->add(vars["leading_bin"],&leading_bin); //
-  fcnc_plots->add(vars["subleading_bin"],&subleading_bin); 
-  // add for xin
-  fcnc_plots->add(vars["actual_mu"],&actual_mu); 
-  fcnc_plots->add(vars["actual_mu_cor"],&actual_mu_cor); 
-  fcnc_plots->add(vars["average_mu"],&average_mu); 
-  fcnc_plots->add(vars["average_mu_cor"],&average_mu_cor); 
-
+  fcnc_plots->add(vars["subleading_bin"],&subleading_bin);
   for (int j = 0; j < fcnc_regions.size(); ++j)
   {
     for (int k = 0; k < 2; ++k)
@@ -279,12 +273,6 @@ void hadhadtree::prepare(){
     tau0RNN=tau_0_jet_rnn_score_trans;
     tau1RNN=tau_1_jet_rnn_score_trans;
     met_sumet=met_sumet_;
-
-    // add for xin
-    actual_mu=n_actual_int;
-    actual_mu_cor=n_actual_int_cor;
-    average_mu=n_avg_int;
-    average_mu_cor=n_avg_int_cor;
     /*
     leadingJetPt=jet_0_p4->Pt();
     subleadingJetPt=jet_1_p4->Pt();

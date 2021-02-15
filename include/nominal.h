@@ -368,11 +368,5 @@ public :
   bool passReduce3Cut=0;
 
   std::vector<TString> xTFWfakeNPlist_;
-  
-  // add for xin
-  double actual_mu;
-  double actual_mu_cor;
-  double average_mu;
-  double average_mu_cor;
 };
 #endif

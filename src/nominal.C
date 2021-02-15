@@ -427,11 +427,6 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("tau1ntracks",&tau1ntracks);//!!
   tree->SetBranchAddress("tau0ntracks",&tau0ntracks);//!!
   tree->SetBranchAddress("nmOnlyfakeweight",&nmOnlyfakeweight);
-  // add for xin
-  tree->SetBranchAddress("actual_mu", &actual_mu);
-  tree->SetBranchAddress("actual_mu_cor", &actual_mu_cor);
-  tree->SetBranchAddress("average_mu", &average_mu);
-  tree->SetBranchAddress("average_mu_cor", &average_mu_cor);
 
 }
 
@@ -500,11 +495,6 @@ void nominal::BDTBranch(TTree *tree){
   tree->Branch("tau1ntracks",&tau1ntracks);//!!
   tree->Branch("tau0ntracks",&tau0ntracks);//!!
   tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
-  // add for xin
-  tree->Branch("actual_mu", &actual_mu);
-  tree->Branch("actual_mu_cor", &actual_mu_cor);
-  tree->Branch("average_mu", &average_mu);
-  tree->Branch("average_mu_cor", &average_mu_cor);
 }
 
 
@@ -544,12 +534,6 @@ void nominal::setVecBranch(TTree *tree){
 //
 //tree->SetBranchAddress("newfakeweight",&newfakeweight);
 //tree->SetBranchAddress("nmOnlyfakeweight",&nmOnlyfakeweight);
-
-  // add for xin
-  tree->SetBranchAddress("actual_mu", &actual_mu);
-  tree->SetBranchAddress("actual_mu_cor", &actual_mu_cor);
-  tree->SetBranchAddress("average_mu", &average_mu);
-  tree->SetBranchAddress("average_mu_cor", &average_mu_cor);
 }
 
 void nominal::vecBranch(TTree *tree){
@@ -588,13 +572,6 @@ void nominal::vecBranch(TTree *tree){
   //
   //tree->Branch("newfakeweight",&newfakeweight);
   //tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
-
-    // add for xin
-  tree->Branch("actual_mu", &actual_mu);
-  tree->Branch("actual_mu_cor", &actual_mu_cor);
-  tree->Branch("average_mu", &average_mu);
-  tree->Branch("average_mu_cor", &average_mu_cor);
-
 }
 
 void nominal::initFit(){
@@ -1477,11 +1454,10 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       if(belong_regions.isEmpty()) continue;
   
       cut_flow.fill("SR+CR");
-      
-      defineTauTruth();
-
-      defineLepTruth();
-  
+       if(!isData){
+        defineTauTruth();
+        defineLepTruth();
+      }
       if(taus_p4->size()) tau_pt_0 = taus_p4->at(0)->Pt();
       if(taus_p4->size()>=2) tau_pt_1 = taus_p4->at(1)->Pt();
       if(leps_p4->size()) {
