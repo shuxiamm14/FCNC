@@ -10,7 +10,7 @@ void nominal::initializeFF(){
   //ff_sys
   auto getResult = [&](std::string root_name,std::string tree_name){ 
     std::string full_name=PACKAGE_DIR;
-    full_name += "/data/ff_sys/"+root_name;
+    full_name += "/ff_sys/"+root_name;
     TFile *File_ = TFile::Open(full_name.c_str());
     TH1D *hist1d = 0;
     File_->GetObject(tree_name.c_str(),hist1d);
@@ -23,8 +23,8 @@ void nominal::initializeFF(){
     File_->Close();
     return result;
   };
-  hhFakeSSVec=getResult("FF_sideband_nm.root","outhist1p");
-  hhFakeSBVec=getResult("FF_ss_nm.root","outhist1p");
+  hhFakeSBVec=getResult("FF_sideband_nm.root","outhist1p");
+  hhFakeSSVec=getResult("FF_ss_nm.root","outhist1p");
 
   std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/hhfake/FFs_hadhad_muOnly.root";
 
@@ -34,16 +34,16 @@ void nominal::initializeFF(){
   {
     TH2D *hist2d = 0;
     TFile *File_ = TFile::Open(full_name.c_str());
-    TString histname = "FF_WCR_Presel_All_Comb_SLTandTLT_";
+    TString histname = "FF_WCR_Presel_All_Comb_SLTandTLT";
     histname = histname + (iprong==0?"_1prong":"_3prong");
-    File_->GetObject(histname,FFhist[iprong]);
+    File_->GetObject(histname.Data(),FFhist[iprong]);
     if(!FFhist[iprong]) printf("ERROR: FFhist wasn't found: %s\n",histname.Data());
     FFhist[iprong]->SetDirectory(0);
     for (int iptbin = 0; iptbin < 3; ++iptbin)
       for (int ietabin = 0; ietabin < 2; ++ietabin){
         //"FFNP_1prong_ptbin0_etabin0"
         TString binname = TString("FFNP_") + (iprong==0?"1prong_":"3prong_") + "ptbin" + char(iptbin+'0') + "_etabin" + char(ietabin+'0');
-        hhFakeSysMap[binname]=observable(FFhist[iprong]->GetBinContent(iptbin, ietabin),FFhist[iprong]->GetBinError(iptbin, ietabin));
+        hhFakeSysMap[binname]=observable(FFhist[iprong]->GetBinContent(iptbin+1, ietabin+1),FFhist[iprong]->GetBinError(iptbin+1, ietabin+1));
       }
     File_->Close();
   }
@@ -61,7 +61,7 @@ float nominal::read_fake_factor(TString NPname,int subleading_bin){  //  sublead
   int prong_=int(subleading_bin)/6;
   int ptindex_=int(subleading_bin)%3;
   int etaindex_=(int(subleading_bin)/3)%2;
-  
+  //std::cout<<"thisNP: "<<thisNP<<", NPname:"<<NPname<<std::endl;
   // "FFNP_1prong_ptbin0_etabin0_up"
   TString thisNP=string("FFNP")+(prong_==0?string("_1prong"):string("_3prong"))+(ptindex_==0?string("_ptbin0"):(ptindex_==1?string("_ptbin1"):string("_ptbin2")))+(etaindex_==0?string("_etabin0"):string("_etabin1"));
   if(NPname.Contains("FFNP")){
@@ -342,6 +342,7 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("neu0E", &neu0E);
   tree->SetBranchAddress("neu1E", &neu1E);
   tree->SetBranchAddress("nmOnlyfakeweight",&nmOnlyfakeweight);
+
 }
 
 void nominal::BDTBranch(TTree *tree){
@@ -405,6 +406,9 @@ void nominal::BDTBranch(TTree *tree){
   tree->Branch("tau1E", &tau1E);
   tree->Branch("neu0E", &neu0E);
   tree->Branch("neu1E", &neu1E);
+  tree->Branch("tausid", &tausid);//!!
+  tree->Branch("tau1ntracks",&tau1ntracks);//!!
+  tree->Branch("tau0ntracks",&tau0ntracks);//!!
   tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
 }
 
@@ -439,6 +443,8 @@ void nominal::setVecBranch(TTree *tree){
   tree->SetBranchAddress("met_sumet", &met_sumet);
   tree->SetBranchAddress("tau0RNN",&tau0RNN);
   tree->SetBranchAddress("tau1RNN",&tau1RNN);
+  tree->SetBranchAddress("tau1ntracks",&tau1ntracks);//!!
+  tree->SetBranchAddress("tau0ntracks",&tau0ntracks);//!!
 //
 //tree->SetBranchAddress("newfakeweight",&newfakeweight);
 //tree->SetBranchAddress("nmOnlyfakeweight",&nmOnlyfakeweight);
@@ -1210,8 +1216,10 @@ void nominal::fillhist(histSaver* plots, TString region, TString sample, TString
         } 
       }
       plots->fill_hist(sample,region+prongname + "_veto" + bwps[1] + (etmiss < 20*GeV? "_lowmet" : (passReduce3Cut?"_highmet":"_highmet_SB")),NP);
+    }else{
+      if(BDTG_test<-0.6 && !plotProng) plots->fill_hist(sample,"lowBDT_" + region+prongname + "_veto" + bwps[1] + (etmiss < 20*GeV? "_lowmet" : "_highmet"),NP);
+      plots->fill_hist(sample,region+prongname + "_veto" + bwps[1] + (etmiss < 20*GeV? "_lowmet" : "_highmet"),NP);
     }
-    if(BDTG_test<-0.6) plots->fill_hist(sample,"lowBDT_" + region+prongname + "_veto" + bwps[1] + (etmiss < 20*GeV? "_lowmet" : "_highmet"),NP);
   }
 
 }
@@ -1375,11 +1383,10 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       if(belong_regions.isEmpty()) continue;
   
       cut_flow.fill("SR+CR");
-      
-      defineTauTruth();
-
-      defineLepTruth();
-  
+      if(!isData){
+        defineTauTruth();
+        defineLepTruth();
+      }
       if(taus_p4->size()) tau_pt_0 = taus_p4->at(0)->Pt();
       if(taus_p4->size()>=2) tau_pt_1 = taus_p4->at(1)->Pt();
       if(leps_p4->size()) {
@@ -1875,8 +1882,9 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             if(debug) printf("fill NP %s\n", theNP.Data());
             weight = weights->at(0);
 
-
-
+            if(iNP ==0&& false){
+              for(auto &_x_:weightvec)std::cout<<"np:"<<_x_<<std::endl;
+            }
             if(applyNewFakeSF){
               if(theNP.Contains("fakeSF")){
                 TString SFname;
@@ -1905,16 +1913,32 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
               std::vector<TString>::iterator it = std::find(weightvec.begin(), weightvec.end(), theNP);
               int index = 0;
               if(it != weightvec.end()) index = std::distance(weightvec.begin(), it);
-              //else continue;
+              else continue;
+              if(index !=0) weight *= weights->at(index);
               //if(index==2 || index==1) weight = weights->at(index);
-              if(index !=0)
-                weight *= weights->at(index);
+              //else if(index !=0)
+              //  weight *= weights->at(index);
+              if(index !=0){
+                std::cout<<"nominal weight:"<<(weights->at(0))<<std::endl;
+                std::cout<<"weight:"<<weight<<std::endl;
+              }
             }
-           // if(region.Contains("1mtau1ltau1b")) { weight*=read_fake_factor(theNP,subleading_bin); }
+            if(region.Contains("1mtau1ltau1b")) { weight*=read_fake_factor(theNP,subleading_bin); /*std::cout<<"ff:"<<read_fake_factor(theNP,subleading_bin)<<std::endl;*/}
+            if(!nominaltree){// tree NP
+              weight=weights->at(0);
+              if(region.Contains("1mtau1ltau1b")) weight*=read_fake_factor(theNP,subleading_bin); 
+            }
             if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, theNP);
             //else if(!region.Contains("tau")) fill_notau(region, sample, theNP);
             else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0))) {
             	(fcnc?fcnc_plots:fake_plots)->fill_hist(leporigin,region,theNP);
+            }
+            if(theNP=="NOMINAL"){
+              for(auto &item:xTFWfakeNPlist_){
+                weight=weights->at(0);
+                if(region.Contains("1mtau1ltau1b")) weight*=read_fake_factor(item,subleading_bin);
+                if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, item.Data());
+              }
             }
           }
         }else{ //data  

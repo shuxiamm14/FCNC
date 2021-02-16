@@ -42,8 +42,8 @@ void RunMVA( TString region = "", TCut cut = "(eventNumber%2)!=0" , TString weig
    std::cout << std::endl;
    std::cout << "==> Start TMVARegression" << std::endl;
    TString myMethodList = "BDTG";
-   TFile* outputFile = TFile::Open(weightfile+"_out.root", "RECREATE" );
-
+  // TFile* outputFile = TFile::Open(weightfile+ncuts+ntrees+"_out.root", "RECREATE" );
+  TFile* outputFile = TFile::Open(weightfile+"_out.root", "RECREATE" );
    TMVA::Factory *factory = new TMVA::Factory(weightfile, outputFile,
                                                "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
    TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
@@ -228,9 +228,17 @@ int main(int argc, char const *argv[])
             testeven->SetNameTitle("Test Even","Test Even");
             testeven->SetLineColor(2);
             testeven->SetMarkerSize(0);
+            testeven->GetXaxis()->SetLabelSize(testeven->GetXaxis()->GetLabelSize()*2);
+            testeven->GetYaxis()->SetLabelSize(testeven->GetYaxis()->GetLabelSize()*2);
+            testeven->GetXaxis()->SetTitleSize(testeven->GetXaxis()->GetTitleSize()*2);
+            testeven->GetYaxis()->SetTitleSize(testeven->GetYaxis()->GetTitleSize()*2);
             testodd->SetNameTitle("Test Odd","Test Odd");
             testodd->SetLineColor(4);
             testodd->SetMarkerSize(0);
+            testodd->GetXaxis()->SetLabelSize(testeven->GetXaxis()->GetLabelSize()*2);
+            testodd->GetYaxis()->SetLabelSize(testeven->GetYaxis()->GetLabelSize()*2);
+            testodd->GetXaxis()->SetTitleSize(testeven->GetXaxis()->GetTitleSize()*2);
+            testodd->GetYaxis()->SetTitleSize(testeven->GetYaxis()->GetTitleSize()*2);
             TCanvas c1(catname,catname,1000,1000);
             testeven->GetXaxis()->SetRangeUser(0,1);
             testeven->GetYaxis()->SetRangeUser(0,1);

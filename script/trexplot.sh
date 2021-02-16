@@ -39,6 +39,7 @@ runfitcomb(){
 		ln -s $PWD/combined_$variable/Histograms $sig/${reg}_$variable/Histograms
 		if [[ $reg =~ "combined" ]] ; then
 			trex-fitter wfdplr config/combined/$variable.config "Signal=$sig:Job=$sig/${reg}_$variable"
+			#trex-fitter wfdp config/combined/$variable.config "Signal=$sig:Job=$sig/${reg}_$variable"
 		else
 			trex-fitter wfl config/combined/$variable.config "Signal=$sig:Regions=$reg:Job=$sig/${reg}_$variable" 
 		fi

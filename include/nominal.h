@@ -368,6 +368,5 @@ public :
   bool passReduce3Cut=0;
 
   std::vector<TString> xTFWfakeNPlist_;
-  
 };
 #endif
