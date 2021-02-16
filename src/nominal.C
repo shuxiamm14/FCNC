@@ -1193,7 +1193,7 @@ void nominal::fillhist(histSaver* plots, TString region, TString sample, TString
   if(debug) printf("nominal::fillhist\n");
   //if(dobwp[bwps[1]] == 1 && taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_" + bwps[1],NP);
   //if(dovetobwp[bwps[1]] == 1 && !taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_veto" + bwps[1] + (taus_p4->at(0)->Eta() < 20*GeV? "_lowmet" : "_highmet"),NP);
-  if(dovetobwp[bwps[1]] == 1 && !taus_b_tagged->at(0)){
+  if(dovetobwp[bwps[1]] == 1 && (!taus_b_tagged->at(0) && (taus_b_tagged->size()<2 || !taus_b_tagged->at(1)))){
     if(leps_id->size() == 0){
       passReduce3Cut=0;
       if(ttvismass > 60*GeV){
