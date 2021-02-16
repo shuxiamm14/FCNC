@@ -41,7 +41,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool prefit = 1;
 	float BRbenchmark = 0.2;
 	bool calculate_fake_calibration = 1;
-	bool mergeFake = 0;// template: mergeFake=0,showfake=0       hadhad realonly=1,mergeFake=0 ==>0,1
+	bool mergeFake = 1;// template: mergeFake=0,showfake=0       hadhad realonly=1,mergeFake=0 ==>0,1
 	bool mergeOrigin = 0;
 	bool doTrex = 1;
 	bool plotnj = 0;
@@ -53,7 +53,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	bool fittodata = 0;
 	bool plotFakeLep = 0;
 	bool plot2lttbar = 0;
-	bool showFake = 1; // 1
+	bool showFake = 1; // 1 showfake 0 raw
 	TString fitcharge = "os";
 	int campaignfrom = 0;
 	int campaignto = 3;
@@ -61,7 +61,7 @@ int plot(int iNP, TString framework, TString method, int ipart = 0) //method = f
 	int varcount = 0;
 	int plotvar = 0;
 	bool doFakeFactor = 0;
-	bool realOnly = 0;//0
+	bool realOnly = 0;// hadhad 0
 	bool mergeleptype = 1;
 	bool doClosureTest = 0;
 	bool printSRTable = 0;

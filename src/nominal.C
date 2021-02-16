@@ -23,8 +23,8 @@ void nominal::initializeFF(){
     File_->Close();
     return result;
   };
-  hhFakeSSVec=getResult("FF_sideband_nm.root","outhist1p");
-  hhFakeSBVec=getResult("FF_ss_nm.root","outhist1p");
+  hhFakeSBVec=getResult("FF_sideband_nm.root","outhist1p");
+  hhFakeSSVec=getResult("FF_ss_nm.root","outhist1p");
 
   std::string full_name="/publicfs/atlas/atlasnew/higgs/tautau/xiammfcnc/hhfake/FFs_hadhad_muOnly.root";
 
@@ -1923,17 +1923,22 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
                 std::cout<<"weight:"<<weight<<std::endl;
               }
             }
-
             if(region.Contains("1mtau1ltau1b")) { weight*=read_fake_factor(theNP,subleading_bin); /*std::cout<<"ff:"<<read_fake_factor(theNP,subleading_bin)<<std::endl;*/}
             if(!nominaltree){// tree NP
               weight=weights->at(0);
               if(region.Contains("1mtau1ltau1b")) weight*=read_fake_factor(theNP,subleading_bin); 
             }
-
             if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, theNP);
             //else if(!region.Contains("tau")) fill_notau(region, sample, theNP);
             else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0))) {
             	(fcnc?fcnc_plots:fake_plots)->fill_hist(leporigin,region,theNP);
+            }
+            if(theNP=="NOMINAL"){
+              for(auto &item:xTFWfakeNPlist_){
+                weight=weights->at(0);
+                if(region.Contains("1mtau1ltau1b")) weight*=read_fake_factor(item,subleading_bin);
+                if(plotTauFake && region.Contains("tau")) fillhist(fcnc?fcnc_plots:fake_plots, region, tauorigin, item.Data());
+              }
             }
           }
         }else{ //data  
