@@ -1,11 +1,12 @@
 #rundir=$ttH_fakes_DIR/datafiles/tthML/v2
-rundir=$ttH_fakes_DIR/datafiles/tthML/v5
+rundir=$ttH_fakes_DIR/datafiles/tthML/v6
 mkdir -p $rundir/run
 rm $rundir/run/*
 allsamplefile=$rundir/run/allsamples.dat
 sysallsamplefile=$rundir/run/sys_allsamples.dat
 #inputdir=/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimttV3
-inputdir=/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimttV5
+inputdir=/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimSysttV6
+inputdatadir=/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAnaTop/Hist/25ns_R21SkimttV6
 #for files in `ls $inputdir/*.list`
 #do
 #	if [ `grep -c "$files" $rundir/ignore.list` -ne '0' ] ; then
@@ -19,7 +20,8 @@ inputdir=/global/projecta/projectdirs/atlas/weiming/testareaSL5/AxAODsData/tthAn
 #	cat $files | sort >> $sysallsamplefile
 #	echo >> $sysallsamplefile
 #done
-ls $inputdir/*.root | grep -v p4135 | tee $allsamplefile $sysallsamplefile > /dev/null
+ls $inputdir/*.root | grep -v p4310 | tee $allsamplefile $sysallsamplefile > /dev/null
+ls $inputdatadir/*data*.root >> $allsamplefile
 
 Order $allsamplefile
 Order $sysallsamplefile

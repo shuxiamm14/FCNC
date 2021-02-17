@@ -16,6 +16,7 @@
 #include "TROOT.h"
 #include "TSystem.h"
 #include "weightsys_list.h"
+#include "fcnc_include.h"
 using namespace std;
 
 int main(int argc, char const *argv[])
@@ -53,7 +54,11 @@ int main(int argc, char const *argv[])
 		reduce = 2;
 	}
 	TString samplefile = argv[3];
-	TString systname = argv[4];
+	TString rawsystname = argv[4];
+	string tmpsystname=argv[4];
+	findAndReplaceAll(tmpsystname,"CategoryReduction_","");
+	findAndReplaceAll(tmpsystname,"__","_");
+	TString systname = tmpsystname.c_str();
 	if(samplefile.Contains("sys") && systname != "NOMINAL") {
 		printf("sys sample doesnt have the systematic trees\n");
 		return 0;
@@ -467,7 +472,9 @@ int main(int argc, char const *argv[])
 		cutflowraw->GetXaxis()->SetBinLabel(1,"Total Events");
 		cutflowraw->GetXaxis()->SetBinLabel(2,"DAOD");
 	}else if(analysis->nominaltree && !isData){
-		TString weightfilename = prefix + "/datafiles/" + framework + "/v3/run/" + samplefile;
+		TString weightfilename = prefix + "/datafiles/" + framework;
+		if(version == "v3") weightfilename += "/v3/run/" + samplefile;
+		else weightfilename = samplefilefullname;
 		printf("Read weightSum file: %s\n", weightfilename.Data());
 		ifstream wtfn(weightfilename);
 		while(!wtfn.eof()){
@@ -499,7 +506,14 @@ int main(int argc, char const *argv[])
 				if(theoryweightsum.find(dsid) == theoryweightsum.end()) {
 					theoryweightsum[dsid] = new TH1D(("theory_"+to_string(dsid)).c_str(), ("theory_"+to_string(dsid)).c_str(), weightname->size(), 0, weightname->size());
 					theoryweightsum[dsid]->SetDirectory(gROOT);
-					for(int j = 0; j<weightname->size(); j++) theoryweightsum[dsid]->GetXaxis()->SetBinLabel(j+1,weightname->at(j).c_str());
+					for(int j = 0; j<weightname->size(); j++) {
+						findAndReplaceAll((*weightname)[j]," ","");
+						if(weightname->at(j).find("muR=")!=string::npos && weightname->at(j).find("muF=")!=string::npos) {
+							findAndReplaceAll((*weightname)[j],".","0");
+							findAndReplaceAll((*weightname)[j],"005","050");
+						}
+						theoryweightsum[dsid]->GetXaxis()->SetBinLabel(j+1,weightname->at(j).c_str());
+					}
 				}
 				totgenweighted[dsid] += totalEventsWeighted;
 				for(int j = 0; j<weightname->size(); j++) theoryweightsum[dsid]->Fill(j,weightsum->at(j));
@@ -536,7 +550,7 @@ int main(int argc, char const *argv[])
 				cutflowraw->SetBinError(i+2, sqrt(pow(error,2) + pow(inputcutflow->GetBinError(i),2)));
 			}
 		}
-		if(isData) analysis->Loop( (TTree*)inputfile.Get(systname), inputconfig, 1.);
+		if(isData) analysis->Loop( (TTree*)inputfile.Get(rawsystname), inputconfig, 1.);
 		else {
 			if(analysis->nominaltree) {
 				analysis->theoryweightsum=theoryweightsum[dsid];
@@ -547,7 +561,12 @@ int main(int argc, char const *argv[])
 			}
 			if(dsid != lastdsid) analysis->init_dsid();
 			//if(framework == "tthML" && inputconfig.Contains("ml") && analysis->TTHMLVERSION == 5) ((tthmltree_v2*)analysis)->mc_norm = xsecs[dsid]*luminosity/totgenweighted[dsid];
-			analysis->Loop( (TTree*)inputfile.Get(systname), inputconfig, (framework == "xTFW")? xsecs[dsid]*luminosity/totgenweighted[dsid] : 1);
+			if(framework == "tthML" && !analysis->nominaltree) {
+				TTree* nominalTree = (TTree*)inputfile.Get("nominal");
+				nominalTree->SetBranchAddress("mc_norm",&(((tthmltree_v6*)analysis)->mc_norm));
+				nominalTree->GetEntry(1);
+			}
+			analysis->Loop( (TTree*)inputfile.Get(rawsystname), inputconfig, (framework == "xTFW")? xsecs[dsid]*luminosity/totgenweighted[dsid] : 1);
 			if(framework == "xTFW") printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		}
 		inputfile.Close();

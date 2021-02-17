@@ -959,7 +959,9 @@ bool nominal::addTheorySys(){
   if(weight_mc_v){
     for (int i = 1; i <= theoryweightsum->GetNbinsX(); ++i)
     {
-      TString weightName = theoryweightsum->GetXaxis()->GetBinLabel(i);
+      string weightname = theoryweightsum->GetXaxis()->GetBinLabel(i);
+      findAndReplaceAll(weightname,"LHE3Weight_","");
+      TString weightName=weightname.c_str();
       if(weightName!=""){ //https://twiki.cern.ch/twiki/bin/view/AtlasProtected/PmgTopProcesses, Top, Single Top, ttH
         if((weightName.Contains("muR=") && weightName.Contains(",muF=")) || weightName.Contains("PDFset=260") ){
           addweights(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),weightName);
@@ -1173,7 +1175,7 @@ void nominal::fillhist(histSaver* plots, TString region, TString sample, TString
   if(debug) printf("nominal::fillhist\n");
   //if(dobwp[bwps[1]] == 1 && taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_" + bwps[1],NP);
   //if(dovetobwp[bwps[1]] == 1 && !taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_veto" + bwps[1] + (taus_p4->at(0)->Eta() < 20*GeV? "_lowmet" : "_highmet"),NP);
-  if(dovetobwp[bwps[1]] == 1 && !taus_b_tagged->at(0)){
+  if(dovetobwp[bwps[1]] == 1 && (!taus_b_tagged->at(0) && (taus_b_tagged->size()<2 || !taus_b_tagged->at(1)))){
     if(leps_id->size() == 0){
       passReduce3Cut=0;
       if(ttvismass > 60*GeV){
@@ -1834,10 +1836,10 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
               else if (tauabspdg <= 3 && tauabspdg >=1) tauorigin = sample + "_j_fake";
               else if (tauabspdg == 21) tauorigin = sample + "_g_fake";
               else tauorigin = sample + "_nomatch";
-              if((tauabspdg == 4 || (tauabspdg <= 3 && tauabspdg >=1)) && abs(taus_matched_mother_pdgId->at(i)) == 24) tauorigin = sample + "_w_jet_fake";
+              if((tauabspdg <= 4 && tauabspdg >=1) && abs(taus_matched_mother_pdgId->at(i)) == 24) tauorigin = sample + "_w_jet_fake";
             }
           }
-          if(nfaketau == 1&&abs(taus_matched_pdgId->at(0))==15) continue;
+          if(leps_id->size()==0 && nfaketau == 1&&abs(taus_matched_pdgId->at(0))==15) continue;
           if(nfaketau == 0) tauorigin = sample + "_real";
           //if(nfaketau == 0||(nfaketau == 1&&(abs(taus_matched_pdgId->at(1))==15))) tauorigin = sample + "_real";
           else if(nfaketau >= 2) tauorigin = sample + "_doublefake";
@@ -2015,7 +2017,7 @@ void nominal::defineRegions(){
   	if(taus_p4->size() ==1 && ljets_p4->size()) region_name = region_name + char('0'-max(-(int)ljets_p4->size(),-3)) + "j";
   	else if(taus_p4->size() ==2) region_name = region_name+"nj";
   	region_name+= taus_q->at(0)*(taus_q->size()==1?-leps_id->at(0):taus_q->at(1)) < 0? "_os" : "_ss";
-        if(!leps_iso->at(0) && taus_p4->size()==1) region_name+="_antiiso";
+    if(!leps_iso->at(0) && taus_p4->size()==1) region_name+="_antiiso";
   	belong_regions.add(region_name);
   }else if (leps_p4->size()==2){
     mll = (*leps_p4->at(0)+*leps_p4->at(1)).M();

@@ -324,6 +324,7 @@ truthpart* tthmltree::truthmatch(TLorentzVector *p4){
       }
     }
   }
+  while(matched && abs(matched->pdg) > 30) matched = matched->mother;
   return matched;
 }
 

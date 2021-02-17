@@ -180,12 +180,12 @@ bool tthmltree_v6::addWeightSys(){
   addweights(custTrigSF_TightElMediumMuID_FCLooseIso_SLTorDLT_MUON_EFF_TrigStatUncertainty__1down, "muTrigger_Stat_down");
   addweights(custTrigSF_TightElMediumMuID_FCLooseIso_SLTorDLT_MUON_EFF_TrigSystUncertainty__1up, "muTrigger_Syst_up");
   addweights(custTrigSF_TightElMediumMuID_FCLooseIso_SLTorDLT_MUON_EFF_TrigSystUncertainty__1down, "muTrigger_Syst_down");
-  addweights(tauSFRNNMedium_EFF_ELEOLR_TOTAL_UP, "tauSF_ELEOLR_TOTAL_up");
-  addweights(tauSFRNNMedium_EFF_ELEOLR_TOTAL_DOWN, "tauSF_ELEOLR_TOTAL_down");
-  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_STAT_UP, "tauSF_EFF_ELEOLR_STAT_up");
-  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_STAT_DOWN, "tauSF_EFF_ELEOLR_STAT_down");
-  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_SYST_UP, "tauSF_EFF_ELEOLR_SYST_up");
-  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_SYST_DOWN, "tauSF_EFF_ELEOLR_SYST_down");
+  addweights(tauSFRNNMedium_EFF_ELEOLR_TOTAL_UP, "tauEveto_TOTAL_up");
+  addweights(tauSFRNNMedium_EFF_ELEOLR_TOTAL_DOWN, "tauEveto_TOTAL_down");
+  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_STAT_UP,   "tauEveto_EL_STAT_up");
+  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_STAT_DOWN, "tauEveto_EL_STAT_down");
+  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_SYST_UP,   "tauEveto_EL_SYST_up");
+  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_SYST_DOWN, "tauEveto_EL_SYST_down");
   addweights(tauSFRNNMedium_EFF_RNNID_1PRONGSTATSYSTPT2025_UP, "MEDIUM_tauID_1P2025_up");
   addweights(tauSFRNNMedium_EFF_RNNID_1PRONGSTATSYSTPT2025_DOWN, "MEDIUM_tauID_1P2025_down");
   addweights(tauSFRNNMedium_EFF_RNNID_1PRONGSTATSYSTPT2530_UP, "MEDIUM_tauID_1P2530_up");
@@ -385,7 +385,7 @@ void tthmltree_v6::defineObjects(){
 }
 
 void tthmltree_v6::calcGeneralWeight(){
-  generalweight = mcChannelNumber > 0 ? mc_norm*weight_mc*weight_pileup*bTagSF_weight_DL1r_70*jvtSF_customOR: 1.0;
+  generalweight = mcChannelNumber > 0 ? mc_norm*weight_mc*weight_pileup*bTagSF_weight_DL1r_Continuous*jvtSF_customOR: 1.0;
 /*
 	if (isEl) {
       // Electron SF = Reco * ID * Isol * QmisID
@@ -399,9 +399,10 @@ void tthmltree_v6::calcGeneralWeight(){
 */
   if(!lep_SF_CombinedTight_1) lep_SF_CombinedTight_1=1;
   if( mcChannelNumber > 0) generalweight*=lep_SF_CombinedTight_0*lep_SF_CombinedTight_1*custTrigSF_TightElMediumMuID_FCLooseIso_SLTorDLT;
+  if(taus_p4->size()==1 && lep_plvWP_Tight_0) generalweight*=abs(leps_id->at(0))==11?lep_SF_El_PLVTight_0:lep_SF_Mu_PLVTight_0;
   if(taus_p4->size() &&  mcChannelNumber > 0) generalweight*=tauSFRNNMedium_TAU_SF_NOMINAL;
   if(generalweight == 0 && debug) {
-    printf("weights:\nmc_norm=%f\nweight_mc=%f\nweight_pileup=%f\nbtag=%f\nJVT_EventWeight=%f\nlepSF=%f,%f\nleptrigSF=%f,tauSF=%f\n", mc_norm,weight_mc,weight_pileup,bTagSF_weight_DL1r_70,jvtSF_customOR,lep_SF_CombinedTight_0,lep_SF_CombinedTight_1,custTrigSF_TightElMediumMuID_FCLooseIso_SLTorDLT,tauSFRNNMedium_TAU_SF_NOMINAL);
+    printf("weights:\nmc_norm=%f\nweight_mc=%f\nweight_pileup=%f\nbtag=%f\nJVT_EventWeight=%f\nlepSF=%f,%f\nleptrigSF=%f,tauSF=%f\n", mc_norm,weight_mc,weight_pileup,bTagSF_weight_DL1r_Continuous,jvtSF_customOR,lep_SF_CombinedTight_0,lep_SF_CombinedTight_1,custTrigSF_TightElMediumMuID_FCLooseIso_SLTorDLT,tauSFRNNMedium_TAU_SF_NOMINAL);
   }
 }
 
@@ -446,8 +447,11 @@ void tthmltree_v6::defineTauTruth(){
     {
       auto matched = truthmatch(taus_p4->at(i));
       if(matched){
-        if(matched->mother){
-          taus_matched_mother_pdgId->push_back(matched->mother->pdg);
+        auto matchedmother = matched->mother;
+        while(matchedmother && matchedmother->pdg==matched->pdg)
+          matchedmother = matchedmother->mother;
+        if(matchedmother){
+          taus_matched_mother_pdgId->push_back(matchedmother->pdg);
         }else taus_matched_mother_pdgId->push_back(0);
       }else taus_matched_mother_pdgId->push_back(0);
     }
@@ -1955,5 +1959,5 @@ void tthmltree_v6::initRaw(TTree *tree)
    tree->SetBranchAddress("jvtSF_customOR__1down", &jvtSF_customOR__1down, &b_jvtSF_customOR__1down);
    tree->SetBranchAddress("fjvtSF_customOR__1up", &fjvtSF_customOR__1up, &b_fjvtSF_customOR__1up);
    tree->SetBranchAddress("fjvtSF_customOR__1down", &fjvtSF_customOR__1down, &b_fjvtSF_customOR__1down);
-   tree->SetBranchAddress("mc_norm", &mc_norm, &b_mc_norm);
+   if(nominaltree) tree->SetBranchAddress("mc_norm", &mc_norm, &b_mc_norm);
 }
