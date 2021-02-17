@@ -979,7 +979,9 @@ bool nominal::addTheorySys(){
   if(weight_mc_v){
     for (int i = 1; i <= theoryweightsum->GetNbinsX(); ++i)
     {
-      TString weightName = theoryweightsum->GetXaxis()->GetBinLabel(i);
+      string weightname = theoryweightsum->GetXaxis()->GetBinLabel(i);
+      findAndReplaceAll(weightname,"LHE3Weight_","");
+      TString weightName=weightname.c_str();
       if(weightName!=""){ //https://twiki.cern.ch/twiki/bin/view/AtlasProtected/PmgTopProcesses, Top, Single Top, ttH
         if((weightName.Contains("muR=") && weightName.Contains(",muF=")) || weightName.Contains("PDFset=260") ){
           addweights(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),weightName);
@@ -1193,7 +1195,7 @@ void nominal::fillhist(histSaver* plots, TString region, TString sample, TString
   if(debug) printf("nominal::fillhist\n");
   //if(dobwp[bwps[1]] == 1 && taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_" + bwps[1],NP);
   //if(dovetobwp[bwps[1]] == 1 && !taus_b_tagged->at(0)) plots->fill_hist(sample,region+prongname + "_veto" + bwps[1] + (taus_p4->at(0)->Eta() < 20*GeV? "_lowmet" : "_highmet"),NP);
-  if(dovetobwp[bwps[1]] == 1 && !taus_b_tagged->at(0)){
+  if(dovetobwp[bwps[1]] == 1 && (!taus_b_tagged->at(0) && (taus_b_tagged->size()<2 || !taus_b_tagged->at(1)))){
     if(leps_id->size() == 0){
       passReduce3Cut=0;
       if(ttvismass > 60*GeV){

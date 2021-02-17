@@ -16,6 +16,7 @@
 #include "TROOT.h"
 #include "TSystem.h"
 #include "weightsys_list.h"
+#include "fcnc_include.h"
 using namespace std;
 
 int main(int argc, char const *argv[])
@@ -495,9 +496,10 @@ int main(int argc, char const *argv[])
 				if(theoryweightsum.find(dsid) == theoryweightsum.end()) {
 					theoryweightsum[dsid] = new TH1D(("theory_"+to_string(dsid)).c_str(), ("theory_"+to_string(dsid)).c_str(), weightname->size(), 0, weightname->size());
 					theoryweightsum[dsid]->SetDirectory(gROOT);
-					for(int j = 0; j<weightname->size(); j++){
+					for(int j = 0; j<weightname->size(); j++) {
+						findAndReplaceAll((*weightname)[j]," ","");
+						if(weightname->at(j).find("muR=")!=string::npos && weightname->at(j).find("muF=")!=string::npos) findAndReplaceAll((*weightname)[j],".","");
 						theoryweightsum[dsid]->GetXaxis()->SetBinLabel(j+1,weightname->at(j).c_str());
-					//	printf("Weight name : %s;",weightname->at(j).c_str());
 					}
 				}
 				totgenweighted[dsid] += totalEventsWeighted;
