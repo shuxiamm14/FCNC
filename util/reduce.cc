@@ -33,7 +33,7 @@ int main(int argc, char const *argv[])
 	bool dofake = 0;
 	bool onlyMajorNP = 0; // set to 0 for current xTFW analysis.
 	bool applynewSF = 0; //w-jet non-w-jet fake, not available for both hadhad and lephad yet.
-	bool nominalOnly = 0;
+	bool nominalOnly = 1;
 	TString version = "v3"; //define your n-tuple version
 	TString prefix1;
 	TString prefix = PACKAGE_DIR;
@@ -461,7 +461,9 @@ int main(int argc, char const *argv[])
 		cutflowraw->GetXaxis()->SetBinLabel(1,"Total Events");
 		cutflowraw->GetXaxis()->SetBinLabel(2,"DAOD");
 	}else if(analysis->nominaltree && !isData){
-		TString weightfilename = prefix + "/datafiles/" + framework + "/v3/run/" + samplefile;
+		TString weightfilename = prefix + "/datafiles/" + framework;
+		if(version == "v3") weightfilename += "/v3/run/" + samplefile;
+		else weightfilename = samplefilefullname;
 		printf("Read weightSum file: %s\n", weightfilename.Data());
 		ifstream wtfn(weightfilename);
 		while(!wtfn.eof()){
@@ -493,7 +495,10 @@ int main(int argc, char const *argv[])
 				if(theoryweightsum.find(dsid) == theoryweightsum.end()) {
 					theoryweightsum[dsid] = new TH1D(("theory_"+to_string(dsid)).c_str(), ("theory_"+to_string(dsid)).c_str(), weightname->size(), 0, weightname->size());
 					theoryweightsum[dsid]->SetDirectory(gROOT);
-					for(int j = 0; j<weightname->size(); j++) theoryweightsum[dsid]->GetXaxis()->SetBinLabel(j+1,weightname->at(j).c_str());
+					for(int j = 0; j<weightname->size(); j++){
+						theoryweightsum[dsid]->GetXaxis()->SetBinLabel(j+1,weightname->at(j).c_str());
+					//	printf("Weight name : %s;",weightname->at(j).c_str());
+					}
 				}
 				totgenweighted[dsid] += totalEventsWeighted;
 				for(int j = 0; j<weightname->size(); j++) theoryweightsum[dsid]->Fill(j,weightsum->at(j));
