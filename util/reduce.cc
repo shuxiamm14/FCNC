@@ -498,7 +498,10 @@ int main(int argc, char const *argv[])
 					theoryweightsum[dsid]->SetDirectory(gROOT);
 					for(int j = 0; j<weightname->size(); j++) {
 						findAndReplaceAll((*weightname)[j]," ","");
-						if(weightname->at(j).find("muR=")!=string::npos && weightname->at(j).find("muF=")!=string::npos) findAndReplaceAll((*weightname)[j],".","");
+						if(weightname->at(j).find("muR=")!=string::npos && weightname->at(j).find("muF=")!=string::npos) {
+							findAndReplaceAll((*weightname)[j],".","0");
+							findAndReplaceAll((*weightname)[j],"005","050");
+						}
 						theoryweightsum[dsid]->GetXaxis()->SetBinLabel(j+1,weightname->at(j).c_str());
 					}
 				}
