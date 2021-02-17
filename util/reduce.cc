@@ -548,6 +548,11 @@ int main(int argc, char const *argv[])
 			}
 			if(dsid != lastdsid) analysis->init_dsid();
 			//if(framework == "tthML" && inputconfig.Contains("ml") && analysis->TTHMLVERSION == 5) ((tthmltree_v2*)analysis)->mc_norm = xsecs[dsid]*luminosity/totgenweighted[dsid];
+			if(framework == "tthML" && !analysis->nominaltree) {
+				TTree* nominalTree = (TTree*)inputfile.Get("nominal");
+				nominalTree->SetBranchAddress("mc_norm",&(((tthmltree_v6*)analysis)->mc_norm));
+				nominalTree->GetEntry(1);
+			}
 			analysis->Loop( (TTree*)inputfile.Get(systname), inputconfig, (framework == "xTFW")? xsecs[dsid]*luminosity/totgenweighted[dsid] : 1);
 			if(framework == "xTFW") printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		}

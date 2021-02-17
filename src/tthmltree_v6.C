@@ -1958,5 +1958,5 @@ void tthmltree_v6::initRaw(TTree *tree)
    tree->SetBranchAddress("jvtSF_customOR__1down", &jvtSF_customOR__1down, &b_jvtSF_customOR__1down);
    tree->SetBranchAddress("fjvtSF_customOR__1up", &fjvtSF_customOR__1up, &b_fjvtSF_customOR__1up);
    tree->SetBranchAddress("fjvtSF_customOR__1down", &fjvtSF_customOR__1down, &b_fjvtSF_customOR__1down);
-   tree->SetBranchAddress("mc_norm", &mc_norm, &b_mc_norm);
+   if(nominaltree) tree->SetBranchAddress("mc_norm", &mc_norm, &b_mc_norm);
 }
