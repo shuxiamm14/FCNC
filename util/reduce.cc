@@ -54,7 +54,11 @@ int main(int argc, char const *argv[])
 		reduce = 2;
 	}
 	TString samplefile = argv[3];
-	TString systname = argv[4];
+	TString rawsystname = argv[4];
+	string tmpsystname=argv[4];
+	findAndReplaceAll(tmpsystname,"CategoryReduction_","");
+	findAndReplaceAll(tmpsystname,"__","_");
+	TString systname = tmpsystname.c_str();
 	if(samplefile.Contains("sys") && systname != "NOMINAL") {
 		printf("sys sample doesnt have the systematic trees\n");
 		return 0;
@@ -540,7 +544,7 @@ int main(int argc, char const *argv[])
 				cutflowraw->SetBinError(i+2, sqrt(pow(error,2) + pow(inputcutflow->GetBinError(i),2)));
 			}
 		}
-		if(isData) analysis->Loop( (TTree*)inputfile.Get(systname), inputconfig, 1.);
+		if(isData) analysis->Loop( (TTree*)inputfile.Get(rawsystname), inputconfig, 1.);
 		else {
 			if(analysis->nominaltree) {
 				analysis->theoryweightsum=theoryweightsum[dsid];
@@ -556,7 +560,7 @@ int main(int argc, char const *argv[])
 				nominalTree->SetBranchAddress("mc_norm",&(((tthmltree_v6*)analysis)->mc_norm));
 				nominalTree->GetEntry(1);
 			}
-			analysis->Loop( (TTree*)inputfile.Get(systname), inputconfig, (framework == "xTFW")? xsecs[dsid]*luminosity/totgenweighted[dsid] : 1);
+			analysis->Loop( (TTree*)inputfile.Get(rawsystname), inputconfig, (framework == "xTFW")? xsecs[dsid]*luminosity/totgenweighted[dsid] : 1);
 			if(framework == "xTFW") printf("xsecs[%d] = %f\nluminosity=%f\ntotal weight generated:%f\n",dsid,xsecs[dsid],luminosity,totgenweighted[dsid]);
 		}
 		inputfile.Close();
