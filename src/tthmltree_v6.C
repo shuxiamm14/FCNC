@@ -180,12 +180,12 @@ bool tthmltree_v6::addWeightSys(){
   addweights(custTrigSF_TightElMediumMuID_FCLooseIso_SLTorDLT_MUON_EFF_TrigStatUncertainty__1down, "muTrigger_Stat_down");
   addweights(custTrigSF_TightElMediumMuID_FCLooseIso_SLTorDLT_MUON_EFF_TrigSystUncertainty__1up, "muTrigger_Syst_up");
   addweights(custTrigSF_TightElMediumMuID_FCLooseIso_SLTorDLT_MUON_EFF_TrigSystUncertainty__1down, "muTrigger_Syst_down");
-  addweights(tauSFRNNMedium_EFF_ELEOLR_TOTAL_UP, "tauSF_ELEOLR_TOTAL_up");
-  addweights(tauSFRNNMedium_EFF_ELEOLR_TOTAL_DOWN, "tauSF_ELEOLR_TOTAL_down");
-  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_STAT_UP, "tauSF_EFF_ELEOLR_STAT_up");
-  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_STAT_DOWN, "tauSF_EFF_ELEOLR_STAT_down");
-  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_SYST_UP, "tauSF_EFF_ELEOLR_SYST_up");
-  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_SYST_DOWN, "tauSF_EFF_ELEOLR_SYST_down");
+  addweights(tauSFRNNMedium_EFF_ELEOLR_TOTAL_UP, "tauEveto_TOTAL_up");
+  addweights(tauSFRNNMedium_EFF_ELEOLR_TOTAL_DOWN, "tauEveto_TOTAL_down");
+  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_STAT_UP,   "tauEveto_EL_STAT_up");
+  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_STAT_DOWN, "tauEveto_EL_STAT_down");
+  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_SYST_UP,   "tauEveto_EL_SYST_up");
+  addweights(tauSFRNNMedium_ELE_EFF_ELEOLR_SYST_DOWN, "tauEveto_EL_SYST_down");
   addweights(tauSFRNNMedium_EFF_RNNID_1PRONGSTATSYSTPT2025_UP, "MEDIUM_tauID_1P2025_up");
   addweights(tauSFRNNMedium_EFF_RNNID_1PRONGSTATSYSTPT2025_DOWN, "MEDIUM_tauID_1P2025_down");
   addweights(tauSFRNNMedium_EFF_RNNID_1PRONGSTATSYSTPT2530_UP, "MEDIUM_tauID_1P2530_up");
