@@ -399,6 +399,7 @@ void tthmltree_v6::calcGeneralWeight(){
 */
   if(!lep_SF_CombinedTight_1) lep_SF_CombinedTight_1=1;
   if( mcChannelNumber > 0) generalweight*=lep_SF_CombinedTight_0*lep_SF_CombinedTight_1*custTrigSF_TightElMediumMuID_FCLooseIso_SLTorDLT;
+  if(taus_p4->size()==1 && lep_plvWP_Tight_0) generalweight*=abs(leps_id->at(0))==11?lep_SF_El_PLVTight_0:lep_SF_Mu_PLVTight_0;
   if(taus_p4->size() &&  mcChannelNumber > 0) generalweight*=tauSFRNNMedium_TAU_SF_NOMINAL;
   if(generalweight == 0 && debug) {
     printf("weights:\nmc_norm=%f\nweight_mc=%f\nweight_pileup=%f\nbtag=%f\nJVT_EventWeight=%f\nlepSF=%f,%f\nleptrigSF=%f,tauSF=%f\n", mc_norm,weight_mc,weight_pileup,bTagSF_weight_DL1r_70,jvtSF_customOR,lep_SF_CombinedTight_0,lep_SF_CombinedTight_1,custTrigSF_TightElMediumMuID_FCLooseIso_SLTorDLT,tauSFRNNMedium_TAU_SF_NOMINAL);
