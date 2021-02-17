@@ -41,7 +41,7 @@ echo 'date
 shopt -s expand_aliases
 source /global/project/projectdirs/atlas/scripts/setupATLAS.sh
 setupATLAS
-lsetup "root 6.14.04-x86_64-slc6-gcc62-opt"
+lsetup "root 6.20.06-x86_64-centos7-gcc8-opt"
 cd '`pwd`"
 ulimit -n 32000
 . $ttH_fakes_DIR/env.sh" > bulkreduce.sh
@@ -58,11 +58,11 @@ rm -f sublocal.sh
 
 if [[ $2 =~ "sub" ]] ; then
 	if [ -n "$4" ] ; then
-		files=$ttH_fakes_DIR/datafiles/tthML/v5/run/$4
+		files=`ls $ttH_fakes_DIR/datafiles/tthML/v6/run/$4 | xargs -n 1 basename`
 	else
-		$ttH_fakes_DIR/datafiles/tthML/v5/run/{mc*,data*}
+		files=`ls $ttH_fakes_DIR/datafiles/tthML/v6/run/{mc*,data*} | xargs -n 1 basename`
 	fi
-	for lines in `ls $files | xargs -n 1 basename`
+	for lines in $files
 	do
 		if [[ $systname != "nominal" ]] && ( [[ $lines =~ "wjet" ]] || [[ $lines =~ "zll" ]] || [[ $lines =~ "ztautau" ]] ) ; then
 			continue
