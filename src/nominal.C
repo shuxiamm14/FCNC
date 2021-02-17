@@ -979,7 +979,9 @@ bool nominal::addTheorySys(){
   if(weight_mc_v){
     for (int i = 1; i <= theoryweightsum->GetNbinsX(); ++i)
     {
-      TString weightName = theoryweightsum->GetXaxis()->GetBinLabel(i);
+      string weightname = theoryweightsum->GetXaxis()->GetBinLabel(i);
+      findAndReplaceAll(weightname,"LHE3Weight_","");
+      TString weightName=weightname.c_str();
       if(weightName!=""){ //https://twiki.cern.ch/twiki/bin/view/AtlasProtected/PmgTopProcesses, Top, Single Top, ttH
         if((weightName.Contains("muR=") && weightName.Contains(",muF=")) || weightName.Contains("PDFset=260") ){
           addweights(weight_mc_v->at(i-1)/weight_mc*theoryweightsum->GetBinContent(1)/theoryweightsum->GetBinContent(i),weightName);
