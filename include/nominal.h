@@ -327,13 +327,9 @@ public :
 
   std::map<TString,std::vector<TLorentzVector*>*> fitvec;
   // hadhad specific
-  float      tau0RNN;
-  float      tau1RNN;
   float      met_sumet;
   float      met_sigma;
   // need to delete
-   int      tau1ntracks;
-   int      tau0ntracks;
   
 
 

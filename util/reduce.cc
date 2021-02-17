@@ -252,7 +252,13 @@ int main(int argc, char const *argv[])
 	analysis->writetree = (reduce == 1 || (reduce == 2 && !dofake)) ? 1:0;
 	analysis->doubleCounting = 1;
   	analysis->belong_regions.enable(regions);
-	if(framework == "xTFW") analysis->xTFWfakeNPlist_=xTFWfakeNPlist;
+	if(framework == "xTFW") {
+		analysis->xTFWfakeNPlist_=xTFWfakeNPlist;
+		if(analysis->hhFakeSSVec.size()==0) {
+      		analysis->initializeFF();
+      		std::cout<<"===========================once============"<<std::endl;
+    	}
+	}
     char inputline[500];
 	if(reduce > 1){
         if(framework == "xTFW")analysis->dovetobwp["btagwp70"] = 1;

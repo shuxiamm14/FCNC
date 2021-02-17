@@ -333,14 +333,6 @@ void nominal::setBDTBranch(TTree *tree){
   tree->SetBranchAddress("leps_first_EgMother_truth_origin", &leps_first_EgMother_truth_origin);
   tree->SetBranchAddress("leps_first_EgMother_truth_type", &leps_first_EgMother_truth_type);
   // hadhad specific
-  tree->SetBranchAddress("tau0RNN",&tau0RNN);
-  tree->SetBranchAddress("tau1RNN",&tau1RNN);
-  tree->SetBranchAddress("tauvis0E", &tauvis0E);
-  tree->SetBranchAddress("tauvis1E", &tauvis1E);
-  tree->SetBranchAddress("tau0E", &tau0E);
-  tree->SetBranchAddress("tau1E", &tau1E);
-  tree->SetBranchAddress("neu0E", &neu0E);
-  tree->SetBranchAddress("neu1E", &neu1E);
   tree->SetBranchAddress("nmOnlyfakeweight",&nmOnlyfakeweight);
 
 }
@@ -398,17 +390,6 @@ void nominal::BDTBranch(TTree *tree){
   tree->Branch("leps_first_EgMother_truth_origin", &leps_first_EgMother_truth_origin);
   tree->Branch("leps_first_EgMother_truth_type", &leps_first_EgMother_truth_type);
   // hadhad specific
-  tree->Branch("tau0RNN",&tau0RNN);
-  tree->Branch("tau1RNN",&tau1RNN);
-  tree->Branch("tauvis0E", &tauvis0E);
-  tree->Branch("tauvis1E", &tauvis1E);
-  tree->Branch("tau0E", &tau0E);
-  tree->Branch("tau1E", &tau1E);
-  tree->Branch("neu0E", &neu0E);
-  tree->Branch("neu1E", &neu1E);
-  tree->Branch("tausid", &tausid);//!!
-  tree->Branch("tau1ntracks",&tau1ntracks);//!!
-  tree->Branch("tau0ntracks",&tau0ntracks);//!!
   tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
 }
 
@@ -441,11 +422,6 @@ void nominal::setVecBranch(TTree *tree){
   tree->SetBranchAddress("leps_first_EgMother_truth_type", &leps_first_EgMother_truth_type);
   // hadhad specific
   tree->SetBranchAddress("met_sumet", &met_sumet);
-  tree->SetBranchAddress("tau0RNN",&tau0RNN);
-  tree->SetBranchAddress("tau1RNN",&tau1RNN);
-  tree->SetBranchAddress("tau1ntracks",&tau1ntracks);//!!
-  tree->SetBranchAddress("tau0ntracks",&tau0ntracks);//!!
-//
 //tree->SetBranchAddress("newfakeweight",&newfakeweight);
 //tree->SetBranchAddress("nmOnlyfakeweight",&nmOnlyfakeweight);
 }
@@ -478,8 +454,6 @@ void nominal::vecBranch(TTree *tree){
   tree->Branch("leps_first_EgMother_truth_type", &leps_first_EgMother_truth_type);
   // hadhad specific
   tree->Branch("met_sumet", &met_sumet);
-  tree->Branch("tau0RNN",&tau0RNN);
-  tree->Branch("tau1RNN",&tau1RNN);
   //
   //tree->Branch("newfakeweight",&newfakeweight);
   //tree->Branch("nmOnlyfakeweight",&nmOnlyfakeweight);
@@ -1399,11 +1373,11 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
       if(debug)std::cout<<"weight_size: "<<weights->size()<<"  weight[0]: "<<weights->at(0)<<std::endl;
       if(debug)std::cout<<"leps_id size: "<<leps_id->size()<<std::endl; // distinguish hadhad and lephad when reduce==3
     }
-
+    /*
     if(leps_id->size()==0&& hhFakeSSVec.size()==0) {
       initializeFF();
       std::cout<<"===========================once============"<<std::endl;
-    }
+    }*/
       //===============================pre-selections===============================
     if(reduce == 2) {
       cut_flow.fill("this region");
@@ -1918,8 +1892,8 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
               //if(index==2 || index==1) weight = weights->at(index);
               //else if(index !=0)
               //  weight *= weights->at(index);
-              if(index !=0){
-                std::cout<<"nominal weight:"<<(weights->at(0))<<std::endl;
+              if(index !=0&&leps_id->size()==0&&jentry/1000==1){
+                std::cout<<"nominal weight:"<<weights->at(0)<<std::endl;
                 std::cout<<"weight:"<<weight<<std::endl;
               }
             }
@@ -1933,7 +1907,7 @@ void nominal::Loop(TTree* inputtree, TString _samplename, float globalweight = 1
             else if((taus_b_tagged->size()==0 || !taus_b_tagged->at(0))) {
             	(fcnc?fcnc_plots:fake_plots)->fill_hist(leporigin,region,theNP);
             }
-            if(theNP=="NOMINAL"){
+            if(theNP=="NOMINAL"&&leps_id->size()==0){
               for(auto &item:xTFWfakeNPlist_){
                 weight=weights->at(0);
                 if(region.Contains("1mtau1ltau1b")) weight*=read_fake_factor(item,subleading_bin);

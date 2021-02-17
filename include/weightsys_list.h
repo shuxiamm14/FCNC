@@ -110,14 +110,14 @@ std::vector<TString> commonNPlist = { //common NP for both tthML and xTFW
 };
 
 std::vector<TString> theoryNPlist = { // theory uncertainties, the recipe is changed, need to ask conveners.
-//"LHE3Weight_muR=100,muF=200",
-//"LHE3Weight_muR=100,muF=050",
-//"LHE3Weight_muR=200,muF=100",
-//"LHE3Weight_muR=050,muF=100",
-//"LHE3Weight_muR=050,muF=050",
-//"LHE3Weight_muR=200,muF=200",
-//"LHE3Weight_muR=200,muF=050",
-//"LHE3Weight_muR=050,muF=200",
+"LHE3Weight_muR=10,muF=20",
+"LHE3Weight_muR=10,muF=05",
+"LHE3Weight_muR=20,muF=10",
+"LHE3Weight_muR=05,muF=10",
+"LHE3Weight_muR=05,muF=05",
+"LHE3Weight_muR=20,muF=20",
+"LHE3Weight_muR=20,muF=05",
+"LHE3Weight_muR=05,muF=20",
 "LHE3Weight_PDFset=260001",
 "LHE3Weight_PDFset=260002",
 "LHE3Weight_PDFset=260003",
